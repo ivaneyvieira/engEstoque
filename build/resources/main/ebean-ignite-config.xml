@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<l2Configuration xmlns="http://ebean-orm.github.io/xml/ns/ignite">
+
+  <base>
+    <backups>0</backups>
+    <cacheMode>PARTITIONED</cacheMode>
+  </base>
+
+
+
+</l2Configuration>

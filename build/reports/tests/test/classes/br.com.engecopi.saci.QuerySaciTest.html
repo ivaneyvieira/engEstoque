@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - QuerySaciTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>QuerySaciTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/br.com.engecopi.saci.html">br.com.engecopi.saci</a> &gt; QuerySaciTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">3</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">0.737s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">notaEntrada()</td>
+<td class="success">0.008s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">notaSaida()</td>
+<td class="success">0.012s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">pedidos()</td>
+<td class="success">0.717s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>2019-05-19 12:22:20,472 [Test worker] INFO  br.com.engecopi.estoque.ui.EstoqueUI - Starting up
+##################### /home/ivaneyvieira/ebean.properties
+2019-05-19 12:22:20,610 [Test worker] WARN  com.jolbox.bonecp.BoneCPConfig - Min Connections &gt; max connections
+SQL2O ==&gt; SELECT DISTINCT cast(CONCAT(N.paymno) as char)     AS rota,
+                N.storeno,
+                N.ordno       AS numero,
+                ''            AS serie,
+                N.date,
+                N.date as dt_emissao,
+                P.prdno,
+                P.grade,
+                P.qtty / 1000 AS quant,
+                C.name        AS clienteName,
+                'PEDIDO_S'    AS tipo
+FROM sqldados.eord AS                    N
+       INNER JOIN sqldados.eoprd AS      P USING (storeno, ordno)
+       INNER JOIN engEstoque.produtos AS E
+         ON E.codigo = P.prdno AND E.grade = P.grade
+       LEFT JOIN  sqldados.custp AS      C
+         ON C.no = N.custno
+WHERE N.paymno = 291 AND
+      N.storeno = :storeno AND
+      (N.ordno = :nfno)
+2019-05-19 12:22:21,198 [Test worker] INFO  br.com.engecopi.estoque.ui.EstoqueUI - Starting up
+##################### /home/ivaneyvieira/ebean.properties
+SQL2O ==&gt; SELECT CAST(IFNULL(X.xrouteno, '') AS CHAR) AS rota,
+       N.storeno,
+       N.nfno                               AS numero,
+       N.nfse                               AS serie,
+       N.issuedate                          AS date,
+       N.issuedate                          AS dt_emissao,
+       P.prdno                              AS prdno,
+       P.grade,
+       P.qtty                               AS quant,
+       C.name                               AS clienteName,
+       CASE WHEN N.nfse = 1 AND N.cfo IN (5922, 6922)
+                 THEN ''
+            WHEN N.nfse = '66'
+                 THEN 'ACERTO_S'
+            WHEN N.nfse = '3'
+                 THEN 'ENT_RET'
+            WHEN tipo = 0
+                 THEN 'VENDA'
+            WHEN tipo = 1
+                 THEN 'TRANSFERENCIA_S'
+            WHEN tipo = 2
+                 THEN 'DEV_FOR'
+            WHEN tipo = 3
+                 THEN 'DEV_FOR'
+            WHEN tipo = 7
+                 THEN 'OUTRAS_NFS'
+            ELSE 'SP_REME'
+           END                              AS tipo
+FROM sqldados.nf AS                      N
+       INNER JOIN sqldados.xaprd AS      P USING (storeno, pdvno, xano)
+       INNER JOIN engEstoque.produtos AS E
+         ON E.codigo = P.prdno AND E.grade = P.grade
+       LEFT JOIN  sqldados.custp AS      C
+         ON C.no = N.custno
+       LEFT JOIN  sqldados.inv AS        I
+         ON N.invno = I.invno
+       LEFT JOIN  sqldados.xfr AS        X
+         ON X.no = I.xfrno
+WHERE N.storeno = :storeno AND
+      N.nfno = :nfno AND
+      N.nfse = :nfse AND
+      N.status &lt;&gt; 1
+HAVING tipo &lt;&gt; ''
+SQL2O ==&gt; SELECT DISTINCT ''            AS rota,
+                N.storeno,
+                N.nfno AS numero,
+                N.nfse AS serie,
+                N.date,
+                N.date as dt_emissao,
+                P.prdno,
+                P.grade,
+                SUM(P.qtty / 1000) AS quant,
+                C.name        AS clienteName,
+                CASE WHEN N.nfse = '66'
+                          THEN 'ACERTO_S'
+                     WHEN N.nfse = '3'
+                          THEN 'ENT_RET'
+                     ELSE 'VENDA'
+                    END       AS tipo
+FROM sqlpdv.pxa AS                       N
+       INNER JOIN sqlpdv.pxaprd AS       P USING (storeno, pdvno, xano)
+       INNER JOIN engEstoque.produtos AS E
+         ON E.codigo = P.prdno AND E.grade = P.grade
+       LEFT JOIN  sqldados.custp AS      C
+         ON C.no = N.custno
+WHERE N.storeno = :storeno AND
+      N.nfno = :nfno AND
+      N.nfse = :nfse AND
+      processed = 0
+GROUP BY P.storeno, P.pdvno, P.xano, P.prdno, P.grade
+2019-05-19 12:22:21,211 [Test worker] INFO  br.com.engecopi.estoque.ui.EstoqueUI - Starting up
+##################### /home/ivaneyvieira/ebean.properties
+SQL2O ==&gt; 
+select P.invno, N.storeno, nfname           as numero, invse as serie,
+       CAST(IFNULL(X.xrouteno, '') AS CHAR) AS rota,
+       N.date,
+       N.issue_date                         AS dt_emissao,
+       P.prdno                              AS prdno,
+       P.grade, P.qtty/1000                 as quant, V.name as vendName,
+  CASE
+    WHEN invse = '66' then 'ACERTO_E'
+    WHEN type = 0 then &quot;COMPRA&quot;
+    WHEN type = 1 then &quot;TRANSFERENCIA_E&quot;
+    WHEN type = 2 then &quot;DEV_CLI&quot;
+    WHEN type = 8 then &quot;RECLASSIFICACAO_E&quot;
+    WHEN type = 10 AND N.remarks LIKE 'DEV%' then &quot;DEV_CLI&quot;
+    ELSE &quot;NOTA_E&quot;
+  END                                       AS tipo
+from sqldados.inv AS N
+  inner join sqldados.iprd AS P
+  USING(invno)
+  inner join sqldados.vend AS V
+    ON V.no = N.vendno
+  left join sqldados.xfr AS X
+    ON X.no = N.xfrno
+where N.invno = (SELECT MAX(invno)
+                 FROM sqldados.inv AS N
+                 where N.storeno = :storeno
+                     and nfname = :nfname
+                     and invse = :invse
+                     AND N.bits &amp; POW(2, 4) = 0
+                     AND N.auxShort13 &amp; pow(2, 15) = 0
+                     AND invse &lt;&gt; ''
+)
+UNION
+select 0                    as invno, N.storeno, ordno as numero, '' as serie,
+       cast(CONCAT(N.paymno) as char)      AS rota,
+       N.date,
+       N.date,
+       P.prdno              AS prdno,
+       P.grade, P.qtty/1000 as quant, C.name as vendName,
+       'PEDIDO_E'           AS tipo
+from sqldados.eord AS N
+  inner join sqldados.eoprd AS P
+  USING(storeno, ordno)
+  inner join engEstoque.produtos AS E
+    ON E.codigo = P.prdno AND E.grade = P.grade
+  left join sqldados.custp AS C
+    ON C.no = N.custno
+WHERE N.paymno = 290 AND
+      N.storeno = :storeno
+      and (N.ordno = :nfname)
+      and (:invse = '')
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 5.2.1</a> at 19/05/2019 12:22:21</p>
+</div>
+</div>
+</body>
+</html>
