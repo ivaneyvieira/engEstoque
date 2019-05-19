@@ -1,0 +1,44 @@
+@startuml modelo
+hide methods
+
+class Produto{
+	codigo
+	nome
+	grade
+	data_cadastro
+}
+
+class ItemEntrada{
+	quantidade
+	custo_unitario
+}
+
+class Entrada{
+	numero
+	loja
+	data
+	hora
+	observacao
+}
+
+class ItemSaida{
+	quantidade
+	custo_unitario
+}
+
+class Saida{
+	numero
+	loja
+	data
+	hora
+	observacao
+}
+
+Entrada		<--	ItemEntrada
+Saida		<-- 	ItemSaida
+ItemEntrada	-->	Produto
+ItemSaida	-->	Produto
+
+
+
+@enduml

@@ -1,0 +1,52 @@
+@startuml modelo
+hide methods
+
+class Produto{
+	codigo
+	grade
+	codebar
+	data_cadastro
+}
+
+class ItemNota{
+	data
+	hora
+	quantidade
+}
+
+class Nota {
+	numero
+	tipoMov [ENTRADA, SAIDA]
+	data
+	hora
+	observacao
+}
+
+class Loja {
+	numero
+}
+
+class Usuario {
+	loginName
+	impressora
+}
+
+class Saldo {
+	quantidade
+}
+
+class Etiqueta {
+	titulo
+	template
+}
+
+
+ItemNota	-u->	Nota
+ItemNota	-l->	Produto
+Nota		-l->	Loja
+Usuario		-u->	Loja
+Usuario		<-d->	Produto
+Saldo		-u->	Loja
+Saldo		-d->	Produto
+ItemNota	-r->	Etiqueta
+@enduml

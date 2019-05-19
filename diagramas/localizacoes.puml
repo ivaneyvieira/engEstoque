@@ -1,0 +1,61 @@
+@startuml modelo
+hide methods
+
+package Model {
+
+class Produto{
+	codigo
+	grade
+	codebar
+	dataCadastro
+}
+
+class ItemNota{
+	data
+	hora
+	quantidade
+	saldo
+	impresso
+	localizacao
+}
+
+class Nota {
+	numero
+	tipoMov
+	tipoNota
+	rota
+	data
+	hora
+	observacao
+	fornecedor
+	cliente
+	dataEmissao
+}
+
+class Loja {
+	numero
+	sigla
+}
+
+class Usuario {
+	loginName
+	localizacaoes
+	isAdmin
+}
+
+class Etiqueta {
+	titulo
+	template
+	tipo_mov
+}
+
+ItemNota		}-r-		Usuario
+ItemNota		}-d-		Produto
+ItemNota		}-u-		Nota
+ItemNota		}-l-		Etiqueta
+Nota			}-r-		Loja
+Usuario			}-u-		Loja
+Usuario			}-d-{		localizacao
+localizacao		}-l-{		Produto
+}
+@enduml

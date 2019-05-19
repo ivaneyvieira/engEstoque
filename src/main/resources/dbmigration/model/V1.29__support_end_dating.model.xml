@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
+    <changeSet type="apply">
+        <addColumn tableName="itens_nota">
+            <column name="status" type="varchar(9)" notnull="true" checkConstraint="check ( status in ('RECEBIDO','INCLUIDA','CONFERIDA','ENTREGUE'))" checkConstraintName="ck_itens_nota_status"/>
+        </addColumn>
+    </changeSet>
+    <changeSet type="pendingDrops">
+        <dropColumn columnName="status" tableName="notas"/>
+    </changeSet>
+</migration>

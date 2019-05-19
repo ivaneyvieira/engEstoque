@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
+    <changeSet type="apply">
+        <addColumn tableName="usuarios">
+            <column name="tipo_usuario" type="varchar(9)" notnull="true" checkConstraint="check ( tipo_usuario in ('ESTOQUE','EXPEDICAO'))" checkConstraintName="ck_usuarios_tipo_usuario"/>
+        </addColumn>
+    </changeSet>
+</migration>

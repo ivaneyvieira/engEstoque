@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="br.com.engecopi.saci.QuerySaciTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2019-05-19T15:22:20" hostname="note-ci" time="0.739">
+<testsuite name="br.com.engecopi.saci.QuerySaciTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2019-05-19T20:48:26" hostname="note-ci" time="3.538">
   <properties/>
-  <testcase name="pedidos()" classname="br.com.engecopi.saci.QuerySaciTest" time="0.717"/>
-  <testcase name="notaSaida()" classname="br.com.engecopi.saci.QuerySaciTest" time="0.012"/>
-  <testcase name="notaEntrada()" classname="br.com.engecopi.saci.QuerySaciTest" time="0.008"/>
-  <system-out><![CDATA[2019-05-19 12:22:20,472 [Test worker] INFO  br.com.engecopi.estoque.ui.EstoqueUI - Starting up
+  <testcase name="pedidos()" classname="br.com.engecopi.saci.QuerySaciTest" time="2.882"/>
+  <testcase name="notaSaida()" classname="br.com.engecopi.saci.QuerySaciTest" time="0.509"/>
+  <testcase name="notaEntrada()" classname="br.com.engecopi.saci.QuerySaciTest" time="0.144"/>
+  <system-out><![CDATA[2019-05-19 17:48:26,051 [Test worker] INFO  br.com.engecopi.estoque.ui.EstoqueUI - Starting up
 ##################### /home/ivaneyvieira/ebean.properties
-2019-05-19 12:22:20,610 [Test worker] WARN  com.jolbox.bonecp.BoneCPConfig - Min Connections > max connections
+2019-05-19 17:48:26,213 [Test worker] WARN  com.jolbox.bonecp.BoneCPConfig - Min Connections > max connections
 SQL2O ==> SELECT DISTINCT cast(CONCAT(N.paymno) as char)     AS rota,
                 N.storeno,
                 N.ordno       AS numero,
@@ -27,7 +27,7 @@ FROM sqldados.eord AS                    N
 WHERE N.paymno = 291 AND
       N.storeno = :storeno AND
       (N.ordno = :nfno)
-2019-05-19 12:22:21,198 [Test worker] INFO  br.com.engecopi.estoque.ui.EstoqueUI - Starting up
+2019-05-19 17:48:28,941 [Test worker] INFO  br.com.engecopi.estoque.ui.EstoqueUI - Starting up
 ##################### /home/ivaneyvieira/ebean.properties
 SQL2O ==> SELECT CAST(IFNULL(X.xrouteno, '') AS CHAR) AS rota,
        N.storeno,
@@ -99,7 +99,7 @@ WHERE N.storeno = :storeno AND
       N.nfse = :nfse AND
       processed = 0
 GROUP BY P.storeno, P.pdvno, P.xano, P.prdno, P.grade
-2019-05-19 12:22:21,211 [Test worker] INFO  br.com.engecopi.estoque.ui.EstoqueUI - Starting up
+2019-05-19 17:48:29,452 [Test worker] INFO  br.com.engecopi.estoque.ui.EstoqueUI - Starting up
 ##################### /home/ivaneyvieira/ebean.properties
 SQL2O ==> 
 select P.invno, N.storeno, nfname           as numero, invse as serie,
