@@ -1,0 +1,184 @@
+@import "../valo/valo";
+
+$v-font-size: 14px;
+
+$v-unit-size: 24px;
+
+$v-layout-margin-top: round($v-unit-size/3);
+$v-layout-margin-right: round($v-unit-size/3);
+$v-layout-margin-bottom: round($v-unit-size/3);
+$v-layout-margin-left: round($v-unit-size/3);
+$v-layout-spacing-vertical: round($v-unit-size/3);
+$v-layout-spacing-horizontal: round($v-unit-size/3);
+$view-padding: round($v-unit-size / 2) !default;
+$valo-menu-background-color: #414B56;
+$v-font-family: 'Roboto', 'Open Sans', 'Source Sans Pro';
+
+@mixin mytheme {
+  @include valo;
+
+  .v-grid-header,
+  .v-caption {
+    font-weight: bold;
+  }
+  .v-window-header {
+    font-weight: bold;
+  }
+  .v-panel-caption {
+    font-weight: bold;
+  }
+  .v-caption-mystyle {
+    font-weight: bold;
+  }
+  .mono .v-textarea {
+    font-family: monospace;
+  }
+  .right {
+    text-align: right;
+  }
+  .left {
+    text-align: left;
+  }
+  .center {
+    text-align: center;
+  }
+  .font_pequena {
+    font-size: 10%;
+  }
+  .box_rotate {
+    /* Firefox */
+    -moz-transform: rotate(-90deg) translate(0, 100%);
+    -moz-transform-origin: 0 100%;
+    /* Opera */
+    -o-transform: rotate(-90deg) translate(0, 100%);
+    -o-transform-origin: 0 100%;
+    /* Safari + Chrome */
+    -webkit-transform: rotate(-90deg) translate(0, 100%);
+    -webkit-transform-origin: 0 100%;
+    /* IE */
+    -ms-transform: rotate(-90deg) translate(0, 100%);
+    -ms-transform-origin: 0% 100%;
+    /* Internet Explorer */
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+  }
+
+  .compact .v-grid-row .v-grid-cell {
+    line-height: $v-unit-size--tiny; // adjust to your needs
+    font-size: $v-font-size--tiny; // adjust to your needs
+  }
+
+  .v-grid-row .v-grid-cell {
+    line-height: $v-unit-size--tiny; // adjust to your needs
+    font-size: $v-font-size--tiny; // adjust to your needs
+    font-weight: bold;
+  }
+
+  .v-window-modal .v-window-outerheader {
+    background: $valo-menu-background-color;
+  }
+
+  .v-window-modal .v-window-header {
+    color: white;
+  }
+  .box_select {
+    border-color: DodgerBlue;
+    cursor: pointer;
+    cursor: hand;
+    background-color: LightCyan;
+  }
+  .hand_select {
+    cursor: pointer;
+    cursor: hand;
+  }
+  .box_select:hover {
+    background-color: LightSkyBlue;
+  }
+  .box_mark {
+    background-color: DodgerBlue;
+  }
+  .sombra {
+    box-shadow: 3px 3px 5px #888888;
+  }
+  .apto_vazio {
+    background-color: Gainsboro;
+  }
+  .apto_ocupado {
+    background-color: NavajoWhite;
+  }
+  .box_nivel {
+    border-style: solid;
+    border-width: medium;
+    border-color: OrangeRed DodgerBlue;
+  }
+  .box_nivel_base {
+    border-style: solid solid none solid;
+    border-width: medium;
+    border-color: OrangeRed DodgerBlue;
+  }
+  .box_nivel_topo {
+    border-style: none none solid none;
+    border-width: medium;
+    border-color: OrangeRed DodgerBlue;
+  }
+  .border_less {
+    padding: 0;
+  }
+
+  .v-grid-row.grid_green > td {
+    background-color: #ccffcc;
+  }
+  .v-grid-row.grid_yellow > td {
+    background-color: #ffffcc;
+  }
+  .v-grid-row.grid_red > td {
+    background-color: #ccddcc;
+  }
+  .v-grid-row.grid_orange > td {
+    background-color: #ffb833;
+  }
+  .v-grid-row.grid_blue > td {
+    background-color: #99c2ff;
+  }
+
+  .v-grid-row.grid_purple > td {
+    background-color: #bf80ff;
+  }
+
+  .titulo_app {
+    color: valo-font-color($v-selection-color, 1);
+    background-color: $v-selection-color;
+  }
+
+  .img_obs {
+    filter: grayscale(1);
+  }
+
+  @media print {
+    .v-button.noprint {
+      display: none;
+    }
+    .v-label.noprint {
+      display: none;
+    }
+  }
+
+  .v-grid-row.error_row > td {
+    background-color: tomato;
+  }
+
+  .v-grid-row.pendente > td {
+    background-color: khaki;
+  }
+
+  .v-grid-row.pendente2 > td {
+    background-color: DarkKhaki ;
+  }
+
+  .v-grid-row.ok > td {
+    background-color: lightgreen;
+  }
+
+  .v-grid-row.info > td {
+    background-color: lightblue;
+  }
+}
