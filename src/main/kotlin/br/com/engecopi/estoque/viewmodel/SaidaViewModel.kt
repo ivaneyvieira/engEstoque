@@ -40,8 +40,7 @@ class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE,
           .any {it.abreviacao == abreviacaoDefault}
       }
     val notaSaci = notasSaci.firstOrNull()
-    return if(usuarioDefault.isTipoCompativel(notaSaci?.tipoNota())) Nota.findSaida(notaSaci?.numeroSerie())
-                                                                     ?: Nota.createNotaItens(notasSaci)
+    return if(usuarioDefault.isTipoCompativel(notaSaci?.tipoNota())) Nota.createNotaItens(notasSaci)
     else null
   }
 

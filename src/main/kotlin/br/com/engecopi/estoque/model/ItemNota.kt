@@ -120,8 +120,9 @@ class ItemNota: BaseModel() {
       notaPrd ?: return null
       val produtoSaci = Produto.findProduto(notaSaci.prdno, notaSaci.grade) ?: return null
       val locProduto = ViewProdutoLoc.localizacoesProduto(produtoSaci).firstOrNull() ?: ""
+      val item = find(notaPrd, produtoSaci)
 
-      return ItemNota().apply {
+      return item ?: ItemNota().apply {
         quantidade = notaSaci.quant ?: 0
         produto = produtoSaci
         nota = notaPrd
