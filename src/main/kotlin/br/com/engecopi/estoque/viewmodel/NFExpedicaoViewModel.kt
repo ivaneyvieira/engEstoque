@@ -140,6 +140,7 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
   }
 
   private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta) = execString {
+    if(usuarioDefault.isEstoqueExpedicao) return@execString ""
     itemNota ?: return@execString ""
     val tipoNota = itemNota.tipoNota ?: return@execString ""
     if(!etiqueta.imprimivel(tipoNota)) return@execString ""
