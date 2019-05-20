@@ -93,8 +93,7 @@ abstract class LayoutView<V: ViewModel>: VerticalLayout(), View, IView {
   @Suppress("DEPRECATION")
   open fun openText(text: String) {
     if(text != "") {
-      val resource =
-        StreamResource({IOUtils.toInputStream(text)}, "${SystemUtils.md5(text)}.txt")
+      val resource = StreamResource({IOUtils.toInputStream(text)}, "${SystemUtils.md5(text)}.txt")
       resource.mimeType = "text/plain"
 
       Page.getCurrent()
@@ -182,11 +181,10 @@ inline fun <reified BEAN: Any, FIELDVALUE> HasValue<FIELDVALUE>.reloadBinderOnCh
     if(event.isUserOriginated && (event.oldValue != event.value)) {
       val bean = binder.bean
       if(propertys.isEmpty()) {
-        val bindings =
-          BEAN::class.memberProperties.mapNotNull {prop ->
-            binder.getBinding(prop.name)
-              .orElse(null)
-          }
+        val bindings = BEAN::class.memberProperties.mapNotNull {prop ->
+          binder.getBinding(prop.name)
+            .orElse(null)
+        }
         binder.fields.toList()
           .mapNotNull {field ->
             bindings.find {binding ->
@@ -196,7 +194,8 @@ inline fun <reified BEAN: Any, FIELDVALUE> HasValue<FIELDVALUE>.reloadBinderOnCh
           .forEach {binding ->
             binding.read(bean)
           }
-      } else {
+      }
+      else {
         reloadPropertys(binder, *propertys)
       }
     }

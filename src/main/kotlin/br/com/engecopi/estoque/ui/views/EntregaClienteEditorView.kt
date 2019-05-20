@@ -34,8 +34,9 @@ class EntregaClienteEditorView: NotaView<EntregaClienteVo, EntregaClienteEditorV
         binder.bean.usuario = usuario
       }
       formLayout.apply {
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-          .px
+        w =
+          (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+            .px
 
         grupo("Nota fiscal de saída") {
           verticalLayout {
@@ -110,7 +111,7 @@ class EntregaClienteEditorView: NotaView<EntregaClienteVo, EntregaClienteEditorV
         caption = "Quantidade"
         intFormat()
       }
-      column(EntregaClienteVo::status){
+      column(EntregaClienteVo::status) {
         caption = "Situação"
         setRenderer({it?.descricao ?: ""}, TextRenderer())
       }
@@ -141,13 +142,14 @@ class EntregaClienteEditorView: NotaView<EntregaClienteVo, EntregaClienteEditorV
         caption = "Cliente"
         setSortProperty("nota.cliente")
       }
-      val itens = viewModel.notasConferidas()
-        .groupBy {it.numeroNF}
-        .entries.sortedBy {entry ->
-        entry.value.map {it.entityVo?.id ?: 0}
-          .max()
-      }
-        .mapNotNull {it.key}
+      val itens =
+        viewModel.notasConferidas()
+          .groupBy {it.numeroNF}
+          .entries.sortedBy {entry ->
+          entry.value.map {it.entityVo?.id ?: 0}
+            .max()
+        }
+          .mapNotNull {it.key}
 
       grid.setStyleGenerator {saida ->
         if(saida.status == CONFERIDA) {
@@ -155,7 +157,8 @@ class EntregaClienteEditorView: NotaView<EntregaClienteVo, EntregaClienteEditorV
           val index = itens.indexOf(numero)
           if(index % 2 == 0) "pendente"
           else "pendente2"
-        } else null
+        }
+        else null
       }
     }
   }

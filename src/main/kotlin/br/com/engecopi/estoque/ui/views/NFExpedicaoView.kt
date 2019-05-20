@@ -51,8 +51,9 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
     viewModel = NFExpedicaoViewModel(this)
     layoutForm {
       formLayout.apply {
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-          .px
+        w =
+          (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+            .px
         val nota = binder.bean
         grupo("Nota fiscal de saída") {
           verticalLayout {
@@ -198,8 +199,9 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
   init {
     val nota = notaSaida.firstOrNull()
     verticalLayout {
-      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-        .px
+      w =
+        (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+          .px
 
       grupo("Nota fiscal de saída") {
         verticalLayout {
@@ -212,14 +214,16 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
             textField("Loja") {
               expand = 2
               isReadOnly = true
-              value = viewModel.findLoja(nota?.storeno)
-                ?.sigla
+              value =
+                viewModel.findLoja(nota?.storeno)
+                  ?.sigla
             }
             textField("Tipo") {
               expand = 2
               isReadOnly = true
-              value = TipoNota.value(nota?.tipo)
-                ?.descricao
+              value =
+                TipoNota.value(nota?.tipo)
+                  ?.descricao
             }
             dateField("Data") {
               expand = 1

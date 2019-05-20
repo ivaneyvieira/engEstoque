@@ -69,8 +69,9 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
         operationButton?.isEnabled = false
       }
       formLayout.apply {
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-          .px
+        w =
+          (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+            .px
         grupo("Nota fiscal de saída") {
           verticalLayout {
             row {
@@ -229,8 +230,9 @@ class DlgNotaSaida(val nota: Nota, val viewModel: SaidaViewModel): Window("Nota 
 
   init {
     verticalLayout {
-      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-        .px
+      w =
+        (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+          .px
 
       grupo("Nota fiscal de saída") {
         verticalLayout {
@@ -276,8 +278,10 @@ class DlgNotaSaida(val nota: Nota, val viewModel: SaidaViewModel): Window("Nota 
           gridProdutos = grid(ProdutoVO::class) {
             val abreviacao = RegistryUserInfo.abreviacaoDefault
             //nota.refresh()
-            val itens = nota.itensNota().filter {it.status == INCLUIDA}
-              .filter {it.localizacao.startsWith(abreviacao)}
+            val itens =
+              nota.itensNota()
+                .filter {it.status == INCLUIDA}
+                .filter {it.localizacao.startsWith(abreviacao)}
 
             this.dataProvider = ListDataProvider(itens.map {item ->
               ProdutoVO(item.produto, item.tipoMov ?: SAIDA, LocProduto(item.localizacao)).apply {
@@ -294,7 +298,7 @@ class DlgNotaSaida(val nota: Nota, val viewModel: SaidaViewModel): Window("Nota 
                     it.selecionado = false
                   }
                 select.allSelectedItems.forEach {
-                  if(it.saldoFinal < 0){
+                  if(it.saldoFinal < 0) {
                     Notification.show("Saldo Insuficiente")
                     selectionModel.deselect(it)
                     it.selecionado = false
@@ -336,11 +340,13 @@ class DlgNotaSaida(val nota: Nota, val viewModel: SaidaViewModel): Window("Nota 
               caption = "Saldo"
               align = VAlign.Right
             }
-            editor.addOpenListener { event ->
-              event.bean.produto?.let { produto ->
-                val locSulfixos = produto.localizacoes().map { LocProduto(it) }
+            editor.addOpenListener {event ->
+              event.bean.produto?.let {produto ->
+                val locSulfixos =
+                  produto.localizacoes()
+                    .map {LocProduto(it)}
                 comboLoc.setItems(locSulfixos)
-                comboLoc.setItemCaptionGenerator { it.localizacao }
+                comboLoc.setItemCaptionGenerator {it.localizacao}
                 comboLoc.value = event.bean.localizacao
               }
             }
@@ -354,8 +360,7 @@ class DlgNotaSaida(val nota: Nota, val viewModel: SaidaViewModel): Window("Nota 
             editor.saveCaption = "Salvar"
             editor.isBuffered = false
             this.setStyleGenerator {
-              if (it.saldoFinal < 0)
-                "error_row"
+              if(it.saldoFinal < 0) "error_row"
               else null
             }
           }
@@ -375,8 +380,9 @@ class DlgNotaSaida(val nota: Nota, val viewModel: SaidaViewModel): Window("Nota 
             alignment = BOTTOM_RIGHT
             addStyleName(ValoTheme.BUTTON_PRIMARY)
             addClickListener {
-              val itens = gridProdutos.selectedItems.toList()
-                .filter {it.saldoFinal >= 0}
+              val itens =
+                gridProdutos.selectedItems.toList()
+                  .filter {it.saldoFinal >= 0}
               val allItens = gridProdutos.dataProvider.getAll()
               val naoSelect = allItens.minus(itens)
               viewModel.confirmaProdutos(itens, CONFERIDA)

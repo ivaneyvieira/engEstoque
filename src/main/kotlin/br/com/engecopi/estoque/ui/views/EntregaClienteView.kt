@@ -20,7 +20,6 @@ import com.github.mvysny.karibudsl.v8.px
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.verticalLayout
 import com.github.mvysny.karibudsl.v8.w
-import com.sun.javafx.webkit.theme.Renderer.setRenderer
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
@@ -42,8 +41,9 @@ class EntregaClienteView: NotaView<EntregaClienteVo, EntregaClienteViewModel>() 
         binder.bean.usuario = usuario
       }
       formLayout.apply {
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-          .px
+        w =
+          (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+            .px
 
         grupo("Nota fiscal de saída") {
           verticalLayout {
@@ -142,13 +142,14 @@ class EntregaClienteView: NotaView<EntregaClienteVo, EntregaClienteViewModel>() 
         caption = "Cliente"
         setSortProperty("nota.cliente")
       }
-      val itens = viewModel.notasConferidas()
-        .groupBy {it.numeroNF}
-        .entries.sortedBy {entry ->
-        entry.value.map {it.entityVo?.id ?: 0}
-          .max()
-      }
-        .mapNotNull {it.key}
+      val itens =
+        viewModel.notasConferidas()
+          .groupBy {it.numeroNF}
+          .entries.sortedBy {entry ->
+          entry.value.map {it.entityVo?.id ?: 0}
+            .max()
+        }
+          .mapNotNull {it.key}
 
       grid.setStyleGenerator {saida ->
         if(saida.status == CONFERIDA) {
@@ -156,7 +157,8 @@ class EntregaClienteView: NotaView<EntregaClienteVo, EntregaClienteViewModel>() 
           val index = itens.indexOf(numero)
           if(index % 2 == 0) "pendente"
           else "pendente2"
-        } else null
+        }
+        else null
       }
     }
   }

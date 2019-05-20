@@ -67,8 +67,9 @@ open class QueryDB(private val driver: String, val url: String, val username: St
         params.forEach {
           sqlScript = sqlScript?.replace(":${it.first}", it.second)
         }
-        val sqls = sqlScript?.split(";")
-          .orEmpty()
+        val sqls =
+          sqlScript?.split(";")
+            .orEmpty()
         val count = sqls.size
         sqls.filter {it.trim() != ""}
           .forEachIndexed {index, sql ->

@@ -34,8 +34,9 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel>() {
         binder.bean.usuario = usuario
       }
       formLayout.apply {
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-          .px
+        w =
+          (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+            .px
 
         grupo("Nota fiscal de entrada") {
           row {

@@ -30,7 +30,7 @@ class ClienteBio {
     clientSocket?.close()
   }
 
-  fun sendMessage(message : Mensagem) : Mensagem? {
+  fun sendMessage(message: Mensagem): Mensagem? {
     val retorno = sendText(message.toText())
     return Mensagem.mensagem(retorno)
   }

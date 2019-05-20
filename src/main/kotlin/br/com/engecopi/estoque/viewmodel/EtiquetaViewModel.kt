@@ -8,7 +8,7 @@ import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.IView
 
-class EtiquetaViewModel(view: IView) : CrudViewModel<Etiqueta, QEtiqueta, EtiquetaVo>(view) {
+class EtiquetaViewModel(view: IView): CrudViewModel<Etiqueta, QEtiqueta, EtiquetaVo>(view) {
   override fun newBean(): EtiquetaVo {
     return EtiquetaVo()
   }
@@ -58,7 +58,7 @@ class EtiquetaViewModel(view: IView) : CrudViewModel<Etiqueta, QEtiqueta, Etique
   }
 }
 
-class EtiquetaVo : EntityVo<Etiqueta>() {
+class EtiquetaVo: EntityVo<Etiqueta>() {
   override fun findEntity(): Etiqueta? {
     return Etiqueta.find(titulo, statusNota)
   }
@@ -66,5 +66,5 @@ class EtiquetaVo : EntityVo<Etiqueta>() {
   var titulo: String? = ""
   var template: String? = ""
   var statusNota: StatusNota? = null
-  var etiquetaDefault : Boolean = false
+  var etiquetaDefault: Boolean = false
 }

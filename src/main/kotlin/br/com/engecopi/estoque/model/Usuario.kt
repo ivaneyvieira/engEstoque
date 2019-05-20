@@ -32,16 +32,18 @@ class Usuario: BaseModel() {
   var locais: List<String>
     get() = localizacaoes.split(",").asSequence().filter {it.isNotBlank()}.map {it.trim()}.toList()
     set(value) {
-      localizacaoes = value.asSequence()
-        .sorted()
-        .joinToString()
+      localizacaoes =
+        value.asSequence()
+          .sorted()
+          .joinToString()
     }
   var series: List<NotaSerie>
     get() = notaSeries.split(",").filter {it.isNotBlank()}.mapNotNull {mapNotaSerie(it)}.toList()
     set(value) {
-      notaSeries = value.map {it.id.toString()}
-        .sorted()
-        .joinToString()
+      notaSeries =
+        value.map {it.id.toString()}
+          .sorted()
+          .joinToString()
     }
   val isEstoqueExpedicao
     get() = !admin && expedicao && estoque
@@ -116,7 +118,8 @@ class Usuario: BaseModel() {
           val locais = usuario.locais
           if(locais.isEmpty()) usuario.loja?.findAbreviacores()
           else locais
-        } else emptyList()
+        }
+        else emptyList()
       } ?: emptyList()
     }
 

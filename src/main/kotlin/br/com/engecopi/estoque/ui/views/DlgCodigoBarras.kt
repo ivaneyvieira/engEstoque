@@ -17,8 +17,9 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.Window
 import com.vaadin.ui.themes.ValoTheme
 
-class DlgCodigoBarras(textField: TextField, private val confirmaClose : Boolean,
-                      processaleitura: (Nota?, String) -> ItemNota?) : Window(titulo) {
+class DlgCodigoBarras(textField: TextField,
+                      private val confirmaClose: Boolean,
+                      processaleitura: (Nota?, String) -> ItemNota?): Window(titulo) {
   private var nota: Nota? = null
 
   init {
@@ -47,14 +48,14 @@ class DlgCodigoBarras(textField: TextField, private val confirmaClose : Boolean,
           alignment = Alignment.BOTTOM_RIGHT
           addClickListener {
             val item = processaleitura(nota, textField.value)
-            if (item == null) {
+            if(item == null) {
               textField.selectAll()
-            } else {
+            }
+            else {
               textField.value = ""
               nota = item.nota
             }
-            if(confirmaClose)
-              close()
+            if(confirmaClose) close()
           }
         }
       }
@@ -70,15 +71,14 @@ class DlgCodigoBarras(textField: TextField, private val confirmaClose : Boolean,
   }
 }
 
-fun readString(msg: String, confirmaClose : Boolean,
-               processaleitura: (Nota?, String) -> ItemNota?) {
-  if (msg.isNotBlank()) {
+fun readString(msg: String, confirmaClose: Boolean, processaleitura: (Nota?, String) -> ItemNota?) {
+  if(msg.isNotBlank()) {
     val textField = TextField(msg).apply {
       this.w = 400.px
     }
-
     val dlg = DlgCodigoBarras(textField, confirmaClose, processaleitura)
-    UI.getCurrent().addWindow(dlg)
+    UI.getCurrent()
+      .addWindow(dlg)
     textField.focus()
   }
 }

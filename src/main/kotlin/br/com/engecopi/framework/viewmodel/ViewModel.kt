@@ -79,7 +79,7 @@ abstract class ViewModel(val view: IView) {
     }
   }
 
-  protected fun showWarning(msg : String){
+  protected fun showWarning(msg: String) {
     view.showWarning(msg)
   }
 }

@@ -17,7 +17,6 @@ class ViewProduto {
   @Id
   @Column(name = "produto_id")
   var id: Long? = null
-  
   var codigo: String? = null
   var nome: String? = null
   var grade: String? = null
@@ -30,10 +29,9 @@ class ViewProduto {
   var alt: Int? = null
   @Formula(select = "(comp*larg*alt/(100*100*100))")
   var cubagem: Double? = null
-
   @OneToOne(cascade = [])
   @JoinColumn(name = "produto_id")
   var produto: Produto? = null
-  
-  companion object Find : ViewProdutoFinder()
+
+  companion object Find: ViewProdutoFinder()
 }
