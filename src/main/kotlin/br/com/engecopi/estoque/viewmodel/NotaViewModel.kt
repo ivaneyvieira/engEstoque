@@ -197,7 +197,7 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
         .filtroStatus()
         .nota.loja.id.eq(lojaDefault.id)
         .let {query ->
-          if(usuarioDefault.admin) query
+          if(abreviacaoNota == "") query
           else query.localizacao.startsWith(abreviacaoNota)
         }
     }
@@ -272,7 +272,6 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
   fun imprimir(itemNota: ItemNota?) = execString {
     val itens = ItemNota.where()
       .nota.eq(itemNota?.nota)
-      .status.eq(statusImpressao)
       .order()
       .nota.loja.numero.asc()
       .nota.numero.asc()
