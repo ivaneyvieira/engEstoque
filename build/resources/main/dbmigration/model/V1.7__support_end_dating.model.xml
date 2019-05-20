@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
+    <changeSet type="apply">
+        <alterColumn columnName="tipo_mov" tableName="etiquetas" currentType="varchar(7)" notnull="false" currentNotnull="true"/>
+        <addColumn tableName="itens_nota">
+            <column name="saldo" type="integer"/>
+        </addColumn>
+    </changeSet>
+</migration>

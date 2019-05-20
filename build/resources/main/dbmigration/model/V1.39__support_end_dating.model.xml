@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
+    <changeSet type="apply">
+        <alterColumn columnName="numero" tableName="notas" type="varchar(40)" currentType="varchar(15)" currentNotnull="true"/>
+    </changeSet>
+    <changeSet type="pendingDrops">
+        <dropColumn columnName="codigo_barras" tableName="notas"/>
+    </changeSet>
+</migration>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
+    <changeSet type="apply">
+        <alterColumn columnName="tipo_nota" tableName="notas" checkConstraint="check ( tipo_nota in ('COMPRA','TRANSFERENCIA_E','DEV_CLI','ACERTO_E','PEDIDO_E','OUTROS_E','VENDA','TRANSFERENCIA_S','ENT_RET','DEV_FOR','ACERTO_S','PEDIDO_S','OUTROS_S'))" checkConstraintName="ck_notas_tipo_nota"/>
+    </changeSet>
+</migration>
