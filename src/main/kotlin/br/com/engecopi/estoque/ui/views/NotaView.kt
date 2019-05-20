@@ -39,15 +39,13 @@ import com.vaadin.ui.HasComponents
 import com.vaadin.ui.VerticalLayout
 import org.vaadin.patrik.FastNavigation
 
-abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO>> : CrudLayoutView<VO, MODEL>() {
+abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO>>: CrudLayoutView<VO, MODEL>() {
   val lojaDefault = RegistryUserInfo.lojaDefault
   val usuario = RegistryUserInfo.usuarioDefault
   val isAdmin = usuario.admin
 
-  inline fun <reified V : NotaVo> (@VaadinDsl HasComponents).notaFiscalField(
-    operation: CrudOperation?,
-    binder: Binder<V>
-                                                                            ) {
+  inline fun <reified V: NotaVo> (@VaadinDsl HasComponents).notaFiscalField(operation: CrudOperation?,
+                                                                            binder: Binder<V>) {
     textField("Nota Fiscal") {
       expand = 2
       isReadOnly = operation != ADD
@@ -78,31 +76,28 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO>> : CrudLayoutView
     }
   }
 
-  inline fun <reified V : NotaVo> (@VaadinDsl HasComponents).lojaField(
-    operation: CrudOperation?,
-    binder: Binder<V>
-                                                                      ) {
+  inline fun <reified V: NotaVo> (@VaadinDsl HasComponents).lojaField(operation: CrudOperation?, binder: Binder<V>) {
     comboBox<Loja>("Loja") {
       expand = 2
-      default { it.sigla }
+      default {it.sigla}
       isReadOnly = operation != ADD
       setItems(viewModel.findLojas(lojaDefault))
 
-      bind(binder).asRequired("A lojaDefault deve ser informada").bind("lojaNF")
+      bind(binder).asRequired("A lojaDefault deve ser informada")
+        .bind("lojaNF")
       reloadBinderOnChange(binder)
     }
   }
 
-  inline fun <reified V : NotaVo> VerticalLayout.produtoField(
-    operation: CrudOperation?,
-    binder: Binder<V>, tipo: String
-                                                             ) {
+  inline fun <reified V: NotaVo> VerticalLayout.produtoField(operation: CrudOperation?,
+                                                             binder: Binder<V>,
+                                                             tipo: String) {
     row {
       this.bindVisible(binder, NotaVo::naoTemGrid.name)
       comboBox<Produto>("Código") {
         expand = 2
         isReadOnly = operation != ADD
-        default { "${it.codigo.trim()} ${it.grade}".trim() }
+        default {"${it.codigo.trim()} ${it.grade}".trim()}
         isTextInputAllowed = true
         bindItens(binder, "produtoNota")
         bind(binder).bind("produto")
@@ -116,7 +111,7 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO>> : CrudLayoutView
       comboBox<LocProduto>("Localizacao") {
         expand = 3
         isReadOnly = operation != ADD
-        default { localizacao ->
+        default {localizacao ->
           localizacao.localizacao
         }
         isTextInputAllowed = true
@@ -132,7 +127,8 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO>> : CrudLayoutView
       integerField("Qtd $tipo") {
         expand = 1
         isReadOnly = (!this@NotaView.isAdmin) && (operation != ADD)
-        this.bind(binder).bind("quantProduto")
+        this.bind(binder)
+          .bind("quantProduto")
       }
     }
     row {
@@ -143,11 +139,12 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO>> : CrudLayoutView
         editor.isEnabled = true
         removeAllColumns()
         val selectionModel = setSelectionMode(MULTI)
-        selectionModel.addSelectionListener { select ->
-          if (select.isUserOriginated) {
-            this.dataProvider.getAll().forEach {
-              it.selecionado = false
-            }
+        selectionModel.addSelectionListener {select ->
+          if(select.isUserOriginated) {
+            this.dataProvider.getAll()
+              .forEach {
+                it.selecionado = false
+              }
             select.allSelectedItems.forEach {
               it.selecionado = true
             }
@@ -191,11 +188,12 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO>> : CrudLayoutView
           align = VAlign.Right
         }
         bindItens(binder, "produtos")
-        editor.addOpenListener { event ->
-          event.bean.produto?.let { produto ->
-            val locSulfixos = produto.localizacoes().map { LocProduto(it) }
+        editor.addOpenListener {event ->
+          event.bean.produto?.let {produto ->
+            val locSulfixos = produto.localizacoes()
+              .map {LocProduto(it)}
             comboLoc.setItems(locSulfixos)
-            comboLoc.setItemCaptionGenerator { it.localizacao }
+            comboLoc.setItemCaptionGenerator {it.localizacao}
             comboLoc.value = event.bean.localizacao
           }
         }
@@ -209,8 +207,7 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO>> : CrudLayoutView
         editor.saveCaption = "Salvar"
         editor.isBuffered = false
         this.setStyleGenerator {
-          if (it.saldoFinal < 0)
-            "error_row"
+          if(it.saldoFinal < 0) "error_row"
           else null
         }
       }

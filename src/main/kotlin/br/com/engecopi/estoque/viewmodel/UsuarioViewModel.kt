@@ -9,7 +9,7 @@ import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.IView
 
-class UsuarioViewModel(view: IView) : CrudViewModel<Usuario, QUsuario, UsuarioCrudVo>(view) {
+class UsuarioViewModel(view: IView): CrudViewModel<Usuario, QUsuario, UsuarioCrudVo>(view) {
   override fun newBean(): UsuarioCrudVo {
     return UsuarioCrudVo()
   }
@@ -17,8 +17,7 @@ class UsuarioViewModel(view: IView) : CrudViewModel<Usuario, QUsuario, UsuarioCr
   private val queryProduto get() = Produto.where()
 
   fun findProduto(offset: Int, limit: Int): List<Produto> {
-    return queryProduto
-      .setFirstRow(offset)
+    return queryProduto.setFirstRow(offset)
       .setMaxRows(limit)
       .findList()
   }
@@ -28,10 +27,9 @@ class UsuarioViewModel(view: IView) : CrudViewModel<Usuario, QUsuario, UsuarioCr
   }
 
   override fun update(bean: UsuarioCrudVo) {
-    bean.entityVo?.let { usuario ->
+    bean.entityVo?.let {usuario ->
       val loginName = bean.loginName ?: ""
-      if (loginName.isNotBlank())
-        usuario.loginName = loginName
+      if(loginName.isNotBlank()) usuario.loginName = loginName
       usuario.loja = bean.loja
       usuario.locais = bean.localizacaoes.toList()
       usuario.estoque = bean.estoque
@@ -77,7 +75,8 @@ class UsuarioViewModel(view: IView) : CrudViewModel<Usuario, QUsuario, UsuarioCr
   }
 
   override fun delete(bean: UsuarioCrudVo) {
-    Usuario.findUsuario(bean.loginName ?: "")?.delete()
+    Usuario.findUsuario(bean.loginName ?: "")
+      ?.delete()
   }
 
   val lojas
@@ -86,7 +85,7 @@ class UsuarioViewModel(view: IView) : CrudViewModel<Usuario, QUsuario, UsuarioCr
     get() = Produto.all()
 }
 
-class UsuarioCrudVo : EntityVo<Usuario>() {
+class UsuarioCrudVo: EntityVo<Usuario>() {
   override fun findEntity(): Usuario? {
     return Usuario.findUsuario(loginName)
   }
@@ -96,7 +95,9 @@ class UsuarioCrudVo : EntityVo<Usuario>() {
     set(value) {
       field = value
       locaisLoja.clear()
-      val sets = value?.findAbreviacores().orEmpty().toMutableSet()
+      val sets = value?.findAbreviacores()
+        .orEmpty()
+        .toMutableSet()
       locaisLoja.addAll(sets)
     }
   val nome
@@ -109,9 +110,8 @@ class UsuarioCrudVo : EntityVo<Usuario>() {
   var estoque: Boolean = true
   var expedicao: Boolean = false
   var admin: Boolean? = false
-  val tipoUsuarioStr = if (estoque)
-    if (expedicao) "Estoque/Expedição"
-    else "Estoque"
-  else if (expedicao) "Expedição"
+  val tipoUsuarioStr = if(estoque) if(expedicao) "Estoque/Expedição"
+  else "Estoque"
+  else if(expedicao) "Expedição"
   else ""
 }

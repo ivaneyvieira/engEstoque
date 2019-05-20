@@ -44,10 +44,8 @@ class ViewNotaExpedicao: BaseModel() {
 
   companion object Find: ViewNotaExpedicaoFinder() {
     fun findSaida(numero: String?, abreviacao: String?): ViewNotaExpedicao? {
-      numero
-      ?: return null
-      abreviacao
-      ?: return null
+      numero ?: return null
+      abreviacao ?: return null
       return where().numero.eq(numero)
         .loja.equalTo(RegistryUserInfo.lojaDefault)
         .abreviacao.eq(abreviacao)
@@ -55,7 +53,7 @@ class ViewNotaExpedicao: BaseModel() {
         .firstOrNull()
     }
 
-    fun findExpedicao(nota : Nota) : ViewNotaExpedicao? {
+    fun findExpedicao(nota: Nota): ViewNotaExpedicao? {
       return where().numero.eq(nota.numero)
         .loja.equalTo(nota.loja)
         .findList()

@@ -1,6 +1,5 @@
 package br.com.engecopi.utils
 
-
 import org.imgscalr.Scalr
 import org.imgscalr.Scalr.Method
 import org.imgscalr.Scalr.Mode
@@ -19,33 +18,30 @@ object SystemUtils {
   private val enviroment = System.getenv()
   fun variable(`var`: String, def: String): String {
     val envResult = SystemUtils.enviroment[`var`]
-    return if (envResult == null || envResult.trim { it <= ' ' } == "") {
+    return if(envResult == null || envResult.trim {it <= ' '} == "") {
       def
-    } else envResult
+    }
+    else envResult
   }
-  
-  fun resize(
-          imagem: ByteArray?,
-          width: Int,
-          height: Int
-            ): ByteArray? {
+
+  fun resize(imagem: ByteArray?, width: Int, height: Int): ByteArray? {
     return try {
-      if (imagem == null) return null
+      if(imagem == null) return null
       val bImagemIn = toBufferedImage(imagem) ?: return null
       val bimage = Scalr.resize(bImagemIn, Method.QUALITY, Mode.FIT_TO_WIDTH, width, height)
       toByteArray(bimage)
-    } catch (e: IOException) {
+    } catch(e: IOException) {
       ByteArray(0)
     }
   }
-  
+
   @Throws(IOException::class)
   private fun toBufferedImage(imagem: ByteArray?): BufferedImage? {
-    if (imagem == null) return null
+    if(imagem == null) return null
     val `in` = ByteArrayInputStream(imagem)
     return ImageIO.read(`in`)
   }
-  
+
   @Throws(IOException::class)
   private fun toByteArray(image: BufferedImage): ByteArray? {
     val baos = ByteArrayOutputStream()
@@ -55,64 +51,63 @@ object SystemUtils {
     baos.close()
     return imageInByte
   }
-  
- 
+
   fun getResourceAsStream(name: String?): InputStream? {
     var nameRet = name
     nameRet = resolveName(nameRet)
     val cl = SystemUtils::class.java.classLoader ?: return ClassLoader.getSystemResourceAsStream(nameRet)
     return cl.getResourceAsStream(nameRet)
   }
-  
+
   private fun resolveName(name: String?): String? {
     var nameRet = name
-    if (nameRet == null) {
+    if(nameRet == null) {
       return nameRet
     }
-    if (!nameRet.startsWith("/")) {
+    if(!nameRet.startsWith("/")) {
       var c: Class<*> = SystemUtils::class.java
-      while (c.isArray) {
+      while(c.isArray) {
         c = c.componentType
       }
       val baseName = c.name
       val index = baseName.lastIndexOf('.')
-      if (index != -1) {
+      if(index != -1) {
         nameRet = baseName.substring(0, index).replace('.', '/') + "/" + nameRet
       }
-    } else {
+    }
+    else {
       nameRet = nameRet.substring(1)
     }
     return nameRet
   }
-  
+
   fun readFile(file: String): String? {
     return readFile(file, Charset.defaultCharset())
   }
-  
+
   @Throws(IOException::class)
   fun readFile(filename: String, encoding: Charset): String {
     val resource = SystemUtils::class.java.getResource(filename)
-    val path =Paths.get(resource.toURI())
+    val path = Paths.get(resource.toURI())
     val encoded = Files.readAllBytes(path)
     return String(encoded, encoding)
   }
-  
+
   private fun hashString(type: String, input: String): String {
     val hexChar = "0123456789ABCDEF"
-    val bytes = MessageDigest
-            .getInstance(type)
-            .digest(input.toByteArray())
+    val bytes = MessageDigest.getInstance(type)
+      .digest(input.toByteArray())
     val result = StringBuilder(bytes.size * 2)
-    
+
     bytes.forEach {
       val i = it.toInt()
       result.append(hexChar[i shr 4 and 0x0f])
       result.append(hexChar[i and 0x0f])
     }
-    
+
     return result.toString()
   }
-  
+
   fun md5(text: String): String {
     return hashString("MD5", text)
   }

@@ -20,7 +20,6 @@ import com.github.mvysny.karibudsl.v8.px
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.verticalLayout
 import com.github.mvysny.karibudsl.v8.w
-import com.sun.javafx.webkit.theme.Renderer.setRenderer
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
@@ -156,7 +155,8 @@ class EntregaClienteView: NotaView<EntregaClienteVo, EntregaClienteViewModel>() 
           val index = itens.indexOf(numero)
           if(index % 2 == 0) "pendente"
           else "pendente2"
-        } else null
+        }
+        else null
       }
     }
   }

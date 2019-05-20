@@ -14,7 +14,7 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "lojas")
-class Loja : BaseModel() {
+class Loja: BaseModel() {
   @Index(unique = true)
   var numero: Int = 0
   @Length(2)
@@ -26,45 +26,46 @@ class Loja : BaseModel() {
   @OneToMany(mappedBy = "loja", cascade = [REFRESH])
   var viewProdutoLoc: List<ViewProdutoLoc>? = null
 
-  companion object Find : LojaFinder() {
+  companion object Find: LojaFinder() {
     fun findLoja(storeno: Int?): Loja? {
-      return if (storeno == 0 || storeno == null) null
-      else
-        where().numero.eq(storeno).findList()
-          .firstOrNull()
-        ?: saci.findLojas(storeno).firstOrNull()?.let { lojaSaci ->
-          val loja = Loja().apply {
-            numero = lojaSaci.storeno ?: 0
-          }
-          loja.insert()
-          loja
-        }
+      return if(storeno == 0 || storeno == null) null
+      else where().numero.eq(storeno).findList().firstOrNull()
+           ?: saci.findLojas(storeno).firstOrNull()?.let {lojaSaci ->
+             val loja = Loja().apply {
+               numero = lojaSaci.storeno ?: 0
+             }
+             loja.insert()
+             loja
+           }
     }
 
     fun lojaSaldo(): List<Loja> {
       val loja = RegistryUserInfo.lojaDefault
-      return where().notas.id.gt(0).findList()
-        .filter { it.id == loja.id }
+      return where().notas.id.gt(0)
+        .findList()
+        .filter {it.id == loja.id}
     }
 
     fun carregasLojas() {
-      saci.findLojas(0).forEach { lojaSaci ->
-        lojaSaci.storeno?.let { storeno ->
-          val loja = Loja.findLoja(storeno)
-          if (loja == null) {
-            Loja().apply {
-              numero = storeno
-            }.insert()
+      saci.findLojas(0)
+        .forEach {lojaSaci ->
+          lojaSaci.storeno?.let {storeno ->
+            val loja = Loja.findLoja(storeno)
+            if(loja == null) {
+              Loja().apply {
+                numero = storeno
+              }
+                .insert()
+            }
           }
         }
-      }
     }
   }
 
   fun findAbreviacores(): List<String> {
     return Repositories.findByLoja(this)
       .asSequence()
-      .map { it.abreviacao }
+      .map {it.abreviacao}
       .distinct()
       .toList()
   }

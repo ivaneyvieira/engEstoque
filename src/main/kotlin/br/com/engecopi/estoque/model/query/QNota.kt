@@ -19,12 +19,11 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for Nota.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
-class QNota : TQRootBean<Nota, QNota> {
-
+class QNota: TQRootBean<Nota, QNota> {
   companion object {
     /**
      * shared 'Alias' instance used to provide
@@ -38,8 +37,8 @@ class QNota : TQRootBean<Nota, QNota> {
   lateinit var updatedAt: PLocalDateTime<QNota>
   lateinit var version: PInteger<QNota>
   lateinit var numero: PString<QNota>
-  lateinit var tipoMov: PEnum<QNota,TipoMov>
-  lateinit var tipoNota: PEnum<QNota,TipoNota>
+  lateinit var tipoMov: PEnum<QNota, TipoMov>
+  lateinit var tipoNota: PEnum<QNota, TipoNota>
   lateinit var rota: PString<QNota>
   lateinit var fornecedor: PString<QNota>
   lateinit var cliente: PString<QNota>
@@ -54,19 +53,18 @@ class QNota : TQRootBean<Nota, QNota> {
   lateinit var usuario: QAssocUsuario<QNota>
   lateinit var maxSequencia: PInteger<QNota>
 
-
   /**
    * Construct with a given Database.
    */
-  constructor(database: Database) : super(Nota::class.java, database)
+  constructor(database: Database): super(Nota::class.java, database)
 
   /**
    * Construct using the default Database.
    */
-  constructor() : super(Nota::class.java)
+  constructor(): super(Nota::class.java)
 
   /**
    * Construct for Alias.
    */
-  private constructor(dummy: Boolean) : super(dummy)
+  private constructor(dummy: Boolean): super(dummy)
 }

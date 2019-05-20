@@ -249,13 +249,12 @@ data class NotaSerie(val id: Long, val tipoNota: TipoNota) {
       return values.find {it.tipoNota == tipo}
     }
 
-    val values =
-      listOf(NotaSerie(1, VENDA),
-             NotaSerie(2, ENT_RET),
-             NotaSerie(3, TRANSFERENCIA_S),
-             NotaSerie(4, ACERTO_S),
-             NotaSerie(5, PEDIDO_S),
-             NotaSerie(6, DEV_FOR),
-             NotaSerie(7, OUTROS_S))
+    val values = listOf(NotaSerie(1, VENDA),
+                        NotaSerie(2, ENT_RET),
+                        NotaSerie(3, TRANSFERENCIA_S),
+                        NotaSerie(4, ACERTO_S),
+                        NotaSerie(5, PEDIDO_S),
+                        NotaSerie(6, DEV_FOR),
+                        NotaSerie(7, OUTROS_S))
   }
 }

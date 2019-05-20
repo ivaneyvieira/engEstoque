@@ -34,12 +34,11 @@ class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE,
   }
 
   private fun processaKeyNumero(key: String): Nota? {
-    val notasSaci =
-      Nota.findNotaSaidaSaci(key)
-        .filter {loc ->
-          loc.localizacaoes()
-            .any {it.abreviacao == abreviacaoDefault}
-        }
+    val notasSaci = Nota.findNotaSaidaSaci(key)
+      .filter {loc ->
+        loc.localizacaoes()
+          .any {it.abreviacao == abreviacaoDefault}
+      }
     val notaSaci = notasSaci.firstOrNull()
     return if(usuarioDefault.isTipoCompativel(notaSaci?.tipoNota())) Nota.findSaida(notaSaci?.numeroSerie())
                                                                      ?: Nota.createNotaItens(notasSaci)

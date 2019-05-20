@@ -11,12 +11,11 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Association query bean for AssocViewCodBarCliente.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
-class QAssocViewCodBarCliente<R>(name: String, root: R) : TQAssocBean<ViewCodBarCliente,R>(name, root) {
-
+class QAssocViewCodBarCliente<R>(name: String, root: R): TQAssocBean<ViewCodBarCliente, R>(name, root) {
   lateinit var id: PLong<R>
   lateinit var codbar: PString<R>
   lateinit var codbarLimpo: PString<R>
@@ -28,22 +27,21 @@ class QAssocViewCodBarCliente<R>(name: String, root: R) : TQAssocBean<ViewCodBar
   /**
    * Eagerly fetch this association loading the specified properties.
    */
-  fun fetch(vararg properties: TQProperty<QViewCodBarCliente>) : R {
+  fun fetch(vararg properties: TQProperty<QViewCodBarCliente>): R {
     return fetchProperties(*properties)
   }
 
   /**
    * Eagerly fetch this association using a 'query join' loading the specified properties.
    */
-  fun fetchQuery(vararg properties: TQProperty<QViewCodBarCliente>) : R {
+  fun fetchQuery(vararg properties: TQProperty<QViewCodBarCliente>): R {
     return fetchQueryProperties(*properties)
   }
 
   /**
    * Use lazy loading for this association loading the specified properties.
    */
-  fun fetchLazy(vararg properties: TQProperty<QViewCodBarCliente>) : R {
+  fun fetchLazy(vararg properties: TQProperty<QViewCodBarCliente>): R {
     return fetchLazyProperties(*properties)
   }
-
 }

@@ -23,37 +23,22 @@ object MessageDialog {
   }
 
   fun warning(caption: String = "Aviso", message: String) {
-    if (ui.windows.isNotEmpty())
-      Notification(caption, message, Notification.Type.WARNING_MESSAGE, true).apply {
-        delayMsec = 2000
-      }.show(Page.getCurrent())
-    else
-      MessageBox.createWarning()
-        .withCaption(caption)
-        .withHtmlMessage(message)
-        .withCloseButton(ButtonOption.caption("Fechar"))
-        .asModal(true)
-        .open()
+    if(ui.windows.isNotEmpty()) Notification(caption, message, Notification.Type.WARNING_MESSAGE, true).apply {
+      delayMsec = 2000
+    }.show(Page.getCurrent())
+    else MessageBox.createWarning().withCaption(caption).withHtmlMessage(message).withCloseButton(ButtonOption.caption("Fechar")).asModal(
+        true).open()
   }
 
   fun error(caption: String = "Erro", message: String) {
-    if (ui.windows.isNotEmpty())
-      Notification(caption, message, Notification.Type.ERROR_MESSAGE, true).apply {
-        delayMsec = 2000
-      }.show(Page.getCurrent())
-    else
-      MessageBox.createError()
-        .withCaption(caption)
-        .withHtmlMessage(message)
-        .withCloseButton(ButtonOption.caption("Fechar"))
-        .asModal(true)
-        .open()
+    if(ui.windows.isNotEmpty()) Notification(caption, message, Notification.Type.ERROR_MESSAGE, true).apply {
+      delayMsec = 2000
+    }.show(Page.getCurrent())
+    else MessageBox.createError().withCaption(caption).withHtmlMessage(message).withCloseButton(ButtonOption.caption("Fechar")).asModal(
+        true).open()
   }
 
-  fun question(
-    caption: String = "Questão", message: String,
-    execYes: () -> Unit = {}, execNo: () -> Unit = {}
-              ) {
+  fun question(caption: String = "Questão", message: String, execYes: () -> Unit = {}, execNo: () -> Unit = {}) {
     MessageBox.createQuestion()
       .withCaption(caption)
       .withHtmlMessage(message)
@@ -63,15 +48,15 @@ object MessageDialog {
       .open()
   }
 
-  fun question(
-    caption: String = "Questão", message: Component,
-    execYes: (Component) -> Unit = {}, execNo: (Component) -> Unit = {}
-              ) {
+  fun question(caption: String = "Questão",
+               message: Component,
+               execYes: (Component) -> Unit = {},
+               execNo: (Component) -> Unit = {}) {
     MessageBox.createQuestion()
       .withCaption(caption)
       .withMessage(message)
-      .withYesButton({ execYes(message) }, arrayOf(ButtonOption.caption("Sim")))
-      .withNoButton({ execNo(message) }, arrayOf(ButtonOption.caption("Não")))
+      .withYesButton({execYes(message)}, arrayOf(ButtonOption.caption("Sim")))
+      .withNoButton({execNo(message)}, arrayOf(ButtonOption.caption("Não")))
       .asModal(true)
       .open()
   }

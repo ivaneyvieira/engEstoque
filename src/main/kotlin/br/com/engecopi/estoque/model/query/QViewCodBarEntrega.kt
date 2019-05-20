@@ -10,12 +10,11 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for ViewCodBarEntrega.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
-class QViewCodBarEntrega : TQRootBean<ViewCodBarEntrega, QViewCodBarEntrega> {
-
+class QViewCodBarEntrega: TQRootBean<ViewCodBarEntrega, QViewCodBarEntrega> {
   companion object {
     /**
      * shared 'Alias' instance used to provide
@@ -34,19 +33,18 @@ class QViewCodBarEntrega : TQRootBean<ViewCodBarEntrega, QViewCodBarEntrega> {
   lateinit var grade: PString<QViewCodBarEntrega>
   lateinit var quantidade: PInteger<QViewCodBarEntrega>
 
-
   /**
    * Construct with a given Database.
    */
-  constructor(database: Database) : super(ViewCodBarEntrega::class.java, database)
+  constructor(database: Database): super(ViewCodBarEntrega::class.java, database)
 
   /**
    * Construct using the default Database.
    */
-  constructor() : super(ViewCodBarEntrega::class.java)
+  constructor(): super(ViewCodBarEntrega::class.java)
 
   /**
    * Construct for Alias.
    */
-  private constructor(dummy: Boolean) : super(dummy)
+  private constructor(dummy: Boolean): super(dummy)
 }

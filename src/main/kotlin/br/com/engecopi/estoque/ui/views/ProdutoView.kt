@@ -5,7 +5,6 @@ import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.TipoNota
-import br.com.engecopi.estoque.viewmodel.ProdutoVO
 import br.com.engecopi.estoque.viewmodel.ProdutoViewModel
 import br.com.engecopi.estoque.viewmodel.ProdutoVo
 import br.com.engecopi.framework.ui.view.CrudLayoutView
@@ -31,14 +30,12 @@ import com.github.mvysny.karibudsl.v8.h
 import com.github.mvysny.karibudsl.v8.px
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.w
-import com.vaadin.event.ShortcutAction.KeyCode
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.LocalDateRenderer
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
-import org.vaadin.patrik.FastNavigation
 import java.text.DecimalFormat
 
 @AutoView
@@ -175,9 +172,10 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>() {
                 setRenderer(NumberRenderer(DecimalFormat("0")))
                 align = VAlign.Right
               }
-              editor.addOpenListener { event ->
-                event.bean.produto?.let { produto ->
-                  val locSulfixos = produto.localizacoes().map { LocProduto(it) }
+              editor.addOpenListener {event ->
+                event.bean.produto?.let {produto ->
+                  val locSulfixos = produto.localizacoes()
+                    .map {LocProduto(it)}
                   comboLoc.setItems(locSulfixos.map {it.localizacao})
                   comboLoc.value = event.bean.localizacao
                 }
@@ -187,12 +185,12 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>() {
                 viewModel.saveItem(item)
                 binder.reload()
               }
-            //  val nav = FastNavigation(this, false, true)
-            //  nav.changeColumnAfterLastRow = true
-             // nav.openEditorWithSingleClick = true
-             // nav.allowArrowToChangeRow = true
-             // nav.openEditorOnTyping = true
-             // nav.addEditorSaveShortcut(KeyCode.ENTER)
+              //  val nav = FastNavigation(this, false, true)
+              //  nav.changeColumnAfterLastRow = true
+              // nav.openEditorWithSingleClick = true
+              // nav.allowArrowToChangeRow = true
+              // nav.openEditorOnTyping = true
+              // nav.addEditorSaveShortcut(KeyCode.ENTER)
               editor.cancelCaption = "Cancelar"
               editor.saveCaption = "Salvar"
               editor.isBuffered = true

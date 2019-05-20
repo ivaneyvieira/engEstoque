@@ -2,7 +2,11 @@ package br.com.engecopi.utils
 
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
-import java.time.*
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -13,19 +17,23 @@ private val DATETIME_FORMATTER = DateTimeFormatter.ofPattern(DATETIME_PATTERN)
 
 fun LocalDateTime?.toDate(): Date? {
   if(this == null) return null
-  val instant = this.atZone(ZoneId.systemDefault())?.toInstant()
+  val instant = this.atZone(ZoneId.systemDefault())
+    ?.toInstant()
   return Date.from(instant)
 }
 
 fun LocalDateTime?.toTimeStamp(): Timestamp? {
   if(this == null) return null
-  val instant = this.atZone(ZoneId.systemDefault())?.toInstant()
+  val instant = this.atZone(ZoneId.systemDefault())
+    ?.toInstant()
   return Timestamp.from(instant)
 }
 
 fun LocalDate?.toDate(): Date? {
   if(this == null) return null
-  val instant = this.atStartOfDay()?.atZone(ZoneId.systemDefault())?.toInstant()
+  val instant = this.atStartOfDay()
+    ?.atZone(ZoneId.systemDefault())
+    ?.toInstant()
   return Date.from(instant)
 }
 
@@ -36,7 +44,8 @@ fun LocalTime?.toDate(): Date? {
   val month = date.month
   val dayOfMonth = date.dayOfMonth
   val instant = this.atDate(LocalDate.of(year, month, dayOfMonth))
-    ?.atZone(ZoneId.systemDefault())?.toInstant()
+    ?.atZone(ZoneId.systemDefault())
+    ?.toInstant()
   return Date.from(instant)
 }
 
@@ -59,29 +68,32 @@ fun LocalDateTime?.format(): String {
   return DATETIME_FORMATTER.format(this)
 }
 
-fun Date?.format() : String? {
+fun Date?.format(): String? {
   if(this == null) return null
   val sdf = SimpleDateFormat(DATE_PATTERN)
   return sdf.format(this)
 }
 
-fun LocalDate?.format() : String {
+fun LocalDate?.format(): String {
   return this?.format(DATE_FORMATTER) ?: ""
 }
 
-fun Int.localDate() : LocalDate? {
+fun Int.localDate(): LocalDate? {
   val strDate = this.toString()
   if(strDate.length != 8) return null
-  val year = strDate.substring(0, 4).toInt()
-  val month = strDate.substring(4, 6).toInt()
-  val day = strDate.substring(6, 8).toInt()
+  val year = strDate.substring(0, 4)
+    .toInt()
+  val month = strDate.substring(4, 6)
+    .toInt()
+  val day = strDate.substring(6, 8)
+    .toInt()
   return LocalDate.of(year, month, day)
 }
 
 fun String?.parserDate(): LocalDate? {
   return try {
     LocalDate.parse(this, DATE_FORMATTER)
-  } catch (e: Exception) {
+  } catch(e: Exception) {
     null
   }
 }

@@ -276,7 +276,8 @@ class DlgNotaSaida(val nota: Nota, val viewModel: SaidaViewModel): Window("Nota 
           gridProdutos = grid(ProdutoVO::class) {
             val abreviacao = RegistryUserInfo.abreviacaoDefault
             //nota.refresh()
-            val itens = nota.itensNota().filter {it.status == INCLUIDA}
+            val itens = nota.itensNota()
+              .filter {it.status == INCLUIDA}
               .filter {it.localizacao.startsWith(abreviacao)}
 
             this.dataProvider = ListDataProvider(itens.map {item ->
@@ -294,7 +295,7 @@ class DlgNotaSaida(val nota: Nota, val viewModel: SaidaViewModel): Window("Nota 
                     it.selecionado = false
                   }
                 select.allSelectedItems.forEach {
-                  if(it.saldoFinal < 0){
+                  if(it.saldoFinal < 0) {
                     Notification.show("Saldo Insuficiente")
                     selectionModel.deselect(it)
                     it.selecionado = false
@@ -336,11 +337,12 @@ class DlgNotaSaida(val nota: Nota, val viewModel: SaidaViewModel): Window("Nota 
               caption = "Saldo"
               align = VAlign.Right
             }
-            editor.addOpenListener { event ->
-              event.bean.produto?.let { produto ->
-                val locSulfixos = produto.localizacoes().map { LocProduto(it) }
+            editor.addOpenListener {event ->
+              event.bean.produto?.let {produto ->
+                val locSulfixos = produto.localizacoes()
+                  .map {LocProduto(it)}
                 comboLoc.setItems(locSulfixos)
-                comboLoc.setItemCaptionGenerator { it.localizacao }
+                comboLoc.setItemCaptionGenerator {it.localizacao}
                 comboLoc.value = event.bean.localizacao
               }
             }
@@ -354,8 +356,7 @@ class DlgNotaSaida(val nota: Nota, val viewModel: SaidaViewModel): Window("Nota 
             editor.saveCaption = "Salvar"
             editor.isBuffered = false
             this.setStyleGenerator {
-              if (it.saldoFinal < 0)
-                "error_row"
+              if(it.saldoFinal < 0) "error_row"
               else null
             }
           }

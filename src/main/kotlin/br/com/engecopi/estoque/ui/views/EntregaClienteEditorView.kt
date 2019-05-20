@@ -110,7 +110,7 @@ class EntregaClienteEditorView: NotaView<EntregaClienteVo, EntregaClienteEditorV
         caption = "Quantidade"
         intFormat()
       }
-      column(EntregaClienteVo::status){
+      column(EntregaClienteVo::status) {
         caption = "Situação"
         setRenderer({it?.descricao ?: ""}, TextRenderer())
       }
@@ -155,7 +155,8 @@ class EntregaClienteEditorView: NotaView<EntregaClienteVo, EntregaClienteEditorV
           val index = itens.indexOf(numero)
           if(index % 2 == 0) "pendente"
           else "pendente2"
-        } else null
+        }
+        else null
       }
     }
   }

@@ -10,12 +10,11 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Association query bean for AssocViewProdutoSaci.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
-class QAssocViewProdutoSaci<R>(name: String, root: R) : TQAssocBean<ViewProdutoSaci,R>(name, root) {
-
+class QAssocViewProdutoSaci<R>(name: String, root: R): TQAssocBean<ViewProdutoSaci, R>(name, root) {
   lateinit var id: PString<R>
   lateinit var codigo: PString<R>
   lateinit var nome: PString<R>
@@ -28,22 +27,21 @@ class QAssocViewProdutoSaci<R>(name: String, root: R) : TQAssocBean<ViewProdutoS
   /**
    * Eagerly fetch this association loading the specified properties.
    */
-  fun fetch(vararg properties: TQProperty<QViewProdutoSaci>) : R {
+  fun fetch(vararg properties: TQProperty<QViewProdutoSaci>): R {
     return fetchProperties(*properties)
   }
 
   /**
    * Eagerly fetch this association using a 'query join' loading the specified properties.
    */
-  fun fetchQuery(vararg properties: TQProperty<QViewProdutoSaci>) : R {
+  fun fetchQuery(vararg properties: TQProperty<QViewProdutoSaci>): R {
     return fetchQueryProperties(*properties)
   }
 
   /**
    * Use lazy loading for this association loading the specified properties.
    */
-  fun fetchLazy(vararg properties: TQProperty<QViewProdutoSaci>) : R {
+  fun fetchLazy(vararg properties: TQProperty<QViewProdutoSaci>): R {
     return fetchLazyProperties(*properties)
   }
-
 }

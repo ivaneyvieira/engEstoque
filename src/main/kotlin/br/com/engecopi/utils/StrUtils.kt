@@ -2,9 +2,9 @@ package br.com.engecopi.utils
 
 fun String?.lpad(size: Int, filler: String): String {
   var str = this ?: ""
-  if (str.length > size) return str.substring(0, size)
+  if(str.length > size) return str.substring(0, size)
   val buf = StringBuilder(str)
-  while (buf.length < size) buf.insert(0, filler)
+  while(buf.length < size) buf.insert(0, filler)
 
   str = buf.toString()
   return str
@@ -12,20 +12,19 @@ fun String?.lpad(size: Int, filler: String): String {
 
 fun String?.rpad(size: Int, filler: String): String {
   val str = this ?: ""
-  if (str.length > size) return str.substring(0, size)
+  if(str.length > size) return str.substring(0, size)
   val buf = StringBuilder(str)
-  while (buf.length < size) buf.append(filler)
+  while(buf.length < size) buf.append(filler)
 
   return buf.toString()
 }
 
 fun String?.trimNull(): String {
-  return this?.trim { it <= ' ' } ?: ""
+  return this?.trim {it <= ' '} ?: ""
 }
 
 fun String.mid(start: Int, len: Int): String {
-  return if (this == "")
-    ""
+  return if(this == "") ""
   else {
     val end = start + len
     val pStart = when {
@@ -38,10 +37,8 @@ fun String.mid(start: Int, len: Int): String {
       end > length -> length
       else         -> end
     }
-    if (pStart <= pEnd)
-      substring(pStart, pEnd)
-    else
-      ""
+    if(pStart <= pEnd) substring(pStart, pEnd)
+    else ""
   }
 }
 

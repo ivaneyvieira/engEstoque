@@ -1,7 +1,6 @@
 package br.com.engecopi.estoque.viewmodel
 
 import br.com.engecopi.estoque.model.ItemNota
-import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
@@ -11,11 +10,7 @@ import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.framework.viewmodel.IView
 
-class EntregaClienteEditorViewModel(view: IView): NotaViewModel<EntregaClienteVo>(view,
-                                                                                  SAIDA,
-                                                                                  ENTREGUE,
-                                                                                  ENTREGUE,
-                                                                                  "") {
+class EntregaClienteEditorViewModel(view: IView): NotaViewModel<EntregaClienteVo>(view, SAIDA, ENTREGUE, ENTREGUE, "") {
   override fun newBean(): EntregaClienteVo {
     return EntregaClienteVo()
   }

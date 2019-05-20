@@ -116,7 +116,8 @@ class Usuario: BaseModel() {
           val locais = usuario.locais
           if(locais.isEmpty()) usuario.loja?.findAbreviacores()
           else locais
-        } else emptyList()
+        }
+        else emptyList()
       } ?: emptyList()
     }
 

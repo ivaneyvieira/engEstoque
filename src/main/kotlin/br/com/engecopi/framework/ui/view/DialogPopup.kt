@@ -16,38 +16,35 @@ import com.vaadin.ui.Window
 import com.vaadin.ui.themes.ValoTheme
 import kotlin.reflect.KClass
 
-open class DialogPopup<BEAN : Any>(
-        caption: String, classBean: KClass<BEAN>
-                                  ) : Window(caption) {
+open class DialogPopup<BEAN: Any>(caption: String, classBean: KClass<BEAN>): Window(caption) {
   val binder = BeanValidationBinder(classBean.java)
   val form = VerticalLayout().apply {
     setSizeFull()
   }
-  
   private val btnOk: Button = Button("Confirma").apply {
     addStyleName(ValoTheme.BUTTON_PRIMARY)
   }
   private val btnCancel = Button("Cancela")
-  
   private val toolBar = buildToolBar()
-  
+
   init {
     isClosable = false
     isResizable = false
     isModal = true
   }
-  
+
   fun show() {
     center()
     content = VerticalLayout(form, toolBar)
     addStyleName(ValoTheme.PANEL_WELL)
-    UI.getCurrent().addWindow(this)
+    UI.getCurrent()
+      .addWindow(this)
   }
-  
+
   fun initForm(configForm: (VerticalLayout) -> Unit) {
     configForm(form)
   }
-  
+
   private fun buildToolBar(): Component {
     val espaco = Label()
     val tool = HorizontalLayout()
@@ -56,27 +53,26 @@ open class DialogPopup<BEAN : Any>(
     tool.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR)
     tool.addComponents(espaco, btnOk, btnCancel)
     tool.setExpandRatio(espaco, 1f)
-    btnOk.addClickListener { this.btnOkClick() }
-    btnCancel.addClickListener { this.btnCancelClick() }
+    btnOk.addClickListener {this.btnOkClick()}
+    btnCancel.addClickListener {this.btnCancelClick()}
     return tool
   }
-  
+
   fun addClickListenerOk(listener: (Button.ClickEvent) -> Unit): Registration {
     return btnOk.addClickListener(listener)
   }
-  
+
   fun addClickListenerCancel(listener: (Button.ClickEvent) -> Unit): Registration {
     return btnCancel.addClickListener(listener)
   }
-  
+
   private fun btnCancelClick() {
     close()
   }
-  
+
   private fun btnOkClick() {
     val status = binder.validate()
-    if (!status.hasErrors())
-      close()
+    if(!status.hasErrors()) close()
   }
 }
 
@@ -98,6 +94,6 @@ fun VerticalLayout.row(block: HorizontalLayout.() -> Unit) {
   horizontalLayout.block()
   //horizontalLayout.iterator().forEach { component ->
   //  component.setWidth("100%")
- // }
+  // }
   addComponent(horizontalLayout)
 }

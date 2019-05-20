@@ -56,12 +56,10 @@ object DB {
 
       when {
         T::class.isSubclassOf(BaseModel::class) -> {
-          val rawSql =
-            RawSqlBuilder.parse(sql)
-              .create()
-          val query =
-            Transaction.find(T::class.java)
-              ?.setRawSql(rawSql)
+          val rawSql = RawSqlBuilder.parse(sql)
+            .create()
+          val query = Transaction.find(T::class.java)
+            ?.setRawSql(rawSql)
           params.forEach {param ->
             query?.setParameter(param.first, param.second)
           }

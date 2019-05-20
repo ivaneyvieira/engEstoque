@@ -78,7 +78,8 @@ class EstoqueUI: UI() {
     if(info == null) {
       content = LoginForm("$title <p align=\"right\">$versao</p>")
       navigator = null
-    } else {
+    }
+    else {
       content = null
       val user = info.usuario
 

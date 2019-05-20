@@ -12,13 +12,12 @@ import javax.persistence.Version
 
 @MappedSuperclass
 abstract class BaseModel(
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        var id: Long = 0,
-        @WhenCreated
-        var createdAt: LocalDateTime = LocalDateTime.now(),
-        @WhenModified
-        var updatedAt: LocalDateTime= LocalDateTime.now(),
-        @Version
-        var version: Int = 0
-                        ) : Model()
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  var id: Long = 0,
+  @WhenCreated
+  var createdAt: LocalDateTime = LocalDateTime.now(),
+  @WhenModified
+  var updatedAt: LocalDateTime = LocalDateTime.now(),
+  @Version
+  var version: Int = 0): Model()
