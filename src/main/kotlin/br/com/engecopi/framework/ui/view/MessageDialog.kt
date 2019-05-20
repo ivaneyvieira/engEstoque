@@ -27,7 +27,7 @@ object MessageDialog {
       delayMsec = 2000
     }.show(Page.getCurrent())
     else MessageBox.createWarning().withCaption(caption).withHtmlMessage(message).withCloseButton(ButtonOption.caption("Fechar")).asModal(
-        true).open()
+      true).open()
   }
 
   fun error(caption: String = "Erro", message: String) {
@@ -35,7 +35,7 @@ object MessageDialog {
       delayMsec = 2000
     }.show(Page.getCurrent())
     else MessageBox.createError().withCaption(caption).withHtmlMessage(message).withCloseButton(ButtonOption.caption("Fechar")).asModal(
-        true).open()
+      true).open()
   }
 
   fun question(caption: String = "Questão", message: String, execYes: () -> Unit = {}, execNo: () -> Unit = {}) {

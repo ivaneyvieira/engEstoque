@@ -190,9 +190,8 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO>>: CrudLayoutView<VO
         bindItens(binder, "produtos")
         editor.addOpenListener {event ->
           event.bean.produto?.let {produto ->
-            val locSulfixos =
-              produto.localizacoes()
-                .map {LocProduto(it)}
+            val locSulfixos = produto.localizacoes()
+              .map {LocProduto(it)}
             comboLoc.setItems(locSulfixos)
             comboLoc.setItemCaptionGenerator {it.localizacao}
             comboLoc.value = event.bean.localizacao

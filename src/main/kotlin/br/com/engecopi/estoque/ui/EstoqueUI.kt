@@ -183,19 +183,17 @@ fun setCookie(nome: String, valor: String) {
   // Make cookie expire in 2 minutes
   myCookie.maxAge = 60 * 60 * 24 * 5
   // Set the cookie path.
-  myCookie.path =
-    VaadinService.getCurrentRequest()
-      .contextPath
+  myCookie.path = VaadinService.getCurrentRequest()
+    .contextPath
   // Save cookie
   VaadinService.getCurrentResponse()
     .addCookie(myCookie)
 }
 
 fun getCokies(name: String): String? {
-  val cookie =
-    VaadinService.getCurrentRequest()
-      .cookies.toList()
-      .firstOrNull {it.name == name}
+  val cookie = VaadinService.getCurrentRequest()
+    .cookies.toList()
+    .firstOrNull {it.name == name}
   cookie?.let {
     setCookie(it.name, it.value)
   }

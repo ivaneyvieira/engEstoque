@@ -122,9 +122,8 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C>>: Layout
   val count = CallbackDataProvider.CountCallback<C, String> {query ->
     countQuery(query)
   }
-  private val dataLazyFilterProvider =
-    DataProvider.fromFilteringCallbacks(find, count)
-      .withConfigurableFilter()
+  private val dataLazyFilterProvider = DataProvider.fromFilteringCallbacks(find, count)
+    .withConfigurableFilter()
   private val filtroEdt = TextField("Pesquisa") {
     val value = if(it.value.isNullOrBlank()) null else it.value
     dataLazyFilterProvider.setFilter(value)
@@ -298,9 +297,8 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C>>: Layout
     }
 
     fun cancel(form: CrudForm<C>) {
-      val selected =
-        grid.asSingleSelect()
-          ?.value
+      val selected = grid.asSingleSelect()
+        ?.value
       hideForm()
       grid.asSingleSelect()
         ?.clear()

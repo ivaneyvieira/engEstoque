@@ -17,9 +17,8 @@ class PrinterCups(val host: String) {
 }
 
 fun CupsPrinter.print(text: String) {
-  val job =
-    PrintJob.Builder(text.toByteArray())
-      .build()
+  val job = PrintJob.Builder(text.toByteArray())
+    .build()
   print(job)
 }
 

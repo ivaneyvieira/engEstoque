@@ -37,9 +37,8 @@ class ProdutoViewModel(view: IView): CrudViewModel<Produto, QProduto, ProdutoVo>
 
   override fun add(bean: ProdutoVo) {
     Produto().apply {
-      val gradesSalvas =
-        Produto.findProdutos(bean.codigoProduto)
-          .map {it.grade}
+      val gradesSalvas = Produto.findProdutos(bean.codigoProduto)
+        .map {it.grade}
       if(!ViewProdutoSaci.existe(bean.codigoProduto)) throw EViewModel("Este produto não existe")
       if(ViewProdutoSaci.temGrade(bean.codigoProduto)) {
         val gradesProduto = bean.gradesProduto.filter {it != ""}
@@ -117,9 +116,8 @@ class ProdutoVo: EntityVo<Produto>() {
   var codigoProduto: String? = ""
     set(value) {
       field = value
-      if(entityVo == null) gradesProduto =
-        Produto.findGradesProduto(value)
-          .toSet()
+      if(entityVo == null) gradesProduto = Produto.findGradesProduto(value)
+        .toSet()
     }
   var gradesProduto: Set<String> = emptySet()
   val descricaoProduto: String?

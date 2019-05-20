@@ -129,12 +129,11 @@ abstract class CrudViewModel<MODEL: BaseModel, Q: TQRootBean<MODEL, Q>, VO: Enti
   fun updateQueryView(queryView: QueryView) {
     if(this.queryView != queryView) {
       this.queryView = queryView
-      pagedList =
-        query.filterBlank(queryView.filter)
-          .makeSort(queryView.sorts)
-          .setFirstRow(queryView.offset)
-          .setMaxRows(queryView.limit)
-          .findPagedList()
+      pagedList = query.filterBlank(queryView.filter)
+        .makeSort(queryView.sorts)
+        .setFirstRow(queryView.offset)
+        .setMaxRows(queryView.limit)
+        .findPagedList()
       pagedList?.loadCount()
     }
   }

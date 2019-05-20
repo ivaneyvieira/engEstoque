@@ -74,12 +74,11 @@ class Produto: BaseModel() {
   fun recalculaSaldos(localizacao: String): Int {
     val loja = RegistryUserInfo.lojaDefault
     var saldo = 0
-    val itensNotNull =
-      ItemNota.where()
-        .produto.id.eq(id)
-        .nota.loja.equalTo(loja)
-        .localizacao.like(if(localizacao == "") "%" else localizacao)
-        .findList()
+    val itensNotNull = ItemNota.where()
+      .produto.id.eq(id)
+      .nota.loja.equalTo(loja)
+      .localizacao.like(if(localizacao == "") "%" else localizacao)
+      .findList()
     itensNotNull.asSequence()
       .filter {it.nota?.loja?.id == loja.id && it.localizacao == localizacao}
       .sortedWith(compareBy(ItemNota::data, ItemNota::hora))
@@ -171,12 +170,11 @@ class Produto: BaseModel() {
     val localizacoesSplit = localizacoes.map {it.split("[.\\-]".toRegex())}
     val ctParte = localizacoesSplit.asSequence().map {it.size - 1}.min() ?: 0
     for(i in ctParte downTo 0) {
-      val prefix =
-        localizacoesSplit.asSequence()
-          .map {it.subList(0, i)}
-          .map {it.joinToString(separator = ".")}
-          .distinct()
-          .toList()
+      val prefix = localizacoesSplit.asSequence()
+        .map {it.subList(0, i)}
+        .map {it.joinToString(separator = ".")}
+        .distinct()
+        .toList()
 
       if(prefix.count() == 1) return prefix[0]
     }

@@ -95,10 +95,9 @@ class UsuarioCrudVo: EntityVo<Usuario>() {
     set(value) {
       field = value
       locaisLoja.clear()
-      val sets =
-        value?.findAbreviacores()
-          .orEmpty()
-          .toMutableSet()
+      val sets = value?.findAbreviacores()
+        .orEmpty()
+        .toMutableSet()
       locaisLoja.addAll(sets)
     }
   val nome

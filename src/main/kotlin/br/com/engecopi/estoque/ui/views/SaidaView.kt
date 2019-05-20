@@ -69,9 +69,8 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
         operationButton?.isEnabled = false
       }
       formLayout.apply {
-        w =
-          (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-            .px
+        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+          .px
         grupo("Nota fiscal de saída") {
           verticalLayout {
             row {
@@ -230,9 +229,8 @@ class DlgNotaSaida(val nota: Nota, val viewModel: SaidaViewModel): Window("Nota 
 
   init {
     verticalLayout {
-      w =
-        (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-          .px
+      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+        .px
 
       grupo("Nota fiscal de saída") {
         verticalLayout {
@@ -278,10 +276,9 @@ class DlgNotaSaida(val nota: Nota, val viewModel: SaidaViewModel): Window("Nota 
           gridProdutos = grid(ProdutoVO::class) {
             val abreviacao = RegistryUserInfo.abreviacaoDefault
             //nota.refresh()
-            val itens =
-              nota.itensNota()
-                .filter {it.status == INCLUIDA}
-                .filter {it.localizacao.startsWith(abreviacao)}
+            val itens = nota.itensNota()
+              .filter {it.status == INCLUIDA}
+              .filter {it.localizacao.startsWith(abreviacao)}
 
             this.dataProvider = ListDataProvider(itens.map {item ->
               ProdutoVO(item.produto, item.tipoMov ?: SAIDA, LocProduto(item.localizacao)).apply {
@@ -342,9 +339,8 @@ class DlgNotaSaida(val nota: Nota, val viewModel: SaidaViewModel): Window("Nota 
             }
             editor.addOpenListener {event ->
               event.bean.produto?.let {produto ->
-                val locSulfixos =
-                  produto.localizacoes()
-                    .map {LocProduto(it)}
+                val locSulfixos = produto.localizacoes()
+                  .map {LocProduto(it)}
                 comboLoc.setItems(locSulfixos)
                 comboLoc.setItemCaptionGenerator {it.localizacao}
                 comboLoc.value = event.bean.localizacao
@@ -380,9 +376,8 @@ class DlgNotaSaida(val nota: Nota, val viewModel: SaidaViewModel): Window("Nota 
             alignment = BOTTOM_RIGHT
             addStyleName(ValoTheme.BUTTON_PRIMARY)
             addClickListener {
-              val itens =
-                gridProdutos.selectedItems.toList()
-                  .filter {it.saldoFinal >= 0}
+              val itens = gridProdutos.selectedItems.toList()
+                .filter {it.saldoFinal >= 0}
               val allItens = gridProdutos.dataProvider.getAll()
               val naoSelect = allItens.minus(itens)
               viewModel.confirmaProdutos(itens, CONFERIDA)
