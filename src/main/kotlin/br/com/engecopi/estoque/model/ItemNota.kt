@@ -120,8 +120,9 @@ class ItemNota: BaseModel() {
       notaPrd ?: return null
       val produtoSaci = Produto.findProduto(notaSaci.prdno, notaSaci.grade) ?: return null
       val locProduto = ViewProdutoLoc.localizacoesProduto(produtoSaci).firstOrNull() ?: ""
+      val item = find(notaPrd, produtoSaci)
 
-      return ItemNota().apply {
+      return item ?: ItemNota().apply {
         quantidade = notaSaci.quant ?: 0
         produto = produtoSaci
         nota = notaPrd
@@ -201,7 +202,7 @@ class NotaPrint(val item: ItemNota) {
   val codigoBarraCliente
     get() = item.codigoBarraCliente ?: ""
   val dataLancamento
-    get() = item.nota?.lancamento?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) ?: ""
+    get() = item.nota?.lancamento?.format(DateTimeFormatter.ofPattern("dd/MM/yy")) ?: ""
   val nomeFilial
     get() = "ENGECOPI ${item.nota?.loja?.sigla}"
   val numeroLoja = notaSaci?.loja?.numero ?: 0

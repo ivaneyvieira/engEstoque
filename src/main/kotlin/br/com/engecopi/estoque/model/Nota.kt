@@ -96,17 +96,19 @@ class Nota: BaseModel() {
     }
 
     fun createNotaItens(notasaci: List<NotaSaci>): Nota? {
-      val nota = createNota(notasaci.firstOrNull()) ?: return null
+      val numero = notasaci.firstOrNull()?.numeroSerie() ?: return null
+      val tipoNota = notasaci.firstOrNull()?.tipoNota() ?: return null
+      val nota = findNota(numero, tipoNota) ?: createNota(notasaci.firstOrNull()) ?: return null
       nota.sequencia = maxSequencia() + 1
       nota.usuario = usuarioDefault
       nota.save()
       notasaci.forEach {item ->
-        ItemNota.createItemNota(item, nota)
-          ?.let {
-            it.status = INCLUIDA
-            it.usuario = usuarioDefault
-            it.save()
-          }
+        val produto = Produto.findProduto(item.prdno, item.grade)
+        if(ItemNota.find(nota, produto) == null) ItemNota.createItemNota(item, nota)?.let {
+          it.status = INCLUIDA
+          it.usuario = usuarioDefault
+          it.save()
+        }
       }
       return nota
     }

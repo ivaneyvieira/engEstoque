@@ -18,9 +18,9 @@ open class QueryDB(private val driver: String, val url: String, val username: St
     ds.jdbcUrl = url
     ds.username = username
     ds.password = password
-    ds.minConnectionsPerPartition = 20
-    ds.maxConnectionsPerPartition = 10
-    ds.partitionCount = 2
+    ds.minConnectionsPerPartition = 4
+    ds.maxConnectionsPerPartition = 2
+    ds.partitionCount = 1
     this.sql2o = Sql2o(ds)
     //this.sql2o = Sql2o(url, username, password)
     //this.sql2o = Sql2o(dataSourceConfig())
