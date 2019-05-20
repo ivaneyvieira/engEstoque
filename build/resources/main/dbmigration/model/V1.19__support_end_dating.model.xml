@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
-    <changeSet type="apply">
-        <addColumn tableName="itens_nota">
-            <column name="impresso" type="boolean" defaultValue="true" notnull="true"/>
-        </addColumn>
-    </changeSet>
-</migration>

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
-    <changeSet type="apply">
-        <createIndex indexName="ix_notas_loja_id_tipo_mov" tableName="notas" columns="loja_id,tipo_mov"/>
-    </changeSet>
-</migration>
