@@ -31,10 +31,11 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   }
 
   private fun filtroDataRecente(notaSaci: NotaSaci): Boolean {
-    val data = notaSaci.dt_emissao?.localDate() ?: return false
+    val dtEmissao = notaSaci.dt_emissao?.localDate() ?: return false
+    val date = notaSaci.date?.localDate() ?: return false
     val dataLimite = LocalDate.now()
       .minusDays(15)
-    return data.isAfter(dataLimite)
+    return date.isAfter(dataLimite) || dtEmissao.isAfter(dataLimite)
   }
 
   private fun findNotaSaidaNF(storeno: Int, nfno: String, nfse: String): List<NotaSaci> {
