@@ -67,7 +67,6 @@ tasks.named<Test>("test") {
 }
 
 dependencies {
-  compile(project(":trayServerBiometrico"))
   // Karibu-DSL dependency
   compile("com.github.mvysny.karibudsl:karibu-dsl-v8:$karibuVersion")
   compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
