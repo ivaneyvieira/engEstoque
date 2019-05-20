@@ -1,5 +1,0 @@
-profile-location: true
-entity-packages: br.com.engecopi.estoque.model
-transactional-packages: br.com.engecopi
-querybean-packages: br.com.engecopi
-

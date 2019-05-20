@@ -1,2 +1,0 @@
-packages: br.com.engecopi.estoque.model.query
-

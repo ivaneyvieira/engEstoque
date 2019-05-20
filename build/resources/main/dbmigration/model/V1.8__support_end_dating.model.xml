@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
-    <changeSet type="apply">
-        <alterColumn columnName="id" tableName="produtos" uniqueOneToOne="uq_produtos_id" references="view_produtos.produto_id" foreignKeyName="fk_produtos_id"/>
-    </changeSet>
-</migration>

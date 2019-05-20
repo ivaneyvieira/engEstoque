@@ -15,8 +15,7 @@ src/main/webapp/VAADIN/themes/*/styles.css.gz
 .classpath
 .project
 *.iml
-*.jar
-*.war
 Procfile
 deploy.sh
 /.gradle/
+
