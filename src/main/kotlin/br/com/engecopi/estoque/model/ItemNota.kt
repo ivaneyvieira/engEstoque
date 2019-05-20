@@ -202,7 +202,7 @@ class NotaPrint(val item: ItemNota) {
   val codigoBarraCliente
     get() = item.codigoBarraCliente ?: ""
   val dataLancamento
-    get() = item.nota?.lancamento?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) ?: ""
+    get() = item.nota?.lancamento?.format(DateTimeFormatter.ofPattern("dd/MM/yy")) ?: ""
   val nomeFilial
     get() = "ENGECOPI ${item.nota?.loja?.sigla}"
   val numeroLoja = notaSaci?.loja?.numero ?: 0
