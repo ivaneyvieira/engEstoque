@@ -58,7 +58,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO>>: CrudLayoutView<VO
     return Button("Imprime Etiquetas").apply {
       icon = PRINT
       addClickListener {
-        openText(viewModel.imprime())
+        openText(viewModel.imprimir())
         //grid.refreshGrid()
       }
     }
