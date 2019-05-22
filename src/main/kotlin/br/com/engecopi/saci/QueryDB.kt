@@ -2,9 +2,6 @@ package br.com.engecopi.saci
 
 import br.com.engecopi.utils.SystemUtils
 import com.jolbox.bonecp.BoneCPDataSource
-import io.ebean.datasource.DataSourceConfig
-import io.ebean.datasource.DataSourceFactory
-import io.ebean.datasource.DataSourcePool
 import org.sql2o.Connection
 import org.sql2o.Query
 import org.sql2o.Sql2o
@@ -24,16 +21,6 @@ open class QueryDB(private val driver: String, val url: String, val username: St
     this.sql2o = Sql2o(ds)
     //this.sql2o = Sql2o(url, username, password)
     //this.sql2o = Sql2o(dataSourceConfig())
-  }
-
-  private fun dataSourceConfig(): DataSourcePool? {
-    val config = DataSourceConfig()
-    config.driver = driver
-    config.url = url
-    config.username = username
-    config.password = password
-    return DataSourceFactory.get()
-      .createPool("app", config)
   }
 
   private fun registerDriver(driver: String) {

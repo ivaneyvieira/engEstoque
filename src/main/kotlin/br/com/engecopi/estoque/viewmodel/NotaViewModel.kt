@@ -272,7 +272,7 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
   fun imprimir(itemNota: ItemNota?) = execString {
     val itens = ItemNota.where()
       .nota.eq(itemNota?.nota)
-      .filtroStatus()
+      .status.eq(itemNota?.status)
       .order()
       .nota.loja.numero.asc()
       .nota.numero.asc()
