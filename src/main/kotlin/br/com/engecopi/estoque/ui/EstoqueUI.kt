@@ -99,7 +99,7 @@ class EstoqueUI: UI() {
 
         if(user.expedicao || user.admin) {
           section("Expedição") {
-            if(!user.estoque){
+            if(!user.estoque || user.admin){
               menuButton("Nota Fiscal", NEWSPAPER, view = NFExpedicaoView::class.java)
             }
             menuButton("Entrega ao Cliente", TRUCK, view = EntregaClienteView::class.java)
