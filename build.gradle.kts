@@ -114,6 +114,7 @@ dependencies {
   //compile("org.vaadin.crudui:crudui:2.3.1")
   compile("org.vaadin.addons:filtering-grid:0.1.1")
   compile("com.fo0.advancedtokenfield:AdvancedTokenField:0.5.1")
+  compile("org.vaadin:grideditorcolumnfix:0.3.1")
   // heroku app runner
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
   testRuntime("org.junit.jupiter:junit-jupiter-engine:5.4.2")

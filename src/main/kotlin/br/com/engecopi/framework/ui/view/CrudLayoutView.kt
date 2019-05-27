@@ -39,6 +39,7 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.Window
 import com.vaadin.ui.themes.ValoTheme
+import org.vaadin.grideditorcolumnfix.GridEditorColumnFix
 import java.awt.Event.ENTER
 import java.util.stream.*
 import kotlin.collections.set
@@ -130,6 +131,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C>>: Layout
     dataLazyFilterProvider.refreshAll()
   }
   val grid = Grid<C>().apply {
+    GridEditorColumnFix(this)
     setSizeFull()
     addSelectionListener {gridSelectionChanged()}
 
