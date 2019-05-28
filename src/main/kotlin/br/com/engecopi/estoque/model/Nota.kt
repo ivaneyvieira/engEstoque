@@ -109,7 +109,8 @@ class Nota: BaseModel() {
           it.usuario = usuarioDefault
           //it.save()
           it
-        }else null
+        }
+        else null
       }
       return NotaItens(nota, itens)
     }
@@ -262,4 +263,10 @@ data class NotaSerie(val id: Long, val tipoNota: TipoNota) {
   }
 }
 
-data class NotaItens(val nota : Nota?, val itens : List<ItemNota>)
+data class NotaItens(val nota: Nota?, val itens: List<ItemNota>) {
+  val isVazia
+    get() = nota == null || itens.isEmpty()
+  companion object{
+    val NOTA_VAZIA = NotaItens(null, emptyList())
+  }
+}

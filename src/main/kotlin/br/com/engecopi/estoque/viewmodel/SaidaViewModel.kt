@@ -31,7 +31,8 @@ class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE,
   override fun createVo() = SaidaVo()
 
   fun processaKey(key: String) = execValue {
-    processaKeyBarcodeCliente(key)
+    val nota = processaKeyBarcodeCliente(key)
+    if(nota.vazia())
   }
 
   private fun processaKeyNumero(key: String): NotaItens {
@@ -44,14 +45,16 @@ class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE,
     return if(usuarioDefault.isTipoCompativel(notaSaci?.tipoNota())) Nota.createNotaItens(notasSaci)
     else NotaItens(null, emptyList())
   }
-  // private fun processaKeyBarcodeConferencia(key: String): NotaItens {
-  //   val item = ViewCodBarConferencia.findNota(key) ?: return NotaItens(null, emptyList())
-  //   if(item.abreviacao != abreviacaoDefault) throw EViewModel("Esta nota não pertence ao cd $abreviacaoDefault")
-  //   return Nota.findSaida(item.numero)
-  // }
+
+  private fun processaKeyBarcodeConferencia(key: String): NotaItens {
+    val item = ViewCodBarConferencia.findNota(key) ?: return NotaItens(null, emptyList())
+    if(item.abreviacao != abreviacaoDefault) throw EViewModel("Esta nota não pertence ao cd $abreviacaoDefault")
+    val nota = Nota.findSaida(item.numero) ?: return NotaItens(null, emptyList())
+    return NotaItens(nota, nota.itensNota())
+  }
+
   private fun processaKeyBarcodeCliente(key: String): NotaItens {
-    val loja = if(key.isNotEmpty()) key.mid(0, 1).toIntOrNull() ?: return NotaItens(null,
-                                                                                    emptyList())
+    val loja = if(key.isNotEmpty()) key.mid(0, 1).toIntOrNull() ?: return NotaItens(null, emptyList())
     else return NotaItens(null, emptyList())
     val numero = if(key.length > 1) key.mid(1) else return NotaItens(null, emptyList())
     if(loja != lojaDefault.numero) return NotaItens(null, emptyList())
