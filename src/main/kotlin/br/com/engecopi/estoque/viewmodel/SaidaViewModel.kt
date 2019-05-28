@@ -1,6 +1,7 @@
 package br.com.engecopi.estoque.viewmodel
 
 import br.com.engecopi.estoque.model.Nota
+import br.com.engecopi.estoque.model.NotaItens
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
@@ -30,10 +31,10 @@ class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE,
   override fun createVo() = SaidaVo()
 
   fun processaKey(key: String) = execValue {
-    processaKeyBarcodeConferencia(key) ?: processaKeyBarcodeCliente(key)
+    processaKeyBarcodeCliente(key)
   }
 
-  private fun processaKeyNumero(key: String): Nota? {
+  private fun processaKeyNumero(key: String): NotaItens {
     val notasSaci = Nota.findNotaSaidaSaci(key)
       .filter {loc ->
         loc.localizacaoes()
@@ -41,33 +42,37 @@ class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE,
       }
     val notaSaci = notasSaci.firstOrNull()
     return if(usuarioDefault.isTipoCompativel(notaSaci?.tipoNota())) Nota.createNotaItens(notasSaci)
-    else null
+    else NotaItens(null, emptyList())
   }
+  // private fun processaKeyBarcodeConferencia(key: String): NotaItens {
+  //   val item = ViewCodBarConferencia.findNota(key) ?: return NotaItens(null, emptyList())
+  //   if(item.abreviacao != abreviacaoDefault) throw EViewModel("Esta nota não pertence ao cd $abreviacaoDefault")
+  //   return Nota.findSaida(item.numero)
+  // }
+  private fun processaKeyBarcodeCliente(key: String): NotaItens {
+    val loja = if(key.isNotEmpty()) key.mid(0, 1).toIntOrNull() ?: return NotaItens(null,
+                                                                                    emptyList())
+    else return NotaItens(null, emptyList())
+    val numero = if(key.length > 1) key.mid(1) else return NotaItens(null, emptyList())
+    if(loja != lojaDefault.numero) return NotaItens(null, emptyList())
 
-  private fun processaKeyBarcodeConferencia(key: String): Nota? {
-    val item = ViewCodBarConferencia.findNota(key) ?: return null
-    if(item.abreviacao != abreviacaoDefault) throw EViewModel("Esta nota não pertence ao cd $abreviacaoDefault")
-    return Nota.findSaida(item.numero)
-  }
-
-  private fun processaKeyBarcodeCliente(key: String): Nota? {
-    val loja = if(key.isNotEmpty()) key.mid(0, 1).toIntOrNull() ?: return null else return null
-    val numero = if(key.length > 1) key.mid(1) else return null
-    if(loja != lojaDefault.numero) return null
     return processaKeyNumero(numero)
   }
 
   fun confirmaProdutos(itens: List<ProdutoVO>, situacao: StatusNota) = exec {
+    itens.firstOrNull()
+      ?.value?.nota?.save()
     itens.forEach {produtoVO ->
       produtoVO.value?.run {
-        refresh()
+        if(this.id != 0L) refresh()
+
         status = situacao
         impresso = false
         usuario = usuarioDefault
         localizacao = produtoVO.localizacao?.localizacao ?: ""
         if(quantidade >= produtoVO.quantidade) {
           quantidade = produtoVO.quantidade
-          update()
+          save()
           recalculaSaldos()
         }
         else showWarning("A quantidade do produto ${produto?.codigo} não pode ser maior que $quantidade")

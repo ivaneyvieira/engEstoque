@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.ui.views
 
 import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.Nota
+import br.com.engecopi.estoque.model.NotaItens
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
@@ -202,7 +203,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
       addClickListener {
         readString("Código de barras", true) {_, key ->
           val nota = viewModel.processaKey(key)
-          if(nota == null) showError("A nota não foi encontrada")
+          if(nota?.nota == null) showError("A nota não foi encontrada")
           else {
             val dlg = DlgNotaSaida(nota, viewModel)
             dlg.showDialog()
@@ -225,7 +226,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
   }
 }
 
-class DlgNotaSaida(val nota: Nota, val viewModel: SaidaViewModel): Window("Nota de Saída") {
+class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("Nota de Saída") {
   private lateinit var gridProdutos: Grid<ProdutoVO>
 
   init {
@@ -239,34 +240,34 @@ class DlgNotaSaida(val nota: Nota, val viewModel: SaidaViewModel): Window("Nota 
             textField("Nota Fiscal") {
               expand = 2
               isReadOnly = true
-              value = nota.numero
+              value = nota.nota?.numero ?: ""
             }
             textField("Loja") {
               expand = 2
               isReadOnly = true
-              value = nota.loja?.sigla
+              value = nota.nota?.loja?.sigla
             }
             textField("Tipo") {
               expand = 2
               isReadOnly = true
-              value = nota.tipoNota?.descricao ?: ""
+              value = nota.nota?.tipoNota?.descricao ?: ""
             }
             dateField("Data") {
               expand = 1
               isReadOnly = true
-              value = nota.data
+              value = nota.nota?.data
             }
             textField("Rota") {
               expand = 1
               isReadOnly = true
-              value = nota.rota
+              value = nota.nota?.rota
             }
           }
           row {
             textField("Observação da nota fiscal") {
               expand = 1
               isReadOnly = true
-              value = nota.observacao
+              value = nota.nota?.observacao
             }
           }
         }
@@ -277,7 +278,7 @@ class DlgNotaSaida(val nota: Nota, val viewModel: SaidaViewModel): Window("Nota 
           gridProdutos = grid(ProdutoVO::class) {
             val abreviacao = RegistryUserInfo.abreviacaoDefault
             //nota.refresh()
-            val itens = nota.itensNota()
+            val itens = nota.itens
               .filter {it.status == INCLUIDA}
               .filter {it.localizacao.startsWith(abreviacao)}
 
