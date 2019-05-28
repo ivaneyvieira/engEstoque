@@ -95,22 +95,23 @@ class Nota: BaseModel() {
       }
     }
 
-    fun createNotaItens(notasaci: List<NotaSaci>): Nota? {
-      val numero = notasaci.firstOrNull()?.numeroSerie() ?: return null
-      val tipoNota = notasaci.firstOrNull()?.tipoNota() ?: return null
-      val nota = findNota(numero, tipoNota) ?: createNota(notasaci.firstOrNull()) ?: return null
+    fun createNotaItens(notasaci: List<NotaSaci>): NotaItens {
+      val numero = notasaci.firstOrNull()?.numeroSerie() ?: return NotaItens(null, emptyList())
+      val tipoNota = notasaci.firstOrNull()?.tipoNota() ?: return NotaItens(null, emptyList())
+      val nota = findNota(numero, tipoNota) ?: createNota(notasaci.firstOrNull()) ?: return NotaItens(null, emptyList())
       nota.sequencia = maxSequencia() + 1
       nota.usuario = usuarioDefault
-      nota.save()
-      notasaci.forEach {item ->
+      //nota.save()
+      val itens = notasaci.mapNotNull {item ->
         val produto = Produto.findProduto(item.prdno, item.grade)
         if(ItemNota.find(nota, produto) == null) ItemNota.createItemNota(item, nota)?.let {
           it.status = INCLUIDA
           it.usuario = usuarioDefault
-          it.save()
-        }
+          //it.save()
+          it
+        }else null
       }
-      return nota
+      return NotaItens(nota, itens)
     }
 
     fun maxSequencia(): Int {
@@ -260,3 +261,5 @@ data class NotaSerie(val id: Long, val tipoNota: TipoNota) {
                         NotaSerie(7, OUTROS_S))
   }
 }
+
+data class NotaItens(val nota : Nota?, val itens : List<ItemNota>)
