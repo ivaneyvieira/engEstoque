@@ -51,6 +51,7 @@ import com.vaadin.ui.Window
 import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
 import org.vaadin.patrik.FastNavigation
+import org.vaadin.viritin.fields.IntegerField
 
 @AutoView("")
 class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
@@ -309,6 +310,10 @@ class DlgNotaSaida(val nota: Nota, val viewModel: SaidaViewModel): Window("Nota 
               isEmptySelectionAllowed = false
               isTextInputAllowed = false
             }
+            val edtQuant = IntegerField().apply {
+              w = 100.px
+              addStyleName(ValoTheme.TEXTFIELD_ALIGN_RIGHT)
+            }
             setSizeFull()
             addColumnFor(ProdutoVO::codigo) {
               expandRatio = 1
@@ -331,6 +336,7 @@ class DlgNotaSaida(val nota: Nota, val viewModel: SaidaViewModel): Window("Nota 
               expandRatio = 1
               caption = "Qtd Saida"
               align = VAlign.Right
+              setEditorComponent(edtQuant)
             }
             addColumnFor(ProdutoVO::saldoFinal) {
               expandRatio = 1
