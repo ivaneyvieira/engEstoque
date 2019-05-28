@@ -65,8 +65,12 @@ class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE,
         impresso = false
         usuario = usuarioDefault
         localizacao = produtoVO.localizacao?.localizacao ?: ""
-        update()
-        recalculaSaldos()
+        if(quantidade >= produtoVO.quantidade) {
+          quantidade = produtoVO.quantidade
+          update()
+          recalculaSaldos()
+        }
+        else showWarning("A quantidade do produto ${produto?.codigo} não pode ser maior que $quantidade")
       }
     }
   }
