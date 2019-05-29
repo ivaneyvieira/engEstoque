@@ -263,10 +263,18 @@ data class NotaSerie(val id: Long, val tipoNota: TipoNota) {
   }
 }
 
+<<<<<<< HEAD
 data class NotaItens(val nota: Nota?, val itens: List<ItemNota>) {
   val isVazia
     get() = nota == null || itens.isEmpty()
   companion object{
     val NOTA_VAZIA = NotaItens(null, emptyList())
+=======
+data class NotaItens(val nota : Nota?, val itens : List<ItemNota>){
+  val vazio get() = nota == null || itens.isEmpty()
+
+  companion object{
+    val VAZIO = NotaItens(null, emptyList())
+>>>>>>> hotfix
   }
 }
