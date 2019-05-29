@@ -31,7 +31,9 @@ class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE,
   override fun createVo() = SaidaVo()
 
   fun processaKey(key: String) = execValue {
-    processaKeyBarcodeCliente(key)
+    val notaItens = processaKeyBarcodeCliente(key)
+    if(notaItens.vazio) processaKeyBarcodeConferencia(key)
+    else notaItens
   }
 
   private fun processaKeyNumero(key: String): NotaItens {
@@ -42,19 +44,21 @@ class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE,
       }
     val notaSaci = notasSaci.firstOrNull()
     return if(usuarioDefault.isTipoCompativel(notaSaci?.tipoNota())) Nota.createNotaItens(notasSaci)
-    else NotaItens(null, emptyList())
+    else NotaItens.VAZIO
   }
-  // private fun processaKeyBarcodeConferencia(key: String): NotaItens {
-  //   val item = ViewCodBarConferencia.findNota(key) ?: return NotaItens(null, emptyList())
-  //   if(item.abreviacao != abreviacaoDefault) throw EViewModel("Esta nota não pertence ao cd $abreviacaoDefault")
-  //   return Nota.findSaida(item.numero)
-  // }
+
+  private fun processaKeyBarcodeConferencia(key: String): NotaItens {
+    val item = ViewCodBarConferencia.findNota(key) ?: return NotaItens(null, emptyList())
+    if(item.abreviacao != abreviacaoDefault) throw EViewModel("Esta nota não pertence ao cd $abreviacaoDefault")
+    val nota = Nota.findSaida(item.numero) ?: return NotaItens.VAZIO
+    return NotaItens(nota, nota.itensNota())
+  }
+
   private fun processaKeyBarcodeCliente(key: String): NotaItens {
-    val loja = if(key.isNotEmpty()) key.mid(0, 1).toIntOrNull() ?: return NotaItens(null,
-                                                                                    emptyList())
-    else return NotaItens(null, emptyList())
-    val numero = if(key.length > 1) key.mid(1) else return NotaItens(null, emptyList())
-    if(loja != lojaDefault.numero) return NotaItens(null, emptyList())
+    val loja = if(key.isNotEmpty()) key.mid(0, 1).toIntOrNull() ?: return NotaItens.VAZIO
+    else return NotaItens.VAZIO
+    val numero = if(key.length > 1) key.mid(1) else return NotaItens.VAZIO
+    if(loja != lojaDefault.numero) return NotaItens.VAZIO
 
     return processaKeyNumero(numero)
   }
