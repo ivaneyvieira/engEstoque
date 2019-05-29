@@ -196,14 +196,14 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
       }
     }
   }
-
+/*
   private fun btnLerChaveNota(): Button {
     return button("Ler Código") {
       icon = VaadinIcons.BARCODE
       addClickListener {
         readString("Código de barras", true) {_, key ->
           val nota = viewModel.processaKey(key)
-          if(nota?.nota == null) showError("A nota não foi encontrada")
+          if(nota.va) showError("A nota não foi encontrada")
           else {
             val dlg = DlgNotaSaida(nota, viewModel)
             dlg.showDialog()
@@ -213,11 +213,11 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
       }
     }
   }
-
+*/
   private fun formCodbar(): PnlCodigoBarras {
     return PnlCodigoBarras("Código de barras") {key ->
       val nota = viewModel.processaKey(key)
-      if(nota == null) showError("A nota não foi encontrada")
+      if(nota == null || nota.vazio) showError("A nota não foi encontrada")
       else {
         val dlg = DlgNotaSaida(nota, viewModel)
         dlg.showDialog()
