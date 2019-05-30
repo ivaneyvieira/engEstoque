@@ -36,19 +36,19 @@ class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE,
     else notaItens
   }
 
-  private fun processaKeyNumero(key: String): NotaItens {
-    val notasSaci = Nota.findNotaSaidaSaci(key)
+  private fun processaKeyNumero(numeroNota: String): NotaItens {
+    val notasSaci = Nota.findNotaSaidaSaci(numeroNota)
       .filter {loc ->
         loc.localizacaoes()
           .any {it.abreviacao == abreviacaoDefault}
       }
-    val notaSaci = notasSaci.firstOrNull()
-    return if(usuarioDefault.isTipoCompativel(notaSaci?.tipoNota())) Nota.createNotaItens(notasSaci)
+    val notaSaci = notasSaci.firstOrNull() ?: return NotaItens.VAZIO
+    return if(usuarioDefault.isTipoCompativel(notaSaci.tipoNota())) Nota.createNotaItens(notasSaci)
     else NotaItens.VAZIO
   }
 
   private fun processaKeyBarcodeConferencia(key: String): NotaItens {
-    val item = ViewCodBarConferencia.findNota(key) ?: return NotaItens(null, emptyList())
+    val item = ViewCodBarConferencia.findNota(key) ?: return NotaItens.VAZIO
     if(item.abreviacao != abreviacaoDefault) throw EViewModel("Esta nota não pertence ao cd $abreviacaoDefault")
     val nota = Nota.findSaida(item.numero) ?: return NotaItens.VAZIO
 

@@ -96,6 +96,7 @@ class ItemNota: BaseModel() {
 
   companion object Find: ItemNotaFinder() {
     fun find(nota: Nota?, produto: Produto?): ItemNota? {
+      //TODO Depois pensar na possibilidade de mais de um
       nota ?: return null
       produto ?: return null
       return where().fetchQuery("nota")

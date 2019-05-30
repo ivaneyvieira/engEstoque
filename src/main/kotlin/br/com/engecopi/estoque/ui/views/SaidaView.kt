@@ -5,6 +5,7 @@ import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.NotaItens
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
+import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
@@ -21,6 +22,7 @@ import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.intFormat
 import br.com.engecopi.framework.ui.view.row
 import br.com.engecopi.framework.ui.view.showDialog
+import br.com.engecopi.utils.IN
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.VAlign
 import com.github.mvysny.karibudsl.v8.addColumnFor
@@ -196,24 +198,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
       }
     }
   }
-/*
-  private fun btnLerChaveNota(): Button {
-    return button("Ler Código") {
-      icon = VaadinIcons.BARCODE
-      addClickListener {
-        readString("Código de barras", true) {_, key ->
-          val nota = viewModel.processaKey(key)
-          if(nota.va) showError("A nota não foi encontrada")
-          else {
-            val dlg = DlgNotaSaida(nota, viewModel)
-            dlg.showDialog()
-          }
-          return@readString null
-        }
-      }
-    }
-  }
-*/
+
   private fun formCodbar(): PnlCodigoBarras {
     return PnlCodigoBarras("Código de barras") {key ->
       val nota = viewModel.processaKey(key)
@@ -278,9 +263,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
           gridProdutos = grid(ProdutoVO::class) {
             val abreviacao = RegistryUserInfo.abreviacaoDefault
             //nota.refresh()
-            val itens = nota.itens
-              .filter {it.status == INCLUIDA}
-              .filter {it.localizacao.startsWith(abreviacao)}
+            val itens = nota.itens.filter {it.localizacao.startsWith(abreviacao)}
 
             this.dataProvider = ListDataProvider(itens.map {item ->
               ProdutoVO(item.produto, item.tipoMov ?: SAIDA, LocProduto(item.localizacao)).apply {
@@ -352,6 +335,8 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
                 comboLoc.setItemCaptionGenerator {it.localizacao}
                 comboLoc.value = event.bean.localizacao
               }
+              comboLoc.isReadOnly = !event.bean.editavel()
+              edtQuant.isReadOnly = !event.bean.editavel()
             }
             val nav = FastNavigation<ProdutoVO>(this, false, true)
             nav.changeColumnAfterLastRow = true
@@ -364,6 +349,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
             editor.isBuffered = false
             this.setStyleGenerator {
               if(it.saldoFinal < 0) "error_row"
+              else if(!it.editavel()) "ok"
               else null
             }
           }
@@ -384,9 +370,11 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
             addStyleName(ValoTheme.BUTTON_PRIMARY)
             addClickListener {
               val itens = gridProdutos.selectedItems.toList()
-                .filter {it.saldoFinal >= 0}
-              val allItens = gridProdutos.dataProvider.getAll()
-              val naoSelect = allItens.minus(itens)
+                .filter {it.saldoFinal >= 0 && it.editavel()}
+              val naoSelect = gridProdutos.dataProvider.getAll()
+                .minus(itens)
+                .filter {it.editavel()}
+
               viewModel.confirmaProdutos(itens, CONFERIDA)
               viewModel.confirmaProdutos(naoSelect, ENT_LOJA)
               close()
@@ -396,4 +384,9 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
       }
     }
   }
+}
+
+private fun ProdutoVO.editavel(): Boolean {
+  val itemNota = value ?: return false
+  return itemNota.status.IN(INCLUIDA, ENT_LOJA)
 }
