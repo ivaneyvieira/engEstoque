@@ -1,11 +1,9 @@
 package br.com.engecopi.estoque.ui.views
 
 import br.com.engecopi.estoque.model.LocProduto
-import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.NotaItens
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
-import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
@@ -22,6 +20,7 @@ import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.intFormat
 import br.com.engecopi.framework.ui.view.row
 import br.com.engecopi.framework.ui.view.showDialog
+import br.com.engecopi.framework.ui.view.timeFormat
 import br.com.engecopi.utils.IN
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.VAlign
@@ -149,10 +148,15 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
         caption = "TipoNota"
         setSortProperty("nota.tipo_nota")
       }
-      column(SaidaVo::dataNota) {
+      column(SaidaVo::lancamento) {
         caption = "Data"
         dateFormat()
-        setSortProperty("nota.data", "data", "hora")
+        setSortProperty("data", "hora")
+      }
+      column(SaidaVo::horaLacamento) {
+        caption = "Hora"
+        timeFormat()
+        setSortProperty("data", "hora")
       }
       column(SaidaVo::dataEmissao) {
         caption = "Emissao"

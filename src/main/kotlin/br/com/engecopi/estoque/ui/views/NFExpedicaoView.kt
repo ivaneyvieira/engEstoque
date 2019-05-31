@@ -10,6 +10,7 @@ import br.com.engecopi.framework.ui.view.expand
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.row
 import br.com.engecopi.framework.ui.view.showDialog
+import br.com.engecopi.framework.ui.view.timeFormat
 import br.com.engecopi.saci.beans.NotaSaci
 import br.com.engecopi.utils.localDate
 import com.github.mvysny.karibudsl.v8.AutoView
@@ -135,10 +136,16 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
         setSortProperty("tipo_nota")
       }
       column(NFExpedicaoVo::lancamento) {
-        caption = "Lançamento"
+        caption = "Data"
         dateFormat()
-        setSortProperty("lancamento", "data", "hora")
+        setSortProperty("data", "hora")
       }
+      column(NFExpedicaoVo::dataHoraLancamento) {
+        caption = "Hora"
+        timeFormat()
+        setSortProperty("data", "hora")
+      }
+
       column(NFExpedicaoVo::dataEmissao) {
         caption = "Emissao"
         dateFormat()

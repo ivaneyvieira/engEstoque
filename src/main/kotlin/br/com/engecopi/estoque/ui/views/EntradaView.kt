@@ -12,6 +12,7 @@ import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.intFormat
 import br.com.engecopi.framework.ui.view.integerField
 import br.com.engecopi.framework.ui.view.row
+import br.com.engecopi.framework.ui.view.timeFormat
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.bind
 import com.github.mvysny.karibudsl.v8.comboBox
@@ -119,11 +120,15 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel>() {
         caption = "TipoNota"
         setSortProperty("nota.tipo_nota")
       }
-      column(EntradaVo::dataNota) {
-        caption = "Data Nota"
+      column(EntradaVo::lancamento) {
+        caption = "Data"
         dateFormat()
-
-        setSortProperty("nota.data", "data", "hora")
+        setSortProperty("data", "hora")
+      }
+      column(EntradaVo::horaLacamento) {
+        caption = "Hora"
+        timeFormat()
+        setSortProperty("data", "hora")
       }
       column(EntradaVo::dataEmissao) {
         caption = "Emissao"

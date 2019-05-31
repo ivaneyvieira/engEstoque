@@ -25,6 +25,7 @@ import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.saci.beans.NotaSaci
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewNotaExpedicao, NFExpedicaoVo>(view) {
@@ -255,4 +256,6 @@ class NFExpedicaoVo: EntityVo<ViewNotaExpedicao>() {
   var usuario: Usuario? = null
   var abreviacao: String? = ""
   var impresso: Boolean = false
+  val dataHoraLancamento
+    get() = LocalDateTime.of(data, hora)
 }

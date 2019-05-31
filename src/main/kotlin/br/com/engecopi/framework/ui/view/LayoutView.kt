@@ -213,11 +213,11 @@ fun <BEAN> reloadPropertys(binder: Binder<BEAN>, vararg propertys: KProperty1<BE
 }
 
 fun <C> Column<C, LocalDate?>.dateFormat() {
-  this.setRenderer(LocalDateRenderer {DateTimeFormatter.ofPattern("dd/MM/yyyy")})
+  this.setRenderer(LocalDateRenderer {DateTimeFormatter.ofPattern("dd/MM/yy")})
 }
 
 fun <C> Column<C, LocalDateTime?>.timeFormat() {
-  this.setRenderer(LocalDateTimeRenderer {DateTimeFormatter.ofPattern("hh:mm:ss")})
+  this.setRenderer(LocalDateTimeRenderer {DateTimeFormatter.ofPattern("HH:mm")})
 }
 
 fun <C> Column<C, Int?>.intFormat() {
