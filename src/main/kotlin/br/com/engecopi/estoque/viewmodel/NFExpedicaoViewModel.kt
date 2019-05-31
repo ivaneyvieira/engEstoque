@@ -120,10 +120,12 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
           val item = ItemNota.find(notaSaci) ?: ItemNota.createItemNota(notaSaci, nota)
           val abreviacao = item?.abreviacao
           return@mapNotNull if(abreviacoes.contains(abreviacao)) item?.apply {
-            status = INCLUIDA
-            impresso = false
-            usuario = usuarioDefault
-            save()
+            this.status = INCLUIDA
+            this.impresso = false
+            this.usuario = usuarioDefault
+            this.data = LocalDate.now()
+            this.hora = LocalTime.now()
+            this.save()
           }
           else null
         }

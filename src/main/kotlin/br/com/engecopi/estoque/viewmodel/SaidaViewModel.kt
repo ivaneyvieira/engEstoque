@@ -14,6 +14,8 @@ import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.utils.mid
+import java.time.LocalDate
+import java.time.LocalTime
 
 class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE, CONFERIDA, abreviacaoDefault) {
   override fun newBean(): SaidaVo {
@@ -71,14 +73,16 @@ class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE,
       produtoVO.value?.run {
         if(this.id != 0L) refresh()
 
-        status = situacao
-        impresso = false
-        usuario = usuarioDefault
-        localizacao = produtoVO.localizacao?.localizacao ?: ""
-        if(quantidade >= produtoVO.quantidade) {
-          quantidade = produtoVO.quantidade
-          save()
-          recalculaSaldos()
+        this.status = situacao
+        this.impresso = false
+        this.usuario = usuarioDefault
+        this.data = LocalDate.now()
+        this.hora = LocalTime.now()
+        this.localizacao = produtoVO.localizacao?.localizacao ?: ""
+        if(this.quantidade >= produtoVO.quantidade) {
+          this.quantidade = produtoVO.quantidade
+          this.save()
+          this.recalculaSaldos()
         }
         else showWarning("A quantidade do produto ${produto?.codigo} não pode ser maior que $quantidade")
       }
