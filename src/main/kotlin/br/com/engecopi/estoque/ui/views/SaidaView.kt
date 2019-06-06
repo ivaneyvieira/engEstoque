@@ -336,7 +336,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
                   else if(!RegistryUserInfo.userDefaultIsAdmin) {
                     Notification.show("Usuário não é administrador")
                     selectionModel.deselect(it)
-                    it.selecionado = false
+                    it.selecionado = true
                   }
                   else it.selecionado = true
                 }
