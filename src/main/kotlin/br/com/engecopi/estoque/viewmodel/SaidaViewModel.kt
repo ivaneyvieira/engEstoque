@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.viewmodel
 
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.NotaItens
+import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
@@ -87,6 +88,11 @@ class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE,
         else showWarning("A quantidade do produto ${produto?.codigo} não pode ser maior que $quantidade")
       }
     }
+  }
+
+  fun processaBarcodeProduto(barcode: String?): Produto? {
+    return if(barcode.isNullOrBlank()) null
+    else Produto.findBarcode(barcode)
   }
 }
 

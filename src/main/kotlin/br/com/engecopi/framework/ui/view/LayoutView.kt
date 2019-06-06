@@ -296,8 +296,10 @@ fun Window.showDialog() {
   isResizable = false
   isModal = true
   styleName = "modal"
-  center()
+  //isTabStopEnabled=true
+  tabIndex = -1
   addCloseShortcut(KeyCode.ESCAPE)
   UI.getCurrent()
     .addWindow(this)
+  center()
 }

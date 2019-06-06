@@ -25,6 +25,7 @@ import br.com.engecopi.utils.IN
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.VAlign
 import com.github.mvysny.karibudsl.v8.addColumnFor
+import com.github.mvysny.karibudsl.v8.addGlobalShortcutListener
 import com.github.mvysny.karibudsl.v8.align
 import com.github.mvysny.karibudsl.v8.alignment
 import com.github.mvysny.karibudsl.v8.bind
@@ -34,20 +35,25 @@ import com.github.mvysny.karibudsl.v8.dateField
 import com.github.mvysny.karibudsl.v8.getAll
 import com.github.mvysny.karibudsl.v8.grid
 import com.github.mvysny.karibudsl.v8.horizontalLayout
+import com.github.mvysny.karibudsl.v8.label
+import com.github.mvysny.karibudsl.v8.perc
 import com.github.mvysny.karibudsl.v8.px
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.verticalLayout
 import com.github.mvysny.karibudsl.v8.w
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.event.ShortcutAction.KeyCode
+import com.vaadin.event.ShortcutAction.KeyCode.F2
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
+import com.vaadin.shared.ui.ValueChangeMode.BLUR
 import com.vaadin.ui.Alignment.BOTTOM_RIGHT
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.Grid
 import com.vaadin.ui.Grid.SelectionMode.MULTI
 import com.vaadin.ui.Notification
+import com.vaadin.ui.TextField
 import com.vaadin.ui.UI
 import com.vaadin.ui.Window
 import com.vaadin.ui.renderers.TextRenderer
@@ -210,6 +216,8 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
       else {
         val dlg = DlgNotaSaida(nota, viewModel)
         dlg.showDialog()
+        Thread.sleep(1000)
+        dlg.focusEditor()
       }
     }
   }
@@ -217,8 +225,16 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
 
 class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("Nota de Saída") {
   private lateinit var gridProdutos: Grid<ProdutoVO>
+  private val edtBarcode = TextField()
+
+  fun focusEditor() {
+    edtBarcode.focus()
+  }
 
   init {
+    addBlurListener {
+      edtBarcode.focus()
+    }
     verticalLayout {
       w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
         .px
@@ -230,26 +246,31 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
               expand = 2
               isReadOnly = true
               value = nota.nota?.numero ?: ""
+              this.tabIndex = -1
             }
             textField("Loja") {
               expand = 2
               isReadOnly = true
               value = nota.nota?.loja?.sigla
+              this.tabIndex = -1
             }
             textField("Tipo") {
               expand = 2
               isReadOnly = true
               value = nota.nota?.tipoNota?.descricao ?: ""
+              this.tabIndex = -1
             }
             dateField("Data") {
               expand = 1
               isReadOnly = true
               value = nota.nota?.data
+              this.tabIndex = -1
             }
             textField("Rota") {
               expand = 1
               isReadOnly = true
               value = nota.nota?.rota
+              this.tabIndex = -1
             }
           }
           row {
@@ -257,14 +278,32 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
               expand = 1
               isReadOnly = true
               value = nota.nota?.observacao
+              this.tabIndex = -1
             }
           }
         }
       }
 
-      grupo("Produto") {
+      grupo {
+        row {
+          w = 100.perc
+          label("Produto")
+          edtBarcode.apply {
+            addValueChangeListener {
+              val barcode = it.value
+              execBarcode(barcode)
+            }
+            this.addGlobalShortcutListener(F2) {
+              focusEditor()
+            }
+            this.valueChangeMode = BLUR
+          }
+          this.addComponentsAndExpand(edtBarcode)
+        }
+
         row {
           gridProdutos = grid(ProdutoVO::class) {
+            this.tabIndex = -1
             val abreviacao = RegistryUserInfo.abreviacaoDefault
             //nota.refresh()
             val itens = nota.itens.filter {it.localizacao.startsWith(abreviacao)}
@@ -286,6 +325,16 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
                 select.allSelectedItems.forEach {
                   if(it.saldoFinal < 0) {
                     Notification.show("Saldo Insuficiente")
+                    selectionModel.deselect(it)
+                    it.selecionado = false
+                  }
+                  else if(!it.editavel()) {
+                    Notification.show("Não editavel")
+                    selectionModel.deselect(it)
+                    it.selecionado = false
+                  }
+                  else if(!RegistryUserInfo.userDefaultIsAdmin) {
+                    Notification.show("Usuário não é administrador")
                     selectionModel.deselect(it)
                     it.selecionado = false
                   }
@@ -386,6 +435,29 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
           }
         }
       }
+    }
+  }
+
+  private fun execBarcode(barcode: String?) {
+    if(!barcode.isNullOrBlank()) {
+      val produto = viewModel.processaBarcodeProduto(barcode)
+      if(produto == null) viewModel.view.showWarning("Produto não encontrado no saci")
+      else {
+        val produtosVO = gridProdutos.dataProvider.getAll()
+        val produtos = produtosVO.mapNotNull {it.value?.produto}
+        if(produtos.contains(produto)) {
+          val itemVO = produtosVO.filter {it.value?.produto?.id == produto.id}
+          itemVO.forEach {item ->
+            val codigo = item.value?.codigo ?: "Não encontrado"
+            if(item.saldoFinal < 0) viewModel.view.showWarning("O saldo final do produto $codigo está negativo")
+            else if(!item.editavel()) viewModel.view.showWarning("O produto $codigo não é editável")
+            else gridProdutos.select(item)
+          }
+        }
+        else viewModel.view.showWarning("Produto não encontrado no grid")
+      }
+      edtBarcode.focus()
+      edtBarcode.selectAll()
     }
   }
 }

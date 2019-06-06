@@ -1,5 +1,6 @@
 package br.com.engecopi.saci
 
+import br.com.engecopi.saci.beans.ChaveProduto
 import br.com.engecopi.saci.beans.LojaSaci
 import br.com.engecopi.saci.beans.NfsKey
 import br.com.engecopi.saci.beans.NotaSaci
@@ -102,6 +103,15 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }?.let {key ->
       findNotaSaida(key.storeno, key.nfno, key.nfse, liberaNotasAntigas)
     } ?: emptyList()
+  }
+
+  fun findBarcode(storeno: Int, barcode : String): List<ChaveProduto> {
+    val sql = "/sqlSaci/findBarcode.sql"
+    return query(sql) {q ->
+      q.addParameter("storeno", storeno)
+        .addParameter("barcode", barcode)
+        .executeAndFetch(ChaveProduto::class.java)
+    }
   }
 
   companion object {

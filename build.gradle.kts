@@ -1,6 +1,6 @@
-import com.sun.javafx.scene.CameraHelper.project
 import io.ebean.gradle.EnhancePluginExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 
 val kotlinVersion = properties["kotlinVersion"] as String
 val karibuVersion = properties["karibuVersion"] as String
