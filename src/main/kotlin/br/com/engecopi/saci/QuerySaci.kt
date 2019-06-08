@@ -5,6 +5,7 @@ import br.com.engecopi.saci.beans.LojaSaci
 import br.com.engecopi.saci.beans.NfsKey
 import br.com.engecopi.saci.beans.NotaSaci
 import br.com.engecopi.saci.beans.UserSaci
+import br.com.engecopi.saci.beans.findChave
 import br.com.engecopi.utils.DB
 import br.com.engecopi.utils.localDate
 import java.time.LocalDate
@@ -105,12 +106,24 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     } ?: emptyList()
   }
 
-  fun findBarcode(storeno: Int, barcode : String): List<ChaveProduto> {
-    val sql = "/sqlSaci/findBarcode.sql"
+  fun findBarcode(storeno: Int, barcode : String): ChaveProduto? {
+    val sql = "/sqlSaci/findBarcode2.sql"
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
         .addParameter("barcode", barcode)
         .executeAndFetch(ChaveProduto::class.java)
+        .findChave()
+    }
+  }
+
+  fun findBarcode(storeno: Int, prdno : String, grade : String): ChaveProduto? {
+    val sql = "/sqlSaci/findBarcode2.sql"
+    return query(sql) {q ->
+      q.addParameter("storeno", storeno)
+        .addParameter("barcode", prdno)
+        .addParameter("barcode", grade)
+        .executeAndFetch(ChaveProduto::class.java)
+        .findChave()
     }
   }
 

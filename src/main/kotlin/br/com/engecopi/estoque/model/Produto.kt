@@ -102,13 +102,11 @@ class Produto: BaseModel() {
         .firstOrNull()
     }
 
-    fun findBarcode(barcode : String?) : Produto?{
+    fun findBarcode(barcode: String?): Produto? {
       val storeno = RegistryUserInfo.usuarioDefault.loja?.numero ?: return null
       barcode ?: return null
-      val lista = saci.findBarcode(storeno, barcode)
-      return lista.firstOrNull()?.run {
-        findProduto(this.codigo, this.grade)
-      }
+      val chave = saci.findBarcode(storeno, barcode) ?: return null
+      return findProduto(chave.codigo, chave.grade)
     }
 
     fun findProdutos(codigo: String?): List<Produto> {
@@ -189,6 +187,12 @@ class Produto: BaseModel() {
       if(prefix.count() == 1) return prefix[0]
     }
     return ""
+  }
+
+  fun findBarcode(): String? {
+    val storeno = RegistryUserInfo.usuarioDefault.loja?.numero ?: return null
+    val chave = saci.findBarcode(storeno, codigo, grade)
+    return chave?.barcode
   }
 }
 

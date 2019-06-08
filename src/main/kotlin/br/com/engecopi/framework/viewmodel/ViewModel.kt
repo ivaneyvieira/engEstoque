@@ -72,11 +72,7 @@ abstract class ViewModel(val view: IView) {
   }
 
   private fun <T> transaction(block: () -> T) {
-    try {
-      Transaction.execTransacao {block()}
-    } catch(e: EViewModel) {
-      //Não faz nada
-    }
+    Transaction.execTransacao {block()}
   }
 
   protected fun showWarning(msg: String) {

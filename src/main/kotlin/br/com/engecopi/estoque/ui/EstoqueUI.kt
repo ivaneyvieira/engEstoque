@@ -6,6 +6,7 @@ import br.com.engecopi.estoque.ui.views.EntradaView
 import br.com.engecopi.estoque.ui.views.EntregaClienteEditorView
 import br.com.engecopi.estoque.ui.views.EntregaClienteView
 import br.com.engecopi.estoque.ui.views.EtiquetaView
+import br.com.engecopi.estoque.ui.views.LabelView
 import br.com.engecopi.estoque.ui.views.NFExpedicaoView
 import br.com.engecopi.estoque.ui.views.ProdutoView
 import br.com.engecopi.estoque.ui.views.SaidaView
@@ -28,6 +29,7 @@ import com.vaadin.icons.VaadinIcons.PACKAGE
 import com.vaadin.icons.VaadinIcons.PAPERCLIP
 import com.vaadin.icons.VaadinIcons.TRUCK
 import com.vaadin.icons.VaadinIcons.USER
+import com.vaadin.icons.VaadinIcons.BARCODE
 import com.vaadin.navigator.Navigator
 import com.vaadin.navigator.PushStateNavigation
 import com.vaadin.navigator.ViewDisplay
@@ -117,6 +119,7 @@ class EstoqueUI: UI() {
             if(user.admin) {
               menuButton("Usuários", USER, view = UsuarioView::class.java)
               menuButton("Etiquetas", PAPERCLIP, view = EtiquetaView::class.java)
+              menuButton("Imprimir Etiquetas", BARCODE, view = LabelView::class.java)
             }
           }
         }
