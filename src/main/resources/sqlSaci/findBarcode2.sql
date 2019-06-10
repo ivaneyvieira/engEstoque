@@ -6,9 +6,11 @@ where storeno = :storeno
 union
 select distinct prdno, grade, barcode, 'GRADE' as tipo
 from sqldados.prdbar
-where prdno = :prdno
-  and grade = :grade
+where prdno =  :prdno
+  and grade =  :grade
+  and :grade != ''
 union
 select distinct no as prdno, '' as grade, barcode, 'PRD' as tipo
 from sqldados.prd
-where no = :prdno
+where no    = :prdno
+  and :grade = ''
