@@ -119,9 +119,11 @@ class EstoqueUI: UI() {
             if(user.admin) {
               menuButton("Usuários", USER, view = UsuarioView::class.java)
               menuButton("Etiquetas", PAPERCLIP, view = EtiquetaView::class.java)
-              menuButton("Imprimir Etiquetas", BARCODE, view = LabelView::class.java)
             }
           }
+        }
+        section("Etiquetas"){
+          menuButton("Imprimir", BARCODE, view = LabelView::class.java)
         }
       }
       // Read more about navigators here: https://github.com/mvysny/karibu-dsl
