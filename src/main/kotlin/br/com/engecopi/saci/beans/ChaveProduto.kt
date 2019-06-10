@@ -11,5 +11,5 @@ fun List<ChaveProduto>.findChave(): ChaveProduto? {
   val listaPdv = this.filter {it.tipo == "PDV"}
   val listaGrade = this.filter {it.tipo == "GRADE"}
   val listaPrd = this.filter {it.tipo == "PRD"}
-  return listaGrade.firstOrNull() ?: listaPdv.firstOrNull() ?: listaPrd.firstOrNull()
+  return listaGrade.firstOrNull() /*?: listaPdv.firstOrNull() */?: listaPrd.firstOrNull()
 }

@@ -120,8 +120,8 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     val sql = "/sqlSaci/findBarcode2.sql"
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
-        .addParameter("barcode", prdno)
-        .addParameter("barcode", grade)
+        .addParameter("prdno", prdno)
+        .addParameter("grade", grade)
         .executeAndFetch(ChaveProduto::class.java)
         .findChave()
     }

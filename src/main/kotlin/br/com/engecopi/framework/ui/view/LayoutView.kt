@@ -91,8 +91,8 @@ abstract class LayoutView<V: ViewModel>: VerticalLayout(), View, IView {
   }
 
   @Suppress("DEPRECATION")
-  open fun openText(text: String) {
-    if(text != "") {
+  open fun openText(text: String?) {
+    if(!text.isNullOrBlank()) {
       val resource = StreamResource({IOUtils.toInputStream(text)}, "${SystemUtils.md5(text)}.txt")
       resource.mimeType = "text/plain"
 
