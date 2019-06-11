@@ -344,17 +344,17 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   val rotaDescricao: String?
     get() = if(tipoNota == TRANSFERENCIA_E || tipoNota == TRANSFERENCIA_S) rota
     else ""
-
   private val mapNotaSaci = mutableMapOf<String?, List<NotaSaci>>()
   private val notaProdutoSaci: List<NotaSaci>
-    get() = if(entityVo == null)  mapNotaSaci.getOrPut(numeroNF) {
+    get() = if(entityVo == null) mapNotaSaci.getOrPut(numeroNF) {
       when(tipo) {
         SAIDA   -> Nota.findNotaSaidaSaci(numeroNF).filter {
           usuario.admin || (it.tipo != "PEDIDO_E")
         }
         ENTRADA -> Nota.findNotaEntradaSaci(numeroNF)
       }
-    }else emptyList()
+    }
+    else emptyList()
   val notaSaci
     get() = notaProdutoSaci.firstOrNull()
   val nota: Nota?
@@ -375,46 +375,46 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
         rota = ""
       }
       produtos.clear()
-      val produtosVo = notaProdutoSaci.filter {!it.isSave()}
-        .flatMap {notaSaci ->
-          val prd = Produto.findProduto(notaSaci.prdno, notaSaci.grade)
-          val localizacoes = prd?.localizacoes()
-            .orEmpty()
-            .sorted()
-          val ultimaLocalizacao = localizacoes.sorted().lastOrNull() ?: ""
-          return@flatMap if(tipoNota.tipoMov == SAIDA) {
-            var quant = notaSaci.quant ?: 0
-            val produtosLocais = localizacoes.asSequence()
-              .map {localizacao ->
-                ProdutoVO(prd, tipoNota.tipoMov, LocProduto(localizacao)).apply {
-                  val saldo = saldo
-                  if(quant > 0) if(quant > saldo) {
-                    if(localizacao == ultimaLocalizacao) {
-                      quantidade = quant
-                      quant = 0
-                    }
-                    else {
-                      quantidade = saldo
-                      quant -= saldo
-                    }
-                  }
-                  else {
+      val produtosVo = notaProdutoSaci/*.filter {!it.isSave()}*/.flatMap {notaSaci ->
+        val prd = Produto.findProduto(notaSaci.prdno, notaSaci.grade)
+        val localizacoes = prd?.localizacoes()
+          .orEmpty()
+          .sorted()
+        val ultimaLocalizacao = localizacoes.sorted().lastOrNull() ?: ""
+        return@flatMap if(tipoNota.tipoMov == SAIDA) {
+          var quant = notaSaci.quant ?: 0
+          val produtosLocais = localizacoes.asSequence()
+            .map {localizacao ->
+              ProdutoVO(prd, tipoNota.tipoMov, LocProduto(localizacao), notaSaci.isSave()).apply {
+                val saldo = saldo
+                if(quant > 0) if(quant > saldo) {
+                  if(localizacao == ultimaLocalizacao) {
                     quantidade = quant
                     quant = 0
                   }
-                  else quantidade = 0
+                  else {
+                    quantidade = saldo
+                    quant -= saldo
+                  }
                 }
+                else {
+                  quantidade = quant
+                  quant = 0
+                }
+                else quantidade = 0
               }
-              .toList()
-            produtosLocais
-          }
-          else listOf(ProdutoVO(prd, tipoNota.tipoMov, LocProduto(ultimaLocalizacao)).apply {
-            quantidade = notaSaci.quant ?: 0
-          })
+            }
+            .toList()
+          produtosLocais
         }
+        else listOf(ProdutoVO(prd, tipoNota.tipoMov, LocProduto(ultimaLocalizacao), notaSaci.isSave()).apply {
+          quantidade = notaSaci.quant ?: 0
+        })
+      }
       produtos.addAll(produtosVo.asSequence().filter {
         it.quantidade != 0 && it.codigo != "" && it.localizacao?.localizacao?.startsWith(abreviacaoNota) ?: false
-      }.sortedWith(compareBy(ProdutoVO::codigo, ProdutoVO::grade, ProdutoVO::localizacao)).toList())
+      }.sortedWith(compareBy(ProdutoVO::isSave,  ProdutoVO::codigo, ProdutoVO::grade, ProdutoVO::localizacao))
+                        .toList())
     }
   }
 
@@ -428,7 +428,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   val lancamento: LocalDate
     get() = toEntity()?.data ?: LocalDate.now()
   val horaLacamento: LocalDateTime
-    get() = toEntity()?.let { LocalDateTime.of(it.data, it.hora)} ?: LocalDateTime.now()
+    get() = toEntity()?.let {LocalDateTime.of(it.data, it.hora)} ?: LocalDateTime.now()
   val dataEmissao: LocalDate
     get() = toEntity()?.nota?.dataEmissao ?: notaSaci?.dt_emissao?.localDate() ?: LocalDate.now()
   val numeroInterno: Int
@@ -478,7 +478,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   var status: StatusNota? = null
 }
 
-class ProdutoVO(val produto: Produto?, val tipoMov: TipoMov, var localizacao: LocProduto?) {
+class ProdutoVO(val produto: Produto?, val tipoMov: TipoMov, var localizacao: LocProduto?, val isSave: Boolean) {
   val codigo: String = produto?.codigo ?: ""
   val grade: String = produto?.grade ?: ""
   var quantidade: Int = 0
@@ -493,4 +493,13 @@ class ProdutoVO(val produto: Produto?, val tipoMov: TipoMov, var localizacao: Lo
   val descricaoProduto: String
     get() = produto?.descricao ?: ""
   var value: ItemNota? = null
+  /*
+  fun isSave(numero: String?): Boolean {
+    val nota = Nota.findNota(numero, tipoMov) ?: return false
+    return nota.itensNota()
+      .mapNotNull {it.produto}
+      .any {
+        it.codigo == codigo && it.grade == grade
+      }
+  }*/
 }

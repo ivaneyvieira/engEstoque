@@ -309,7 +309,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
             val itens = nota.itens.filter {it.localizacao.startsWith(abreviacao)}
 
             this.dataProvider = ListDataProvider(itens.map {item ->
-              ProdutoVO(item.produto, item.tipoMov ?: SAIDA, LocProduto(item.localizacao)).apply {
+              ProdutoVO(item.produto, item.tipoMov ?: SAIDA, LocProduto(item.localizacao), item.id != 0L).apply {
                 this.quantidade = item.quantidade
                 this.value = item
               }

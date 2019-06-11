@@ -145,7 +145,12 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO>>: CrudLayoutView<VO
               .forEach {
                 it.selecionado = false
               }
+
             select.allSelectedItems.forEach {
+              if(it.isSave){
+                it.selecionado = false
+                selectionModel.deselect(it)
+              }else
               it.selecionado = true
             }
           }
@@ -207,8 +212,11 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO>>: CrudLayoutView<VO
         editor.saveCaption = "Salvar"
         editor.isBuffered = false
         this.setStyleGenerator {
-          if(it.saldoFinal < 0) "error_row"
-          else null
+          when {
+            it.saldoFinal < 0 -> "error_row"
+            it.isSave         -> "ok"
+            else              -> null
+          }
         }
       }
     }

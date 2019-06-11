@@ -82,7 +82,7 @@ class Nota: BaseModel() {
       val tn = TipoNota.value(notasaci.tipo) ?: return null
       val numero = notasaci.numeroSerie()
 
-      return findNota(numero, tn) ?: Nota().apply {
+      return findNota(numero, tn.tipoMov) ?: Nota().apply {
         this.numero = notasaci.numeroSerie()
         this.tipoNota = tn
         this.tipoMov = tn.tipoMov
@@ -99,7 +99,7 @@ class Nota: BaseModel() {
       val notaSimples = notasaci.firstOrNull() ?: return NotaItens.VAZIO
       val numero = notaSimples.numeroSerie()
       val tipoNota = notaSimples.tipoNota() ?: return NotaItens.VAZIO
-      val nota = findNota(numero, tipoNota) ?: createNota(notaSimples) ?: return NotaItens.VAZIO
+      val nota = findNota(numero, tipoNota.tipoMov) ?: createNota(notaSimples) ?: return NotaItens.VAZIO
       nota.sequencia = maxSequencia() + 1
       nota.usuario = usuarioDefault
 
@@ -130,8 +130,8 @@ class Nota: BaseModel() {
       else Nota.where().tipoMov.eq(SAIDA).numero.eq(numero).loja.id.eq(loja.id).findList().firstOrNull()
     }
 
-    fun findNota(numero: String?, tipoNota: TipoNota): Nota? {
-      return when(tipoNota.tipoMov) {
+    fun findNota(numero: String?, tipoMov: TipoMov): Nota? {
+      return when(tipoMov) {
         ENTRADA -> findEntrada(numero)
         SAIDA   -> findSaida(numero)
       }
