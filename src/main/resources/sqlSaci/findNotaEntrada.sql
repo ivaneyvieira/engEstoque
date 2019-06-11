@@ -1,5 +1,5 @@
 
-select P.invno, N.storeno, nfname           as numero, invse as serie,
+select P.invno, N.storeno, cast(nfname as char)          as numero, invse as serie,
        CAST(IFNULL(X.xrouteno, '') AS CHAR) AS rota,
        N.date,
        N.issue_date                         AS dt_emissao,
