@@ -133,7 +133,7 @@ class ItemNota: BaseModel() {
     }
 
     fun isSave(notaSaci: NotaSaci): Boolean {
-      return where().produto.codigo.eq(notaSaci.prdno?.padStart(16, ' '))
+      return where().produto.codigo.eq(notaSaci.codigo())
         .produto.grade.eq(notaSaci.grade)
         .nota.numero.eq(notaSaci.numeroSerie())
         .nota.loja.equalTo(lojaDefault)

@@ -493,13 +493,4 @@ class ProdutoVO(val produto: Produto?, val tipoMov: TipoMov, var localizacao: Lo
   val descricaoProduto: String
     get() = produto?.descricao ?: ""
   var value: ItemNota? = null
-  /*
-  fun isSave(numero: String?): Boolean {
-    val nota = Nota.findNota(numero, tipoMov) ?: return false
-    return nota.itensNota()
-      .mapNotNull {it.produto}
-      .any {
-        it.codigo == codigo && it.grade == grade
-      }
-  }*/
 }

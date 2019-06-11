@@ -3,6 +3,7 @@ package br.com.engecopi.saci.beans
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.model.ViewProdutoLoc
+import br.com.engecopi.utils.lpad
 
 class NotaSaci(val rota: String?,
                val storeno: Int?,
@@ -19,6 +20,10 @@ class NotaSaci(val rota: String?,
                val invno: Int?) {
   fun isSave(): Boolean {
     return ItemNota.isSave(this)
+  }
+
+  fun codigo() : String {
+    return prdno?.lpad(16, " ") ?: ""
   }
 
   fun numeroSerie(): String {
