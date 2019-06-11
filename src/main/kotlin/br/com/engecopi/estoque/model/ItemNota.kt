@@ -138,7 +138,7 @@ class ItemNota: BaseModel() {
       println("####################################################################")
       val tipoMov = notaSaci.tipoNota()?.tipoMov ?: return false
       val nota = Nota.findNota(notaSaci.numeroSerie(), tipoMov) ?: return false
-      val produto = Produto.findProduto(notaSaci.prdno, notaSaci.grade)
+      val produto = Produto.findProduto(notaSaci.prdno, notaSaci.grade)?: return false
       return where().produto.eq(produto)
         .nota.eq(nota)
         .exists()
