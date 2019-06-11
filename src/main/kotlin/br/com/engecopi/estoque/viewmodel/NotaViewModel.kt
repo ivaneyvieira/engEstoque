@@ -375,7 +375,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
         rota = ""
       }
       produtos.clear()
-      val produtosVo = notaProdutoSaci/*.filter {!it.isSave()}*/.flatMap {notaSaci ->
+      val produtosVo = notaProdutoSaci.flatMap {notaSaci ->
         val prd = Produto.findProduto(notaSaci.prdno, notaSaci.grade)
         val localizacoes = prd?.localizacoes()
           .orEmpty()
