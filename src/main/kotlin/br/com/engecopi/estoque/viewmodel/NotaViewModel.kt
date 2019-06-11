@@ -344,14 +344,17 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   val rotaDescricao: String?
     get() = if(tipoNota == TRANSFERENCIA_E || tipoNota == TRANSFERENCIA_S) rota
     else ""
+
+  private val mapNotaSaci = mutableMapOf<String?, List<NotaSaci>>()
   private val notaProdutoSaci: List<NotaSaci>
-    get() = if(entityVo == null) when(tipo) {
-      SAIDA   -> Nota.findNotaSaidaSaci(numeroNF)
-      ENTRADA -> Nota.findNotaEntradaSaci(numeroNF)
-    }.filter {
-      usuario.admin || (it.tipo != "PEDIDO_E")
-    }
-    else emptyList()
+    get() = if(entityVo == null)  mapNotaSaci.getOrPut(numeroNF) {
+      when(tipo) {
+        SAIDA   -> Nota.findNotaSaidaSaci(numeroNF).filter {
+          usuario.admin || (it.tipo != "PEDIDO_E")
+        }
+        ENTRADA -> Nota.findNotaEntradaSaci(numeroNF)
+      }
+    }else emptyList()
   val notaSaci
     get() = notaProdutoSaci.firstOrNull()
   val nota: Nota?
