@@ -133,11 +133,12 @@ class ItemNota: BaseModel() {
     }
 
     fun isSave(notaSaci: NotaSaci): Boolean {
+      val numeroSerie = notaSaci.numeroSerie()
       println("####################################################################")
-      println("Nota e produto")
+      println("Nota e produto $numeroSerie")
       println("####################################################################")
       val tipoMov = notaSaci.tipoNota()?.tipoMov ?: return false
-      val nota = Nota.findNota(notaSaci.numeroSerie(), tipoMov) ?: return false
+      val nota = Nota.findNota(numeroSerie, tipoMov) ?: return false
       val produto = Produto.findProduto(notaSaci.prdno, notaSaci.grade)?: return false
       return where().produto.eq(produto)
         .nota.eq(nota)
