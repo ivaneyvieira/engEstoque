@@ -23,6 +23,7 @@ import com.github.mvysny.karibudsl.v8.addColumnFor
 import com.github.mvysny.karibudsl.v8.align
 import com.github.mvysny.karibudsl.v8.bind
 import com.github.mvysny.karibudsl.v8.comboBox
+import com.github.mvysny.karibudsl.v8.expandRatio
 import com.github.mvysny.karibudsl.v8.getAll
 import com.github.mvysny.karibudsl.v8.grid
 import com.github.mvysny.karibudsl.v8.h
@@ -47,7 +48,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO>>: CrudLayoutView<VO
   inline fun <reified V: NotaVo> (@VaadinDsl HasComponents).notaFiscalField(operation: CrudOperation?,
                                                                             binder: Binder<V>) {
     textField("Nota Fiscal") {
-      expand = 2
+      expandRatio = 2f
       isReadOnly = operation != ADD
       bind(binder).bind("numeroNF")
       reloadBinderOnChange(binder)
@@ -78,7 +79,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO>>: CrudLayoutView<VO
 
   inline fun <reified V: NotaVo> (@VaadinDsl HasComponents).lojaField(operation: CrudOperation?, binder: Binder<V>) {
     comboBox<Loja>("Loja") {
-      expand = 2
+      expandRatio = 2f
       default {it.sigla}
       isReadOnly = operation != ADD
       setItems(viewModel.findLojas(lojaDefault))
@@ -95,7 +96,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO>>: CrudLayoutView<VO
     row {
       this.bindVisible(binder, NotaVo::naoTemGrid.name)
       comboBox<Produto>("Código") {
-        expand = 2
+        expandRatio = 2f
         isReadOnly = operation != ADD
         default {"${it.codigo.trim()} ${it.grade}".trim()}
         isTextInputAllowed = true
@@ -104,12 +105,12 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO>>: CrudLayoutView<VO
         reloadBinderOnChange(binder)
       }
       textField("Descrição") {
-        expand = 5
+        expandRatio = 5f
         isReadOnly = true
         bind(binder).bind("descricaoProduto")
       }
       comboBox<LocProduto>("Localizacao") {
-        expand = 3
+        expandRatio = 3f
         isReadOnly = operation != ADD
         default {localizacao ->
           localizacao.localizacao
@@ -120,12 +121,12 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO>>: CrudLayoutView<VO
         bind(binder).bind(NotaVo::localizacao.name)
       }
       textField("Grade") {
-        expand = 1
+        expandRatio = 1f
         isReadOnly = true
         bind(binder).bind("grade")
       }
       integerField("Qtd $tipo") {
-        expand = 1
+        expandRatio = 1f
         isReadOnly = (!this@NotaView.isAdmin) && (operation != ADD)
         this.bind(binder)
           .bind("quantProduto")
@@ -134,7 +135,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO>>: CrudLayoutView<VO
     row {
       this.bindVisible(binder, "temGrid")
       grid(ProdutoVO::class) {
-        expand = 2
+        expandRatio = 2f
         this.h = 200.px
         editor.isEnabled = true
         removeAllColumns()

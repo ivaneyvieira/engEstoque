@@ -284,12 +284,10 @@ fun <T: Any> (@VaadinDsl HasComponents).filterGrid(itemClass: KClass<T>? = null,
     block()
   }
 
-var (@VaadinDsl Component).expand: Int
-  get() = this.expandRatio.toInt()
-  set(value) {
-    this.setWidth("100%")
-    this.expandRatio = value * 1f
-  }
+fun (@VaadinDsl VerticalLayout).expand() {
+  this.setWidth("100%")
+  this.expandRatio = 1f
+}
 
 fun Window.showDialog() {
   isClosable = true

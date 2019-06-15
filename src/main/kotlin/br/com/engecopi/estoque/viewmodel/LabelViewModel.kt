@@ -50,4 +50,10 @@ class LabelViewModel(view: LabelView): ViewModel(view) {
     val produtos = Produto.findFaixaCodigo(codigoI?.toString(), codigoF?.toString())
     listaProduto.addAll(produtos)
   }
+
+  fun addFaixaNome(nomeI: String?, nomeF: String?) = exec {
+    listaProduto.clear()
+    val produtos = Produto.findFaixaNome(nomeI, nomeF)
+    listaProduto.addAll(produtos)
+  }
 }

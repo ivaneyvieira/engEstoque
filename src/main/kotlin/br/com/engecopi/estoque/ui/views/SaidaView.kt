@@ -32,6 +32,7 @@ import com.github.mvysny.karibudsl.v8.bind
 import com.github.mvysny.karibudsl.v8.button
 import com.github.mvysny.karibudsl.v8.comboBox
 import com.github.mvysny.karibudsl.v8.dateField
+import com.github.mvysny.karibudsl.v8.expandRatio
 import com.github.mvysny.karibudsl.v8.getAll
 import com.github.mvysny.karibudsl.v8.grid
 import com.github.mvysny.karibudsl.v8.horizontalLayout
@@ -86,26 +87,26 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
               notaFiscalField(operation, binder)
               lojaField(operation, binder)
               comboBox<TipoNota>("Tipo") {
-                expand = 2
+                expandRatio = 2f
                 default {it.descricao}
                 isReadOnly = true
                 setItems(TipoNota.valuesSaida())
                 bind(binder).bind(SaidaVo::tipoNota)
               }
               dateField("Data") {
-                expand = 1
+                expandRatio = 1f
                 isReadOnly = true
                 bind(binder).bind(SaidaVo::dataNota.name)
               }
               textField("Rota") {
-                expand = 1
+                expandRatio = 1f
                 isReadOnly = true
                 bind(binder).bind(SaidaVo::rota)
               }
             }
             row {
               textField("Observação da nota fiscal") {
-                expand = 1
+                expandRatio = 1f
                 bind(binder).bind(SaidaVo::observacaoNota)
               }
             }
@@ -243,31 +244,31 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
         verticalLayout {
           row {
             textField("Nota Fiscal") {
-              expand = 2
+              expandRatio = 2f
               isReadOnly = true
               value = nota.nota?.numero ?: ""
               this.tabIndex = -1
             }
             textField("Loja") {
-              expand = 2
+              expandRatio = 2f
               isReadOnly = true
               value = nota.nota?.loja?.sigla
               this.tabIndex = -1
             }
             textField("Tipo") {
-              expand = 2
+              expandRatio = 2f
               isReadOnly = true
               value = nota.nota?.tipoNota?.descricao ?: ""
               this.tabIndex = -1
             }
             dateField("Data") {
-              expand = 1
+              expandRatio = 1f
               isReadOnly = true
               value = nota.nota?.data
               this.tabIndex = -1
             }
             textField("Rota") {
-              expand = 1
+              expandRatio = 1f
               isReadOnly = true
               value = nota.nota?.rota
               this.tabIndex = -1
@@ -275,7 +276,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
           }
           row {
             textField("Observação da nota fiscal") {
-              expand = 1
+              expandRatio = 1f
               isReadOnly = true
               value = nota.nota?.observacao
               this.tabIndex = -1

@@ -77,7 +77,7 @@ class LoginForm(private val appTitle: String): VerticalLayout() {
           isResponsive = true
           username = textField("Usuário") {
             isResponsive = true
-            expand = 1
+            expandRatio = 1f
             w = fillParent
             icon = VaadinIcons.USER
             styleName = ValoTheme.TEXTFIELD_INLINE_ICON

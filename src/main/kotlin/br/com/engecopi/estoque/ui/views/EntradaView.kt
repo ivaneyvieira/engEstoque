@@ -17,6 +17,7 @@ import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.bind
 import com.github.mvysny.karibudsl.v8.comboBox
 import com.github.mvysny.karibudsl.v8.dateField
+import com.github.mvysny.karibudsl.v8.expandRatio
 import com.github.mvysny.karibudsl.v8.px
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.w
@@ -43,38 +44,38 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel>() {
             notaFiscalField(operation, binder)
             lojaField(operation, binder)
             comboBox<TipoNota>("Tipo") {
-              expand = 2
+              expandRatio = 2f
               default {it.descricao}
               isReadOnly = true
               setItems(TipoNota.valuesEntrada())
               bind(binder).bind(EntradaVo::tipoNota)
             }
             textField("Rota") {
-              expand = 1
+              expandRatio = 1f
               isReadOnly = true
               bind(binder).bind(EntradaVo::rota)
             }
           }
           row {
             textField("Observação") {
-              expand = 2
+              expandRatio = 2f
               bind(binder).bind(EntradaVo::observacaoNota)
             }
           }
           row {
             dateField("Data") {
-              expand = 1
+              expandRatio = 1f
               isReadOnly = true
               bind(binder).bind(EntradaVo::dataNota.name)
             }
             integerField("Número Interno") {
-              expand = 1
+              expandRatio = 1f
               isReadOnly = true
               this.bind(binder)
                 .bind(EntradaVo::numeroInterno.name)
             }
             textField("Fornecedor") {
-              expand = 2
+              expandRatio = 2f
               isReadOnly = true
               bind(binder).bind(EntradaVo::fornecedor.name)
             }

@@ -17,6 +17,7 @@ import com.github.mvysny.karibudsl.v8.bind
 import com.github.mvysny.karibudsl.v8.checkBox
 import com.github.mvysny.karibudsl.v8.checkBoxGroup
 import com.github.mvysny.karibudsl.v8.comboBox
+import com.github.mvysny.karibudsl.v8.expandRatio
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.twinColSelect
 import com.vaadin.ui.Alignment
@@ -33,7 +34,7 @@ class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>() {
       formLayout.apply {
         row {
           textField {
-            expand = 1
+            expandRatio = 1f
             caption = "Login Saci"
             isReadOnly = isAdmin == false
             bind(binder).bind(UsuarioCrudVo::loginName)
@@ -42,7 +43,7 @@ class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>() {
             }
           }
           textField {
-            expand = 4
+            expandRatio = 4f
             caption = "Nome"
             isReadOnly = true
             bind(binder).bind(UsuarioCrudVo::nome.name)
@@ -50,7 +51,7 @@ class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>() {
         }
         row {
           comboBox<Loja> {
-            expand = 1
+            expandRatio = 1f
             caption = "Loja"
             isEmptySelectionAllowed = true
             isTextInputAllowed = false
@@ -62,17 +63,17 @@ class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>() {
           }
 
           checkBox("Administrador") {
-            expand = 1
+            expandRatio = 1f
             bind(binder).bind(UsuarioCrudVo::admin)
             alignment = Alignment.BOTTOM_RIGHT
           }
           checkBox("Expedição") {
-            expand = 1
+            expandRatio = 1f
             bind(binder).bind(UsuarioCrudVo::expedicao)
             alignment = Alignment.BOTTOM_RIGHT
           }
           checkBox("Estoque") {
-            expand = 1
+            expandRatio = 1f
             bind(binder).bind(UsuarioCrudVo::estoque)
             alignment = Alignment.BOTTOM_RIGHT
           }
@@ -80,7 +81,7 @@ class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>() {
         row {
           checkBoxGroup<NotaSerie> {
             caption = "Tipo de notas"
-            expand = 1
+            expandRatio = 1f
             setItems(NotaSerie.values)
             setItemCaptionGenerator {
               it.descricao
@@ -92,7 +93,7 @@ class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>() {
         row {
           // expand =1
           twinColSelect<String>("Localizações") {
-            expand = 1
+            expandRatio = 1f
             //setWidth("95%")
             bindItensSet(binder, UsuarioCrudVo::locaisLoja.name)
             bind(binder).bind(UsuarioCrudVo::localizacaoes)

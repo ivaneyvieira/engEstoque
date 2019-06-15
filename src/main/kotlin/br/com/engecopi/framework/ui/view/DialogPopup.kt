@@ -1,6 +1,8 @@
 package br.com.engecopi.framework.ui.view
 
 import com.github.mvysny.karibudsl.v8.cssLayout
+import com.github.mvysny.karibudsl.v8.horizontalLayout
+import com.github.mvysny.karibudsl.v8.isExpanded
 import com.github.mvysny.karibudsl.v8.perc
 import com.github.mvysny.karibudsl.v8.verticalLayout
 import com.github.mvysny.karibudsl.v8.w
@@ -78,22 +80,22 @@ open class DialogPopup<BEAN: Any>(caption: String, classBean: KClass<BEAN>): Win
 
 fun VerticalLayout.grupo(caption: String = "", block: VerticalLayout.() -> Unit) {
   cssLayout(caption) {
-    expand = 1
+    this.isExpanded = false
+    w = 100.perc
     addStyleName(ValoTheme.LAYOUT_CARD)
     verticalLayout {
       w = 100.perc
       this.block()
+      //this.forEach {it.w = 100.perc}
     }
   }
 }
 
 fun VerticalLayout.row(block: HorizontalLayout.() -> Unit) {
-  val horizontalLayout = HorizontalLayout()
-  horizontalLayout.setWidth("100%")
-
-  horizontalLayout.block()
-  //horizontalLayout.iterator().forEach { component ->
-  //  component.setWidth("100%")
-  // }
-  addComponent(horizontalLayout)
+  horizontalLayout {
+    isExpanded = true
+    w = 100.perc
+    this.block()
+    this.forEach {it.w = 100.perc}
+  }
 }

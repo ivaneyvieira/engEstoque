@@ -13,10 +13,14 @@ import com.github.mvysny.karibudsl.v8.addColumnFor
 import com.github.mvysny.karibudsl.v8.alignment
 import com.github.mvysny.karibudsl.v8.button
 import com.github.mvysny.karibudsl.v8.comboBox
+import com.github.mvysny.karibudsl.v8.expandRatio
 import com.github.mvysny.karibudsl.v8.grid
 import com.github.mvysny.karibudsl.v8.horizontalLayout
+import com.github.mvysny.karibudsl.v8.isExpanded
 import com.github.mvysny.karibudsl.v8.isMargin
+import com.github.mvysny.karibudsl.v8.px
 import com.github.mvysny.karibudsl.v8.textField
+import com.github.mvysny.karibudsl.v8.w
 import com.vaadin.shared.ui.ValueChangeMode
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.ComboBox
@@ -29,7 +33,7 @@ import org.vaadin.viritin.fields.IntegerField
 
 @AutoView
 class LabelView: LayoutView<LabelViewModel>() {
-  private lateinit var gridProduto: Grid<Produto>
+  private val gridProduto: Grid<Produto>
   private lateinit var cmbTipoFiltro: ComboBox<FiltroView>
   private lateinit var pnlFiltro: HorizontalLayout
 
@@ -47,7 +51,7 @@ class LabelView: LayoutView<LabelViewModel>() {
                              filtroCentroLucro,
                              filtroTipoProduto,
                              filtroCodigoGrade)
-
+    setSizeFull()
     form("Código de barras")
     grupo("Pesquisa Produto") {
       row {
@@ -63,7 +67,7 @@ class LabelView: LayoutView<LabelViewModel>() {
           }
         }
         pnlFiltro = horizontalLayout {
-          expand = 1
+          this.isExpanded = true
           isSpacing = false
           isMargin = false
         }
@@ -71,28 +75,30 @@ class LabelView: LayoutView<LabelViewModel>() {
           alignment = Alignment.BOTTOM_RIGHT
           addClickListener {
             val label = viewModel.templateLabel()
-
             openText(label)
           }
         }
       }
     }
-    grupo("Produtos") {
-      gridProduto = grid(Produto::class) {
-        addColumnFor(Produto::codigo) {
-          caption = "Código"
-          setRenderer({it?.trim() ?: ""}, TextRenderer())
-        }
-        addColumnFor(Produto::descricao) {
-          caption = "Descrição"
-          this.expandRatio = 1
-        }
-        addColumnFor(Produto::grade) {
-          caption = "Grade"
-        }
-        addColumnFor(Produto::barcodeGtin) {
-          caption = "Gtin"
-        }
+    gridProduto = grid(Produto::class) {
+      setSizeFull()
+      this.removeAllColumns()
+      addColumnFor(Produto::codigo) {
+        caption = "Código"
+        setRenderer({it?.trim() ?: ""}, TextRenderer())
+        this.expandRatio = 1
+      }
+      addColumnFor(Produto::descricao) {
+        caption = "Descrição"
+        this.expandRatio = 9
+      }
+      addColumnFor(Produto::grade) {
+        caption = "Grade"
+        this.expandRatio = 1
+      }
+      addColumnFor(Produto::barcodeGtin) {
+        caption = "Gtin"
+        this.expandRatio = 1
       }
     }
   }
@@ -139,11 +145,17 @@ class FiltroFaixaNome(viewModel: LabelViewModel): FiltroView(viewModel, "Faixa d
 
   init {
     row {
-      edtNomeI = textField("Nome Incial")
-      edtNomeF = textField("Nome Final")
+      edtNomeI = textField("Nome Incial"){
+        expandRatio = 1f
+      }
+      edtNomeF = textField("Nome Final"){
+        expandRatio = 1f
+      }
       button("Adicionar") {
         alignment = Alignment.BOTTOM_RIGHT
-        addClickListener {}
+        addClickListener {
+          viewModel.addFaixaNome(edtNomeI.value, edtNomeF.value)
+        }
       }
     }
   }

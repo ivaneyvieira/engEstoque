@@ -18,6 +18,7 @@ import com.github.mvysny.karibudsl.v8.addColumnFor
 import com.github.mvysny.karibudsl.v8.alignment
 import com.github.mvysny.karibudsl.v8.button
 import com.github.mvysny.karibudsl.v8.dateField
+import com.github.mvysny.karibudsl.v8.expandRatio
 import com.github.mvysny.karibudsl.v8.grid
 import com.github.mvysny.karibudsl.v8.horizontalLayout
 import com.github.mvysny.karibudsl.v8.px
@@ -59,34 +60,34 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
           verticalLayout {
             row {
               textField("Nota Fiscal") {
-                expand = 2
+                expandRatio = 2f
                 isReadOnly = true
                 value = nota.numero
               }
               textField("Loja") {
-                expand = 2
+                expandRatio = 2f
                 isReadOnly = true
                 value = nota.loja?.sigla
               }
               textField("Tipo") {
-                expand = 2
+                expandRatio = 2f
                 isReadOnly = true
                 value = nota.tipoNota?.descricao
               }
               dateField("Data") {
-                expand = 1
+                expandRatio = 1f
                 isReadOnly = true
                 value = nota.data
               }
               textField("Rota") {
-                expand = 1
+                expandRatio = 1f
                 isReadOnly = true
                 value = nota.rota
               }
             }
             row {
               textField("Observação da nota fiscal") {
-                expand = 1
+                expandRatio = 1f
                 isReadOnly = true
                 value = nota.observacao
               }
@@ -212,29 +213,29 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
         verticalLayout {
           row {
             textField("Nota Fiscal") {
-              expand = 2
+              expandRatio = 2f
               isReadOnly = true
               value = nota?.numero
             }
             textField("Loja") {
-              expand = 2
+              expandRatio = 2f
               isReadOnly = true
               value = viewModel.findLoja(nota?.storeno)
                 ?.sigla
             }
             textField("Tipo") {
-              expand = 2
+              expandRatio = 2f
               isReadOnly = true
               value = TipoNota.value(nota?.tipo)
                 ?.descricao
             }
             dateField("Data") {
-              expand = 1
+              expandRatio = 1f
               isReadOnly = true
               value = nota?.date?.localDate()
             }
             textField("Rota") {
-              expand = 1
+              expandRatio = 1f
               isReadOnly = true
               value = nota?.rota
             }

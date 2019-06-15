@@ -25,8 +25,10 @@ import com.github.mvysny.karibudsl.v8.bind
 import com.github.mvysny.karibudsl.v8.checkBoxGroup
 import com.github.mvysny.karibudsl.v8.comboBox
 import com.github.mvysny.karibudsl.v8.dateField
+import com.github.mvysny.karibudsl.v8.expandRatio
 import com.github.mvysny.karibudsl.v8.grid
 import com.github.mvysny.karibudsl.v8.h
+import com.github.mvysny.karibudsl.v8.isExpanded
 import com.github.mvysny.karibudsl.v8.px
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.w
@@ -52,19 +54,19 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>() {
         grupo("Produtos") {
           row {
             textField {
-              expand = 1
+              expandRatio = 1f
               caption = "Código"
               bind(binder).bind(ProdutoVo::codigoProduto)
               reloadBinderOnChange(binder)
             }
             textField("Descrição") {
-              expand = 3
+              expandRatio = 3f
               isReadOnly = true
               bind(binder).bind(ProdutoVo::descricaoProdutoSaci.name)
             }
             if(operation != ADD) {
               textField {
-                expand = 1
+                expandRatio = 1f
                 caption = "Grade"
                 bind(binder).bind(ProdutoVo::grade.name)
                 reloadBinderOnChange(binder)
@@ -74,7 +76,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>() {
           if(operation == ADD) {
             row {
               checkBoxGroup<String> {
-                expand = 1
+                expandRatio = 1f
                 caption = "Grades"
                 addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL)
                 bindItens(binder, ProdutoVo::grades.name)
@@ -86,21 +88,21 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>() {
         grupo("Notas") {
           row {
             dateField("Data Inicial") {
-              expand = 1
+              expandRatio = 1f
               id = "filtro"
               value = null
               bind(binder).bind(ProdutoVo::filtroDI)
               reloadBinderOnChange(binder)
             }
             dateField("Data Final") {
-              expand = 1
+              expandRatio = 1f
               id = "filtro"
               value = null
               bind(binder).bind(ProdutoVo::filtroDF)
               reloadBinderOnChange(binder)
             }
             comboBox<TipoNota>("Tipo") {
-              expand = 1
+              expandRatio = 1f
               default {it.descricao2}
               id = "filtro"
               setItems(TipoNota.values().toList())
@@ -111,7 +113,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>() {
               reloadBinderOnChange(binder)
             }
             comboBox<LocProduto>("Local") {
-              expand = 2
+              expandRatio = 2f
               default {it.localizacao}
               isEmptySelectionAllowed = true
               id = "filtro"
@@ -125,7 +127,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>() {
           }
           row {
             grid(ItemNota::class) {
-              expand = 2
+              setSizeFull()
               removeAllColumns()
               editor.isEnabled = usuarioDefault.admin
               val comboLoc = ComboBox<String>().apply {

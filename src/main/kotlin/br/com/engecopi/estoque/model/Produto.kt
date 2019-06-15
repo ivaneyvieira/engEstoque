@@ -4,6 +4,7 @@ import br.com.engecopi.estoque.model.finder.ProdutoFinder
 import br.com.engecopi.framework.model.BaseModel
 import br.com.engecopi.saci.saci
 import br.com.engecopi.utils.lpad
+import br.com.engecopi.utils.rpad
 import io.ebean.annotation.Cache
 import io.ebean.annotation.CacheQueryTuning
 import io.ebean.annotation.Formula
@@ -142,9 +143,16 @@ class Produto: BaseModel() {
     }
 
     fun findFaixaCodigo(codigoI: String?, codigoF: String?): List<Produto> {
-      codigoI ?: return emptyList()
-      codigoF ?: return emptyList()
-      return where().codigo.between(codigoI.lpad(16, ""), codigoF.lpad(16, ""))
+      val prdnoI = codigoI?.lpad(16, " ") ?: return emptyList()
+      val prdnoF = codigoF?.lpad(16, " ") ?: return emptyList()
+      return where().codigo.between(prdnoI, prdnoF)
+        .findList()
+    }
+
+    fun findFaixaNome(nomeI: String?, nomeF: String?): List<Produto> {
+      val nomeStrI = nomeI ?: return emptyList()
+      val nomeStrF = nomeF ?: return emptyList()
+      return where().vproduto.nome.between(nomeI, nomeF)
         .findList()
     }
   }
