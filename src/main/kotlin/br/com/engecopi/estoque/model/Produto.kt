@@ -95,8 +95,7 @@ class Produto: BaseModel() {
   companion object Find: ProdutoFinder() {
     fun findProduto(codigo: String?, grade: String?): Produto? {
       codigo ?: return null
-      return where()
-        .codigo.eq(codigo.trim().lpad(16, " "))
+      return where().codigo.eq(codigo.trim().lpad(16, " "))
         .grade.eq(grade ?: "")
         .findList()
         .firstOrNull()
@@ -140,6 +139,13 @@ class Produto: BaseModel() {
     fun createProduto(codigoProduto: String?, gradeProduto: String?): Produto? {
       val produtoSaci = ViewProdutoSaci.find(codigoProduto, gradeProduto)
       return createProduto(produtoSaci)
+    }
+
+    fun findFaixaCodigo(codigoI: String?, codigoF: String?): List<Produto> {
+      codigoI ?: return emptyList()
+      codigoF ?: return emptyList()
+      return where().codigo.between(codigoI.lpad(16, ""), codigoF.lpad(16, ""))
+        .findList()
     }
   }
 
@@ -189,11 +195,12 @@ class Produto: BaseModel() {
     return ""
   }
 
-  fun findBarcode(): String? {
-    val storeno = RegistryUserInfo.usuarioDefault.loja?.numero ?: return null
-    val chave = saci.findBarcode(storeno, codigo, grade)
-    return chave?.barcode
-  }
+  val barcodeGtin
+    get(): String? {
+      val storeno = RegistryUserInfo.usuarioDefault.loja?.numero ?: return null
+      val chave = saci.findBarcode(storeno, codigo, grade)
+      return chave?.barcode
+    }
 }
 
 data class LocProduto(val localizacao: String): Comparable<LocProduto> {

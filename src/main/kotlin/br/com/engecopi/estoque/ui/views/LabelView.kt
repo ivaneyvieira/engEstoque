@@ -9,33 +9,38 @@ import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.integerField
 import br.com.engecopi.framework.ui.view.row
 import com.github.mvysny.karibudsl.v8.AutoView
+import com.github.mvysny.karibudsl.v8.addColumnFor
 import com.github.mvysny.karibudsl.v8.alignment
 import com.github.mvysny.karibudsl.v8.button
 import com.github.mvysny.karibudsl.v8.comboBox
+import com.github.mvysny.karibudsl.v8.grid
 import com.github.mvysny.karibudsl.v8.horizontalLayout
 import com.github.mvysny.karibudsl.v8.isMargin
 import com.github.mvysny.karibudsl.v8.textField
 import com.vaadin.shared.ui.ValueChangeMode
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.ComboBox
+import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.renderers.TextRenderer
 import org.vaadin.viritin.fields.IntegerField
 
 @AutoView
 class LabelView: LayoutView<LabelViewModel>() {
+  private lateinit var gridProduto: Grid<Produto>
   private lateinit var cmbTipoFiltro: ComboBox<FiltroView>
   private lateinit var pnlFiltro: HorizontalLayout
 
   init {
     viewModel = LabelViewModel(this)
-    val filtroFaixaCodigo = FiltroFaixaCodigo(viewModel, ::addProduto)
-    val filtroFaixaNome = FiltroFaixaNome(viewModel, ::addProduto)
-    val filtroFabricante = FiltroFabricante(viewModel, ::addProduto)
-    val filtroCentroLucro = FiltroCentroLucro(viewModel, ::addProduto)
-    val filtroTipoProduto = FiltroTipoProduto(viewModel, ::addProduto)
-    val filtroCodigoGrade = FiltroCodigoGrade(viewModel, ::addProduto)
+    val filtroFaixaCodigo = FiltroFaixaCodigo(viewModel)
+    val filtroFaixaNome = FiltroFaixaNome(viewModel)
+    val filtroFabricante = FiltroFabricante(viewModel)
+    val filtroCentroLucro = FiltroCentroLucro(viewModel)
+    val filtroTipoProduto = FiltroTipoProduto(viewModel)
+    val filtroCodigoGrade = FiltroCodigoGrade(viewModel)
     val filtrosView = listOf(filtroFaixaCodigo,
                              filtroFaixaNome,
                              filtroFabricante,
@@ -72,6 +77,24 @@ class LabelView: LayoutView<LabelViewModel>() {
         }
       }
     }
+    grupo("Produtos") {
+      gridProduto = grid(Produto::class) {
+        addColumnFor(Produto::codigo) {
+          caption = "Código"
+          setRenderer({it?.trim() ?: ""}, TextRenderer())
+        }
+        addColumnFor(Produto::descricao) {
+          caption = "Descrição"
+          this.expandRatio = 1
+        }
+        addColumnFor(Produto::grade) {
+          caption = "Grade"
+        }
+        addColumnFor(Produto::barcodeGtin) {
+          caption = "Gtin"
+        }
+      }
+    }
   }
 
   override fun updateView() {
@@ -79,25 +102,20 @@ class LabelView: LayoutView<LabelViewModel>() {
   }
 
   override fun updateModel() {
-    viewModel.run {}
-  }
-
-  fun addProduto(produto: Produto) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    viewModel.run {
+      gridProduto.setItems(listaProduto)
+    }
   }
 }
 
-abstract class FiltroView(val viewModel: LabelViewModel, val addProduto: (Produto) -> Unit, val descricao: String):
-  VerticalLayout() {
+abstract class FiltroView(val viewModel: LabelViewModel, val descricao: String): VerticalLayout() {
   init {
     isSpacing = false
     isMargin = false
   }
 }
 
-class FiltroFaixaCodigo(viewModel: LabelViewModel, addProduto: (Produto) -> Unit): FiltroView(viewModel,
-                                                                                              addProduto,
-                                                                                              "Faixa de Código") {
+class FiltroFaixaCodigo(viewModel: LabelViewModel): FiltroView(viewModel, "Faixa de Código") {
   private lateinit var edtCodigoI: IntegerField
   private lateinit var edtCodigoF: IntegerField
 
@@ -107,15 +125,15 @@ class FiltroFaixaCodigo(viewModel: LabelViewModel, addProduto: (Produto) -> Unit
       edtCodigoF = integerField("Código Final")
       button("Adicionar") {
         alignment = Alignment.BOTTOM_RIGHT
-        addClickListener {}
+        addClickListener {
+          viewModel.addFaixaCodigo(edtCodigoI.value, edtCodigoF.value)
+        }
       }
     }
   }
 }
 
-class FiltroFaixaNome(viewModel: LabelViewModel, addProduto: (Produto) -> Unit): FiltroView(viewModel,
-                                                                                            addProduto,
-                                                                                            "Faixa de Nome") {
+class FiltroFaixaNome(viewModel: LabelViewModel): FiltroView(viewModel, "Faixa de Nome") {
   private lateinit var edtNomeI: TextField
   private lateinit var edtNomeF: TextField
 
@@ -131,9 +149,7 @@ class FiltroFaixaNome(viewModel: LabelViewModel, addProduto: (Produto) -> Unit):
   }
 }
 
-class FiltroFabricante(viewModel: LabelViewModel, addProduto: (Produto) -> Unit): FiltroView(viewModel,
-                                                                                             addProduto,
-                                                                                             "Fabricante") {
+class FiltroFabricante(viewModel: LabelViewModel): FiltroView(viewModel, "Fabricante") {
   private lateinit var edtFabricante: IntegerField
 
   init {
@@ -148,9 +164,7 @@ class FiltroFabricante(viewModel: LabelViewModel, addProduto: (Produto) -> Unit)
   }
 }
 
-class FiltroCentroLucro(viewModel: LabelViewModel, addProduto: (Produto) -> Unit): FiltroView(viewModel,
-                                                                                              addProduto,
-                                                                                              "Centro de lucro") {
+class FiltroCentroLucro(viewModel: LabelViewModel): FiltroView(viewModel, "Centro de lucro") {
   private lateinit var edtCentroLucro: IntegerField
 
   init {
@@ -165,9 +179,7 @@ class FiltroCentroLucro(viewModel: LabelViewModel, addProduto: (Produto) -> Unit
   }
 }
 
-class FiltroTipoProduto(viewModel: LabelViewModel, addProduto: (Produto) -> Unit): FiltroView(viewModel,
-                                                                                              addProduto,
-                                                                                              "Tipo de produto") {
+class FiltroTipoProduto(viewModel: LabelViewModel): FiltroView(viewModel, "Tipo de produto") {
   private lateinit var edtTipo: ComboBox<Int>
 
   init {
@@ -183,9 +195,7 @@ class FiltroTipoProduto(viewModel: LabelViewModel, addProduto: (Produto) -> Unit
   }
 }
 
-class FiltroCodigoGrade(viewModel: LabelViewModel, addProduto: (Produto) -> Unit): FiltroView(viewModel,
-                                                                                              addProduto,
-                                                                                              "Código e grade") {
+class FiltroCodigoGrade(viewModel: LabelViewModel): FiltroView(viewModel, "Código e grade") {
   private lateinit var edtGrade: ComboBox<String>
   private lateinit var edtCodigo: TextField
 

@@ -21,6 +21,7 @@ class LabelViewModel(view: LabelView): ViewModel(view) {
   var listGrade = emptyList<String>()
   var descricao: String = ""
   var gtin: String = ""
+  val listaProduto = arrayListOf<Produto>()
 
   fun pesquisaCodigo() = exec {
     val produtos = Produto.findProdutos(codigo)
@@ -29,12 +30,12 @@ class LabelViewModel(view: LabelView): ViewModel(view) {
     listGrade = produtos.map {it.grade}
     grade = if(listGrade.contains(grade)) grade
     else listGrade.firstOrNull()
-    gtin = Produto.findProduto(codigo, grade)?.findBarcode() ?: ""
+    gtin = Produto.findProduto(codigo, grade)?.barcodeGtin ?: ""
   }
 
   fun templateLabel() = execValue {
     val produto = Produto.findProduto(codigo, grade) ?: throw  EViewModel("Produto não encontrado")
-    val barcode = produto.findBarcode() ?: throw EViewModel("Cogio de barras não encontrado")
+    val barcode = produto.barcodeGtin ?: throw EViewModel("Cogio de barras não encontrado")
     val etiquetas = Etiqueta.findByStatus(StatusNota.PRODUTO)
     //TODO Refatorar
     val template = etiquetas.joinToString(separator = "\n") {it.template}
@@ -42,5 +43,11 @@ class LabelViewModel(view: LabelView): ViewModel(view) {
       .replace("[Grade]", grade ?: "")
       .replace("[Descricao]", descricao)
       .replace("[Gtin]", barcode)
+  }
+
+  fun addFaixaCodigo(codigoI: Int?, codigoF: Int?) = exec {
+    listaProduto.clear()
+    val produtos = Produto.findFaixaCodigo(codigoI?.toString(), codigoF?.toString())
+    listaProduto.addAll(produtos)
   }
 }
