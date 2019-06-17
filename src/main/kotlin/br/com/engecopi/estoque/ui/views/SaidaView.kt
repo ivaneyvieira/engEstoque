@@ -22,6 +22,8 @@ import br.com.engecopi.framework.ui.view.showDialog
 import br.com.engecopi.framework.ui.view.timeFormat
 import br.com.engecopi.utils.IN
 import com.github.mvysny.karibudsl.v8.AutoView
+import com.github.mvysny.karibudsl.v8.KeyShortcut
+import com.github.mvysny.karibudsl.v8.ModifierKey
 import com.github.mvysny.karibudsl.v8.VAlign
 import com.github.mvysny.karibudsl.v8.addColumnFor
 import com.github.mvysny.karibudsl.v8.addGlobalShortcutListener
@@ -46,7 +48,7 @@ import com.vaadin.event.ShortcutAction.KeyCode
 import com.vaadin.event.ShortcutAction.KeyCode.F2
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
-import com.vaadin.shared.ui.ValueChangeMode.BLUR
+import com.vaadin.shared.ui.ValueChangeMode.LAZY
 import com.vaadin.ui.Alignment.BOTTOM_RIGHT
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
@@ -296,7 +298,14 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
             this.addGlobalShortcutListener(F2) {
               focusEditor()
             }
-            this.valueChangeMode = BLUR
+            this.valueChangeMode = LAZY
+            valueChangeTimeout = 200
+            this.addGlobalShortcutListener(KeyShortcut(KeyCode.V, setOf(ModifierKey.Ctrl))) {
+              this.value = ""
+            }
+            this.addContextClickListener {
+              this.value = ""
+            }
           }
           this.addComponentsAndExpand(edtBarcode)
         }
