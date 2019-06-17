@@ -8,6 +8,7 @@ import br.com.engecopi.saci.beans.UserSaci
 import br.com.engecopi.saci.beans.findChave
 import br.com.engecopi.utils.DB
 import br.com.engecopi.utils.localDate
+import br.com.engecopi.utils.lpad
 import java.time.LocalDate
 
 class QuerySaci: QueryDB(driver, url, username, password) {
@@ -110,7 +111,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     val sql = "/sqlSaci/findBarcode.sql"
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
-        .addParameter("barcode", barcode)
+        .addParameter("barcode", barcode.lpad(16, " "))
         .executeAndFetch(ChaveProduto::class.java)
         .findChave()
     }

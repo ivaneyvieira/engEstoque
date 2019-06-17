@@ -48,6 +48,7 @@ import com.vaadin.event.ShortcutAction.KeyCode
 import com.vaadin.event.ShortcutAction.KeyCode.F2
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
+import com.vaadin.shared.ui.ValueChangeMode.BLUR
 import com.vaadin.shared.ui.ValueChangeMode.LAZY
 import com.vaadin.ui.Alignment.BOTTOM_RIGHT
 import com.vaadin.ui.Button
@@ -298,14 +299,17 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
             this.addGlobalShortcutListener(F2) {
               focusEditor()
             }
-            this.valueChangeMode = LAZY
-            valueChangeTimeout = 200
-            this.addGlobalShortcutListener(KeyShortcut(KeyCode.V, setOf(ModifierKey.Ctrl))) {
-              this.value = ""
-            }
-            this.addContextClickListener {
-              this.value = ""
-            }
+            if(RegistryUserInfo.usuarioDefault.travaEtiqueta && !RegistryUserInfo.usuarioDefault.admin) {
+              this.valueChangeMode = LAZY
+              valueChangeTimeout = 200
+              this.addGlobalShortcutListener(KeyShortcut(KeyCode.V, setOf(ModifierKey.Ctrl))) {
+                this.value = ""
+              }
+              this.addContextClickListener {
+                this.value = ""
+              }
+            }else
+              this.valueChangeMode = BLUR
           }
           this.addComponentsAndExpand(edtBarcode)
         }

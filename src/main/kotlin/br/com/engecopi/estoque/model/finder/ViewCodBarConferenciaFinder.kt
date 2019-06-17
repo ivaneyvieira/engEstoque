@@ -4,7 +4,7 @@ import br.com.engecopi.estoque.model.ViewCodBarConferencia
 import br.com.engecopi.estoque.model.query.QViewCodBarConferencia
 import io.ebean.Finder
 
-open class ViewCodBarConferenciaFinder: Finder<Long, ViewCodBarConferencia>(ViewCodBarConferencia::class.java) {
+open class ViewCodBarConferenciaFinder : Finder<Long, ViewCodBarConferencia>(ViewCodBarConferencia::class.java) {
   /**
    * Start a new typed query.
    */

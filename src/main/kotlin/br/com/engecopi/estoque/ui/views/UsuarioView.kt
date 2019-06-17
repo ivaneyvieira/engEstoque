@@ -82,6 +82,11 @@ class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>() {
               bind(binder).bind(UsuarioCrudVo::estoque)
               alignment = Alignment.BOTTOM_RIGHT
             }
+            checkBox("Trava Eitqueta") {
+              expandRatio = 1f
+              bind(binder).bind(UsuarioCrudVo::travaEtiqueta)
+              alignment = Alignment.BOTTOM_RIGHT
+            }
           }
           row {
             checkBoxGroup<NotaSerie> {
