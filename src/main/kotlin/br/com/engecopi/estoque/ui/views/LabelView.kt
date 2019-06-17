@@ -1,10 +1,10 @@
 package br.com.engecopi.estoque.ui.views
 
 import br.com.engecopi.estoque.model.Produto
+import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.viewmodel.LabelViewModel
 import br.com.engecopi.framework.ui.view.LayoutView
 import br.com.engecopi.framework.ui.view.default
-import br.com.engecopi.framework.ui.view.expand
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.integerField
 import br.com.engecopi.framework.ui.view.row
@@ -18,9 +18,8 @@ import com.github.mvysny.karibudsl.v8.grid
 import com.github.mvysny.karibudsl.v8.horizontalLayout
 import com.github.mvysny.karibudsl.v8.isExpanded
 import com.github.mvysny.karibudsl.v8.isMargin
-import com.github.mvysny.karibudsl.v8.px
 import com.github.mvysny.karibudsl.v8.textField
-import com.github.mvysny.karibudsl.v8.w
+import com.github.mvysny.karibudsl.v8.verticalLayout
 import com.vaadin.shared.ui.ValueChangeMode
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.ComboBox
@@ -33,7 +32,7 @@ import org.vaadin.viritin.fields.IntegerField
 
 @AutoView
 class LabelView: LayoutView<LabelViewModel>() {
-  private val gridProduto: Grid<Produto>
+  private lateinit var gridProduto: Grid<Produto>
   private lateinit var cmbTipoFiltro: ComboBox<FiltroView>
   private lateinit var pnlFiltro: HorizontalLayout
 
@@ -45,62 +44,75 @@ class LabelView: LayoutView<LabelViewModel>() {
     val filtroCentroLucro = FiltroCentroLucro(viewModel)
     val filtroTipoProduto = FiltroTipoProduto(viewModel)
     val filtroCodigoGrade = FiltroCodigoGrade(viewModel)
-    val filtrosView = listOf(filtroFaixaCodigo,
-                             filtroFaixaNome,
-                             filtroFabricante,
-                             filtroCentroLucro,
-                             filtroTipoProduto,
-                             filtroCodigoGrade)
+    val filtroNfe = FiltroNfe(viewModel)
+    val filtrosView = if(RegistryUserInfo.usuarioDefault.admin) listOf(filtroFaixaCodigo,
+                                                                       filtroFaixaNome,
+                                                                       filtroFabricante,
+                                                                       filtroCentroLucro,
+                                                                       filtroTipoProduto,
+                                                                       filtroNfe,
+                                                                       filtroCodigoGrade)
+    else listOf(filtroCodigoGrade)
     setSizeFull()
     form("Código de barras")
-    grupo("Pesquisa Produto") {
-      row {
-        cmbTipoFiltro = comboBox("Tipo Filtro") {
-          default()
-          setItems(filtrosView)
-          setItemCaptionGenerator {it.descricao}
-          addValueChangeListener {
-            if(it.isUserOriginated) {
-              pnlFiltro.removeAllComponents()
-              pnlFiltro.addComponentsAndExpand(it.value)
+    verticalLayout {
+      isExpanded = true
+      setSizeFull()
+      grupo("Pesquisa Produto") {
+        this.row {
+          cmbTipoFiltro = comboBox("Tipo Filtro") {
+            this.expandRatio = 2f
+            default()
+            setItems(filtrosView)
+            setItemCaptionGenerator {it.descricao}
+            addValueChangeListener {
+              if(it.isUserOriginated) {
+                viewModel.clearProduto()
+                pnlFiltro.removeAllComponents()
+                pnlFiltro.addComponentsAndExpand(it.value)
+              }
+            }
+          }
+          pnlFiltro = horizontalLayout {
+            this.expandRatio = 10f
+            isSpacing = false
+            isMargin = false
+          }
+          button("Imprimir") {
+            this.expandRatio = 1f
+            alignment = Alignment.BOTTOM_RIGHT
+            addClickListener {
+              val print = viewModel.impressao()
+              openText(print)
             }
           }
         }
-        pnlFiltro = horizontalLayout {
-          this.isExpanded = true
-          isSpacing = false
-          isMargin = false
+      }
+      gridProduto = grid(Produto::class) {
+        isExpanded = true
+        setSizeFull()
+        this.removeAllColumns()
+        addColumnFor(Produto::codigo) {
+          caption = "Código"
+          setRenderer({it?.trim() ?: ""}, TextRenderer())
+          this.expandRatio = 1
         }
-        button("Imprimir") {
-          alignment = Alignment.BOTTOM_RIGHT
-          addClickListener {
-            val label = viewModel.templateLabel()
-            openText(label)
-          }
+        addColumnFor(Produto::descricao) {
+          caption = "Descrição"
+          this.expandRatio = 9
+        }
+        addColumnFor(Produto::grade) {
+          caption = "Grade"
+          this.expandRatio = 1
+        }
+        addColumnFor(Produto::barcodeGtin) {
+          caption = "Gtin"
+          this.expandRatio = 1
         }
       }
     }
-    gridProduto = grid(Produto::class) {
-      setSizeFull()
-      this.removeAllColumns()
-      addColumnFor(Produto::codigo) {
-        caption = "Código"
-        setRenderer({it?.trim() ?: ""}, TextRenderer())
-        this.expandRatio = 1
-      }
-      addColumnFor(Produto::descricao) {
-        caption = "Descrição"
-        this.expandRatio = 9
-      }
-      addColumnFor(Produto::grade) {
-        caption = "Grade"
-        this.expandRatio = 1
-      }
-      addColumnFor(Produto::barcodeGtin) {
-        caption = "Gtin"
-        this.expandRatio = 1
-      }
-    }
+
+    setFiltro(filtroCodigoGrade)
   }
 
   override fun updateView() {
@@ -111,6 +123,13 @@ class LabelView: LayoutView<LabelViewModel>() {
     viewModel.run {
       gridProduto.setItems(listaProduto)
     }
+  }
+
+  private fun setFiltro(pnlFIltro: FiltroView) {
+    cmbTipoFiltro.value = pnlFIltro
+    pnlFiltro.removeAllComponents()
+    pnlFiltro.addComponentsAndExpand(pnlFIltro)
+    viewModel.clearProduto()
   }
 }
 
@@ -127,7 +146,10 @@ class FiltroFaixaCodigo(viewModel: LabelViewModel): FiltroView(viewModel, "Faixa
 
   init {
     row {
-      edtCodigoI = integerField("Código Inicial")
+      edtCodigoI = integerField("Código Inicial") {
+        isExpanded = false
+      }
+
       edtCodigoF = integerField("Código Final")
       button("Adicionar") {
         alignment = Alignment.BOTTOM_RIGHT
@@ -145,16 +167,35 @@ class FiltroFaixaNome(viewModel: LabelViewModel): FiltroView(viewModel, "Faixa d
 
   init {
     row {
-      edtNomeI = textField("Nome Incial"){
+      edtNomeI = textField("Nome Incial") {
         expandRatio = 1f
       }
-      edtNomeF = textField("Nome Final"){
+      edtNomeF = textField("Nome Final") {
         expandRatio = 1f
       }
       button("Adicionar") {
+        //w = 10.em
         alignment = Alignment.BOTTOM_RIGHT
         addClickListener {
           viewModel.addFaixaNome(edtNomeI.value, edtNomeF.value)
+        }
+      }
+    }
+  }
+}
+
+
+class FiltroNfe(viewModel: LabelViewModel): FiltroView(viewModel, "NF Entrada") {
+  private lateinit var edtNfe: TextField
+
+  init {
+    row {
+      edtNfe = textField("Numero NF Entrada")
+
+      button("Adicionar") {
+        alignment = Alignment.BOTTOM_RIGHT
+        addClickListener {
+          viewModel.addFaixaNfe(edtNfe.value)
         }
       }
     }
@@ -166,11 +207,13 @@ class FiltroFabricante(viewModel: LabelViewModel): FiltroView(viewModel, "Fabric
 
   init {
     row {
-      edtFabricante = integerField("Código")
+      edtFabricante = integerField("Código do Fabricante")
 
       button("Adicionar") {
         alignment = Alignment.BOTTOM_RIGHT
-        addClickListener {}
+        addClickListener {
+          viewModel.addFaixaFabricante(edtFabricante.value)
+        }
       }
     }
   }
@@ -181,27 +224,29 @@ class FiltroCentroLucro(viewModel: LabelViewModel): FiltroView(viewModel, "Centr
 
   init {
     row {
-      edtCentroLucro = integerField("Código")
+      edtCentroLucro = integerField("Centro de lucro")
 
       button("Adicionar") {
         alignment = Alignment.BOTTOM_RIGHT
-        addClickListener {}
+        addClickListener {
+          viewModel.addFaixaCentroLucro(edtCentroLucro.value)
+        }
       }
     }
   }
 }
 
 class FiltroTipoProduto(viewModel: LabelViewModel): FiltroView(viewModel, "Tipo de produto") {
-  private lateinit var edtTipo: ComboBox<Int>
+  private lateinit var edtTipo: IntegerField
 
   init {
     row {
-      edtTipo = comboBox("Tipo") {
-        this.default()
-      }
+      edtTipo = integerField("Tipo do Produto")
       button("Adicionar") {
         alignment = Alignment.BOTTOM_RIGHT
-        addClickListener {}
+        addClickListener {
+          viewModel.addFaixaTipoProduto(edtTipo.value)
+        }
       }
     }
   }
@@ -216,20 +261,21 @@ class FiltroCodigoGrade(viewModel: LabelViewModel): FiltroView(viewModel, "Códi
       edtCodigo = textField("Código") {
         this.valueChangeMode = ValueChangeMode.BLUR
         addValueChangeListener {
-          viewModel.pesquisaCodigo()
+          if(it.isUserOriginated) {
+            val grades = viewModel.pesquisaGrades(it.value)
+            edtGrade.setItems(grades)
+            edtGrade.value = grades.firstOrNull()
+          }
         }
       }
       edtGrade = comboBox("Grade") {
         this.default()
-        addValueChangeListener {
-          if(it.isUserOriginated) {
-            viewModel.pesquisaCodigo()
-          }
-        }
       }
       button("Adicionar") {
         alignment = Alignment.BOTTOM_RIGHT
-        addClickListener {}
+        addClickListener {
+          viewModel.addFaixaCodigoGrade(edtCodigo.value, edtGrade.value)
+        }
       }
     }
   }

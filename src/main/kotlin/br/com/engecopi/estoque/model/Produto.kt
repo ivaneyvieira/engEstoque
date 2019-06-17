@@ -4,7 +4,6 @@ import br.com.engecopi.estoque.model.finder.ProdutoFinder
 import br.com.engecopi.framework.model.BaseModel
 import br.com.engecopi.saci.saci
 import br.com.engecopi.utils.lpad
-import br.com.engecopi.utils.rpad
 import io.ebean.annotation.Cache
 import io.ebean.annotation.CacheQueryTuning
 import io.ebean.annotation.Formula
@@ -154,6 +153,30 @@ class Produto: BaseModel() {
       val nomeStrF = nomeF ?: return emptyList()
       return where().vproduto.nome.between(nomeI, nomeF)
         .findList()
+    }
+
+    fun findFaixaFabricante(vendno: Int?): List<Produto> {
+      vendno ?: return emptyList()
+      return saci.findFornecedor(vendno)
+        .mapNotNull {
+          findProduto(it.codigo, it.grade)
+        }
+    }
+
+    fun findFaixaCentroLucro(clno: Int?): List<Produto> {
+      clno ?: return emptyList()
+      return saci.findCentroLucro(clno)
+        .mapNotNull {
+          findProduto(it.codigo, it.grade)
+        }
+    }
+
+    fun findTipoProduto(typeno: Int?): List<Produto> {
+      typeno ?: return emptyList()
+      return saci.findTipoProduto(typeno)
+        .mapNotNull {
+          findProduto(it.codigo, it.grade)
+        }
     }
   }
 

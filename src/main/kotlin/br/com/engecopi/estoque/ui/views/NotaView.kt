@@ -13,7 +13,6 @@ import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.bindItens
 import br.com.engecopi.framework.ui.view.bindVisible
 import br.com.engecopi.framework.ui.view.default
-import br.com.engecopi.framework.ui.view.expand
 import br.com.engecopi.framework.ui.view.integerField
 import br.com.engecopi.framework.ui.view.reloadBinderOnChange
 import br.com.engecopi.framework.ui.view.row

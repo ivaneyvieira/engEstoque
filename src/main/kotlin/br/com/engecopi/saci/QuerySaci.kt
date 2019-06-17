@@ -106,7 +106,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     } ?: emptyList()
   }
 
-  fun findBarcode(storeno: Int, barcode : String): ChaveProduto? {
+  fun findBarcode(storeno: Int, barcode: String): ChaveProduto? {
     val sql = "/sqlSaci/findBarcode.sql"
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
@@ -116,7 +116,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
 
-  fun findBarcode(storeno: Int, prdno : String, grade : String): ChaveProduto? {
+  fun findBarcode(storeno: Int, prdno: String, grade: String): ChaveProduto? {
     val sql = "/sqlSaci/findBarcode2.sql"
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
@@ -124,6 +124,30 @@ class QuerySaci: QueryDB(driver, url, username, password) {
         .addParameter("grade", grade)
         .executeAndFetch(ChaveProduto::class.java)
         .findChave()
+    }
+  }
+
+  fun findFornecedor(vendno: Int): List<ChaveProduto> {
+    val sql = "/sqlSaci/findFornecedor.sql"
+    return query(sql) {q ->
+      q.addParameter("vendno", vendno)
+        .executeAndFetch(ChaveProduto::class.java)
+    }
+  }
+
+  fun findCentroLucro(clno: Int): List<ChaveProduto> {
+    val sql = "/sqlSaci/findCentroLucro.sql"
+    return query(sql) {q ->
+      q.addParameter("clno", clno)
+        .executeAndFetch(ChaveProduto::class.java)
+    }
+  }
+
+  fun findTipoProduto(typeno: Int): List<ChaveProduto> {
+    val sql = "/sqlSaci/findTipoProduto.sql"
+    return query(sql) {q ->
+      q.addParameter("typeno", typeno)
+        .executeAndFetch(ChaveProduto::class.java)
     }
   }
 

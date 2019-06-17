@@ -6,7 +6,6 @@ import br.com.engecopi.estoque.viewmodel.NFExpedicaoViewModel
 import br.com.engecopi.estoque.viewmodel.NFExpedicaoVo
 import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.dateFormat
-import br.com.engecopi.framework.ui.view.expand
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.row
 import br.com.engecopi.framework.ui.view.showDialog

@@ -1,6 +1,7 @@
 package br.com.engecopi.framework.ui.view
 
 import com.github.mvysny.karibudsl.v8.cssLayout
+import com.github.mvysny.karibudsl.v8.expandRatio
 import com.github.mvysny.karibudsl.v8.horizontalLayout
 import com.github.mvysny.karibudsl.v8.isExpanded
 import com.github.mvysny.karibudsl.v8.perc
@@ -86,7 +87,6 @@ fun VerticalLayout.grupo(caption: String = "", block: VerticalLayout.() -> Unit)
     verticalLayout {
       w = 100.perc
       this.block()
-      //this.forEach {it.w = 100.perc}
     }
   }
 }
@@ -96,6 +96,8 @@ fun VerticalLayout.row(block: HorizontalLayout.() -> Unit) {
     isExpanded = true
     w = 100.perc
     this.block()
-    this.forEach {it.w = 100.perc}
+    this.forEach {
+      if(it.expandRatio > 0f) it.w = 100.perc
+    }
   }
 }

@@ -1,7 +1,6 @@
 import io.ebean.gradle.EnhancePluginExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-
 val kotlinVersion = properties["kotlinVersion"] as String
 val karibuVersion = properties["karibuVersion"] as String
 val vaadin8Version = properties["vaadin8Version"] as String
@@ -49,6 +48,7 @@ gretty {
 vaadin {
   version = "8.5.2"
 }
+
 
 configure<EnhancePluginExtension> {
   debugLevel = 0

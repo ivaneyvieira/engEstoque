@@ -2,7 +2,6 @@ package br.com.engecopi.estoque.ui
 
 import br.com.engecopi.estoque.model.LoginInfo
 import br.com.engecopi.estoque.model.Usuario
-import br.com.engecopi.framework.ui.view.expand
 import br.com.engecopi.saci.saci
 import com.github.mvysny.karibudsl.v8.alignment
 import com.github.mvysny.karibudsl.v8.button

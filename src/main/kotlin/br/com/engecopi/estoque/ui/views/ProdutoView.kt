@@ -12,7 +12,6 @@ import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
 import br.com.engecopi.framework.ui.view.bindItens
 import br.com.engecopi.framework.ui.view.default
-import br.com.engecopi.framework.ui.view.expand
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.reload
 import br.com.engecopi.framework.ui.view.reloadBinderOnChange
@@ -25,10 +24,10 @@ import com.github.mvysny.karibudsl.v8.bind
 import com.github.mvysny.karibudsl.v8.checkBoxGroup
 import com.github.mvysny.karibudsl.v8.comboBox
 import com.github.mvysny.karibudsl.v8.dateField
+import com.github.mvysny.karibudsl.v8.em
 import com.github.mvysny.karibudsl.v8.expandRatio
 import com.github.mvysny.karibudsl.v8.grid
 import com.github.mvysny.karibudsl.v8.h
-import com.github.mvysny.karibudsl.v8.isExpanded
 import com.github.mvysny.karibudsl.v8.px
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.w
@@ -128,6 +127,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>() {
           row {
             grid(ItemNota::class) {
               setSizeFull()
+              h = 20.em
               removeAllColumns()
               editor.isEnabled = usuarioDefault.admin
               val comboLoc = ComboBox<String>().apply {

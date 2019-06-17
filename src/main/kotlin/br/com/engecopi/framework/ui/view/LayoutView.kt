@@ -65,8 +65,7 @@ abstract class LayoutView<V: ViewModel>: VerticalLayout(), View, IView {
 
   open fun form(titleForm: String, block: (@VaadinDsl VerticalLayout).() -> Unit = {}) {
     isMargin = true
-    setSizeFull()
-    title(titleForm)
+    this.title(titleForm)
     this.block()
   }
 
@@ -283,11 +282,6 @@ fun <T: Any> (@VaadinDsl HasComponents).filterGrid(itemClass: KClass<T>? = null,
     if(dataProvider != null) this.dataProvider = dataProvider
     block()
   }
-
-fun (@VaadinDsl VerticalLayout).expand() {
-  this.setWidth("100%")
-  this.expandRatio = 1f
-}
 
 fun Window.showDialog() {
   isClosable = true

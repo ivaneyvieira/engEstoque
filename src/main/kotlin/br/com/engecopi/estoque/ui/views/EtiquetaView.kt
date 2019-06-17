@@ -6,7 +6,6 @@ import br.com.engecopi.estoque.viewmodel.EtiquetaViewModel
 import br.com.engecopi.estoque.viewmodel.EtiquetaVo
 import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.default
-import br.com.engecopi.framework.ui.view.expand
 import br.com.engecopi.framework.ui.view.row
 import br.com.engecopi.utils.SystemUtils
 import com.github.mvysny.karibudsl.v8.AutoView
