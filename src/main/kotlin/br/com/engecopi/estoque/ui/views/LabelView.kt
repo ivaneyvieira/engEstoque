@@ -20,7 +20,6 @@ import com.github.mvysny.karibudsl.v8.isExpanded
 import com.github.mvysny.karibudsl.v8.isMargin
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.verticalLayout
-import com.vaadin.shared.ui.ValueChangeMode
 import com.vaadin.shared.ui.ValueChangeMode.BLUR
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.ComboBox
@@ -144,7 +143,7 @@ abstract class FiltroView(val viewModel: LabelViewModel, val descricao: String):
     isMargin = false
   }
 
-  abstract fun processaFiltro()
+  abstract fun processaFiltro(): List<Produto>
 }
 
 class FiltroFaixaCodigo(viewModel: LabelViewModel): FiltroView(viewModel, "Faixa de Código") {
@@ -161,7 +160,7 @@ class FiltroFaixaCodigo(viewModel: LabelViewModel): FiltroView(viewModel, "Faixa
         }
       }
 
-      edtCodigoF = integerField("Código Final"){
+      edtCodigoF = integerField("Código Final") {
         isExpanded = false
 
         addValueChangeListener {
@@ -206,7 +205,7 @@ class FiltroNfe(viewModel: LabelViewModel): FiltroView(viewModel, "NF Entrada") 
 
   init {
     row {
-      edtNfe = textField("Numero NF Entrada"){
+      edtNfe = textField("Numero NF Entrada") {
         valueChangeMode = BLUR
         addValueChangeListener {
           processaFiltro()
@@ -223,7 +222,7 @@ class FiltroFabricante(viewModel: LabelViewModel): FiltroView(viewModel, "Fabric
 
   init {
     row {
-      edtFabricante = integerField("Código do Fabricante"){
+      edtFabricante = integerField("Código do Fabricante") {
         addValueChangeListener {
           processaFiltro()
         }
@@ -239,7 +238,7 @@ class FiltroCentroLucro(viewModel: LabelViewModel): FiltroView(viewModel, "Centr
 
   init {
     row {
-      edtCentroLucro = integerField("Centro de lucro"){
+      edtCentroLucro = integerField("Centro de lucro") {
         addValueChangeListener {
           processaFiltro()
         }
@@ -255,7 +254,7 @@ class FiltroTipoProduto(viewModel: LabelViewModel): FiltroView(viewModel, "Tipo 
 
   init {
     row {
-      edtTipo = integerField("Tipo do Produto"){
+      edtTipo = integerField("Tipo do Produto") {
         addValueChangeListener {
           processaFiltro()
         }
@@ -279,9 +278,9 @@ class FiltroCodigoGrade(viewModel: LabelViewModel): FiltroView(viewModel, "Códi
             val grades = viewModel.pesquisaGrades(it.value)
             edtGrade.setItems(grades)
             edtGrade.value = null
-            processaFiltro()
-            edtCodigo.value = ""
-            edtCodigo.focus()
+            val produtos = processaFiltro()
+            // edtCodigo.value = ""
+            if(produtos.isNotEmpty()) edtCodigo.selectAll()
           }
         }
       }
@@ -294,9 +293,7 @@ class FiltroCodigoGrade(viewModel: LabelViewModel): FiltroView(viewModel, "Códi
     }
   }
 
-  override fun processaFiltro()  {
-    viewModel.addFaixaCodigoGrade(edtCodigo.value, edtGrade.value)
-  }
+  override fun processaFiltro() = viewModel.addFaixaCodigoGrade(edtCodigo.value, edtGrade.value)
 }
 
 
