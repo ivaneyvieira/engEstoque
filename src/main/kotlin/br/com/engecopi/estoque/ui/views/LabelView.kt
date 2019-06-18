@@ -278,8 +278,10 @@ class FiltroCodigoGrade(viewModel: LabelViewModel): FiltroView(viewModel, "Códi
           if(it.isUserOriginated) {
             val grades = viewModel.pesquisaGrades(it.value)
             edtGrade.setItems(grades)
-            edtGrade.value = grades.firstOrNull()
+            edtGrade.value = null
             processaFiltro()
+            edtCodigo.value = ""
+            edtCodigo.focus()
           }
         }
       }
@@ -292,7 +294,9 @@ class FiltroCodigoGrade(viewModel: LabelViewModel): FiltroView(viewModel, "Códi
     }
   }
 
-  override fun processaFiltro() = viewModel.addFaixaCodigoGrade(edtCodigo.value, edtGrade.value)
+  override fun processaFiltro()  {
+    viewModel.addFaixaCodigoGrade(edtCodigo.value, edtGrade.value)
+  }
 }
 
 
