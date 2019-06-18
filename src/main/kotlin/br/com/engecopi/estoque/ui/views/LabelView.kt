@@ -78,12 +78,16 @@ class LabelView: LayoutView<LabelViewModel>() {
             isSpacing = false
             isMargin = false
           }
+
           button("Imprimir") {
             this.expandRatio = 1f
             alignment = Alignment.BOTTOM_RIGHT
             addClickListener {
-              val print = viewModel.impressao()
-              openText(print)
+              cmbTipoFiltro.value?.let {filtroView ->
+                filtroView.processaFiltro()
+                val print = viewModel.impressao()
+                openText(print)
+              }
             }
           }
         }
@@ -116,13 +120,13 @@ class LabelView: LayoutView<LabelViewModel>() {
   }
 
   override fun updateView() {
-    viewModel.run {}
-  }
-
-  override fun updateModel() {
     viewModel.run {
       gridProduto.setItems(listaProduto)
     }
+  }
+
+  override fun updateModel() {
+    viewModel.run { }
   }
 
   private fun setFiltro(pnlFIltro: FiltroView) {
@@ -138,6 +142,8 @@ abstract class FiltroView(val viewModel: LabelViewModel, val descricao: String):
     isSpacing = false
     isMargin = false
   }
+
+  abstract fun processaFiltro()
 }
 
 class FiltroFaixaCodigo(viewModel: LabelViewModel): FiltroView(viewModel, "Faixa de Código") {
@@ -151,14 +157,10 @@ class FiltroFaixaCodigo(viewModel: LabelViewModel): FiltroView(viewModel, "Faixa
       }
 
       edtCodigoF = integerField("Código Final")
-      button("Adicionar") {
-        alignment = Alignment.BOTTOM_RIGHT
-        addClickListener {
-          viewModel.addFaixaCodigo(edtCodigoI.value, edtCodigoF.value)
-        }
-      }
     }
   }
+
+  override fun processaFiltro() = viewModel.addFaixaCodigo(edtCodigoI.value, edtCodigoF.value)
 }
 
 class FiltroFaixaNome(viewModel: LabelViewModel): FiltroView(viewModel, "Faixa de Nome") {
@@ -173,17 +175,11 @@ class FiltroFaixaNome(viewModel: LabelViewModel): FiltroView(viewModel, "Faixa d
       edtNomeF = textField("Nome Final") {
         expandRatio = 1f
       }
-      button("Adicionar") {
-        //w = 10.em
-        alignment = Alignment.BOTTOM_RIGHT
-        addClickListener {
-          viewModel.addFaixaNome(edtNomeI.value, edtNomeF.value)
-        }
-      }
     }
   }
-}
 
+  override fun processaFiltro() = viewModel.addFaixaNome(edtNomeI.value, edtNomeF.value)
+}
 
 class FiltroNfe(viewModel: LabelViewModel): FiltroView(viewModel, "NF Entrada") {
   private lateinit var edtNfe: TextField
@@ -191,15 +187,10 @@ class FiltroNfe(viewModel: LabelViewModel): FiltroView(viewModel, "NF Entrada") 
   init {
     row {
       edtNfe = textField("Numero NF Entrada")
-
-      button("Adicionar") {
-        alignment = Alignment.BOTTOM_RIGHT
-        addClickListener {
-          viewModel.addFaixaNfe(edtNfe.value)
-        }
-      }
     }
   }
+
+  override fun processaFiltro() = viewModel.addFaixaNfe(edtNfe.value)
 }
 
 class FiltroFabricante(viewModel: LabelViewModel): FiltroView(viewModel, "Fabricante") {
@@ -208,15 +199,10 @@ class FiltroFabricante(viewModel: LabelViewModel): FiltroView(viewModel, "Fabric
   init {
     row {
       edtFabricante = integerField("Código do Fabricante")
-
-      button("Adicionar") {
-        alignment = Alignment.BOTTOM_RIGHT
-        addClickListener {
-          viewModel.addFaixaFabricante(edtFabricante.value)
-        }
-      }
     }
   }
+
+  override fun processaFiltro() = viewModel.addFaixaFabricante(edtFabricante.value)
 }
 
 class FiltroCentroLucro(viewModel: LabelViewModel): FiltroView(viewModel, "Centro de lucro") {
@@ -225,15 +211,10 @@ class FiltroCentroLucro(viewModel: LabelViewModel): FiltroView(viewModel, "Centr
   init {
     row {
       edtCentroLucro = integerField("Centro de lucro")
-
-      button("Adicionar") {
-        alignment = Alignment.BOTTOM_RIGHT
-        addClickListener {
-          viewModel.addFaixaCentroLucro(edtCentroLucro.value)
-        }
-      }
     }
   }
+
+  override fun processaFiltro() = viewModel.addFaixaCentroLucro(edtCentroLucro.value)
 }
 
 class FiltroTipoProduto(viewModel: LabelViewModel): FiltroView(viewModel, "Tipo de produto") {
@@ -242,14 +223,10 @@ class FiltroTipoProduto(viewModel: LabelViewModel): FiltroView(viewModel, "Tipo 
   init {
     row {
       edtTipo = integerField("Tipo do Produto")
-      button("Adicionar") {
-        alignment = Alignment.BOTTOM_RIGHT
-        addClickListener {
-          viewModel.addFaixaTipoProduto(edtTipo.value)
-        }
-      }
     }
   }
+
+  override fun processaFiltro() = viewModel.addFaixaTipoProduto(edtTipo.value)
 }
 
 class FiltroCodigoGrade(viewModel: LabelViewModel): FiltroView(viewModel, "Código e grade") {
@@ -271,14 +248,10 @@ class FiltroCodigoGrade(viewModel: LabelViewModel): FiltroView(viewModel, "Códi
       edtGrade = comboBox("Grade") {
         this.default()
       }
-      button("Adicionar") {
-        alignment = Alignment.BOTTOM_RIGHT
-        addClickListener {
-          viewModel.addFaixaCodigoGrade(edtCodigo.value, edtGrade.value)
-        }
-      }
     }
   }
+
+  override fun processaFiltro() = viewModel.addFaixaCodigoGrade(edtCodigo.value, edtGrade.value)
 }
 
 

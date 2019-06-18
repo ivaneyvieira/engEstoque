@@ -146,13 +146,13 @@ class Produto: BaseModel() {
       val prdnoF = codigoF?.lpad(16, " ") ?: return emptyList()
       return where().codigo.between(prdnoI, prdnoF)
         .findList()
+        .filtroCD()
     }
 
     fun findFaixaNome(nomeI: String?, nomeF: String?): List<Produto> {
-      val nomeStrI = nomeI ?: return emptyList()
-      val nomeStrF = nomeF ?: return emptyList()
       return where().vproduto.nome.between(nomeI, nomeF)
         .findList()
+        .filtroCD()
     }
 
     fun findFaixaFabricante(vendno: Int?): List<Produto> {
@@ -161,6 +161,7 @@ class Produto: BaseModel() {
         .mapNotNull {
           findProduto(it.codigo, it.grade)
         }
+        .filtroCD()
     }
 
     fun findFaixaCentroLucro(clno: Int?): List<Produto> {
@@ -169,6 +170,7 @@ class Produto: BaseModel() {
         .mapNotNull {
           findProduto(it.codigo, it.grade)
         }
+        .filtroCD()
     }
 
     fun findTipoProduto(typeno: Int?): List<Produto> {
@@ -177,6 +179,7 @@ class Produto: BaseModel() {
         .mapNotNull {
           findProduto(it.codigo, it.grade)
         }
+        .filtroCD()
     }
   }
 
@@ -232,6 +235,13 @@ class Produto: BaseModel() {
       val chave = saci.findBarcode(storeno, codigo, grade)
       return chave?.barcode
     }
+}
+
+private fun List<Produto>.filtroCD(): List<Produto> {
+  return this.filter {
+    it.localizacoes()
+      .contains(RegistryUserInfo.abreviacaoDefault)
+  }
 }
 
 data class LocProduto(val localizacao: String): Comparable<LocProduto> {
