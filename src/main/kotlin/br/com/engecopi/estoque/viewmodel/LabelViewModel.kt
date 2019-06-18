@@ -2,7 +2,6 @@ package br.com.engecopi.estoque.viewmodel
 
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.Nota
-import br.com.engecopi.estoque.model.Nota.Find
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.ui.views.LabelView
@@ -44,7 +43,7 @@ class LabelViewModel(view: LabelView): ViewModel(view) {
 
   fun addFaixaCodigoGrade(codigo: String?, grade: String?) = exec {
     val produto = Produto.findProduto(codigo, grade) ?: throw EViewModel("Produto não localizado")
-    listaProduto.add(produto)
+    if(!listaProduto.contains(produto)) listaProduto.add(produto)
   }
 
   fun clearProduto() = exec {
@@ -52,28 +51,29 @@ class LabelViewModel(view: LabelView): ViewModel(view) {
   }
 
   fun pesquisaGrades(codigo: String?): List<String> {
-    return Produto.findProdutos(codigo).map { it.grade}
+    return Produto.findProdutos(codigo)
+      .map {it.grade}
   }
 
   fun impressao(): String? {
     val etiquetas = Etiqueta.findByStatus(StatusNota.PRODUTO)
     val template = etiquetas.joinToString(separator = "\n") {it.template}
 
-    return listaProduto
-      .filter { !it.barcodeGtin.isNullOrBlank()}
+    return listaProduto.filter {!it.barcodeGtin.isNullOrBlank()}
       .joinToString(separator = "\n") {
-      template.replace("[Codigo]", it.codigo.trim())
-        .replace("[Grade]", it.grade)
-        .replace("[Descricao]", it.descricao ?: "")
-        .replace("[Gtin]", it.barcodeGtin ?: "")
-    }
+        template.replace("[Codigo]", it.codigo.trim())
+          .replace("[Grade]", it.grade)
+          .replace("[Descricao]", it.descricao ?: "")
+          .replace("[Gtin]", it.barcodeGtin ?: "")
+      }
   }
 
   fun addFaixaNfe(nfe: String?) = exec {
     listaProduto.clear()
-    val produtos = Nota.findNotaEntradaSaci(nfe).mapNotNull{
-      Produto.findProduto(it.prdno, it.grade)
-    }
+    val produtos = Nota.findNotaEntradaSaci(nfe)
+      .mapNotNull {
+        Produto.findProduto(it.prdno, it.grade)
+      }
     listaProduto.addAll(produtos)
   }
 }
