@@ -21,6 +21,7 @@ import com.github.mvysny.karibudsl.v8.isMargin
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.verticalLayout
 import com.vaadin.shared.ui.ValueChangeMode
+import com.vaadin.shared.ui.ValueChangeMode.BLUR
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.Grid
@@ -154,9 +155,19 @@ class FiltroFaixaCodigo(viewModel: LabelViewModel): FiltroView(viewModel, "Faixa
     row {
       edtCodigoI = integerField("Código Inicial") {
         isExpanded = false
+
+        addValueChangeListener {
+          processaFiltro()
+        }
       }
 
-      edtCodigoF = integerField("Código Final")
+      edtCodigoF = integerField("Código Final"){
+        isExpanded = false
+
+        addValueChangeListener {
+          processaFiltro()
+        }
+      }
     }
   }
 
@@ -171,9 +182,18 @@ class FiltroFaixaNome(viewModel: LabelViewModel): FiltroView(viewModel, "Faixa d
     row {
       edtNomeI = textField("Nome Incial") {
         expandRatio = 1f
+
+        valueChangeMode = BLUR
+        addValueChangeListener {
+          processaFiltro()
+        }
       }
       edtNomeF = textField("Nome Final") {
         expandRatio = 1f
+        valueChangeMode = BLUR
+        addValueChangeListener {
+          processaFiltro()
+        }
       }
     }
   }
@@ -186,7 +206,12 @@ class FiltroNfe(viewModel: LabelViewModel): FiltroView(viewModel, "NF Entrada") 
 
   init {
     row {
-      edtNfe = textField("Numero NF Entrada")
+      edtNfe = textField("Numero NF Entrada"){
+        valueChangeMode = BLUR
+        addValueChangeListener {
+          processaFiltro()
+        }
+      }
     }
   }
 
@@ -198,7 +223,11 @@ class FiltroFabricante(viewModel: LabelViewModel): FiltroView(viewModel, "Fabric
 
   init {
     row {
-      edtFabricante = integerField("Código do Fabricante")
+      edtFabricante = integerField("Código do Fabricante"){
+        addValueChangeListener {
+          processaFiltro()
+        }
+      }
     }
   }
 
@@ -210,7 +239,11 @@ class FiltroCentroLucro(viewModel: LabelViewModel): FiltroView(viewModel, "Centr
 
   init {
     row {
-      edtCentroLucro = integerField("Centro de lucro")
+      edtCentroLucro = integerField("Centro de lucro"){
+        addValueChangeListener {
+          processaFiltro()
+        }
+      }
     }
   }
 
@@ -222,7 +255,11 @@ class FiltroTipoProduto(viewModel: LabelViewModel): FiltroView(viewModel, "Tipo 
 
   init {
     row {
-      edtTipo = integerField("Tipo do Produto")
+      edtTipo = integerField("Tipo do Produto"){
+        addValueChangeListener {
+          processaFiltro()
+        }
+      }
     }
   }
 
@@ -236,17 +273,21 @@ class FiltroCodigoGrade(viewModel: LabelViewModel): FiltroView(viewModel, "Códi
   init {
     row {
       edtCodigo = textField("Código") {
-        this.valueChangeMode = ValueChangeMode.BLUR
+        this.valueChangeMode = BLUR
         addValueChangeListener {
           if(it.isUserOriginated) {
             val grades = viewModel.pesquisaGrades(it.value)
             edtGrade.setItems(grades)
             edtGrade.value = grades.firstOrNull()
+            processaFiltro()
           }
         }
       }
       edtGrade = comboBox("Grade") {
         this.default()
+        addValueChangeListener {
+          processaFiltro()
+        }
       }
     }
   }
