@@ -366,6 +366,10 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
               expandRatio = 1
               caption = "Código"
             }
+            addColumnFor(ProdutoVO::gtin) {
+              expandRatio = 1
+              caption = "Gtin"
+            }
             addColumnFor(ProdutoVO::descricaoProduto) {
               expandRatio = 5
               caption = "Descrição"

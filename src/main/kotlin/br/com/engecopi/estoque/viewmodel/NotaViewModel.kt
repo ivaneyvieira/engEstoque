@@ -413,8 +413,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
       }
       produtos.addAll(produtosVo.asSequence().filter {
         it.quantidade != 0 && it.codigo != "" && it.localizacao?.localizacao?.startsWith(abreviacaoNota) ?: false
-      }.sortedWith(compareBy(ProdutoVO::isSave,  ProdutoVO::codigo, ProdutoVO::grade, ProdutoVO::localizacao))
-                        .toList())
+      }.sortedWith(compareBy(ProdutoVO::isSave, ProdutoVO::codigo, ProdutoVO::grade, ProdutoVO::localizacao)).toList())
     }
   }
 
@@ -493,4 +492,6 @@ class ProdutoVO(val produto: Produto?, val tipoMov: TipoMov, var localizacao: Lo
   val descricaoProduto: String
     get() = produto?.descricao ?: ""
   var value: ItemNota? = null
+  val gtin
+    get() = produto?.barcodeGtin ?: ""
 }
