@@ -1,6 +1,5 @@
 package br.com.engecopi.estoque.model
 
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
@@ -99,7 +98,7 @@ class ItemNota: BaseModel() {
       //TODO Depois pensar na possibilidade de mais de um
       nota ?: return null
       produto ?: return null
-      return where().fetchQuery("nota")
+      return where().nota.fetchQuery()
         .nota.id.eq(nota.id)
         .produto.id.eq(produto.id)
         .findList()
@@ -109,7 +108,7 @@ class ItemNota: BaseModel() {
     fun find(notaSaci: NotaSaci?): ItemNota? {
       notaSaci ?: return null
       val produtoSaci = Produto.findProduto(notaSaci.prdno, notaSaci.grade) ?: return null
-      return where().fetchQuery("nota")
+      return where().nota.fetchQuery()
         .nota.numero.eq("${notaSaci.numero}/${notaSaci.serie}")
         .nota.loja.equalTo(RegistryUserInfo.lojaDefault)
         .produto.equalTo(produtoSaci)
@@ -139,7 +138,7 @@ class ItemNota: BaseModel() {
       println("####################################################################")
       val tipoMov = notaSaci.tipoNota()?.tipoMov ?: return false
       val nota = Nota.findNota(numeroSerie, tipoMov) ?: return false
-      val produto = Produto.findProduto(notaSaci.prdno, notaSaci.grade)?: return false
+      val produto = Produto.findProduto(notaSaci.prdno, notaSaci.grade) ?: return false
       return where().produto.eq(produto)
         .nota.eq(nota)
         .exists()

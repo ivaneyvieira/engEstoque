@@ -21,6 +21,7 @@ import com.vaadin.annotations.Theme
 import com.vaadin.annotations.Title
 import com.vaadin.annotations.VaadinServletConfiguration
 import com.vaadin.annotations.Viewport
+import com.vaadin.icons.VaadinIcons.BARCODE
 import com.vaadin.icons.VaadinIcons.INBOX
 import com.vaadin.icons.VaadinIcons.NEWSPAPER
 import com.vaadin.icons.VaadinIcons.OUT
@@ -29,7 +30,6 @@ import com.vaadin.icons.VaadinIcons.PACKAGE
 import com.vaadin.icons.VaadinIcons.PAPERCLIP
 import com.vaadin.icons.VaadinIcons.TRUCK
 import com.vaadin.icons.VaadinIcons.USER
-import com.vaadin.icons.VaadinIcons.BARCODE
 import com.vaadin.navigator.Navigator
 import com.vaadin.navigator.PushStateNavigation
 import com.vaadin.navigator.ViewDisplay
@@ -101,7 +101,7 @@ class EstoqueUI: UI() {
 
         if(user.expedicao || user.admin) {
           section("Expedição") {
-            if(!user.estoque || user.admin){
+            if(!user.estoque || user.admin) {
               menuButton("Nota Fiscal", NEWSPAPER, view = NFExpedicaoView::class.java)
             }
             menuButton("Entrega ao Cliente", TRUCK, view = EntregaClienteView::class.java)
@@ -122,8 +122,10 @@ class EstoqueUI: UI() {
             }
           }
         }
-        section("Etiquetas"){
-          menuButton("Imprimir", BARCODE, view = LabelView::class.java)
+        if(user.etiqueta || user.admin) {
+          section("Etiquetas") {
+            menuButton("Imprimir", BARCODE, view = LabelView::class.java)
+          }
         }
       }
       // Read more about navigators here: https://github.com/mvysny/karibu-dsl

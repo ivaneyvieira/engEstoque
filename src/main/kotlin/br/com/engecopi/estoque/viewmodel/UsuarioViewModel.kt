@@ -36,7 +36,7 @@ class UsuarioViewModel(view: IView): CrudViewModel<Usuario, QUsuario, UsuarioCru
       usuario.series = bean.series.toList()
       usuario.expedicao = bean.expedicao
       usuario.admin = bean.admin ?: false
-      usuario.travaEtiqueta = bean.travaEtiqueta
+      usuario.etiqueta = bean.etiqueta
       usuario.update()
     }
   }
@@ -50,7 +50,7 @@ class UsuarioViewModel(view: IView): CrudViewModel<Usuario, QUsuario, UsuarioCru
       this.estoque = bean.estoque
       this.expedicao = bean.expedicao
       this.admin = bean.admin ?: false
-      this.travaEtiqueta = bean.travaEtiqueta
+      this.etiqueta = bean.etiqueta
     }
     usuario.insert()
   }
@@ -69,7 +69,7 @@ class UsuarioViewModel(view: IView): CrudViewModel<Usuario, QUsuario, UsuarioCru
       this.estoque = usuario.estoque
       this.expedicao = usuario.expedicao
       this.admin = usuario.admin
-      this.travaEtiqueta = usuario.travaEtiqueta
+      this.etiqueta = usuario.etiqueta
     }
   }
 
@@ -113,7 +113,7 @@ class UsuarioCrudVo: EntityVo<Usuario>() {
   var estoque: Boolean = true
   var expedicao: Boolean = false
   var admin: Boolean? = false
-  var travaEtiqueta = false
+  var etiqueta = false
   val tipoUsuarioStr = if(estoque) if(expedicao) "Estoque/Expedição"
   else "Estoque"
   else if(expedicao) "Expedição"
