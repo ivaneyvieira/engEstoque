@@ -6,7 +6,6 @@ import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
-import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.viewmodel.ProdutoVO
 import br.com.engecopi.estoque.viewmodel.SaidaViewModel
@@ -318,11 +317,15 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
             //nota.refresh()
             val itens = nota.itens.filter {it.localizacao.startsWith(abreviacao)}
 
-            this.dataProvider = ListDataProvider(itens.map {item ->
-              ProdutoVO(item.produto, item.tipoMov ?: SAIDA, LocProduto(item.localizacao), item.id != 0L).apply {
+            this.dataProvider = ListDataProvider(itens.mapNotNull {item ->
+              val produto = item.produto
+              val statusNota = item.status
+              val isSave = item.id != 0L
+              if(produto != null) ProdutoVO(produto, statusNota, LocProduto(item.localizacao), isSave).apply {
                 this.quantidade = item.quantidade
                 this.value = item
               }
+              else null
             })
             removeAllColumns()
             val selectionModel = setSelectionMode(MULTI)

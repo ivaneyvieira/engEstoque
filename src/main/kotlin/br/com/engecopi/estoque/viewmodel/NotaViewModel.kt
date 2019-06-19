@@ -12,6 +12,8 @@ import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.Repositories
 import br.com.engecopi.estoque.model.StatusNota
+import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
+import br.com.engecopi.estoque.model.StatusNota.RECEBIDO
 import br.com.engecopi.estoque.model.TipoMov
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
@@ -377,39 +379,41 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
       produtos.clear()
       val produtosVo = notaProdutoSaci.flatMap {notaSaci ->
         val prd = Produto.findProduto(notaSaci.prdno, notaSaci.grade)
-        val localizacoes = prd?.localizacoes()
-          .orEmpty()
-          .sorted()
-        val ultimaLocalizacao = localizacoes.sorted().lastOrNull() ?: ""
-        return@flatMap if(tipoNota.tipoMov == SAIDA) {
-          var quant = notaSaci.quant ?: 0
-          val produtosLocais = localizacoes.asSequence()
-            .map {localizacao ->
-              ProdutoVO(prd, tipoNota.tipoMov, LocProduto(localizacao), notaSaci.isSave()).apply {
-                val saldo = saldo
-                if(quant > 0) if(quant > saldo) {
-                  if(localizacao == ultimaLocalizacao) {
+        if(prd == null) emptyList()
+        else {
+          val localizacoes = prd.localizacoes()
+            .sorted()
+          val ultimaLocalizacao = localizacoes.sorted().lastOrNull() ?: ""
+          if(tipoNota.tipoMov == SAIDA) {
+            var quant = notaSaci.quant ?: 0
+            val produtosLocais = localizacoes.asSequence()
+              .map {localizacao ->
+                ProdutoVO(prd, CONFERIDA, LocProduto(localizacao), notaSaci.isSave()).apply {
+                  val saldo = saldo
+                  if(quant > 0) if(quant > saldo) {
+                    if(localizacao == ultimaLocalizacao) {
+                      quantidade = quant
+                      quant = 0
+                    }
+                    else {
+                      quantidade = saldo
+                      quant -= saldo
+                    }
+                  }
+                  else {
                     quantidade = quant
                     quant = 0
                   }
-                  else {
-                    quantidade = saldo
-                    quant -= saldo
-                  }
+                  else quantidade = 0
                 }
-                else {
-                  quantidade = quant
-                  quant = 0
-                }
-                else quantidade = 0
               }
-            }
-            .toList()
-          produtosLocais
+              .toList()
+            produtosLocais
+          }
+          else listOf(ProdutoVO(prd, RECEBIDO, LocProduto(ultimaLocalizacao), notaSaci.isSave()).apply {
+            quantidade = notaSaci.quant ?: 0
+          })
         }
-        else listOf(ProdutoVO(prd, tipoNota.tipoMov, LocProduto(ultimaLocalizacao), notaSaci.isSave()).apply {
-          quantidade = notaSaci.quant ?: 0
-        })
       }
       produtos.addAll(produtosVo.asSequence().filter {
         it.quantidade != 0 && it.codigo != "" && it.localizacao?.localizacao?.startsWith(abreviacaoNota) ?: false
@@ -477,21 +481,23 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   var status: StatusNota? = null
 }
 
-class ProdutoVO(val produto: Produto?, val tipoMov: TipoMov, var localizacao: LocProduto?, val isSave: Boolean) {
-  val codigo: String = produto?.codigo ?: ""
-  val grade: String = produto?.grade ?: ""
+class ProdutoVO(val produto: Produto, val statusNota: StatusNota, var localizacao: LocProduto?, val isSave: Boolean) {
+  val codigo: String = produto.codigo
+  val grade: String = produto.grade
   var quantidade: Int = 0
   var selecionado: Boolean = false
-  val saldoInsuficiente: Boolean
-    get() = if(tipoMov == SAIDA) saldo < quantidade
-    else false
   val saldo: Int
-    get() = produto?.saldoLoja(localizacao?.localizacao) ?: 0
+    get() = produto.saldoLoja(localizacao?.localizacao)  -
+            if(isSave) quantidade * multipicador else 0
+  val tipoMov
+    get() = statusNota.tipoMov
+  val multipicador
+    get() = statusNota.multiplicador
   val saldoFinal
-    get() = saldo + if(tipoMov == SAIDA) -quantidade else quantidade
+    get() = saldo + quantidade * multipicador
   val descricaoProduto: String
-    get() = produto?.descricao ?: ""
+    get() = produto.descricao ?: ""
   var value: ItemNota? = null
   val gtin
-    get() = produto?.barcodeGtin ?: ""
+    get() = produto.barcodeGtin ?: ""
 }
