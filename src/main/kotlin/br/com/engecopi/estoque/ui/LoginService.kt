@@ -2,7 +2,6 @@ package br.com.engecopi.estoque.ui
 
 import br.com.engecopi.estoque.model.LoginInfo
 import br.com.engecopi.estoque.model.Usuario
-import br.com.engecopi.framework.ui.view.expand
 import br.com.engecopi.saci.saci
 import com.github.mvysny.karibudsl.v8.alignment
 import com.github.mvysny.karibudsl.v8.button
@@ -77,7 +76,7 @@ class LoginForm(private val appTitle: String): VerticalLayout() {
           isResponsive = true
           username = textField("Usuário") {
             isResponsive = true
-            expand = 1
+            expandRatio = 1f
             w = fillParent
             icon = VaadinIcons.USER
             styleName = ValoTheme.TEXTFIELD_INLINE_ICON

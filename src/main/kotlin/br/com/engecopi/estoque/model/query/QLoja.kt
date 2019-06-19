@@ -14,11 +14,12 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for Loja.
- *
+ * 
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
-class QLoja: TQRootBean<Loja, QLoja> {
+class QLoja : TQRootBean<Loja, QLoja> {
+
   companion object {
     /**
      * shared 'Alias' instance used to provide
@@ -37,18 +38,19 @@ class QLoja: TQRootBean<Loja, QLoja> {
   lateinit var usuarios: QAssocUsuario<QLoja>
   lateinit var viewProdutoLoc: QAssocViewProdutoLoc<QLoja>
 
+
   /**
    * Construct with a given Database.
    */
-  constructor(database: Database): super(Loja::class.java, database)
+  constructor(database: Database) : super(Loja::class.java, database)
 
   /**
    * Construct using the default Database.
    */
-  constructor(): super(Loja::class.java)
+  constructor() : super(Loja::class.java)
 
   /**
    * Construct for Alias.
    */
-  private constructor(dummy: Boolean): super(dummy)
+  private constructor(dummy: Boolean) : super(dummy)
 }

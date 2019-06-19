@@ -55,6 +55,7 @@ class Usuario: BaseModel() {
   var admin: Boolean = false
   var estoque: Boolean = true
   var expedicao: Boolean = false
+  var etiqueta: Boolean = true
   val nome: String?
     @Transient get() = usuarioSaci()?.name
 

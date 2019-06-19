@@ -6,7 +6,6 @@ import br.com.engecopi.estoque.viewmodel.EtiquetaViewModel
 import br.com.engecopi.estoque.viewmodel.EtiquetaVo
 import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.default
-import br.com.engecopi.framework.ui.view.expand
 import br.com.engecopi.framework.ui.view.row
 import br.com.engecopi.utils.SystemUtils
 import com.github.mvysny.karibudsl.v8.AutoView
@@ -15,6 +14,7 @@ import com.github.mvysny.karibudsl.v8.bind
 import com.github.mvysny.karibudsl.v8.button
 import com.github.mvysny.karibudsl.v8.checkBox
 import com.github.mvysny.karibudsl.v8.comboBox
+import com.github.mvysny.karibudsl.v8.expandRatio
 import com.github.mvysny.karibudsl.v8.h
 import com.github.mvysny.karibudsl.v8.px
 import com.github.mvysny.karibudsl.v8.textArea
@@ -34,25 +34,25 @@ class EtiquetaView: CrudLayoutView<EtiquetaVo, EtiquetaViewModel>() {
         h = 600.px
         row {
           textField("Título") {
-            expand = 4
+            expandRatio = 4f
             bind(binder).bind(EtiquetaVo::titulo)
           }
         }
         row {
           comboBox<StatusNota>("Tipo") {
-            expand = 2
+            expandRatio = 2f
             default {it.descricao}
             setItems(StatusNota.values().toList())
             bind(binder).bind(EtiquetaVo::statusNota)
           }
           checkBox("Etiqueta padrão") {
-            expand = 2
+            expandRatio = 2f
             alignment = Alignment.BOTTOM_LEFT
             bind(binder).bind(EtiquetaVo::etiquetaDefault)
           }
           button("Ajuda") {
             alignment = Alignment.BOTTOM_RIGHT
-            expand = 1
+            expandRatio = 1f
             icon = VaadinIcons.BOOK
             addClickListener {
               showInfo(SystemUtils.readFile("/html/variaveis.html") ?: "")
@@ -62,7 +62,7 @@ class EtiquetaView: CrudLayoutView<EtiquetaVo, EtiquetaViewModel>() {
         row {
           textArea("Template") {
             h = 400.px
-            expand = 1
+            expandRatio = 1f
             bind(binder).bind(EtiquetaVo::template)
           }
         }

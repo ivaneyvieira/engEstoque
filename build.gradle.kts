@@ -1,4 +1,3 @@
-import com.sun.javafx.scene.CameraHelper.project
 import io.ebean.gradle.EnhancePluginExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -50,6 +49,7 @@ vaadin {
   version = "8.5.2"
 }
 
+
 configure<EnhancePluginExtension> {
   debugLevel = 0
 }
@@ -81,9 +81,9 @@ dependencies {
   //testCompile "com.github.kaributesting:karibu-testing-v8:0.4.15"
   testImplementation("com.github.mvysny.dynatest:dynatest:0.8")
 
-  compile("io.ebean:ebean:11.38.1")
+  compile("io.ebean:ebean:11.39.3")
   // compile "io.ebean:querybean-generator:11.37.1"
-  compile("io.ebean:ebean-querybean:11.38.1")
+  compile("io.ebean:ebean-querybean:11.39.1")
 
   //compile "io.ebean:ebean-annotation:4.7"
   compile("io.ebean.tools:finder-generator:11.34.1")

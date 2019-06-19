@@ -4,7 +4,7 @@ import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.query.QItemNota
 import io.ebean.Finder
 
-open class ItemNotaFinder: Finder<Long, ItemNota>(ItemNota::class.java) {
+open class ItemNotaFinder : Finder<Long, ItemNota>(ItemNota::class.java) {
   /**
    * Start a new typed query.
    */

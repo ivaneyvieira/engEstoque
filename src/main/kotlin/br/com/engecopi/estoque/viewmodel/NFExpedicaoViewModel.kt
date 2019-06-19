@@ -25,6 +25,7 @@ import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.saci.beans.NotaSaci
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewNotaExpedicao, NFExpedicaoVo>(view) {
@@ -120,10 +121,12 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
           val item = ItemNota.find(notaSaci) ?: ItemNota.createItemNota(notaSaci, nota)
           val abreviacao = item?.abreviacao
           return@mapNotNull if(abreviacoes.contains(abreviacao)) item?.apply {
-            status = INCLUIDA
-            impresso = false
-            usuario = usuarioDefault
-            save()
+            this.status = INCLUIDA
+            this.impresso = false
+            this.usuario = usuarioDefault
+            this.data = LocalDate.now()
+            this.hora = LocalTime.now()
+            this.save()
           }
           else null
         }
@@ -253,4 +256,6 @@ class NFExpedicaoVo: EntityVo<ViewNotaExpedicao>() {
   var usuario: Usuario? = null
   var abreviacao: String? = ""
   var impresso: Boolean = false
+  val dataHoraLancamento
+    get() = LocalDateTime.of(data, hora)
 }

@@ -1,6 +1,5 @@
 package br.com.engecopi.estoque.model
 
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
@@ -96,9 +95,10 @@ class ItemNota: BaseModel() {
 
   companion object Find: ItemNotaFinder() {
     fun find(nota: Nota?, produto: Produto?): ItemNota? {
+      //TODO Depois pensar na possibilidade de mais de um
       nota ?: return null
       produto ?: return null
-      return where().fetchQuery("nota")
+      return where().nota.fetchQuery()
         .nota.id.eq(nota.id)
         .produto.id.eq(produto.id)
         .findList()
@@ -108,7 +108,7 @@ class ItemNota: BaseModel() {
     fun find(notaSaci: NotaSaci?): ItemNota? {
       notaSaci ?: return null
       val produtoSaci = Produto.findProduto(notaSaci.prdno, notaSaci.grade) ?: return null
-      return where().fetchQuery("nota")
+      return where().nota.fetchQuery()
         .nota.numero.eq("${notaSaci.numero}/${notaSaci.serie}")
         .nota.loja.equalTo(RegistryUserInfo.lojaDefault)
         .produto.equalTo(produtoSaci)
@@ -132,10 +132,15 @@ class ItemNota: BaseModel() {
     }
 
     fun isSave(notaSaci: NotaSaci): Boolean {
-      return where().produto.codigo.eq(notaSaci.prdno?.padStart(16, ' '))
-        .produto.grade.eq(notaSaci.grade)
-        .nota.numero.eq(notaSaci.numeroSerie())
-        .nota.loja.equalTo(lojaDefault)
+      val numeroSerie = notaSaci.numeroSerie()
+      println("####################################################################")
+      println("Nota e produto $numeroSerie")
+      println("####################################################################")
+      val tipoMov = notaSaci.tipoNota()?.tipoMov ?: return false
+      val nota = Nota.findNota(numeroSerie, tipoMov) ?: return false
+      val produto = Produto.findProduto(notaSaci.prdno, notaSaci.grade) ?: return false
+      return where().produto.eq(produto)
+        .nota.eq(nota)
         .exists()
     }
   }
@@ -219,6 +224,7 @@ enum class StatusNota(val descricao: String, val tipoMov: TipoMov, val multiplic
   INCLUIDA("Incluída", SAIDA, 0),
   CONFERIDA("Conferida", SAIDA, -1),
   ENTREGUE("Entregue", SAIDA, -1),
-  ENT_LOJA("Entregue na Loja", SAIDA, 0)
+  ENT_LOJA("Entregue na Loja", SAIDA, 0),
+  PRODUTO("Etiqueta Produto", SAIDA, 0)
 }
 

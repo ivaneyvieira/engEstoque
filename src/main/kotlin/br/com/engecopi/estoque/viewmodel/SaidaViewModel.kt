@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.viewmodel
 
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.NotaItens
+import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
@@ -14,6 +15,8 @@ import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.utils.mid
+import java.time.LocalDate
+import java.time.LocalTime
 
 class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE, CONFERIDA, abreviacaoDefault) {
   override fun newBean(): SaidaVo {
@@ -36,19 +39,19 @@ class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE,
     else notaItens
   }
 
-  private fun processaKeyNumero(key: String): NotaItens {
-    val notasSaci = Nota.findNotaSaidaSaci(key)
+  private fun processaKeyNumero(numeroNota: String): NotaItens {
+    val notasSaci = Nota.findNotaSaidaSaci(numeroNota)
       .filter {loc ->
         loc.localizacaoes()
           .any {it.abreviacao == abreviacaoDefault}
       }
-    val notaSaci = notasSaci.firstOrNull()
-    return if(usuarioDefault.isTipoCompativel(notaSaci?.tipoNota())) Nota.createNotaItens(notasSaci)
+    val notaSaci = notasSaci.firstOrNull() ?: return NotaItens.VAZIO
+    return if(usuarioDefault.isTipoCompativel(notaSaci.tipoNota())) Nota.createNotaItens(notasSaci)
     else NotaItens.VAZIO
   }
 
   private fun processaKeyBarcodeConferencia(key: String): NotaItens {
-    val item = ViewCodBarConferencia.findNota(key) ?: return NotaItens(null, emptyList())
+    val item = ViewCodBarConferencia.findNota(key) ?: return NotaItens.VAZIO
     if(item.abreviacao != abreviacaoDefault) throw EViewModel("Esta nota não pertence ao cd $abreviacaoDefault")
     val nota = Nota.findSaida(item.numero) ?: return NotaItens.VAZIO
     return NotaItens(nota, nota.itensNota())
@@ -70,18 +73,25 @@ class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE,
       produtoVO.value?.run {
         if(this.id != 0L) refresh()
 
-        status = situacao
-        impresso = false
-        usuario = usuarioDefault
-        localizacao = produtoVO.localizacao?.localizacao ?: ""
-        if(quantidade >= produtoVO.quantidade) {
-          quantidade = produtoVO.quantidade
-          save()
-          recalculaSaldos()
+        this.status = situacao
+        this.impresso = false
+        this.usuario = usuarioDefault
+        this.data = LocalDate.now()
+        this.hora = LocalTime.now()
+        this.localizacao = produtoVO.localizacao?.localizacao ?: ""
+        if(this.quantidade >= produtoVO.quantidade) {
+          this.quantidade = produtoVO.quantidade
+          this.save()
+          this.recalculaSaldos()
         }
         else showWarning("A quantidade do produto ${produto?.codigo} não pode ser maior que $quantidade")
       }
     }
+  }
+
+  fun processaBarcodeProduto(barcode: String?): Produto? {
+    return if(barcode.isNullOrBlank()) null
+    else Produto.findBarcode(barcode)
   }
 }
 

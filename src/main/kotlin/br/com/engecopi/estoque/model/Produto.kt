@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.model
 
 import br.com.engecopi.estoque.model.finder.ProdutoFinder
 import br.com.engecopi.framework.model.BaseModel
+import br.com.engecopi.saci.saci
 import br.com.engecopi.utils.lpad
 import io.ebean.annotation.Cache
 import io.ebean.annotation.CacheQueryTuning
@@ -94,11 +95,17 @@ class Produto: BaseModel() {
   companion object Find: ProdutoFinder() {
     fun findProduto(codigo: String?, grade: String?): Produto? {
       codigo ?: return null
-      return where().setUseQueryCache(true)
-        .codigo.eq(codigo.lpad(16, " "))
+      return where().codigo.eq(codigo.trim().lpad(16, " "))
         .grade.eq(grade ?: "")
         .findList()
         .firstOrNull()
+    }
+
+    fun findBarcode(barcode: String?): Produto? {
+      val storeno = RegistryUserInfo.usuarioDefault.loja?.numero ?: return null
+      barcode ?: return null
+      val chave = saci.findBarcode(storeno, barcode) ?: return null
+      return findProduto(chave.codigo, chave.grade)
     }
 
     fun findProdutos(codigo: String?): List<Produto> {
@@ -132,6 +139,47 @@ class Produto: BaseModel() {
     fun createProduto(codigoProduto: String?, gradeProduto: String?): Produto? {
       val produtoSaci = ViewProdutoSaci.find(codigoProduto, gradeProduto)
       return createProduto(produtoSaci)
+    }
+
+    fun findFaixaCodigo(codigoI: String?, codigoF: String?): List<Produto> {
+      val prdnoI = codigoI?.lpad(16, " ") ?: return emptyList()
+      val prdnoF = codigoF?.lpad(16, " ") ?: return emptyList()
+      return where().codigo.between(prdnoI, prdnoF)
+        .findList()
+        .filtroCD()
+    }
+
+    fun findFaixaNome(nomeI: String?, nomeF: String?): List<Produto> {
+      return where().vproduto.nome.between(nomeI, nomeF)
+        .findList()
+        .filtroCD()
+    }
+
+    fun findFaixaFabricante(vendno: Int?): List<Produto> {
+      vendno ?: return emptyList()
+      return saci.findFornecedor(vendno)
+        .mapNotNull {
+          findProduto(it.codigo, it.grade)
+        }
+        .filtroCD()
+    }
+
+    fun findFaixaCentroLucro(clno: Int?): List<Produto> {
+      clno ?: return emptyList()
+      return saci.findCentroLucro(clno)
+        .mapNotNull {
+          findProduto(it.codigo, it.grade)
+        }
+        .filtroCD()
+    }
+
+    fun findTipoProduto(typeno: Int?): List<Produto> {
+      typeno ?: return emptyList()
+      return saci.findTipoProduto(typeno)
+        .mapNotNull {
+          findProduto(it.codigo, it.grade)
+        }
+        .filtroCD()
     }
   }
 
@@ -179,6 +227,20 @@ class Produto: BaseModel() {
       if(prefix.count() == 1) return prefix[0]
     }
     return ""
+  }
+
+  val barcodeGtin
+    get(): String? {
+      val storeno = RegistryUserInfo.usuarioDefault.loja?.numero ?: return null
+      val chave = saci.findBarcode(storeno, codigo, grade)
+      return chave?.barcode
+    }
+}
+
+private fun List<Produto>.filtroCD(): List<Produto> {
+  return this.filter {
+    it.localizacoes()
+      .contains(RegistryUserInfo.abreviacaoDefault)
   }
 }
 

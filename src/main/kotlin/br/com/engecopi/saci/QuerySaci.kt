@@ -1,11 +1,14 @@
 package br.com.engecopi.saci
 
+import br.com.engecopi.saci.beans.ChaveProduto
 import br.com.engecopi.saci.beans.LojaSaci
 import br.com.engecopi.saci.beans.NfsKey
 import br.com.engecopi.saci.beans.NotaSaci
 import br.com.engecopi.saci.beans.UserSaci
+import br.com.engecopi.saci.beans.findChave
 import br.com.engecopi.utils.DB
 import br.com.engecopi.utils.localDate
+import br.com.engecopi.utils.lpad
 import java.time.LocalDate
 
 class QuerySaci: QueryDB(driver, url, username, password) {
@@ -34,7 +37,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     val dtEmissao = notaSaci.dt_emissao?.localDate() ?: return false
     val date = notaSaci.date?.localDate() ?: return false
     val dataLimite = LocalDate.now()
-      .minusDays(15)
+      .minusDays(45)
     return date.isAfter(dataLimite) || dtEmissao.isAfter(dataLimite)
   }
 
@@ -102,6 +105,51 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }?.let {key ->
       findNotaSaida(key.storeno, key.nfno, key.nfse, liberaNotasAntigas)
     } ?: emptyList()
+  }
+
+  fun findBarcode(storeno: Int, barcode: String): ChaveProduto? {
+    val sql = "/sqlSaci/findBarcode.sql"
+    return query(sql) {q ->
+      q.addParameter("storeno", storeno)
+        .addParameter("barcode", barcode.lpad(16, " "))
+        .executeAndFetch(ChaveProduto::class.java)
+        .findChave()
+    }
+  }
+
+  fun findBarcode(storeno: Int, prdno: String, grade: String): ChaveProduto? {
+    val sql = "/sqlSaci/findBarcode2.sql"
+    return query(sql) {q ->
+      q.addParameter("storeno", storeno)
+        .addParameter("prdno", prdno)
+        .addParameter("grade", grade)
+        .executeAndFetch(ChaveProduto::class.java)
+        .findChave()
+    }
+  }
+
+  fun findFornecedor(vendno: Int): List<ChaveProduto> {
+    val sql = "/sqlSaci/findFornecedor.sql"
+    return query(sql) {q ->
+      q.addParameter("vendno", vendno)
+        .executeAndFetch(ChaveProduto::class.java)
+    }
+  }
+
+  fun findCentroLucro(clno: Int): List<ChaveProduto> {
+    val sql = "/sqlSaci/findCentroLucro.sql"
+    return query(sql) {q ->
+      q.addParameter("clno", clno)
+        .executeAndFetch(ChaveProduto::class.java)
+    }
+  }
+
+  fun findTipoProduto(typeno: Int): List<ChaveProduto> {
+    val sql = "/sqlSaci/findTipoProduto.sql"
+    return query(sql) {q ->
+      q.addParameter("typeno", typeno)
+        .executeAndFetch(ChaveProduto::class.java)
+    }
   }
 
   companion object {

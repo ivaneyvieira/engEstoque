@@ -8,7 +8,6 @@ import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
 import br.com.engecopi.framework.ui.view.dateFormat
 import br.com.engecopi.framework.ui.view.default
-import br.com.engecopi.framework.ui.view.expand
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.intFormat
 import br.com.engecopi.framework.ui.view.row
@@ -17,6 +16,7 @@ import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.bind
 import com.github.mvysny.karibudsl.v8.comboBox
 import com.github.mvysny.karibudsl.v8.dateField
+import com.github.mvysny.karibudsl.v8.expandRatio
 import com.github.mvysny.karibudsl.v8.px
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.verticalLayout
@@ -43,26 +43,26 @@ class EntregaClienteEditorView: NotaView<EntregaClienteVo, EntregaClienteEditorV
               notaFiscalField(operation, binder)
               lojaField(operation, binder)
               comboBox<TipoNota>("Tipo") {
-                expand = 2
+                expandRatio = 2f
                 default {it.descricao}
                 isReadOnly = true
                 setItems(TipoNota.valuesSaida())
                 bind(binder).bind(EntregaClienteVo::tipoNota)
               }
               dateField("Data") {
-                expand = 1
+                expandRatio = 1f
                 isReadOnly = true
                 bind(binder).bind(EntregaClienteVo::dataNota.name)
               }
               textField("Rota") {
-                expand = 1
+                expandRatio = 1f
                 isReadOnly = true
                 bind(binder).bind(EntregaClienteVo::rota)
               }
             }
             row {
               textField("Observação da nota fiscal") {
-                expand = 1
+                expandRatio = 1f
                 bind(binder).bind(EntregaClienteVo::observacaoNota)
               }
             }

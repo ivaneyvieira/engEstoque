@@ -11,7 +11,9 @@ import br.com.engecopi.framework.viewmodel.Sort
 import com.github.mvysny.karibudsl.v8.VaadinDsl
 import com.github.mvysny.karibudsl.v8.addGlobalShortcutListener
 import com.github.mvysny.karibudsl.v8.expandRatio
+import com.github.mvysny.karibudsl.v8.h
 import com.github.mvysny.karibudsl.v8.init
+import com.github.mvysny.karibudsl.v8.perc
 import com.github.mvysny.karibudsl.v8.w
 import com.github.mvysny.karibudsl.v8.wrapContent
 import com.vaadin.data.BeanValidationBinder

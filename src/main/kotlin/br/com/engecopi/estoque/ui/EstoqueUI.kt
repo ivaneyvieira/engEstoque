@@ -6,6 +6,7 @@ import br.com.engecopi.estoque.ui.views.EntradaView
 import br.com.engecopi.estoque.ui.views.EntregaClienteEditorView
 import br.com.engecopi.estoque.ui.views.EntregaClienteView
 import br.com.engecopi.estoque.ui.views.EtiquetaView
+import br.com.engecopi.estoque.ui.views.LabelView
 import br.com.engecopi.estoque.ui.views.NFExpedicaoView
 import br.com.engecopi.estoque.ui.views.ProdutoView
 import br.com.engecopi.estoque.ui.views.SaidaView
@@ -20,6 +21,7 @@ import com.vaadin.annotations.Theme
 import com.vaadin.annotations.Title
 import com.vaadin.annotations.VaadinServletConfiguration
 import com.vaadin.annotations.Viewport
+import com.vaadin.icons.VaadinIcons.BARCODE
 import com.vaadin.icons.VaadinIcons.INBOX
 import com.vaadin.icons.VaadinIcons.NEWSPAPER
 import com.vaadin.icons.VaadinIcons.OUT
@@ -99,7 +101,7 @@ class EstoqueUI: UI() {
 
         if(user.expedicao || user.admin) {
           section("Expedição") {
-            if(!user.estoque || user.admin){
+            if(!user.estoque || user.admin) {
               menuButton("Nota Fiscal", NEWSPAPER, view = NFExpedicaoView::class.java)
             }
             menuButton("Entrega ao Cliente", TRUCK, view = EntregaClienteView::class.java)
@@ -118,6 +120,11 @@ class EstoqueUI: UI() {
               menuButton("Usuários", USER, view = UsuarioView::class.java)
               menuButton("Etiquetas", PAPERCLIP, view = EtiquetaView::class.java)
             }
+          }
+        }
+        if(user.etiqueta || user.admin) {
+          section("Etiquetas") {
+            menuButton("Imprimir", BARCODE, view = LabelView::class.java)
           }
         }
       }

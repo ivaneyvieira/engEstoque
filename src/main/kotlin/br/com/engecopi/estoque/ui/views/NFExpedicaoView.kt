@@ -6,10 +6,10 @@ import br.com.engecopi.estoque.viewmodel.NFExpedicaoViewModel
 import br.com.engecopi.estoque.viewmodel.NFExpedicaoVo
 import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.dateFormat
-import br.com.engecopi.framework.ui.view.expand
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.row
 import br.com.engecopi.framework.ui.view.showDialog
+import br.com.engecopi.framework.ui.view.timeFormat
 import br.com.engecopi.saci.beans.NotaSaci
 import br.com.engecopi.utils.localDate
 import com.github.mvysny.karibudsl.v8.AutoView
@@ -17,6 +17,7 @@ import com.github.mvysny.karibudsl.v8.addColumnFor
 import com.github.mvysny.karibudsl.v8.alignment
 import com.github.mvysny.karibudsl.v8.button
 import com.github.mvysny.karibudsl.v8.dateField
+import com.github.mvysny.karibudsl.v8.expandRatio
 import com.github.mvysny.karibudsl.v8.grid
 import com.github.mvysny.karibudsl.v8.horizontalLayout
 import com.github.mvysny.karibudsl.v8.px
@@ -58,34 +59,34 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
           verticalLayout {
             row {
               textField("Nota Fiscal") {
-                expand = 2
+                expandRatio = 2f
                 isReadOnly = true
                 value = nota.numero
               }
               textField("Loja") {
-                expand = 2
+                expandRatio = 2f
                 isReadOnly = true
                 value = nota.loja?.sigla
               }
               textField("Tipo") {
-                expand = 2
+                expandRatio = 2f
                 isReadOnly = true
                 value = nota.tipoNota?.descricao
               }
               dateField("Data") {
-                expand = 1
+                expandRatio = 1f
                 isReadOnly = true
                 value = nota.data
               }
               textField("Rota") {
-                expand = 1
+                expandRatio = 1f
                 isReadOnly = true
                 value = nota.rota
               }
             }
             row {
               textField("Observação da nota fiscal") {
-                expand = 1
+                expandRatio = 1f
                 isReadOnly = true
                 value = nota.observacao
               }
@@ -135,10 +136,16 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
         setSortProperty("tipo_nota")
       }
       column(NFExpedicaoVo::lancamento) {
-        caption = "Lançamento"
+        caption = "Data"
         dateFormat()
-        setSortProperty("lancamento", "data", "hora")
+        setSortProperty("data", "hora")
       }
+      column(NFExpedicaoVo::dataHoraLancamento) {
+        caption = "Hora"
+        timeFormat()
+        setSortProperty("data", "hora")
+      }
+
       column(NFExpedicaoVo::dataEmissao) {
         caption = "Emissao"
         dateFormat()
@@ -205,29 +212,29 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
         verticalLayout {
           row {
             textField("Nota Fiscal") {
-              expand = 2
+              expandRatio = 2f
               isReadOnly = true
               value = nota?.numero
             }
             textField("Loja") {
-              expand = 2
+              expandRatio = 2f
               isReadOnly = true
               value = viewModel.findLoja(nota?.storeno)
                 ?.sigla
             }
             textField("Tipo") {
-              expand = 2
+              expandRatio = 2f
               isReadOnly = true
               value = TipoNota.value(nota?.tipo)
                 ?.descricao
             }
             dateField("Data") {
-              expand = 1
+              expandRatio = 1f
               isReadOnly = true
               value = nota?.date?.localDate()
             }
             textField("Rota") {
-              expand = 1
+              expandRatio = 1f
               isReadOnly = true
               value = nota?.rota
             }

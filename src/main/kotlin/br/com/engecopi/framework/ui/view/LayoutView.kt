@@ -65,8 +65,7 @@ abstract class LayoutView<V: ViewModel>: VerticalLayout(), View, IView {
 
   open fun form(titleForm: String, block: (@VaadinDsl VerticalLayout).() -> Unit = {}) {
     isMargin = true
-    setSizeFull()
-    title(titleForm)
+    this.title(titleForm)
     this.block()
   }
 
@@ -91,8 +90,8 @@ abstract class LayoutView<V: ViewModel>: VerticalLayout(), View, IView {
   }
 
   @Suppress("DEPRECATION")
-  open fun openText(text: String) {
-    if(text != "") {
+  open fun openText(text: String?) {
+    if(!text.isNullOrBlank()) {
       val resource = StreamResource({IOUtils.toInputStream(text)}, "${SystemUtils.md5(text)}.txt")
       resource.mimeType = "text/plain"
 
@@ -213,11 +212,11 @@ fun <BEAN> reloadPropertys(binder: Binder<BEAN>, vararg propertys: KProperty1<BE
 }
 
 fun <C> Column<C, LocalDate?>.dateFormat() {
-  this.setRenderer(LocalDateRenderer {DateTimeFormatter.ofPattern("dd/MM/yyyy")})
+  this.setRenderer(LocalDateRenderer {DateTimeFormatter.ofPattern("dd/MM/yy")})
 }
 
 fun <C> Column<C, LocalDateTime?>.timeFormat() {
-  this.setRenderer(LocalDateTimeRenderer {DateTimeFormatter.ofPattern("hh:mm:ss")})
+  this.setRenderer(LocalDateTimeRenderer {DateTimeFormatter.ofPattern("HH:mm")})
 }
 
 fun <C> Column<C, Int?>.intFormat() {
@@ -284,20 +283,15 @@ fun <T: Any> (@VaadinDsl HasComponents).filterGrid(itemClass: KClass<T>? = null,
     block()
   }
 
-var (@VaadinDsl Component).expand: Int
-  get() = this.expandRatio.toInt()
-  set(value) {
-    this.setWidth("100%")
-    this.expandRatio = value * 1f
-  }
-
 fun Window.showDialog() {
   isClosable = true
   isResizable = false
   isModal = true
   styleName = "modal"
-  center()
+  //isTabStopEnabled=true
+  tabIndex = -1
   addCloseShortcut(KeyCode.ESCAPE)
   UI.getCurrent()
     .addWindow(this)
+  center()
 }
