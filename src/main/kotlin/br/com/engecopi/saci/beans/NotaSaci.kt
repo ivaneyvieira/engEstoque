@@ -1,6 +1,7 @@
 package br.com.engecopi.saci.beans
 
 import br.com.engecopi.estoque.model.ItemNota
+import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.model.ViewProdutoLoc
 import br.com.engecopi.utils.lpad
@@ -22,7 +23,7 @@ class NotaSaci(val rota: String?,
     return ItemNota.isSave(this)
   }
 
-  fun codigo() : String {
+  fun codigo(): String {
     return prdno?.lpad(16, " ") ?: ""
   }
 
@@ -37,4 +38,7 @@ class NotaSaci(val rota: String?,
   }
 
   fun tipoNota(): TipoNota? = TipoNota.value(tipo)
+
+  val nome
+    get() = Produto.findProduto(prdno, grade)?.descricao ?: ""
 }

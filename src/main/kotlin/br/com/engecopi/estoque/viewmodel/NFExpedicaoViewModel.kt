@@ -6,7 +6,6 @@ import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.NotaSerie
 import br.com.engecopi.estoque.model.Produto
-import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
@@ -97,49 +96,48 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
     }
   }
 
-  fun processaKey(key: String, abreviacoes: List<String>) = execValue {
+  fun processaKey(key: String) = execValue {
     val notasSaci = findNotaSaidaKey(key)
     if(notasSaci.all {it.isSave()}) throw EViewModel("Todos os itens dessa nota já estão lançados")
-    if(notasSaci.isNotEmpty()) {
-      val loja = RegistryUserInfo.lojaDefault.numero
-      val lojaSaci = notasSaci.firstOrNull()?.storeno ?: 0
-      if(loja != lojaSaci) throw EViewModel("Esta nota pertence a loja $lojaSaci")
-      val nota: Nota? = Nota.createNota(notasSaci.firstOrNull())
-        ?.let {
-          //TODO Verificar notas já cadastrada
-          if(it.existe()) Nota.findSaida(it.numero)
-          else {
-            it.sequencia = Nota.maxSequencia() + 1
-            it.usuario = usuarioDefault
-            it.save()
-            it
-          }
+    return@execValue if(notasSaci.isNotEmpty()) processaNota(notasSaci)
+    else throw EViewModel("Chave não encontrada")
+  }
+
+  private fun processaNota(notasSaci: List<NotaSaci>): Nota? {
+    val loja = lojaDefault.numero
+    val lojaSaci = notasSaci.firstOrNull()?.storeno ?: throw EViewModel("Nota não encontrada")
+    if(loja != lojaSaci) throw EViewModel("Esta nota pertence a loja $lojaSaci")
+    val nota: Nota? = Nota.createNota(notasSaci.firstOrNull())
+      ?.let {
+        //TODO Verificar notas já cadastrada
+        if(it.existe()) Nota.findSaida(it.numero)
+        else {
+          it.sequencia = Nota.maxSequencia() + 1
+          it.usuario = usuarioDefault
+          it.save()
+          it
         }
-      if(nota == null) throw EViewModel("Nota não encontrada")
-      else {
-        val itens = notasSaci.mapNotNull {notaSaci ->
-          val item = ItemNota.find(notaSaci) ?: ItemNota.createItemNota(notaSaci, nota)
-          val abreviacao = item?.abreviacao
-          return@mapNotNull if(abreviacoes.contains(abreviacao)) item?.apply {
-            this.status = INCLUIDA
-            this.impresso = false
-            this.usuario = usuarioDefault
-            this.data = LocalDate.now()
-            this.hora = LocalTime.now()
-            this.save()
-          }
-          else null
-        }
-
-        if(itens.isEmpty()) throw EViewModel("Essa nota não possui itens com localização")
-
-        crudBean = ViewNotaExpedicao.findExpedicao(nota)
-          ?.toVO()
-
-        return@execValue nota
+      }
+    nota ?: throw EViewModel("Nota não encontrada")
+    val itens = notasSaci.mapNotNull {notaSaci ->
+      val item = ItemNota.find(notaSaci) ?: ItemNota.createItemNota(notaSaci, nota)
+      val abreviacao = item?.abreviacao
+      return@mapNotNull item?.apply {
+        this.status = INCLUIDA
+        this.impresso = false
+        this.usuario = usuarioDefault
+        this.data = LocalDate.now()
+        this.hora = LocalTime.now()
+        this.save()
       }
     }
-    else throw EViewModel("Chave não encontrada")
+
+    if(itens.isEmpty()) throw EViewModel("Essa nota não possui itens com localização")
+
+    crudBean = ViewNotaExpedicao.findExpedicao(nota)
+      ?.toVO()
+
+    return nota
   }
 
   private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta) = execString {
@@ -221,9 +219,9 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
 
   fun findLoja(storeno: Int?): Loja? = Loja.findLoja(storeno)
 
-  fun abreviacoes(prdno: String?, grade: String?): List<String> {
-    val produto = Produto.findProduto(prdno, grade) ?: return emptyList()
-    return ViewProdutoLoc.abreviacoesProduto(produto)
+  fun abreviacoes(prdno: String?, grade: String?): String {
+    val produto = Produto.findProduto(prdno, grade) ?: return ""
+    return ViewProdutoLoc.abreviacoesProduto(produto).firstOrNull() ?: ""
   }
 
   override fun QViewNotaExpedicao.filterString(text: String): QViewNotaExpedicao {
@@ -259,3 +257,4 @@ class NFExpedicaoVo: EntityVo<ViewNotaExpedicao>() {
   val dataHoraLancamento
     get() = LocalDateTime.of(data, hora)
 }
+
