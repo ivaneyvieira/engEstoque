@@ -3,9 +3,9 @@ package br.com.engecopi.estoque.viewmodel
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.Produto
+import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.ui.views.LabelView
-import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.ViewModel
 
 class LabelViewModel(view: LabelView): ViewModel(view) {
@@ -48,9 +48,11 @@ class LabelViewModel(view: LabelView): ViewModel(view) {
 
   fun addFaixaCodigoGrade(codigo: String?, grade: String?) = execList {
     val produto = Produto.findProduto(codigo, grade)
-    if(produto != null)
-    if(!listaProduto.contains(produto)) listaProduto.add(produto)
-    listOfNotNull(produto)
+    if(produto != null && produto.localizacoes().contains(RegistryUserInfo.abreviacaoDefault)) {
+      if(!listaProduto.contains(produto)) listaProduto.add(produto)
+      listOfNotNull(produto)
+    }
+    else emptyList()
   }
 
   fun clearProduto() = exec {

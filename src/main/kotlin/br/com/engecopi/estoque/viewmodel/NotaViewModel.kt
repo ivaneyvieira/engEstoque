@@ -367,58 +367,57 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
 
   private fun atualizaNota() {
     if(!readOnly) if(entityVo == null) {
-      val nota = notaSaci
-      if(nota != null) {
-        tipoNota = TipoNota.value(nota.tipo) ?: OUTROS_E
-        rota = nota.rota
-      }
-      else {
-        tipoNota = OUTROS_E
-        rota = ""
-      }
+      val nota = notaSaci ?: return
+      tipoNota = TipoNota.value(nota.tipo) ?: OUTROS_E
+      rota = nota.rota
       produtos.clear()
       val produtosVo = notaProdutoSaci.flatMap {notaSaci ->
-        val prd = Produto.findProduto(notaSaci.prdno, notaSaci.grade)
-        if(prd == null) emptyList()
-        else {
-          val localizacoes = prd.localizacoes()
-            .sorted()
-          val ultimaLocalizacao = localizacoes.sorted().lastOrNull() ?: ""
-          if(tipoNota.tipoMov == SAIDA) {
-            var quant = notaSaci.quant ?: 0
-            val produtosLocais = localizacoes.asSequence()
-              .map {localizacao ->
-                ProdutoVO(prd, CONFERIDA, LocProduto(localizacao), notaSaci.isSave()).apply {
-                  val saldo = saldo
-                  if(quant > 0) if(quant > saldo) {
-                    if(localizacao == ultimaLocalizacao) {
-                      quantidade = quant
-                      quant = 0
-                    }
-                    else {
-                      quantidade = saldo
-                      quant -= saldo
-                    }
-                  }
-                  else {
-                    quantidade = quant
-                    quant = 0
-                  }
-                  else quantidade = 0
-                }
-              }
-              .toList()
-            produtosLocais
-          }
-          else listOf(ProdutoVO(prd, RECEBIDO, LocProduto(ultimaLocalizacao), notaSaci.isSave()).apply {
-            quantidade = notaSaci.quant ?: 0
-          })
-        }
+        if(tipoNota.tipoMov == SAIDA) listItensSaida(notaSaci)
+        else listItensEntrada(notaSaci)
       }
       produtos.addAll(produtosVo.asSequence().filter {
         it.quantidade != 0 && it.codigo != "" && it.localizacao?.localizacao?.startsWith(abreviacaoNota) ?: false
       }.sortedWith(compareBy(ProdutoVO::isSave, ProdutoVO::codigo, ProdutoVO::grade, ProdutoVO::localizacao)).toList())
     }
+  }
+
+  private fun listItensEntrada(notaSaci: NotaSaci): List<ProdutoVO> {
+    val prd = Produto.findProduto(notaSaci.prdno, notaSaci.grade) ?: return emptyList()
+    val localizacoes = prd.localizacoes()
+      .sorted()
+    val ultimaLocalizacao = localizacoes.sorted().lastOrNull() ?: ""
+    val produtoVo = ProdutoVO(prd, RECEBIDO, LocProduto(ultimaLocalizacao), notaSaci.isSave()).apply {
+      quantidade = notaSaci.quant ?: 0
+    }
+    return listOf(produtoVo)
+  }
+
+  private fun listItensSaida(notaSaci: NotaSaci): List<ProdutoVO> {
+    val prd = Produto.findProduto(notaSaci.prdno, notaSaci.grade) ?: return emptyList()
+    var quant = notaSaci.quant ?: return emptyList()
+    val localizacoes = prd.localizacoes()
+      .sorted()
+    val ultimaLocalizacao = localizacoes.sorted().lastOrNull() ?: ""
+    val produtosLocais = localizacoes.map {localizacao ->
+      ProdutoVO(prd, CONFERIDA, LocProduto(localizacao), notaSaci.isSave()).apply {
+        if(quant > 0) if(quant > saldo) {
+          if(localizacao == ultimaLocalizacao) {
+            quantidade = quant
+            quant = 0
+          }
+          else {
+            quantidade = saldo
+            quant -= saldo
+          }
+        }
+        else {
+          quantidade = quant
+          quant = 0
+        }
+        else quantidade = 0
+      }
+    }
+    return produtosLocais
   }
 
   val tipoNotaDescricao: String
@@ -487,8 +486,7 @@ class ProdutoVO(val produto: Produto, val statusNota: StatusNota, var localizaca
   var quantidade: Int = 0
   var selecionado: Boolean = false
   val saldo: Int
-    get() = produto.saldoLoja(localizacao?.localizacao)  -
-            if(isSave) quantidade * multipicador else 0
+    get() = produto.saldoLoja(localizacao?.localizacao) - if(isSave) quantidade * multipicador else 0
   val tipoMov
     get() = statusNota.tipoMov
   val multipicador
