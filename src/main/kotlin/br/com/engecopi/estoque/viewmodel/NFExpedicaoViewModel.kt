@@ -96,8 +96,7 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
     }
   }
 
-  fun processaKey(key: String) = execValue {
-    val notasSaci = findNotaSaidaKey(key)
+  fun processaKey(notasSaci : List<NotaSaci>) = execValue {
     if(notasSaci.all {it.isSave()}) throw EViewModel("Todos os itens dessa nota já estão lançados")
     return@execValue if(notasSaci.isNotEmpty()) processaNota(notasSaci)
     else throw EViewModel("Chave não encontrada")

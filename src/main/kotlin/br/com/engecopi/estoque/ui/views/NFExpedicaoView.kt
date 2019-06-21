@@ -1,13 +1,9 @@
 package br.com.engecopi.estoque.ui.views
 
-import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.RegistryUserInfo
-import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
-import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.viewmodel.NFExpedicaoViewModel
 import br.com.engecopi.estoque.viewmodel.NFExpedicaoVo
-import br.com.engecopi.estoque.viewmodel.ProdutoVO
 import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.dateFormat
 import br.com.engecopi.framework.ui.view.grupo
@@ -28,17 +24,16 @@ import com.github.mvysny.karibudsl.v8.getAll
 import com.github.mvysny.karibudsl.v8.grid
 import com.github.mvysny.karibudsl.v8.horizontalLayout
 import com.github.mvysny.karibudsl.v8.px
+import com.github.mvysny.karibudsl.v8.refresh
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.verticalLayout
 import com.github.mvysny.karibudsl.v8.w
 import com.vaadin.data.provider.ListDataProvider
-import com.vaadin.event.ShortcutAction.KeyCode
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.icons.VaadinIcons.PRINT
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
-import com.vaadin.ui.ComboBox
 import com.vaadin.ui.Grid
 import com.vaadin.ui.Grid.SelectionMode.MULTI
 import com.vaadin.ui.Notification
@@ -46,8 +41,6 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.Window
 import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
-import org.vaadin.patrik.FastNavigation
-import org.vaadin.viritin.fields.IntegerField
 
 @AutoView("nf_expedicao")
 class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
@@ -189,8 +182,7 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
       val notaSaida = viewModel.findNotaSaidaKey(key)
       if(notaSaida.isNotEmpty()) {
         val dialog = DlgNotaLoc(notaSaida, viewModel) {itens ->
-          val abreviacoes = itens.map {it.localizacao}
-          val nota = viewModel.processaKey(key, abreviacoes)
+          val nota = viewModel.processaKey(itens)
           openText(viewModel.imprimir(nota))
         }
         dialog.showDialog()
@@ -260,7 +252,11 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
             button("Confirma") {
               addStyleName(ValoTheme.BUTTON_PRIMARY)
               addClickListener {
-                val itens = gridProdutos.selectedItems.toList()
+                val itens = gridProdutos.dataProvider.getAll()
+                  .flatMap {loc ->
+                    loc.itensExpedicao.filter {it.selecionado}
+                      .map {item -> item.notaSaci}
+                  }
                 execConfirma(itens)
                 close()
               }
@@ -281,7 +277,7 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
               abreviacao
             }
             val abreviacoes = abreviacaoItens.map {entry ->
-              LocalizacaoNota(entry.key, entry.value)
+              LocalizacaoNota(entry.key, entry.value.map {ItemExpedicao(it)})
             }
               .toList()
               .sortedBy {it.abreviacao}
@@ -294,11 +290,19 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
               expandRatio = 1
               caption = "Código"
             }
-
+            addColumnFor(LocalizacaoNota::countSelecionado) {
+              caption = "Selecionados"
+              align = VAlign.Right
+            }
             addComponentColumn {item ->
               Button().apply {
-                this.icon = PRINT
-                this.addClickListener {}
+                this.icon = VaadinIcons.CHECK
+                this.addClickListener {
+                  val dlg = DlgNotaExpedicao(item, viewModel) {
+                    gridProdutos.refresh()
+                  }
+                  dlg.showDialog()
+                }
               }
             }.id = "btnPrintItens"
           }
@@ -308,11 +312,24 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
   }
 }
 
-data class LocalizacaoNota(var abreviacao: String, val notaSaci: List<NotaSaci>)
+data class LocalizacaoNota(val abreviacao: String, val itensExpedicao: List<ItemExpedicao>) {
+  val countSelecionado
+    get() = itensExpedicao.filter {it.selecionado || it.isSave()}.size
+}
+
+data class ItemExpedicao(val notaSaci: NotaSaci, var selecionado: Boolean = false) {
+  val prdno = notaSaci.prdno
+  val grade = notaSaci.grade
+  val nome = notaSaci.nome
+  val quant = notaSaci.quant
+
+  fun isSave() = notaSaci.isSave()
+}
 
 class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
-                       val viewModel: NFExpedicaoViewModel): Window("Itens da expedição") {
-  private lateinit var gridProdutos: Grid<NotaSaci>
+                       val viewModel: NFExpedicaoViewModel,
+                       val update: () -> Unit): Window("Itens da expedição") {
+  private lateinit var gridProdutos: Grid<ItemExpedicao>
 
   init {
     verticalLayout {
@@ -321,10 +338,8 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
 
       grupo("Expedição ${localizacaoNota.abreviacao}") {
         row {
-          gridProdutos = grid(NotaSaci::class) {
-            val abreviacao = RegistryUserInfo.abreviacaoDefault
-            //nota.refresh()
-            val itens = localizacaoNota.notaSaci
+          gridProdutos = grid(ItemExpedicao::class) {
+            val itens = localizacaoNota.itensExpedicao
 
             this.dataProvider = ListDataProvider(itens)
             removeAllColumns()
@@ -342,28 +357,32 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
 
             setSizeFull()
 
-            addColumnFor(NotaSaci::prdno) {
+            addColumnFor(ItemExpedicao::prdno) {
               expandRatio = 1
               caption = "Código"
             }
-            addColumnFor(NotaSaci::nome) {
+            addColumnFor(ItemExpedicao::nome) {
               expandRatio = 5
               caption = "Descrição"
             }
-            addColumnFor(NotaSaci::grade) {
+            addColumnFor(ItemExpedicao::grade) {
               expandRatio = 1
               caption = "Grade"
             }
-            addColumnFor(NotaSaci::quant) {
+            addColumnFor(ItemExpedicao::quant) {
               expandRatio = 1
               caption = "Qtd Saida"
               align = VAlign.Right
             }
 
             this.setStyleGenerator {
-              if(!it.isSave()) "ok"
+              if(it.isSave()) "ok"
               else null
             }
+          }
+          localizacaoNota.itensExpedicao.forEach {item ->
+            if(item.selecionado) gridProdutos.select(item)
+            else gridProdutos.deselect(item)
           }
         }
       }
@@ -381,42 +400,21 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
             alignment = Alignment.BOTTOM_RIGHT
             addStyleName(ValoTheme.BUTTON_PRIMARY)
             addClickListener {
-              val itens = gridProdutos.selectedItems.toList()
-                .filter {it.saldoFinal >= 0 && it.editavel()}
-              val naoSelect = gridProdutos.dataProvider.getAll()
-                .minus(itens)
-                .filter {it.editavel()}
+              localizacaoNota.itensExpedicao.forEach {
+                it.selecionado = false
+              }
+              val itensSelecionado = gridProdutos.selectedItems.toList()
+                .filter {!it.isSave()}
 
-              viewModel.confirmaProdutos(itens, CONFERIDA)
-              viewModel.confirmaProdutos(naoSelect, ENT_LOJA)
+              itensSelecionado.forEach {
+                it.selecionado = true
+              }
+              update()
               close()
             }
           }
         }
       }
-    }
-  }
-
-  private fun execBarcode(barcode: String?) {
-    if(!barcode.isNullOrBlank()) {
-      val produto = viewModel.processaBarcodeProduto(barcode)
-      if(produto == null) viewModel.view.showWarning("Produto não encontrado no saci")
-      else {
-        val produtosVO = gridProdutos.dataProvider.getAll()
-        val produtos = produtosVO.mapNotNull {it.value?.produto}
-        if(produtos.contains(produto)) {
-          val itemVO = produtosVO.filter {it.value?.produto?.id == produto.id}
-          itemVO.forEach {item ->
-            val codigo = item.value?.codigo ?: "Não encontrado"
-            if(item.saldoFinal < 0) viewModel.view.showWarning("O saldo final do produto $codigo está negativo")
-            else if(!item.editavel()) viewModel.view.showWarning("O produto $codigo não é editável")
-            else gridProdutos.select(item)
-          }
-        }
-        else viewModel.view.showWarning("Produto não encontrado no grid")
-      }
-      edtBarcode.focus()
-      edtBarcode.selectAll()
     }
   }
 }
