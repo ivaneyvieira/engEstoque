@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.model.query.assoc
 
+import br.com.engecopi.estoque.model.LancamentoOrigem
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.TipoMov
 import br.com.engecopi.estoque.model.TipoNota
@@ -43,6 +44,7 @@ class QAssocNota<R>(name: String, root: R) : TQAssocBean<Nota,R>(name, root) {
   lateinit var sequencia: PInteger<R>
   lateinit var usuario: QAssocUsuario<R>
   lateinit var maxSequencia: PInteger<R>
+  lateinit var lancamentoOrigem: PEnum<R,LancamentoOrigem>
 
   /**
    * Eagerly fetch this association loading the specified properties.

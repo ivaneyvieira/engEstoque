@@ -6,7 +6,6 @@ union
 select distinct prdno, grade, barcode, 'GRADE' as tipo
 from sqldados.prdbar
 where barcode = :barcode
-  and grade != ''
   and barcode <> ''
 union
 select distinct no as prdno, '' as grade, barcode, 'PRD' as tipo
