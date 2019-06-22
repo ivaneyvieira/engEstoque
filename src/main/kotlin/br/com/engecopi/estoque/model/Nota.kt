@@ -73,6 +73,8 @@ class Nota: BaseModel() {
   var usuario: Usuario? = null
   @Aggregation("max(sequencia)")
   var maxSequencia: Int? = 0
+  @Enumerated(EnumType.STRING)
+  var lancamentoOrigem : LancamentoOrigem = LancamentoOrigem.EXPEDICAO
   val multipicadorCancelado
     get() = if(tipoNota == CANCELADA_E || tipoNota == CANCELADA_S) 0 else 1
 
@@ -268,4 +270,9 @@ data class NotaItens(val nota : Nota?, val itens : List<ItemNota>){
   companion object{
     val VAZIO = NotaItens(null, emptyList())
   }
+}
+
+enum class LancamentoOrigem(val descricao : String) {
+  EXPEDICAO("Expedição"),
+  DEPOSITO("Deposito")
 }

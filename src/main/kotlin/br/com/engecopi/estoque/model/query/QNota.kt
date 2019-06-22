@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.model.query
 
+import br.com.engecopi.estoque.model.LancamentoOrigem
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.TipoMov
 import br.com.engecopi.estoque.model.TipoNota
@@ -53,6 +54,7 @@ class QNota : TQRootBean<Nota, QNota> {
   lateinit var sequencia: PInteger<QNota>
   lateinit var usuario: QAssocUsuario<QNota>
   lateinit var maxSequencia: PInteger<QNota>
+  lateinit var lancamentoOrigem: PEnum<QNota,LancamentoOrigem>
 
 
   /**

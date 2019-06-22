@@ -103,7 +103,7 @@ class LabelView: LayoutView<LabelViewModel>() {
         }
         addColumnFor(Produto::descricao) {
           caption = "Descrição"
-          this.expandRatio = 9
+          this.expandRatio = 6
         }
         addColumnFor(Produto::grade) {
           caption = "Grade"
@@ -111,7 +111,7 @@ class LabelView: LayoutView<LabelViewModel>() {
         }
         addColumnFor(Produto::barcodeGtin) {
           caption = "Gtin"
-          this.expandRatio = 1
+          this.expandRatio = 4
         }
       }
     }
