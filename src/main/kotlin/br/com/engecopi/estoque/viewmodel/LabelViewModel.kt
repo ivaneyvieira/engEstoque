@@ -47,8 +47,9 @@ class LabelViewModel(view: LabelView): ViewModel(view) {
   }
 
   fun addFaixaCodigoGrade(codigo: String?, grade: String?) = execList {
-    val produto = Produto.findProduto(codigo, grade)
-    if(produto != null && produto.localizacoes().contains(RegistryUserInfo.abreviacaoDefault)) {
+    val produto = Produto.findProduto(codigo, grade) ?: return@execList emptyList<Produto>()
+    val localizacoes = produto.localizacoes()
+    if(localizacoes.any{it.startsWith(RegistryUserInfo.abreviacaoDefault)}) {
       if(!listaProduto.contains(produto)) listaProduto.add(produto)
       listOfNotNull(produto)
     }
@@ -68,12 +69,15 @@ class LabelViewModel(view: LabelView): ViewModel(view) {
     val etiquetas = Etiqueta.findByStatus(StatusNota.PRODUTO)
     val template = etiquetas.joinToString(separator = "\n") {it.template}
 
-    return listaProduto.filter {!it.barcodeGtin.isNullOrBlank()}
-      .joinToString(separator = "\n") {
-        template.replace("[Codigo]", it.codigo.trim())
-          .replace("[Grade]", it.grade)
-          .replace("[Descricao]", it.descricao ?: "")
-          .replace("[Gtin]", it.barcodeGtin ?: "")
+    return listaProduto
+      .joinToString(separator = "\n") {prd ->
+        val barcodeGtin = prd.barcodeGtin.distinct()
+        barcodeGtin.joinToString(separator = "\n") {bar ->
+          template.replace("[Codigo]", prd.codigo.trim())
+            .replace("[Grade]", prd.grade)
+            .replace("[Descricao]", prd.descricao ?: "")
+            .replace("[Gtin]", bar)
+        }
       }
   }
 
