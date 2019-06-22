@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.viewmodel
 
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
+import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.NotaSerie
@@ -113,6 +114,7 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
         else {
           it.sequencia = Nota.maxSequencia() + 1
           it.usuario = usuarioDefault
+          it.lancamentoOrigem = EXPEDICAO
           it.save()
           it
         }
@@ -120,7 +122,7 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
     nota ?: throw EViewModel("Nota não encontrada")
     val itens = notasSaci.mapNotNull {notaSaci ->
       val item = ItemNota.find(notaSaci) ?: ItemNota.createItemNota(notaSaci, nota)
-      val abreviacao = item?.abreviacao
+
       return@mapNotNull item?.apply {
         this.status = INCLUIDA
         this.impresso = false
