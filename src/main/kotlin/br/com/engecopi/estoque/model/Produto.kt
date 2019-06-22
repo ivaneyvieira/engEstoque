@@ -230,10 +230,10 @@ class Produto: BaseModel() {
   }
 
   val barcodeGtin
-    get(): String? {
-      val storeno = RegistryUserInfo.usuarioDefault.loja?.numero ?: return null
+    get(): List<String> {
+      val storeno = RegistryUserInfo.usuarioDefault.loja?.numero ?: return emptyList()
       val chave = saci.findBarcode(storeno, codigo, grade)
-      return chave?.barcode
+      return chave.map {it.barcode}
     }
 }
 
