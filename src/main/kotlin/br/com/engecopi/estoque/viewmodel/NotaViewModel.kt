@@ -492,10 +492,10 @@ class ProdutoVO(val produto: Produto, val statusNota: StatusNota, var localizaca
   val multipicador
     get() = statusNota.multiplicador
   val saldoFinal
-    get() = saldo + quantidade * multipicador
+    get() = saldo + quantidade * if(tipoMov == ENTRADA) 1 else -1
   val descricaoProduto: String
     get() = produto.descricao ?: ""
   var value: ItemNota? = null
   val gtin
-    get() = produto.barcodeGtin ?: ""
+    get() = produto.barcodeGtin
 }
