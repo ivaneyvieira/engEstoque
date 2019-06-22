@@ -7,9 +7,14 @@ class ChaveProduto(val prdno: String, val grade: String, val barcode: String, va
     get() = prdno.lpad(16, " ")
 }
 
-fun List<ChaveProduto>.findChave(): ChaveProduto? {
+fun List<ChaveProduto>.findChave(): List<ChaveProduto> {
   val listaPrd2 = this.filter {it.tipo == "PDV2" && it.grade != ""}
   val listaGrade = this.filter {it.tipo == "GRADE" && it.grade != ""}
   val listaPrd = this.filter {it.tipo == "PRD" && it.grade == ""}
-  return listaGrade.firstOrNull() ?: listaPrd2.firstOrNull()  ?: listaPrd.firstOrNull()
+  return when {
+    listaGrade.isNotEmpty() -> listaGrade
+    listaPrd2.isNotEmpty()  -> listaPrd2
+    listaPrd.isNotEmpty()   -> listaPrd
+    else                    -> emptyList()
+  }
 }
