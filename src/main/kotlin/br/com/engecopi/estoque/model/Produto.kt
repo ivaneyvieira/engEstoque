@@ -240,7 +240,7 @@ class Produto: BaseModel() {
 private fun List<Produto>.filtroCD(): List<Produto> {
   return this.filter {
     it.localizacoes()
-      .contains(RegistryUserInfo.abreviacaoDefault)
+      .any {loc -> loc.startsWith(RegistryUserInfo.abreviacaoDefault)}
   }
 }
 
