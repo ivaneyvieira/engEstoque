@@ -286,14 +286,6 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
             removeAllColumns()
             //setSelectionMode(MULTI)
             setSizeFull()
-            addColumnFor(LocalizacaoNota::abreviacao) {
-              expandRatio = 1
-              caption = "Código"
-            }
-            addColumnFor(LocalizacaoNota::countSelecionado) {
-              caption = "Selecionados"
-              align = VAlign.Right
-            }
             addComponentColumn {item ->
               Button().apply {
                 this.icon = VaadinIcons.CHECK
@@ -305,6 +297,14 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
                 }
               }
             }.id = "btnPrintItens"
+            addColumnFor(LocalizacaoNota::abreviacao) {
+              expandRatio = 1
+              caption = "Código"
+            }
+            addColumnFor(LocalizacaoNota::countSelecionado) {
+              caption = "Selecionados"
+              align = VAlign.Right
+            }
           }
         }
       }
@@ -337,6 +337,34 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
         .px
 
       grupo("Expedição ${localizacaoNota.abreviacao}") {
+        row {
+          horizontalLayout {
+            alignment = Alignment.BOTTOM_LEFT
+            button("Cancela") {
+              alignment = Alignment.BOTTOM_LEFT
+              addClickListener {
+                close()
+              }
+            }
+            button("Confirma") {
+              alignment = Alignment.BOTTOM_RIGHT
+              addStyleName(ValoTheme.BUTTON_PRIMARY)
+              addClickListener {
+                localizacaoNota.itensExpedicao.forEach {
+                  it.selecionado = false
+                }
+                val itensSelecionado = gridProdutos.selectedItems.toList()
+                  .filter {!it.isSave()}
+
+                itensSelecionado.forEach {
+                  it.selecionado = true
+                }
+                update()
+                close()
+              }
+            }
+          }
+        }
         row {
           gridProdutos = grid(ItemExpedicao::class) {
             val itens = localizacaoNota.itensExpedicao
@@ -387,34 +415,7 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
         }
       }
 
-      row {
-        horizontalLayout {
-          alignment = Alignment.BOTTOM_RIGHT
-          button("Cancela") {
-            alignment = Alignment.BOTTOM_RIGHT
-            addClickListener {
-              close()
-            }
-          }
-          button("Confirma") {
-            alignment = Alignment.BOTTOM_RIGHT
-            addStyleName(ValoTheme.BUTTON_PRIMARY)
-            addClickListener {
-              localizacaoNota.itensExpedicao.forEach {
-                it.selecionado = false
-              }
-              val itensSelecionado = gridProdutos.selectedItems.toList()
-                .filter {!it.isSave()}
 
-              itensSelecionado.forEach {
-                it.selecionado = true
-              }
-              update()
-              close()
-            }
-          }
-        }
-      }
     }
   }
 }

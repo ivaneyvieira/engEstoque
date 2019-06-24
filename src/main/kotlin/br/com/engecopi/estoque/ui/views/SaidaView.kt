@@ -398,7 +398,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
               align = VAlign.Right
             }
             editor.addOpenListener {event ->
-              event.bean.produto?.let {produto ->
+              event.bean.produto.let {produto ->
                 val locSulfixos = produto.localizacoes()
                   .map {LocProduto(it)}
                 comboLoc.setItems(locSulfixos)
