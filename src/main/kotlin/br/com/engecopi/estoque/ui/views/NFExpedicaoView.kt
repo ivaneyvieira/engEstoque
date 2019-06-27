@@ -340,12 +340,6 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
         row {
           horizontalLayout {
             alignment = Alignment.BOTTOM_LEFT
-            button("Cancela") {
-              alignment = Alignment.BOTTOM_LEFT
-              addClickListener {
-                close()
-              }
-            }
             button("Confirma") {
               alignment = Alignment.BOTTOM_RIGHT
               addStyleName(ValoTheme.BUTTON_PRIMARY)
@@ -360,6 +354,12 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
                   it.selecionado = true
                 }
                 update()
+                close()
+              }
+            }
+            button("Cancela") {
+              alignment = Alignment.BOTTOM_LEFT
+              addClickListener {
                 close()
               }
             }
