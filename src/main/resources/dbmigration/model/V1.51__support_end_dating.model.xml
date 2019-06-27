@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
+    <changeSet type="apply">
+        <addColumn tableName="hitorico_etiquetas">
+            <column name="gtin" type="varchar" notnull="true"/>
+            <column name="gtin_ok" type="boolean" defaultValue="false" notnull="true"/>
+        </addColumn>
+    </changeSet>
+</migration>

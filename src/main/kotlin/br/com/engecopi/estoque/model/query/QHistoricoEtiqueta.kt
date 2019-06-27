@@ -4,6 +4,7 @@ import br.com.engecopi.estoque.model.HistoricoEtiqueta
 import br.com.engecopi.estoque.model.query.assoc.QAssocProduto
 import br.com.engecopi.estoque.model.query.assoc.QAssocUsuario
 import io.ebean.Database
+import io.ebean.typequery.PBoolean
 import io.ebean.typequery.PInteger
 import io.ebean.typequery.PLocalDate
 import io.ebean.typequery.PLocalDateTime
@@ -38,6 +39,8 @@ class QHistoricoEtiqueta : TQRootBean<HistoricoEtiqueta, QHistoricoEtiqueta> {
   lateinit var data: PLocalDate<QHistoricoEtiqueta>
   lateinit var hora: PLocalTime<QHistoricoEtiqueta>
   lateinit var print: PString<QHistoricoEtiqueta>
+  lateinit var gtin: PString<QHistoricoEtiqueta>
+  lateinit var gtinOk: PBoolean<QHistoricoEtiqueta>
 
 
   /**

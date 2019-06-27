@@ -21,7 +21,7 @@ fun main() {
   val generator = Generator(config)
   generator.generateQueryBeans()
   // Additionally generate 'finder's
-  generator.generateFinders()
-  generator.modifyEntityBeansAddFinderField()
+  //generator.generateFinders()
+  //generator.modifyEntityBeansAddFinderField()
 }
 

@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.model.query.assoc
 
 import br.com.engecopi.estoque.model.HistoricoEtiqueta
 import br.com.engecopi.estoque.model.query.QHistoricoEtiqueta
+import io.ebean.typequery.PBoolean
 import io.ebean.typequery.PInteger
 import io.ebean.typequery.PLocalDate
 import io.ebean.typequery.PLocalDateTime
@@ -29,6 +30,8 @@ class QAssocHistoricoEtiqueta<R>(name: String, root: R) : TQAssocBean<HistoricoE
   lateinit var data: PLocalDate<R>
   lateinit var hora: PLocalTime<R>
   lateinit var print: PString<R>
+  lateinit var gtin: PString<R>
+  lateinit var gtinOk: PBoolean<R>
 
   /**
    * Eagerly fetch this association loading the specified properties.

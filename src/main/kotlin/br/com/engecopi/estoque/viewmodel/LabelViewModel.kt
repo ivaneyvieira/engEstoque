@@ -1,6 +1,7 @@
 package br.com.engecopi.estoque.viewmodel
 
 import br.com.engecopi.estoque.model.Etiqueta
+import br.com.engecopi.estoque.model.HistoricoEtiqueta
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo
@@ -73,10 +74,12 @@ class LabelViewModel(view: LabelView): ViewModel(view) {
       .joinToString(separator = "\n") {prd ->
         val barcodeGtin = prd.barcodeGtin.distinct()
         barcodeGtin.joinToString(separator = "\n") {bar ->
-          template.replace("[Codigo]", prd.codigo.trim())
+          val print = template.replace("[Codigo]", prd.codigo.trim())
             .replace("[Grade]", prd.grade)
             .replace("[Descricao]", prd.descricao ?: "")
             .replace("[Gtin]", bar)
+          HistoricoEtiqueta.save(prd, bar, print)
+          print
         }
       }
   }
