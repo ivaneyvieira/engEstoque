@@ -6,6 +6,7 @@ import br.com.engecopi.estoque.ui.views.EntradaView
 import br.com.engecopi.estoque.ui.views.EntregaClienteEditorView
 import br.com.engecopi.estoque.ui.views.EntregaClienteView
 import br.com.engecopi.estoque.ui.views.EtiquetaView
+import br.com.engecopi.estoque.ui.views.HistoricoView
 import br.com.engecopi.estoque.ui.views.LabelView
 import br.com.engecopi.estoque.ui.views.NFExpedicaoView
 import br.com.engecopi.estoque.ui.views.ProdutoView
@@ -125,6 +126,8 @@ class EstoqueUI: UI() {
         if(user.etiqueta || user.admin) {
           section("Etiquetas") {
             menuButton("Imprimir", BARCODE, view = LabelView::class.java)
+            if(user.admin)
+              menuButton("Histórico", BARCODE, view = HistoricoView::class.java)
           }
         }
       }
