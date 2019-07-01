@@ -498,4 +498,9 @@ class ProdutoVO(val produto: Produto, val statusNota: StatusNota, var localizaca
   var value: ItemNota? = null
   val gtin
     get() = produto.barcodeGtin
+  var dateUpdate: LocalDateTime = LocalDateTime.now()
+
+  fun updateItem() {
+    dateUpdate = LocalDateTime.now()
+  }
 }

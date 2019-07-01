@@ -47,6 +47,7 @@ import com.vaadin.event.ShortcutAction.KeyCode
 import com.vaadin.event.ShortcutAction.KeyCode.F2
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
+import com.vaadin.shared.data.sort.SortDirection.DESCENDING
 import com.vaadin.shared.ui.ValueChangeMode.LAZY
 import com.vaadin.ui.Alignment.BOTTOM_RIGHT
 import com.vaadin.ui.Button
@@ -293,6 +294,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
             addValueChangeListener {
               val barcode = it.value
               execBarcode(barcode)
+              gridProdutos.sort(ProdutoVO::dateUpdate.name, DESCENDING)
             }
             this.addGlobalShortcutListener(F2) {
               focusEditor()
@@ -326,7 +328,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
                 this.value = item
               }
               else null
-            })
+            }.sortedByDescending {it.dateUpdate})
             removeAllColumns()
             val selectionModel = setSelectionMode(MULTI)
             selectionModel.addSelectionListener {select ->
@@ -349,9 +351,12 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
                   else if(!RegistryUserInfo.userDefaultIsAdmin) {
                     Notification.show("Usuário não é administrador")
                     selectionModel.deselect(it)
-                    it.selecionado = true
+                    it.selecionado = false
                   }
-                  else it.selecionado = true
+                  else {
+                    it.selecionado = true
+                    it.updateItem()
+                  }
                 }
               }
             }
@@ -365,6 +370,9 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
               addStyleName(ValoTheme.TEXTFIELD_ALIGN_RIGHT)
             }
             setSizeFull()
+            addColumnFor(ProdutoVO::dateUpdate) {
+              this.isHidden = true
+            }
             addColumnFor(ProdutoVO::codigo) {
               expandRatio = 1
               caption = "Código"
@@ -468,7 +476,10 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
             val codigo = item.value?.codigo ?: "Não encontrado"
             if(item.saldoFinal < 0) viewModel.view.showWarning("O saldo final do produto $codigo está negativo")
             else if(!item.editavel()) viewModel.view.showWarning("O produto $codigo não é editável")
-            else gridProdutos.select(item)
+            else {
+              gridProdutos.select(item)
+              item.updateItem()
+            }
           }
         }
         else viewModel.view.showWarning("Produto não encontrado no grid")
