@@ -277,7 +277,10 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
               abreviacao
             }
             val abreviacoes = abreviacaoItens.map {entry ->
-              LocalizacaoNota(entry.key, entry.value.map {ItemExpedicao(it)})
+              LocalizacaoNota(entry.key, entry.value.map {notaSaci ->
+                val saldo = viewModel.saldoProduto(notaSaci)
+                ItemExpedicao(notaSaci, saldo)
+              })
             }
               .toList()
               .sortedBy {it.abreviacao}
@@ -317,11 +320,12 @@ data class LocalizacaoNota(val abreviacao: String, val itensExpedicao: List<Item
     get() = itensExpedicao.filter {it.selecionado || it.isSave()}.size
 }
 
-data class ItemExpedicao(val notaSaci: NotaSaci, var selecionado: Boolean = false) {
+data class ItemExpedicao(val notaSaci: NotaSaci, val saldo: Int, var selecionado: Boolean = false) {
   val prdno = notaSaci.prdno
   val grade = notaSaci.grade
   val nome = notaSaci.nome
-  val quant = notaSaci.quant
+  val quant = notaSaci.quant ?: 0
+  val saldoFinal = saldo - quant
 
   fun isSave() = notaSaci.isSave()
 }
@@ -376,7 +380,10 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
               if(select.isUserOriginated) {
                 select.allSelectedItems.forEach {
                   if(it.isSave()) {
-                    Notification.show("Não pode ser selecionado")
+                    Notification.show("Não pode ser selecionado. Já está salvo")
+                    selectionModel.deselect(it)
+                  }else if(it.saldoFinal < 0){
+                    Notification.show("Não pode ser selecionado. Saldo insuficiente.")
                     selectionModel.deselect(it)
                   }
                 }
@@ -402,10 +409,18 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
               caption = "Qtd Saida"
               align = VAlign.Right
             }
+            addColumnFor(ItemExpedicao::saldoFinal) {
+              expandRatio = 1
+              caption = "Saldo Final"
+              align = VAlign.Right
+            }
 
             this.setStyleGenerator {
-              if(it.isSave()) "ok"
-              else null
+              when {
+                it.isSave()       -> "ok"
+                it.saldoFinal < 0 -> "error_row"
+                else              -> null
+              }
             }
           }
           localizacaoNota.itensExpedicao.forEach {item ->
@@ -414,8 +429,6 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
           }
         }
       }
-
-
     }
   }
 }

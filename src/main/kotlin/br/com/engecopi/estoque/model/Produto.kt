@@ -192,6 +192,16 @@ class Produto: BaseModel() {
       .sumBy {it.quantidadeSaldo}
   }
 
+  fun saldoAbreviacao(): Int {
+    localizacao ?: return 0
+    if(localizacao == "") return 0
+    val loja = RegistryUserInfo.lojaDefault
+    return findItensNota().asSequence()
+      .filter {it.nota?.loja?.id == loja.id && it.localizacao.startsWith(RegistryUserInfo.abreviacaoDefault)}
+      .sumBy {it.quantidadeSaldo}
+  }
+
+
   fun saldoTotal(): Int {
     return findItensNota().sumBy {it.quantidadeSaldo}
   }

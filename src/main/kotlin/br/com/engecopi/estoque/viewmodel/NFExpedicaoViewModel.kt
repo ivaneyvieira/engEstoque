@@ -232,6 +232,11 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
   override fun QViewNotaExpedicao.filterDate(date: LocalDate): QViewNotaExpedicao {
     return data.eq(date)
   }
+
+  fun saldoProduto(notaSaci: NotaSaci): Int {
+    val produto = Produto.findProduto(notaSaci.codigo(), notaSaci.grade)
+    return produto?.saldoAbreviacao() ?: 0
+  }
 }
 
 class NFExpedicaoVo: EntityVo<ViewNotaExpedicao>() {
