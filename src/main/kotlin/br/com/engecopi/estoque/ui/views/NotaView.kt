@@ -147,11 +147,12 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO>>: CrudLayoutView<VO
               }
 
             select.allSelectedItems.forEach {
-              if(it.isSave){
+              if(it.isSave) {
                 it.selecionado = false
                 selectionModel.deselect(it)
-              }else
-              it.selecionado = true
+              }
+              else
+                it.selecionado = true
             }
           }
         }
@@ -194,7 +195,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO>>: CrudLayoutView<VO
         }
         bindItens(binder, "produtos")
         editor.addOpenListener {event ->
-          event.bean.produto?.let {produto ->
+          event.bean.produto.let {produto ->
             val locSulfixos = produto.localizacoes()
               .map {LocProduto(it)}
             comboLoc.setItems(locSulfixos)

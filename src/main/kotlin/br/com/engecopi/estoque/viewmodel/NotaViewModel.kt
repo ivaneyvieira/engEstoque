@@ -95,7 +95,7 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
   private fun insertItemNota(nota: Nota,
                              produto: Produto?,
                              quantProduto: Int,
-                             usuario3: Usuario,
+                             usuario: Usuario,
                              local: String?): ItemNota? {
     if(local.isNullOrBlank()) throw EViewModel("Não foi especificado a localização do item")
     val saldoLocal = produto?.saldoLoja(local) ?: 0
@@ -112,7 +112,7 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
             this.nota = nota
             this.produto = produto
             this.quantidade = quantProduto
-            this.usuario = usuario3
+            this.usuario = usuario
             this.localizacao = local
             this.status = statusDefault
           }

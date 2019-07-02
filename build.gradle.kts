@@ -17,10 +17,9 @@ buildscript {
 }
 
 plugins {
-  id("org.jetbrains.kotlin.jvm") version "1.3.31"
+  id("org.jetbrains.kotlin.jvm") version "1.3.40"
   id("org.gretty") version "2.3.1"
   id("com.devsoap.plugin.vaadin") version "1.4.1"
-  war
 }
 
 repositories {
@@ -33,7 +32,7 @@ configurations.all {
 
 defaultTasks("clean", "build")
 
-group = "dep_endereco"
+group = "engEstoque"
 version = "1.0-SNAPSHOT"
 
 apply(plugin = "war")
@@ -46,17 +45,18 @@ gretty {
 }
 
 vaadin {
-  version = "8.5.2"
+  version = "8.8.5"
 }
-
 
 configure<EnhancePluginExtension> {
-  debugLevel = 0
+  debugLevel = 1
 }
+
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
   jvmTarget = "1.8"
 }
+
 val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
   jvmTarget = "1.8"
@@ -71,19 +71,19 @@ dependencies {
   compile("com.github.mvysny.karibudsl:karibu-dsl-v8:$karibuVersion")
   compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   compile("org.jetbrains.kotlin:kotlin-reflect")
-  // logging
-  // currently we are logging through the SLF4J API to LogBack. See logback.xml file for the logger configuration
+  
   compile("ch.qos.logback:logback-classic:1.2.3")
   compile("org.slf4j:slf4j-api:1.7.25")
-  // this will configure Vaadin to log to SLF4J
+
   compile("org.slf4j:jul-to-slf4j:1.7.25")
-  // test support
-  //testCompile "com.github.kaributesting:karibu-testing-v8:0.4.15"
+  
   testImplementation("com.github.mvysny.dynatest:dynatest:0.8")
 
-  compile("io.ebean:ebean:11.39.3")
+  compile("io.ebean:ebean:11.41.1")
   // compile "io.ebean:querybean-generator:11.37.1"
-  compile("io.ebean:ebean-querybean:11.39.1")
+  compile("io.ebean:ebean-querybean:11.40.1")
+  implementation("io.ebean:ebean-agent:11.41.1")
+  
 
   //compile "io.ebean:ebean-annotation:4.7"
   compile("io.ebean.tools:finder-generator:11.34.1")

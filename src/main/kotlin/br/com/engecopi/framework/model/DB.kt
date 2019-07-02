@@ -102,8 +102,7 @@ object DB {
         sqlQuery?.setParameter(param.first, param.second)
       }
       sqlQuery?.findList()
-        ?.filter {it is T}
-        ?.map {it as T}
+        ?.filterIsInstance<T>()
     }.orEmpty()
   }
 }
