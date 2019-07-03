@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.ui.views
 
+import br.com.engecopi.estoque.model.LancamentoOrigem.DEPOSITO
 import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.NotaItens
 import br.com.engecopi.estoque.model.RegistryUserInfo
@@ -394,6 +395,11 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
               expandRatio = 1
               caption = "Grade"
             }
+            addColumnFor(ProdutoVO::saldo) {
+              expandRatio = 1
+              caption = "Saldo"
+              align = VAlign.Right
+            }
             addColumnFor(ProdutoVO::quantidade) {
               expandRatio = 1
               caption = "Qtd Saida"
@@ -402,7 +408,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
             }
             addColumnFor(ProdutoVO::saldoFinal) {
               expandRatio = 1
-              caption = "Saldo"
+              caption = "Saldo Final"
               align = VAlign.Right
             }
             editor.addOpenListener {event ->
@@ -416,7 +422,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
               comboLoc.isReadOnly = !event.bean.editavel()
               edtQuant.isReadOnly = !event.bean.editavel()
             }
-            val nav = FastNavigation<ProdutoVO>(this, false, true)
+            val nav = FastNavigation(this, false, true)
             nav.changeColumnAfterLastRow = true
             nav.openEditorWithSingleClick = true
             nav.allowArrowToChangeRow = true
@@ -491,6 +497,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
 }
 
 private fun ProdutoVO.editavel(): Boolean {
-  val itemNota = value ?: return false
-  return itemNota.status.IN(INCLUIDA, ENT_LOJA)
+  //val itemNota = value ?: return false
+  //return itemNota.nota?.lancamentoOrigem == DEPOSITO
+  return false
 }
