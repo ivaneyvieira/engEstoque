@@ -312,7 +312,6 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
           }
           this.addComponentsAndExpand(edtBarcode)
         }
-
         row {
           gridProdutos = grid(ProdutoVO::class) {
             this.tabIndex = -1
@@ -340,7 +339,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
                   }
                 select.allSelectedItems.forEach {
                   if(it.saldoFinal < 0) {
-                    Notification.show("Saldo Insuficiente")
+                    Notification.show("Saldo insuficiente")
                     selectionModel.deselect(it)
                     it.selecionado = false
                   }
