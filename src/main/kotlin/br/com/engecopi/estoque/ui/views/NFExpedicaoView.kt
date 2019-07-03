@@ -278,7 +278,7 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
             }
             val abreviacoes = abreviacaoItens.map {entry ->
               LocalizacaoNota(entry.key, entry.value.map {notaSaci ->
-                val saldo = viewModel.saldoProduto(notaSaci)
+                val saldo = viewModel.saldoProduto(notaSaci, entry.key)
                 ItemExpedicao(notaSaci, saldo)
               })
             }
@@ -403,6 +403,11 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
             addColumnFor(ItemExpedicao::grade) {
               expandRatio = 1
               caption = "Grade"
+            }
+            addColumnFor(ItemExpedicao::saldo) {
+              expandRatio = 1
+              caption = "Saldo"
+              align = VAlign.Right
             }
             addColumnFor(ItemExpedicao::quant) {
               expandRatio = 1

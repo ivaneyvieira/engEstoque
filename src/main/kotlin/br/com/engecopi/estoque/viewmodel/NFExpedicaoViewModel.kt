@@ -233,9 +233,9 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
     return data.eq(date)
   }
 
-  fun saldoProduto(notaSaci: NotaSaci): Int {
+  fun saldoProduto(notaSaci: NotaSaci, abreviacao : String): Int {
     val produto = Produto.findProduto(notaSaci.codigo(), notaSaci.grade)
-    return produto?.saldoAbreviacao() ?: 0
+    return produto?.saldoAbreviacao(abreviacao) ?: 0
   }
 }
 
