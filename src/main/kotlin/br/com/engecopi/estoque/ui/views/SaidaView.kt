@@ -1,10 +1,12 @@
 package br.com.engecopi.estoque.ui.views
 
 import br.com.engecopi.estoque.model.LancamentoOrigem.DEPOSITO
+import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
 import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.NotaItens
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
+import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoNota
@@ -343,7 +345,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
                     selectionModel.deselect(it)
                     it.selecionado = false
                   }
-                  else if(!it.editavel()) {
+                  else if(!it.allowSelect()) {
                     Notification.show("Não editavel")
                     selectionModel.deselect(it)
                     it.selecionado = false
@@ -418,8 +420,8 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
                 comboLoc.setItemCaptionGenerator {it.localizacao}
                 comboLoc.value = event.bean.localizacao
               }
-              comboLoc.isReadOnly = !event.bean.editavel()
-              edtQuant.isReadOnly = !event.bean.editavel()
+              comboLoc.isReadOnly = !event.bean.allowEdit()
+              edtQuant.isReadOnly = !event.bean.allowEdit()
             }
             val nav = FastNavigation(this, false, true)
             nav.changeColumnAfterLastRow = true
@@ -432,7 +434,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
             editor.isBuffered = false
             this.setStyleGenerator {
               if(it.saldoFinal < 0) "error_row"
-              else if(!it.editavel()) "ok"
+              else if(!it.allowSelect()) "ok"
               else null
             }
           }
@@ -452,13 +454,16 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
             alignment = BOTTOM_RIGHT
             addStyleName(ValoTheme.BUTTON_PRIMARY)
             addClickListener {
+              val allItens = gridProdutos.dataProvider.getAll()
               val itens = gridProdutos.selectedItems.toList()
-                .filter {it.saldoFinal >= 0 && it.editavel()}
-              val naoSelect = gridProdutos.dataProvider.getAll()
+                .filter {it.allowSelect()}
+              val naoSelect = allItens
                 .minus(itens)
-                .filter {it.editavel()}
-
-              viewModel.confirmaProdutos(itens, CONFERIDA)
+                .filter {it.allowSelect()}
+              val itensDeposito = itens.filter { it.value?.nota?.lancamentoOrigem == DEPOSITO}
+              val itensExpedicao = itens.filter { it.value?.nota?.lancamentoOrigem == EXPEDICAO}
+              viewModel.confirmaProdutos(itensDeposito, ENTREGUE)
+              viewModel.confirmaProdutos(itensExpedicao, CONFERIDA)
               viewModel.confirmaProdutos(naoSelect, ENT_LOJA)
               close()
             }
@@ -478,9 +483,9 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
         if(produtos.contains(produto)) {
           val itemVO = produtosVO.filter {it.value?.produto?.id == produto.id}
           itemVO.forEach {item ->
-            val codigo = item.value?.codigo ?: "Não encontrado"
-            if(item.saldoFinal < 0) viewModel.view.showWarning("O saldo final do produto $codigo está negativo")
-            else if(!item.editavel()) viewModel.view.showWarning("O produto $codigo não é editável")
+            val codigo = item.value?.codigo?.trim()
+            if(item.saldoFinal < 0) viewModel.view.showWarning("O saldo final do produto '$codigo' está negativo")
+            else if(!item.allowSelect()) viewModel.view.showWarning("O produto '$codigo' não é selecionavel")
             else {
               gridProdutos.select(item)
               item.updateItem()
@@ -495,8 +500,13 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
   }
 }
 
-private fun ProdutoVO.editavel(): Boolean {
-  //val itemNota = value ?: return false
-  //return itemNota.nota?.lancamentoOrigem == DEPOSITO
-  return false
+private fun ProdutoVO.allowSelect(): Boolean {
+  val status = this.value?.status ?: return false
+  return this.saldoFinal >= 0 && (status == INCLUIDA || status == ENT_LOJA)
+}
+
+private fun ProdutoVO.allowEdit(): Boolean {
+  val nota = this.value?.nota ?: return false
+  val status = this.value?.status ?: return false
+  return (nota.lancamentoOrigem == DEPOSITO) && (status == INCLUIDA || status == ENT_LOJA)
 }
