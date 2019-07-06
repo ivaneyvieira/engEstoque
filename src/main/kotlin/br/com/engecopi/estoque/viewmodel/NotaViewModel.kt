@@ -71,7 +71,7 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
       val produtosJaInserido = produtos.asSequence()
         .distinctBy {it.produto?.id}
         .filter {prd ->
-          prd.produto?.let {Nota.itemDuplicado(nota, it)} ?: false
+          prd.produto.let {Nota.itemDuplicado(nota, it)} ?: false
         }
         .map {it.produto}
         .filterNotNull()
@@ -316,8 +316,21 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
 }
 
 abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): EntityVo<ItemNota>() {
+  override fun toEntity(): ItemNota? {
+    return super.toEntity()?.apply {
+      this.quantidadeSaci()
+    }
+  }
   override fun findEntity(): ItemNota? {
-    return ItemNota.find(nota, produto)
+    val item = ItemNota.find(nota, produto)
+    item?.quantidadeSaci()
+    return item
+  }
+
+  init {
+    ItemNota.where().findEach {
+      it.quantidadeSaci()
+    }
   }
 
   var usuario: Usuario = usuarioDefault
@@ -360,10 +373,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   val notaSaci
     get() = notaProdutoSaci.firstOrNull()
   val nota: Nota?
-    get() = entityVo?.nota ?: when(tipo) {
-      SAIDA   -> Nota.findSaida(numeroNF)
-      ENTRADA -> Nota.findEntrada(numeroNF)
-    }
+    get() = entityVo?.nota ?: Nota.findNota(numeroNF, tipo)
 
   private fun atualizaNota() {
     if(!readOnly) if(entityVo == null) {

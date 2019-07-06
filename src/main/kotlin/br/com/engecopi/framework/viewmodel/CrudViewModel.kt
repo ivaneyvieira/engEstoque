@@ -150,7 +150,7 @@ abstract class EntityVo<MODEL: BaseModel> {
   open var entityVo: MODEL? = null
   var readOnly: Boolean = false
 
-  fun toEntity(): MODEL? {
+  open fun toEntity(): MODEL? {
     return entityVo ?: findEntity()
   }
 

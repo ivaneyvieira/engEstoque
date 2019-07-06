@@ -74,7 +74,7 @@ class Nota: BaseModel() {
   @Aggregation("max(sequencia)")
   var maxSequencia: Int? = 0
   @Enumerated(EnumType.STRING)
-  var lancamentoOrigem : LancamentoOrigem = LancamentoOrigem.EXPEDICAO
+  var lancamentoOrigem: LancamentoOrigem = LancamentoOrigem.EXPEDICAO
   val multipicadorCancelado
     get() = if(tipoNota == CANCELADA_E || tipoNota == CANCELADA_S) 0 else 1
 
@@ -104,7 +104,6 @@ class Nota: BaseModel() {
       val nota = findNota(numero, tipoNota.tipoMov) ?: createNota(notaSimples) ?: return NotaItens.VAZIO
       nota.sequencia = maxSequencia() + 1
       nota.usuario = usuarioDefault
-
       val itens = notasaci.mapNotNull {item ->
         val produto = Produto.findProduto(item.prdno, item.grade)
         ItemNota.find(nota, produto) ?: ItemNota.createItemNota(item, nota)?.let {itemNota ->
@@ -137,21 +136,6 @@ class Nota: BaseModel() {
         ENTRADA -> findEntrada(numero)
         SAIDA   -> findSaida(numero)
       }
-    }
-
-    fun findEntradas(): List<Nota> {
-      val numero = RegistryUserInfo.lojaDefault.numero
-      return Nota.where()
-        .tipoMov.eq(ENTRADA)
-        .loja.numero.eq(numero)
-        .findList()
-    }
-
-    fun findSaidas(): List<Nota> {
-      val numero = RegistryUserInfo.lojaDefault.numero
-      return where().tipoMov.eq(SAIDA)
-        .loja.numero.eq(numero)
-        .findList()
     }
 
     fun novoNumero(): Int {
@@ -191,9 +175,24 @@ class Nota: BaseModel() {
     }
   }
 
-  fun findItem(produto: Produto): ItemNota? {
-    refresh()
-    return itensNota?.firstOrNull {it.produto == produto}
+  fun updateQuantSaci() {
+    val notaSaci = when(tipoMov) {
+      ENTRADA -> findNotaEntradaSaci(numero)
+      SAIDA   -> findNotaSaidaSaci(numero)
+    }
+    val itensNota = itensNota()
+    notaSaci.forEach {notaSaciProduto ->
+      val prdno = notaSaciProduto.prdno
+      val grade = notaSaciProduto.grade
+      val produto = Produto.findProduto(prdno, grade)
+      val quantidadeSaci = notaSaciProduto.quant
+      itensNota.filter {it.produto?.id == produto?.id}
+        .forEach {itemNota ->
+          itemNota.refresh()
+          itemNota.quantidadeSaci = quantidadeSaci
+          itemNota.save()
+        }
+    }
   }
 
   fun existe(): Boolean {
@@ -264,15 +263,15 @@ data class NotaSerie(val id: Long, val tipoNota: TipoNota) {
   }
 }
 
-data class NotaItens(val nota : Nota?, val itens : List<ItemNota>){
+data class NotaItens(val nota: Nota?, val itens: List<ItemNota>) {
   val vazio get() = nota == null || itens.isEmpty()
 
-  companion object{
+  companion object {
     val VAZIO = NotaItens(null, emptyList())
   }
 }
 
-enum class LancamentoOrigem(val descricao : String) {
+enum class LancamentoOrigem(val descricao: String) {
   EXPEDICAO("Expedição"),
   DEPOSITO("Deposito")
 }

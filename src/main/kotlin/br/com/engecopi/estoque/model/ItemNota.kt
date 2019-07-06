@@ -38,6 +38,15 @@ class ItemNota: BaseModel() {
   var data: LocalDate = LocalDate.now()
   var hora: LocalTime = LocalTime.now()
   var quantidade: Int = 0
+  var quantidadeSaci: Int? = null
+  fun quantidadeSaci() : Int {
+    return quantidadeSaci ?: updateQuantidadeSaci()
+  }
+  private fun updateQuantidadeSaci() : Int {
+    nota?.updateQuantSaci()
+    refresh()
+    return quantidadeSaci ?: 0
+  }
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var produto: Produto? = null
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
@@ -124,6 +133,7 @@ class ItemNota: BaseModel() {
 
       return item ?: ItemNota().apply {
         quantidade = notaSaci.quant ?: 0
+        quantidadeSaci = quantidade
         produto = produtoSaci
         nota = notaPrd
         usuario = RegistryUserInfo.usuarioDefault
