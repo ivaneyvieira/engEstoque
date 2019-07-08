@@ -16,6 +16,7 @@ buildscript {
   }
 }
 
+
 plugins {
   id("org.jetbrains.kotlin.jvm") version "1.3.40"
   id("org.gretty") version "2.3.1"
@@ -24,10 +25,6 @@ plugins {
 
 repositories {
   mavenCentral()
-}
-
-configurations.all {
-  resolutionStrategy.cacheChangingModulesFor(4, "hours")
 }
 
 defaultTasks("clean", "build")

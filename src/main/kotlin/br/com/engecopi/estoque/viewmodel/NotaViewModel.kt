@@ -327,12 +327,6 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
     return item
   }
 
-  init {
-    ItemNota.where().findEach {
-      it.quantidadeSaci()
-    }
-  }
-
   var usuario: Usuario = usuarioDefault
   var numeroCodigo: String? = ""
   var numeroCodigoReduzido: String? = ""
