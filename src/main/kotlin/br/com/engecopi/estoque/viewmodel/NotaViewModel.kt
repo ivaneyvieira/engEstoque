@@ -316,15 +316,8 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
 }
 
 abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): EntityVo<ItemNota>() {
-  override fun toEntity(): ItemNota? {
-    return super.toEntity()?.apply {
-      this.quantidadeSaci()
-    }
-  }
   override fun findEntity(): ItemNota? {
-    val item = ItemNota.find(nota, produto)
-    item?.quantidadeSaci()
-    return item
+    return ItemNota.find(nota, produto)
   }
 
   var usuario: Usuario = usuarioDefault

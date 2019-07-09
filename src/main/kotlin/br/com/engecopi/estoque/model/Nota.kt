@@ -175,6 +175,7 @@ class Nota: BaseModel() {
     }
   }
 
+  /*
   fun updateQuantSaci() {
     val notaSaci = when(tipoMov) {
       ENTRADA -> findNotaEntradaSaci(numero)
@@ -194,7 +195,7 @@ class Nota: BaseModel() {
         }
     }
   }
-
+*/
   fun existe(): Boolean {
     return where().loja.equalTo(loja).numero.eq(numero).findCount() > 0
   }
