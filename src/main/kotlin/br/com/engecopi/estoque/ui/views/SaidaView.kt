@@ -470,12 +470,13 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
 
   private fun execBarcode(barcode: String?) {
     if(!barcode.isNullOrBlank()) {
-      val produto = viewModel.processaBarcodeProduto(barcode)
-      if(produto == null) viewModel.view.showWarning("Produto não encontrado no saci")
+      val listProduto = viewModel.processaBarcodeProduto(barcode)
+      if(listProduto.isEmpty()) viewModel.view.showWarning("Produto não encontrado no saci")
       else {
         val produtosVO = gridProdutos.dataProvider.getAll()
         val produtos = produtosVO.mapNotNull {it.value?.produto}
-        if(produtos.contains(produto)) {
+        val interProdutos = produtos.intersect(listProduto)
+        interProdutos.forEach {produto ->
           val itemVO = produtosVO.filter {it.value?.produto?.id == produto.id}
           itemVO.forEach {item ->
             val codigo = item.value?.codigo ?: "Não encontrado"
@@ -487,7 +488,8 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
             }
           }
         }
-        else viewModel.view.showWarning("Produto não encontrado no grid")
+        if(interProdutos.isEmpty())
+          viewModel.view.showWarning("Produto não encontrado no grid")
       }
       edtBarcode.focus()
       edtBarcode.selectAll()

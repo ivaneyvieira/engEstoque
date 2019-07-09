@@ -101,11 +101,11 @@ class Produto: BaseModel() {
         .firstOrNull()
     }
 
-    fun findBarcode(barcode: String?): Produto? {
-      val storeno = RegistryUserInfo.usuarioDefault.loja?.numero ?: return null
-      barcode ?: return null
-      val chave = saci.findBarcode(storeno, barcode) ?: return null
-      return findProduto(chave.codigo, chave.grade)
+    fun findBarcode(barcode: String?): List<Produto> {
+      val storeno = RegistryUserInfo.usuarioDefault.loja?.numero ?: return emptyList()
+      barcode ?: return emptyList()
+      val listProduto = saci.findBarcode(storeno, barcode)
+      return listProduto.mapNotNull {chave -> findProduto(chave.codigo, chave.grade)}
     }
 
     fun findProdutos(codigo: String?): List<Produto> {

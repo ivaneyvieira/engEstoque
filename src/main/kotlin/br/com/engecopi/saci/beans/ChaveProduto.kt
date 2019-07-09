@@ -19,5 +19,5 @@ fun List<ChaveProduto>.findChave(): List<ChaveProduto> {
      else                    -> emptyList()
    }*/
   return this.filter {it.barcode.isNotBlank()}
-    .distinctBy {it.barcode}
+    .distinctBy {it.barcode + "/" + it.prdno + "/" + it.grade}
 }
