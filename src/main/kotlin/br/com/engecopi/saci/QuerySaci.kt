@@ -107,14 +107,13 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     } ?: emptyList()
   }
 
-  fun findBarcode(storeno: Int, barcode: String): ChaveProduto? {
+  fun findBarcode(storeno: Int, barcode: String): List<ChaveProduto> {
     val sql = "/sqlSaci/findBarcode.sql"
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
         .addParameter("barcode", barcode.lpad(16, " "))
         .executeAndFetch(ChaveProduto::class.java)
         .findChave()
-        .firstOrNull()
     }
   }
 
