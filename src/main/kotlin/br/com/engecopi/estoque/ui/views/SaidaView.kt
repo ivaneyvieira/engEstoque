@@ -10,6 +10,7 @@ import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoNota
+import br.com.engecopi.estoque.viewmodel.EntradaVo
 import br.com.engecopi.estoque.viewmodel.ProdutoVO
 import br.com.engecopi.estoque.viewmodel.SaidaViewModel
 import br.com.engecopi.estoque.viewmodel.SaidaVo
@@ -140,10 +141,9 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
           isEnabled = impresso == false || isAdmin
           icon = VaadinIcons.PRINT
           addClickListener {
-            openText(viewModel.imprimir(item.itemNota))
-            val print = item?.entityVo?.impresso ?: true
-            it.button.isEnabled = print == false || isAdmin
-            refreshGrid()
+            showQuestion(msg = "Imprimir todos os itens da nota?",
+                         execYes = {imprimeItem(item, it.button, true)},
+                         execNo = {imprimeItem(item, it.button, false)})
           }
         }
       }
@@ -225,6 +225,13 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
         dlg.focusEditor()
       }
     }
+  }
+
+  protected fun imprimeItem(item: SaidaVo, button: Button, notaComleta : Boolean) {
+    openText(viewModel.imprimir(item.itemNota, notaComleta))
+    val print = item.entityVo?.impresso ?: true
+    button.isEnabled = print == false || isAdmin
+    refreshGrid()
   }
 }
 
@@ -475,12 +482,13 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
 
   private fun execBarcode(barcode: String?) {
     if(!barcode.isNullOrBlank()) {
-      val produto = viewModel.processaBarcodeProduto(barcode)
-      if(produto == null) viewModel.view.showWarning("Produto não encontrado no saci")
+      val listProduto = viewModel.processaBarcodeProduto(barcode)
+      if(listProduto.isEmpty()) viewModel.view.showWarning("Produto não encontrado no saci")
       else {
         val produtosVO = gridProdutos.dataProvider.getAll()
         val produtos = produtosVO.mapNotNull {it.value?.produto}
-        if(produtos.contains(produto)) {
+        val interProdutos = produtos.intersect(listProduto)
+        interProdutos.forEach {produto ->
           val itemVO = produtosVO.filter {it.value?.produto?.id == produto.id}
           itemVO.forEach {item ->
             val codigo = item.value?.codigo?.trim()
@@ -492,7 +500,8 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
             }
           }
         }
-        else viewModel.view.showWarning("Produto não encontrado no grid")
+        if(interProdutos.isEmpty())
+          viewModel.view.showWarning("Produto não encontrado no grid")
       }
       edtBarcode.focus()
       edtBarcode.selectAll()

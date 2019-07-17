@@ -271,15 +271,20 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
     print.print(etiqueta.template)
   }
 
-  fun imprimir(itemNota: ItemNota?) = execString {
-    val itens = ItemNota.where()
-      .nota.eq(itemNota?.nota)
-      .status.eq(itemNota?.status)
-      .order()
-      .nota.loja.numero.asc()
-      .nota.numero.asc()
-      .findList()
-    imprimir(itens)
+  fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean) = execString {
+    itemNota ?: return@execString ""
+    if(notaCompleta) {
+      val itens = ItemNota.where()
+        .nota.eq(itemNota.nota)
+        .status.eq(itemNota.status)
+        .order()
+        .nota.loja.numero.asc()
+        .nota.numero.asc()
+        .findList()
+      imprimir(itens)
+    }
+    else
+      imprimir(listOf(itemNota))
   }
 
   fun imprimir() = execString {

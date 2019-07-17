@@ -94,8 +94,8 @@ class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE,
     }
   }
 
-  fun processaBarcodeProduto(barcode: String?): Produto? {
-    return if(barcode.isNullOrBlank()) null
+  fun processaBarcodeProduto(barcode: String?): List<Produto> {
+    return if(barcode.isNullOrBlank()) emptyList()
     else Produto.findBarcode(barcode)
   }
 }

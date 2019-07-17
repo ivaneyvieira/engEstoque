@@ -39,6 +39,7 @@ import com.vaadin.ui.renderers.LocalDateRenderer
 import com.vaadin.ui.renderers.LocalDateTimeRenderer
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
+import de.steinwedel.messagebox.MessageBox
 import org.apache.commons.io.IOUtils
 import org.vaadin.addons.filteringgrid.FilterGrid
 import org.vaadin.viritin.fields.ClearableTextField
@@ -87,6 +88,10 @@ abstract class LayoutView<V: ViewModel>: VerticalLayout(), View, IView {
 
   override fun showInfo(msg: String) {
     if(msg.isNotBlank()) MessageDialog.info(message = msg)
+  }
+
+  fun showQuestion(msg: String, execYes: () -> Unit, execNo: () -> Unit) {
+    if(msg.isNotBlank()) MessageDialog.question(message = msg, execYes = execYes, execNo = execNo)
   }
 
   @Suppress("DEPRECATION")
