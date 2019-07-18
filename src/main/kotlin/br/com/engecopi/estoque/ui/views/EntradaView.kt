@@ -104,7 +104,8 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel>() {
         button.icon = VaadinIcons.PRINT
         button.addClickListener {
           item.itemNota?.recalculaSaldos()
-          showQuestion(msg = "Imprimir todos os itens da nota?",
+          val numero = item.numeroNF
+          showQuestion(msg = "Imprimir todos os itens da nota $numero?",
                        execYes = {imprimeItem(item, it.button, true)},
                        execNo = {imprimeItem(item, it.button, false)})
         }
