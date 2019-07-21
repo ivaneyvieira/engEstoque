@@ -10,6 +10,7 @@ import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoNota
+import br.com.engecopi.estoque.viewmodel.EntradaVo
 import br.com.engecopi.estoque.viewmodel.ProdutoVO
 import br.com.engecopi.estoque.viewmodel.SaidaViewModel
 import br.com.engecopi.estoque.viewmodel.SaidaVo
@@ -140,10 +141,11 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
           isEnabled = impresso == false || isAdmin
           icon = VaadinIcons.PRINT
           addClickListener {
-            openText(viewModel.imprimir(item.itemNota))
-            val print = item?.entityVo?.impresso ?: true
-            it.button.isEnabled = print == false || isAdmin
-            refreshGrid()
+            item.itemNota?.recalculaSaldos()
+            val numero = item.numeroNF
+            showQuestion(msg = "Imprimir todos os itens da nota $numero?",
+                         execYes = {imprimeItem(item, it.button, true)},
+                         execNo = {imprimeItem(item, it.button, false)})
           }
         }
       }
@@ -151,9 +153,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
 
       column(SaidaVo::lojaNF) {
         caption = "Loja NF"
-        setRenderer({loja ->
-                      loja?.sigla ?: ""
-                    }, TextRenderer())
+        setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
       }
       column(SaidaVo::tipoNotaDescricao) {
         caption = "TipoNota"
@@ -225,6 +225,13 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
         dlg.focusEditor()
       }
     }
+  }
+
+  protected fun imprimeItem(item: SaidaVo, button: Button, notaComleta: Boolean) {
+    openText(viewModel.imprimir(item.itemNota, notaComleta))
+    val print = item.entityVo?.impresso ?: true
+    button.isEnabled = print == false || isAdmin
+    refreshGrid()
   }
 }
 
@@ -460,8 +467,8 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
               val naoSelect = allItens
                 .minus(itens)
                 .filter {it.allowSelect()}
-              val itensDeposito = itens.filter { it.value?.nota?.lancamentoOrigem == DEPOSITO}
-              val itensExpedicao = itens.filter { it.value?.nota?.lancamentoOrigem == EXPEDICAO}
+              val itensDeposito = itens.filter {it.value?.nota?.lancamentoOrigem == DEPOSITO}
+              val itensExpedicao = itens.filter {it.value?.nota?.lancamentoOrigem == EXPEDICAO}
               viewModel.confirmaProdutos(itensDeposito, ENTREGUE)
               viewModel.confirmaProdutos(itensExpedicao, CONFERIDA)
               viewModel.confirmaProdutos(naoSelect, ENT_LOJA)

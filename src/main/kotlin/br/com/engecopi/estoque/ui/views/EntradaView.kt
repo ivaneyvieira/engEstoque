@@ -22,6 +22,7 @@ import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.w
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.Button
+import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
@@ -103,10 +104,10 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel>() {
         button.icon = VaadinIcons.PRINT
         button.addClickListener {
           item.itemNota?.recalculaSaldos()
-          openText(viewModel.imprimir(item.itemNota))
-          val print = item?.entityVo?.impresso ?: true
-          it.button.isEnabled = print == false || isAdmin
-          refreshGrid()
+          val numero = item.numeroNF
+          showQuestion(msg = "Imprimir todos os itens da nota $numero?",
+                       execYes = {imprimeItem(item, it.button, true)},
+                       execNo = {imprimeItem(item, it.button, false)})
         }
 
         button
@@ -168,6 +169,13 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel>() {
         setSortProperty("nota.fornecedor")
       }
     }
+  }
+
+  protected fun imprimeItem(item: EntradaVo, button: Button, notaComleta : Boolean) {
+    openText(viewModel.imprimir(item.itemNota, notaComleta))
+    val print = item.entityVo?.impresso ?: true
+    button.isEnabled = print == false || isAdmin
+    refreshGrid()
   }
 }
 

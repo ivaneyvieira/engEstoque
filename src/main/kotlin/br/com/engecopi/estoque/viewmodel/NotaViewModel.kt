@@ -271,15 +271,20 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
     print.print(etiqueta.template)
   }
 
-  fun imprimir(itemNota: ItemNota?) = execString {
-    val itens = ItemNota.where()
-      .nota.eq(itemNota?.nota)
-      .status.eq(itemNota?.status)
-      .order()
-      .nota.loja.numero.asc()
-      .nota.numero.asc()
-      .findList()
-    imprimir(itens)
+  fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean) = execString {
+    itemNota ?: return@execString ""
+    if(notaCompleta) {
+      val itens = ItemNota.where()
+        .nota.eq(itemNota.nota)
+        .status.eq(itemNota.status)
+        .order()
+        .nota.loja.numero.asc()
+        .nota.numero.asc()
+        .findList()
+      imprimir(itens)
+    }
+    else
+      imprimir(listOf(itemNota))
   }
 
   fun imprimir() = execString {
@@ -316,15 +321,8 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
 }
 
 abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): EntityVo<ItemNota>() {
-  override fun toEntity(): ItemNota? {
-    return super.toEntity()?.apply {
-      this.quantidadeSaci()
-    }
-  }
   override fun findEntity(): ItemNota? {
-    val item = ItemNota.find(nota, produto)
-    item?.quantidadeSaci()
-    return item
+    return ItemNota.find(nota, produto)
   }
 
   var usuario: Usuario = usuarioDefault
