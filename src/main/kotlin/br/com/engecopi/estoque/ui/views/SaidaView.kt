@@ -46,17 +46,21 @@ import com.github.mvysny.karibudsl.v8.px
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.verticalLayout
 import com.github.mvysny.karibudsl.v8.w
+import com.vaadin.data.provider.GridSortOrder
+import com.vaadin.data.provider.GridSortOrder.desc
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.event.ShortcutAction.KeyCode
 import com.vaadin.event.ShortcutAction.KeyCode.F2
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
+import com.vaadin.shared.data.sort.SortDirection.ASCENDING
 import com.vaadin.shared.data.sort.SortDirection.DESCENDING
 import com.vaadin.shared.ui.ValueChangeMode.LAZY
 import com.vaadin.ui.Alignment.BOTTOM_RIGHT
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.Grid
+import com.vaadin.ui.Grid.Column
 import com.vaadin.ui.Grid.SelectionMode.MULTI
 import com.vaadin.ui.Notification
 import com.vaadin.ui.TextField
@@ -66,6 +70,7 @@ import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
 import org.vaadin.patrik.FastNavigation
 import org.vaadin.viritin.fields.IntegerField
+import java.time.LocalDateTime
 
 @AutoView("")
 class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
@@ -236,6 +241,8 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
 }
 
 class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("Nota de Saída") {
+  private lateinit var grupoSelecaoCol: Column<ProdutoVO, Int>
+  private lateinit var dateUpdateCol: Column<ProdutoVO, LocalDateTime>
   private lateinit var gridProdutos: Grid<ProdutoVO>
   private val edtBarcode = TextField()
 
@@ -304,7 +311,9 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
             addValueChangeListener {
               val barcode = it.value
               execBarcode(barcode)
-              gridProdutos.sort(ProdutoVO::dateUpdate.name, DESCENDING)
+              gridProdutos.clearSortOrder()
+              gridProdutos.setSortOrder(listOf(GridSortOrder(grupoSelecaoCol, ASCENDING),
+                                               GridSortOrder(dateUpdateCol, DESCENDING)))
             }
             this.addGlobalShortcutListener(F2) {
               focusEditor()
@@ -312,12 +321,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
 
             this.valueChangeMode = LAZY
             valueChangeTimeout = 200
-            this.addGlobalShortcutListener(KeyShortcut(KeyCode.V, setOf(ModifierKey.Ctrl))) {
-              this.value = ""
-            }
-            this.addContextClickListener {
-              this.value = ""
-            }
+            //this.blockCLipboard()
           }
           this.addComponentsAndExpand(edtBarcode)
         }
@@ -327,8 +331,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
             val abreviacao = RegistryUserInfo.abreviacaoDefault
             //nota.refresh()
             val itens = nota.itens.filter {it.localizacao.startsWith(abreviacao)}
-
-            this.dataProvider = ListDataProvider(itens.mapNotNull {item ->
+            val itensProvider = itens.mapNotNull {item ->
               val produto = item.produto
               val statusNota = item.status
               val isSave = item.id != 0L
@@ -337,7 +340,10 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
                 this.value = item
               }
               else null
-            }.sortedByDescending {it.dateUpdate})
+            }
+              .sortedByDescending {it.dateUpdate}
+
+            this.dataProvider = ListDataProvider(itensProvider)
             removeAllColumns()
             val selectionModel = setSelectionMode(MULTI)
             selectionModel.addSelectionListener {select ->
@@ -345,26 +351,30 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
                 this.dataProvider.getAll()
                   .forEach {
                     it.selecionado = false
+                    it.updateItem(false)
                   }
                 select.allSelectedItems.forEach {
                   if(it.saldoFinal < 0) {
                     Notification.show("Saldo insuficiente")
                     selectionModel.deselect(it)
                     it.selecionado = false
+                    it.updateItem(false)
                   }
                   else if(!it.allowSelect()) {
                     Notification.show("Não editavel")
                     selectionModel.deselect(it)
                     it.selecionado = false
+                    it.updateItem(false)
                   }
                   else if(!RegistryUserInfo.userDefaultIsAdmin) {
                     Notification.show("Usuário não é administrador")
                     selectionModel.deselect(it)
                     it.selecionado = false
+                    it.updateItem(false)
                   }
                   else {
                     it.selecionado = true
-                    it.updateItem()
+                    it.updateItem(false)
                   }
                 }
               }
@@ -379,7 +389,10 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
               addStyleName(ValoTheme.TEXTFIELD_ALIGN_RIGHT)
             }
             setSizeFull()
-            addColumnFor(ProdutoVO::dateUpdate) {
+            dateUpdateCol = addColumnFor(ProdutoVO::dateUpdate) {
+              this.isHidden = true
+            }
+            grupoSelecaoCol = addColumnFor(ProdutoVO::grupoSelecao) {
               this.isHidden = true
             }
             addColumnFor(ProdutoVO::codigo) {
@@ -486,6 +499,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
       if(listProduto.isEmpty()) viewModel.view.showWarning("Produto não encontrado no saci")
       else {
         val produtosVO = gridProdutos.dataProvider.getAll()
+        produtosVO.forEach { it.updateItem(false)}
         val produtos = produtosVO.mapNotNull {it.value?.produto}
         val interProdutos = produtos.intersect(listProduto)
         interProdutos.forEach {produto ->
@@ -496,7 +510,8 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
             else if(!item.allowSelect()) viewModel.view.showWarning("O produto '$codigo' não é selecionavel")
             else {
               gridProdutos.select(item)
-              item.updateItem()
+              item.selecionado = true
+              item.updateItem(true)
             }
           }
         }
@@ -506,6 +521,15 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
       edtBarcode.focus()
       edtBarcode.selectAll()
     }
+  }
+}
+
+private fun TextField.blockCLipboard() {
+  this.addGlobalShortcutListener(KeyShortcut(KeyCode.V, setOf(ModifierKey.Ctrl))) {
+    this.value = ""
+  }
+  this.addContextClickListener {
+    this.value = ""
   }
 }
 

@@ -501,8 +501,17 @@ class ProdutoVO(val produto: Produto, val statusNota: StatusNota, var localizaca
   val gtin
     get() = produto.barcodeGtin
   var dateUpdate: LocalDateTime = LocalDateTime.now()
+  var grupoSelecao: Int = 1
 
-  fun updateItem() {
+  fun updateItem(first: Boolean) {
     dateUpdate = LocalDateTime.now()
+    grupoSelecao = if(selecionado) {
+      if(first)
+        0
+      else
+        2
+    }
+    else
+      1
   }
 }
