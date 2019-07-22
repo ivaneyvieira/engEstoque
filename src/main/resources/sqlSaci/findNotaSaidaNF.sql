@@ -21,7 +21,7 @@ SELECT CAST(IFNULL(X.xrouteno, '') AS CHAR) AS rota,
             WHEN tipo = 2
                  THEN 'DEV_FOR'
             WHEN tipo = 3
-                 THEN 'DEV_FOR'
+                 THEN 'OUTRAS_NFS'
             WHEN tipo = 7
                  THEN 'OUTRAS_NFS'
             ELSE 'SP_REME'

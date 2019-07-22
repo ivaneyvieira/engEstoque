@@ -2,6 +2,7 @@ package br.com.engecopi.framework.ui.view
 
 import com.github.mvysny.karibudsl.v8.cssLayout
 import com.github.mvysny.karibudsl.v8.expandRatio
+import com.github.mvysny.karibudsl.v8.h
 import com.github.mvysny.karibudsl.v8.horizontalLayout
 import com.github.mvysny.karibudsl.v8.isExpanded
 import com.github.mvysny.karibudsl.v8.perc
@@ -11,6 +12,7 @@ import com.vaadin.data.BeanValidationBinder
 import com.vaadin.shared.Registration
 import com.vaadin.ui.Button
 import com.vaadin.ui.Component
+import com.vaadin.ui.CssLayout
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.UI
@@ -79,9 +81,8 @@ open class DialogPopup<BEAN: Any>(caption: String, classBean: KClass<BEAN>): Win
   }
 }
 
-fun VerticalLayout.grupo(caption: String = "", block: VerticalLayout.() -> Unit) {
-  cssLayout(caption) {
-    this.isExpanded = false
+fun VerticalLayout.grupo(caption: String? = null, expand: Boolean = false, block: VerticalLayout.() -> Unit) {
+  val cssLayout = cssLayout(caption) {
     w = 100.perc
     addStyleName(ValoTheme.LAYOUT_CARD)
     verticalLayout {
@@ -89,11 +90,13 @@ fun VerticalLayout.grupo(caption: String = "", block: VerticalLayout.() -> Unit)
       this.block()
     }
   }
+  if(expand)
+    setExpandRatio(cssLayout, 1f)
 }
 
-fun VerticalLayout.row(block: HorizontalLayout.() -> Unit) {
-  horizontalLayout {
-    isExpanded = true
+fun VerticalLayout.row(expand: Boolean = true, block: HorizontalLayout.() -> Unit): HorizontalLayout {
+  return horizontalLayout {
+    this.isExpanded = expand
     w = 100.perc
     this.block()
     this.forEach {

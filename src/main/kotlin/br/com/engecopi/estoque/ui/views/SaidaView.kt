@@ -39,7 +39,9 @@ import com.github.mvysny.karibudsl.v8.dateField
 import com.github.mvysny.karibudsl.v8.expandRatio
 import com.github.mvysny.karibudsl.v8.getAll
 import com.github.mvysny.karibudsl.v8.grid
+import com.github.mvysny.karibudsl.v8.h
 import com.github.mvysny.karibudsl.v8.horizontalLayout
+import com.github.mvysny.karibudsl.v8.isExpanded
 import com.github.mvysny.karibudsl.v8.label
 import com.github.mvysny.karibudsl.v8.perc
 import com.github.mvysny.karibudsl.v8.px
@@ -56,6 +58,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 import com.vaadin.shared.data.sort.SortDirection.ASCENDING
 import com.vaadin.shared.data.sort.SortDirection.DESCENDING
 import com.vaadin.shared.ui.ValueChangeMode.LAZY
+import com.vaadin.shared.ui.window.WindowMode
 import com.vaadin.ui.Alignment.BOTTOM_RIGHT
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
@@ -251,13 +254,15 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
   }
 
   init {
+    windowMode = WindowMode.NORMAL
+    w = 80.perc
+    h = 80.perc
+
     addBlurListener {
       edtBarcode.focus()
     }
     verticalLayout {
-      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-        .px
-
+      setSizeFull()
       grupo("Nota fiscal de saída") {
         verticalLayout {
           row {
@@ -302,8 +307,33 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
           }
         }
       }
-
-      grupo {
+      grupo(expand = true) {
+        row {
+          horizontalLayout {
+            button("Confirma") {
+              addStyleName(ValoTheme.BUTTON_PRIMARY)
+              addClickListener {
+                val allItens = gridProdutos.dataProvider.getAll()
+                val itens = gridProdutos.selectedItems.toList()
+                  .filter {it.allowSelect()}
+                val naoSelect = allItens
+                  .minus(itens)
+                  .filter {it.allowSelect()}
+                val itensDeposito = itens.filter {it.value?.nota?.lancamentoOrigem == DEPOSITO}
+                val itensExpedicao = itens.filter {it.value?.nota?.lancamentoOrigem == EXPEDICAO}
+                viewModel.confirmaProdutos(itensDeposito, ENTREGUE)
+                viewModel.confirmaProdutos(itensExpedicao, CONFERIDA)
+                viewModel.confirmaProdutos(naoSelect, ENT_LOJA)
+                close()
+              }
+            }
+            button("Cancela") {
+              addClickListener {
+                close()
+              }
+            }
+          }
+        }
         row {
           w = 100.perc
           label("Produto")
@@ -321,12 +351,13 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
 
             this.valueChangeMode = LAZY
             valueChangeTimeout = 200
-            //this.blockCLipboard()
+            this.blockCLipboard()
           }
           this.addComponentsAndExpand(edtBarcode)
         }
-        row {
+        row(expand = true) {
           gridProdutos = grid(ProdutoVO::class) {
+            isExpanded = true
             this.tabIndex = -1
             val abreviacao = RegistryUserInfo.abreviacaoDefault
             //nota.refresh()
@@ -460,36 +491,6 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
           }
         }
       }
-
-      row {
-        horizontalLayout {
-          alignment = BOTTOM_RIGHT
-          button("Cancela") {
-            alignment = BOTTOM_RIGHT
-            addClickListener {
-              close()
-            }
-          }
-          button("Confirma") {
-            alignment = BOTTOM_RIGHT
-            addStyleName(ValoTheme.BUTTON_PRIMARY)
-            addClickListener {
-              val allItens = gridProdutos.dataProvider.getAll()
-              val itens = gridProdutos.selectedItems.toList()
-                .filter {it.allowSelect()}
-              val naoSelect = allItens
-                .minus(itens)
-                .filter {it.allowSelect()}
-              val itensDeposito = itens.filter {it.value?.nota?.lancamentoOrigem == DEPOSITO}
-              val itensExpedicao = itens.filter {it.value?.nota?.lancamentoOrigem == EXPEDICAO}
-              viewModel.confirmaProdutos(itensDeposito, ENTREGUE)
-              viewModel.confirmaProdutos(itensExpedicao, CONFERIDA)
-              viewModel.confirmaProdutos(naoSelect, ENT_LOJA)
-              close()
-            }
-          }
-        }
-      }
     }
   }
 
@@ -499,7 +500,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
       if(listProduto.isEmpty()) viewModel.view.showWarning("Produto não encontrado no saci")
       else {
         val produtosVO = gridProdutos.dataProvider.getAll()
-        produtosVO.forEach { it.updateItem(false)}
+        produtosVO.forEach {it.updateItem(false)}
         val produtos = produtosVO.mapNotNull {it.value?.produto}
         val interProdutos = produtos.intersect(listProduto)
         interProdutos.forEach {produto ->
