@@ -34,8 +34,8 @@ object LoginService {
   fun login(loginInfo: LoginInfo) {
     EstoqueUI.current?.loginInfo = loginInfo
     Session[LoginInfo::class] = loginInfo
-    val httpSession = Session.current.session as? HttpSession
-    val ctx = Session.current.getContext() as WebApplicationContext
+//    val httpSession = Session.current.session as? HttpSession
+//    val ctx = Session.current.getContext() as WebApplicationContext
     val session = ctx.getHttpSession()
     VaadinSession.getAllSessions(httpSession ).forEach {
       println("#####Session $it")
