@@ -47,6 +47,7 @@ import com.vaadin.ui.themes.ValoTheme
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.bridge.SLF4JBridgeHandler
+import javax.servlet.ServletConfig
 import javax.servlet.ServletContextEvent
 import javax.servlet.ServletContextListener
 import javax.servlet.annotation.WebListener
@@ -186,6 +187,12 @@ class MyUIServlet: VaadinServlet() {
       SLF4JBridgeHandler.removeHandlersForRootLogger()
       SLF4JBridgeHandler.install()
     }
+  }
+
+  override fun init(servletConfig: ServletConfig) {
+    super.init(servletConfig)
+    service.addSessionInitListener(VaadinSessionListener.VaadinSessionInitListener())
+    service.addSessionDestroyListener(VaadinSessionListener.VaadinSessionDestroyListener())
   }
 }
 
