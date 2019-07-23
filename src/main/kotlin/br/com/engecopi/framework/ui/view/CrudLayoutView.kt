@@ -141,6 +141,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C>>: Layout
       if(this.selectedItems.isNotEmpty()) if(updateButton.isVisible) updateButtonClicked()
       else readButtonClicked()
     }
+
     this.addItemClickListener {e ->
       if(e.mouseEventDetails.isDoubleClick) if(!this.asSingleSelect().isEmpty) if(updateButton.isVisible) updateButtonClicked()
       else readButtonClicked()

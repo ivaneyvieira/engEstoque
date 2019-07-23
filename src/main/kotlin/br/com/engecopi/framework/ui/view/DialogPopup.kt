@@ -83,6 +83,8 @@ open class DialogPopup<BEAN: Any>(caption: String, classBean: KClass<BEAN>): Win
 
 fun VerticalLayout.grupo(caption: String? = null, expand: Boolean = false, block: VerticalLayout.() -> Unit) {
   val cssLayout = cssLayout(caption) {
+    if(expand)
+      h = 100.perc
     w = 100.perc
     addStyleName(ValoTheme.LAYOUT_CARD)
     verticalLayout {
@@ -94,13 +96,15 @@ fun VerticalLayout.grupo(caption: String? = null, expand: Boolean = false, block
     setExpandRatio(cssLayout, 1f)
 }
 
-fun VerticalLayout.row(expand: Boolean = true, block: HorizontalLayout.() -> Unit): HorizontalLayout {
-  return horizontalLayout {
-    this.isExpanded = expand
-    w = 100.perc
+fun VerticalLayout.row(expand: Boolean = false, block: HorizontalLayout.() -> Unit) {
+  horizontalLayout {
     this.block()
     this.forEach {
       if(it.expandRatio > 0f) it.w = 100.perc
     }
+    isExpanded = expand
+    if(expand)
+      (this.parent as? VerticalLayout)?.addComponentsAndExpand(this)
+    w = 100.perc
   }
 }

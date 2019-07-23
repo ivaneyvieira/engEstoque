@@ -71,6 +71,7 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.Window
 import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
+import org.vaadin.grideditorcolumnfix.GridEditorColumnFix
 import org.vaadin.patrik.FastNavigation
 import org.vaadin.viritin.fields.IntegerField
 import java.time.LocalDateTime
@@ -254,9 +255,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
   }
 
   init {
-    windowMode = WindowMode.NORMAL
-    w = 80.perc
-    h = 80.perc
+    windowMode = WindowMode.MAXIMIZED
 
     addBlurListener {
       edtBarcode.focus()
@@ -333,10 +332,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
               }
             }
           }
-        }
-        row {
-          w = 100.perc
-          label("Produto")
+          label("Código de barras")
           edtBarcode.apply {
             addValueChangeListener {
               val barcode = it.value
@@ -353,11 +349,13 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
             valueChangeTimeout = 200
             this.blockCLipboard()
           }
-          this.addComponentsAndExpand(edtBarcode)
+
         }
         row(expand = true) {
           gridProdutos = grid(ProdutoVO::class) {
             isExpanded = true
+            GridEditorColumnFix(this)
+            setSizeFull()
             this.tabIndex = -1
             val abreviacao = RegistryUserInfo.abreviacaoDefault
             //nota.refresh()
