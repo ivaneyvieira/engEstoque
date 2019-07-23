@@ -349,7 +349,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
             valueChangeTimeout = 200
             this.blockCLipboard()
           }
-
+          this.addComponentsAndExpand(edtBarcode)
         }
         row(expand = true) {
           gridProdutos = grid(ProdutoVO::class) {
