@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.viewmodel
 
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
+import br.com.engecopi.estoque.model.LancamentoOrigem.DEPOSITO
 import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
@@ -13,6 +14,8 @@ import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.Repositories
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
+import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
+import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.StatusNota.RECEBIDO
 import br.com.engecopi.estoque.model.TipoMov
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
@@ -26,6 +29,11 @@ import br.com.engecopi.estoque.model.TipoNota.TRANSFERENCIA_S
 import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.model.ViewProdutoLoc
 import br.com.engecopi.estoque.model.query.QItemNota
+import br.com.engecopi.estoque.viewmodel.ETipoGrupo.BLUE
+import br.com.engecopi.estoque.viewmodel.ETipoGrupo.GREEN
+import br.com.engecopi.estoque.viewmodel.ETipoGrupo.RED
+import br.com.engecopi.estoque.viewmodel.ETipoGrupo.SELECT_FT
+import br.com.engecopi.estoque.viewmodel.ETipoGrupo.WHITE
 import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
@@ -501,17 +509,41 @@ class ProdutoVO(val produto: Produto, val statusNota: StatusNota, var localizaca
   val gtin
     get() = produto.barcodeGtin
   var dateUpdate: LocalDateTime = LocalDateTime.now()
-  var grupoSelecao: Int = 1
+  var grupoSelecao: ETipoGrupo = WHITE
+  val ordermSelecao : Int
+    get() = grupoSelecao.ordem
+
+  fun allowSelect(): Boolean {
+    val status = this.value?.status ?: return false
+    return this.saldoFinal >= 0 && (status == INCLUIDA || status == ENT_LOJA)
+  }
+
+  fun allowEdit(): Boolean {
+    val nota = this.value?.nota ?: return false
+    val status = this.value?.status ?: return false
+    return (nota.lancamentoOrigem == DEPOSITO) && (status == INCLUIDA || status == ENT_LOJA)
+  }
 
   fun updateItem(first: Boolean) {
     dateUpdate = LocalDateTime.now()
     grupoSelecao = if(selecionado) {
       if(first)
-        0
+        SELECT_FT
       else
-        2
+        BLUE
     }
     else
-      1
+      if(saldoFinal < 0) RED
+      else if(!allowSelect()) GREEN
+      else
+        WHITE
   }
+}
+
+enum class ETipoGrupo(val ordem: Int) {
+  SELECT_FT(0),
+  RED(1),
+  WHITE(2),
+  BLUE(3),
+  GREEN(4)
 }
