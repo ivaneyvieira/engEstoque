@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.ui
 
 import br.com.engecopi.estoque.model.LoginInfo
 import br.com.engecopi.estoque.model.Usuario
+import br.com.engecopi.estoque.ui.VaadinSessionListener.uis
 import br.com.engecopi.framework.ui.Session
 import br.com.engecopi.saci.saci
 import com.github.mvysny.karibudsl.v8.alignment
@@ -20,6 +21,7 @@ import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.verticalLayout
 import com.github.mvysny.karibudsl.v8.w
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.server.Page
 import com.vaadin.server.VaadinSession
 import com.vaadin.shared.ui.ContentMode.HTML
 import com.vaadin.ui.Alignment
@@ -32,10 +34,21 @@ import javax.servlet.http.HttpSession
 
 object LoginService {
   fun login(loginInfo: LoginInfo) {
-    EstoqueUI.current?.loginInfo = loginInfo
-    Session[LoginInfo::class] = loginInfo
+    val uis = VaadinSessionListener.uis
+    println("@@@@@@@@@@@@@@@@@@@@ UI = ${uis.size}")
+    val userUi = uis.filterIsInstance<EstoqueUI>()
+      .filter {it.loginInfo?.usuario?.id == loginInfo.usuario.id && !it.isClosing}
+    if(userUi.isEmpty()) {
+      EstoqueUI.current?.loginInfo = loginInfo
+      Session[LoginInfo::class] = loginInfo
+    }
+    else {
+      Page.getCurrent()
+        .reload()
+      Notification.show("Seu usuário está conectado em outra sessão")
+    }
   }
-  //Page.getCurrent().reload()
+
   val currentUser: LoginInfo?
     get() = EstoqueUI.current?.loginInfo
 
