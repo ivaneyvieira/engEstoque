@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.model
 
 import br.com.engecopi.framework.model.Transaction
 import com.vaadin.server.Page
+import com.vaadin.server.WebBrowser
 
 object RegistryUserInfo {
   const val LOJA_FIELD = "LOJA_DEFAULT"
@@ -40,7 +41,7 @@ object RegistryUserInfo {
     get() = Page.getCurrent().webBrowser.address ?: ""
 }
 
-data class LoginInfo(val usuario: Usuario, val abreviacao: String)
+data class LoginInfo(val usuario: Usuario, val abreviacao: String, val WebBrowser: WebBrowser)
 
 enum class TipoUsuario(val descricao: String) {
   ESTOQUE("Estoque"),

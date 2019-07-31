@@ -1,41 +1,32 @@
 package br.com.engecopi.estoque.ui
 
+import br.com.engecopi.estoque.model.LoginInfo
 import com.vaadin.server.*
 
 object VaadinSessionListener {
-  @Volatile
-  private var activeSessions = 0
+  val setSessions = mutableSetOf<VaadinSession>()
 
   class VaadinSessionInitListener: SessionInitListener {
     @Throws(ServiceException::class)
     override fun sessionInit(event: SessionInitEvent) {
-      incSessionCounter()
-      println("############## COUNT = $activeSessions")
+      event.session?.let {setSessions.add(it)}
     }
   }
 
   class VaadinSessionDestroyListener: SessionDestroyListener {
     override fun sessionDestroy(event: SessionDestroyEvent) {
-        if(event.session != null && event.session.session != null) {
-        decSessionCounter()
-        println("############## COUNT = $activeSessions")
+      if(event.session != null && event.session.session != null) {
+        event.session?.let {setSessions.remove(it)}
       }
     }
   }
 
-  fun getActiveSessions(): Int? {
-    return activeSessions
-  }
+  val sessions
+    get() = setSessions.toList()
 
-  @Synchronized
-  private fun decSessionCounter() {
-    if(activeSessions > 0) {
-      activeSessions--
-    }
-  }
+  val uis
+    get() = sessions.flatMap {it.uIs}.filterNotNull().distinct()
 
-  @Synchronized
-  private fun incSessionCounter() {
-    activeSessions++
-  }
+  fun userUi(login : LoginInfo) = uis.filterIsInstance<EstoqueUI>()
+    .filter {it.loginInfo?.usuario?.id == login.usuario.id && !it.isClosing}
 }
