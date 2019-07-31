@@ -172,7 +172,7 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel>() {
   }
 
   protected fun imprimeItem(item: EntradaVo, button: Button, notaComleta : Boolean) {
-    openText(viewModel.imprimir(item.itemNota, notaComleta))
+    imprimeText(viewModel.imprimir(item.itemNota, notaComleta))
     val print = item.entityVo?.impresso ?: true
     button.isEnabled = print == false || isAdmin
     refreshGrid()

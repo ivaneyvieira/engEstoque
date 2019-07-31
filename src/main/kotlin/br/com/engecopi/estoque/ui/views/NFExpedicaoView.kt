@@ -119,7 +119,7 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
           this.isEnabled = impresso == false || isAdmin
           this.icon = PRINT
           this.addClickListener {
-            openText(viewModel.imprimir(item?.entityVo?.nota))
+            imprimeText(viewModel.imprimir(item?.entityVo?.nota))
             val print = item?.impresso ?: true
             it.button.isEnabled = print == false || isAdmin
             refreshGrid()
@@ -183,7 +183,7 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
       if(notaSaida.isNotEmpty()) {
         val dialog = DlgNotaLoc(notaSaida, viewModel) {itens ->
           val nota = viewModel.processaKey(itens)
-          openText(viewModel.imprimir(nota))
+          imprimeText(viewModel.imprimir(nota))
         }
         dialog.showDialog()
       }
@@ -194,7 +194,7 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
     return Button("Imprime Etiquetas").apply {
       icon = PRINT
       addClickListener {
-        openText(viewModel.imprimeTudo())
+        imprimeText(viewModel.imprimeTudo())
         //grid.refreshGrid()
       }
     }

@@ -86,7 +86,7 @@ class LabelView: LayoutView<LabelViewModel>() {
               cmbTipoFiltro.value?.let {filtroView ->
                 filtroView.processaFiltro()
                 val print = viewModel.impressao()
-                openText(print)
+                imprimeText(print)
               }
             }
           }
