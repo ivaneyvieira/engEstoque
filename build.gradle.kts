@@ -94,7 +94,7 @@ dependencies {
 
   compile("org.apache.commons:commons-dbcp2:2.3.0")
 
-  compile("org.cups4j:cups4j:0.7.1")
+  compile("org.cups4j:cups4j:0.7.6")
   compile("org.glassfish.jersey.core:jersey-client:2.27")
   compile("org.glassfish.jersey.media:jersey-media-multipart:2.27")
   compile("org.glassfish.jersey.inject:jersey-hk2:2.27")
