@@ -36,17 +36,16 @@ object LoginService {
   fun login(loginInfo: LoginInfo) {
     val uis = VaadinSessionListener.uis
     println("@@@@@@@@@@@@@@@@@@@@ UI = ${uis.size}")
-    val userUi = uis.filterIsInstance<EstoqueUI>()
-      .filter {it.loginInfo?.usuario?.id == loginInfo.usuario.id && !it.isClosing}
-    if(userUi.isEmpty()) {
-      EstoqueUI.current?.loginInfo = loginInfo
-      Session[LoginInfo::class] = loginInfo
-    }
-    else {
-      Page.getCurrent()
-        .reload()
-      Notification.show("Seu usuário está conectado em outra sessão")
-    }
+    val userUi = VaadinSessionListener.userUi(loginInfo)
+    //if(userUi.isEmpty()) {
+    EstoqueUI.current?.loginInfo = loginInfo
+    Session[LoginInfo::class] = loginInfo
+    // }
+    // else {
+    //   Page.getCurrent()
+    //     .reload()
+    //   Notification.show("Seu usuário está conectado em outra sessão")
+    // }
   }
 
   val currentUser: LoginInfo?
@@ -158,7 +157,9 @@ class LoginForm(private val appTitle: String): VerticalLayout() {
         LoginService.logout()
       }
       else {
-        val loginInfo = LoginInfo(usuario, abrev)
+        val webBrowser = Page.getCurrent()
+          .webBrowser
+        val loginInfo = LoginInfo(usuario, abrev, webBrowser)
         LoginService.login(loginInfo)
       }
     }

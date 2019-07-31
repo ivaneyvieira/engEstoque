@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.ui
 
+import br.com.engecopi.estoque.model.LoginInfo
 import com.vaadin.server.*
 
 object VaadinSessionListener {
@@ -22,6 +23,10 @@ object VaadinSessionListener {
 
   val sessions
     get() = setSessions.toList()
+
   val uis
     get() = sessions.flatMap {it.uIs}.filterNotNull().distinct()
+
+  fun userUi(login : LoginInfo) = uis.filterIsInstance<EstoqueUI>()
+    .filter {it.loginInfo?.usuario?.id == login.usuario.id && !it.isClosing}
 }
