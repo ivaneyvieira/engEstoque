@@ -1,33 +1,8 @@
 package br.com.engecopi.utils
 
-import br.com.engecopi.framework.printer.PrinterCups
-import br.com.engecopi.framework.printer.print
-import br.com.engecopi.utils.CupsUtils.etiqueta
-import org.cups4j.PrintJob
 import org.cups4j.CupsClient
 import org.cups4j.CupsPrinter
-import org.cups4j.PrintRequestResult
-import java.awt.SystemColor.text
-
-fun main() {
-  val cupsClient = PrinterCups("192.168.1.14")
-  println("Inicio")
-  cupsClient.printers.forEach {printer ->
-    println("impressora")
-    printer.print(etiqueta)
-    println(printer.name)
-  }
-  val printer = cupsClient.printers.firstOrNull()
-
-  printer?.let {
-    println("imprimindo job")
-    val job = PrintJob.Builder(etiqueta.toByteArray())
-      .build()
-    printer.print(job)
-  }
-
-  println("Fim")
-}
+import org.cups4j.PrintJob
 
 object CupsUtils {
   private val cupsClient = CupsClient()
