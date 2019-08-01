@@ -47,8 +47,6 @@ import com.vaadin.ui.themes.ValoTheme
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.bridge.SLF4JBridgeHandler
-import org.vaadin.anna.CleanupServlet
-import javax.servlet.ServletConfig
 import javax.servlet.ServletContextEvent
 import javax.servlet.ServletContextListener
 import javax.servlet.annotation.WebListener
@@ -180,32 +178,14 @@ class Bootstrap: ServletContextListener {
 }
 
 @WebServlet(urlPatterns = ["/*"], name = "MyUIServlet", asyncSupported = true)
-@VaadinServletConfiguration(ui = EstoqueUI::class, productionMode = false, heartbeatInterval = 1,
-                            closeIdleSessions = true)
-class MyUIServlet: CleanupServlet() {
+@VaadinServletConfiguration(ui = EstoqueUI::class, productionMode = false)
+class MyUIServlet: VaadinServlet() {
   companion object {
     init {
       // Vaadin logs into java.util.logging. Redirect that, so that all logging goes through slf4j.
       SLF4JBridgeHandler.removeHandlersForRootLogger()
       SLF4JBridgeHandler.install()
     }
-  }
-
-  override fun init(servletConfig: ServletConfig) {
-    super.init(servletConfig)
-    service.addSessionInitListener(VaadinSessionListener.VaadinSessionInitListener())
-    service.addSessionDestroyListener(VaadinSessionListener.VaadinSessionDestroyListener())
-  }
-
-  override fun getCleanupPollingInterval(): Int {
-    // how long to wait between session timeout checks
-    return 3000
-  }
-
-  override fun alwaysCheckUITimeOuts(): Boolean {
-    // if you want to ensure UI cleanup on every check
-    // regardless of session timeout, default false
-    return false
   }
 }
 

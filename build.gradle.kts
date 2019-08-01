@@ -94,7 +94,7 @@ dependencies {
 
   compile("org.apache.commons:commons-dbcp2:2.3.0")
 
-  compile("org.cups4j:cups4j:0.7.6")
+  compile("org.cups4j:cups4j:0.7.1")
   compile("org.glassfish.jersey.core:jersey-client:2.27")
   compile("org.glassfish.jersey.media:jersey-media-multipart:2.27")
   compile("org.glassfish.jersey.inject:jersey-hk2:2.27")
@@ -112,7 +112,6 @@ dependencies {
   compile("org.vaadin.addons:filtering-grid:0.1.1")
   compile("com.fo0.advancedtokenfield:AdvancedTokenField:0.5.1")
   compile("org.vaadin:grideditorcolumnfix:0.3.1")
-  compile("org.vaadin.anna:cleanupservlet:2.0.0")
   // heroku app runner
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
   testRuntime("org.junit.jupiter:junit-jupiter-engine:5.4.2")

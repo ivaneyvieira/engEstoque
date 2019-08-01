@@ -114,12 +114,8 @@ class UsuarioCrudVo: EntityVo<Usuario>() {
   var expedicao: Boolean = false
   var admin: Boolean? = false
   var etiqueta = false
-  val tipoUsuarioStr
-    get() = when {
-      admin == true         -> "Administrador"
-      estoque && !expedicao -> "Estoque"
-      !estoque && expedicao -> "Expedição"
-      estoque && expedicao  -> "Estoque/Expedição"
-      else                  -> ""
-    }
+  val tipoUsuarioStr = if(estoque) if(expedicao) "Estoque/Expedição"
+  else "Estoque"
+  else if(expedicao) "Expedição"
+  else ""
 }

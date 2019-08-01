@@ -237,7 +237,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
   }
 
   protected fun imprimeItem(item: SaidaVo, button: Button, notaComleta: Boolean) {
-    imprimeText(viewModel.imprimir(item.itemNota, notaComleta))
+    openText(viewModel.imprimir(item.itemNota, notaComleta))
     val print = item.entityVo?.impresso ?: true
     button.isEnabled = print == false || isAdmin
     refreshGrid()
@@ -337,7 +337,9 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
             addValueChangeListener {
               val barcode = it.value
               execBarcode(barcode)
-              gridProdutos.sortDefault()
+              gridProdutos.clearSortOrder()
+              gridProdutos.setSortOrder(listOf(GridSortOrder(grupoSelecaoCol, ASCENDING),
+                                               GridSortOrder(dateUpdateCol, DESCENDING)))
             }
             this.addGlobalShortcutListener(F2) {
               focusEditor()
@@ -365,7 +367,6 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
               if(produto != null) ProdutoVO(produto, statusNota, LocProduto(item.localizacao), isSave).apply {
                 this.quantidade = item.quantidade
                 this.value = item
-                this.updateItem(false)
               }
               else null
             }
@@ -420,7 +421,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
             dateUpdateCol = addColumnFor(ProdutoVO::dateUpdate) {
               this.isHidden = true
             }
-            grupoSelecaoCol = addColumnFor(ProdutoVO::ordermSelecao) {
+            grupoSelecaoCol = addColumnFor(ProdutoVO::grupoSelecao) {
               this.isHidden = true
             }
             addColumnFor(ProdutoVO::codigo) {
@@ -485,17 +486,10 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
               else if(!it.allowSelect()) "ok"
               else null
             }
-            sortDefault()
           }
         }
       }
     }
-  }
-
-  private fun Grid<ProdutoVO>.sortDefault() {
-    clearSortOrder()
-    sortOrder = listOf(GridSortOrder(grupoSelecaoCol, ASCENDING),
-                       GridSortOrder(dateUpdateCol, DESCENDING))
   }
 
   private fun execBarcode(barcode: String?) {
@@ -538,4 +532,13 @@ private fun TextField.blockCLipboard() {
   }
 }
 
+private fun ProdutoVO.allowSelect(): Boolean {
+  val status = this.value?.status ?: return false
+  return this.saldoFinal >= 0 && (status == INCLUIDA || status == ENT_LOJA)
+}
 
+private fun ProdutoVO.allowEdit(): Boolean {
+  val nota = this.value?.nota ?: return false
+  val status = this.value?.status ?: return false
+  return (nota.lancamentoOrigem == DEPOSITO) && (status == INCLUIDA || status == ENT_LOJA)
+}

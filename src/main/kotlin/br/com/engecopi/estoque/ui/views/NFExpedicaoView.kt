@@ -119,7 +119,7 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
           this.isEnabled = impresso == false || isAdmin
           this.icon = PRINT
           this.addClickListener {
-            imprimeText(viewModel.imprimir(item?.entityVo?.nota))
+            openText(viewModel.imprimir(item?.entityVo?.nota))
             val print = item?.impresso ?: true
             it.button.isEnabled = print == false || isAdmin
             refreshGrid()
@@ -183,7 +183,7 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
       if(notaSaida.isNotEmpty()) {
         val dialog = DlgNotaLoc(notaSaida, viewModel) {itens ->
           val nota = viewModel.processaKey(itens)
-          imprimeText(viewModel.imprimir(nota))
+          openText(viewModel.imprimir(nota))
         }
         dialog.showDialog()
       }
@@ -194,7 +194,7 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
     return Button("Imprime Etiquetas").apply {
       icon = PRINT
       addClickListener {
-        imprimeText(viewModel.imprimeTudo())
+        openText(viewModel.imprimeTudo())
         //grid.refreshGrid()
       }
     }
@@ -273,17 +273,14 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
           gridProdutos = grid(LocalizacaoNota::class) {
             val itens = notaSaida
             val abreviacaoItens = itens.groupBy {item ->
-              val abreviacao = viewModel.abreviacoesExp(item.prdno, item.grade)
+              val abreviacao = viewModel.abreviacoes(item.prdno, item.grade)
               abreviacao
             }
-            val abreviacoes = abreviacaoItens.map {e ->
-              val abrev = e.key
-              val list = e.value
-              val itensExpedicao = list.map {notaSaci ->
-                val saldo = viewModel.saldoProduto(notaSaci, abrev)
+            val abreviacoes = abreviacaoItens.map {entry ->
+              LocalizacaoNota(entry.key, entry.value.map {notaSaci ->
+                val saldo = viewModel.saldoProduto(notaSaci, entry.key)
                 ItemExpedicao(notaSaci, saldo)
-              }
-              LocalizacaoNota(abrev, itensExpedicao)
+              })
             }
               .toList()
               .sortedBy {it.abreviacao}
@@ -385,8 +382,7 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
                   if(it.isSave()) {
                     Notification.show("Não pode ser selecionado. Já está salvo")
                     selectionModel.deselect(it)
-                  }
-                  else if(it.saldoFinal < 0) {
+                  }else if(it.saldoFinal < 0){
                     Notification.show("Não pode ser selecionado. Saldo insuficiente.")
                     selectionModel.deselect(it)
                   }

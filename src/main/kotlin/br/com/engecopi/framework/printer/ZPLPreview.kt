@@ -1,4 +1,4 @@
-package br.com.engecopi.utils
+package br.com.engecopi.framework.printer
 
 import org.glassfish.jersey.media.multipart.MultiPartFeature
 import javax.ws.rs.client.ClientBuilder

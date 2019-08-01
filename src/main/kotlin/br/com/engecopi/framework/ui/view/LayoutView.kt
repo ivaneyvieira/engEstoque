@@ -2,9 +2,7 @@ package br.com.engecopi.framework.ui.view
 
 import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.framework.viewmodel.ViewModel
-import br.com.engecopi.utils.CupsUtils
 import br.com.engecopi.utils.SystemUtils
-import br.com.engecopi.utils.printText
 import com.fo0.advancedtokenfield.main.AdvancedTokenField
 import com.github.mvysny.karibudsl.v8.VAlign
 import com.github.mvysny.karibudsl.v8.VaadinDsl
@@ -33,7 +31,6 @@ import com.vaadin.ui.Component
 import com.vaadin.ui.Grid
 import com.vaadin.ui.Grid.Column
 import com.vaadin.ui.HasComponents
-import com.vaadin.ui.Notification
 import com.vaadin.ui.TwinColSelect
 import com.vaadin.ui.UI
 import com.vaadin.ui.VerticalLayout
@@ -55,7 +52,6 @@ import org.vaadin.viritin.fields.IntegerSliderField
 import org.vaadin.viritin.fields.LabelField
 import org.vaadin.viritin.fields.MCheckBox
 import org.vaadin.viritin.fields.MTextField
-import java.nio.charset.Charset
 import java.text.DecimalFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -97,34 +93,16 @@ abstract class LayoutView<V: ViewModel>: VerticalLayout(), View, IView {
   fun showQuestion(msg: String, execYes: () -> Unit, execNo: () -> Unit) {
     if(msg.isNotBlank()) MessageDialog.question(message = msg, execYes = execYes, execNo = execNo)
   }
-}
 
-private fun openWindowsText(text: String?) {
-  if(!text.isNullOrBlank()) {
-    val resource = StreamResource({IOUtils.toInputStream(text, Charset.defaultCharset())},
-                                  "${SystemUtils.md5(text)}.txt")
-    resource.mimeType = "text/plain"
+  @Suppress("DEPRECATION")
+  open fun openText(text: String?) {
+    if(!text.isNullOrBlank()) {
+      val resource = StreamResource({IOUtils.toInputStream(text)}, "${SystemUtils.md5(text)}.txt")
+      resource.mimeType = "text/plain"
 
-    Page.getCurrent()
-      .open(resource, "_blank", false)
-  }
-}
-
-fun printText(printerName: String, text: String?) {
-  if(!text.isNullOrBlank()) {
-    CupsUtils.printer(printerName)
-      .printText(text) {
-        Notification.show(it)
-      }
-  }
-}
-
-fun imprimeText(printerName: String, text: String?) {
-  if(CupsUtils.printerExists(printerName)) {
-    printText(printerName, text)
-  }
-  else {
-    openWindowsText(text)
+      Page.getCurrent()
+        .open(resource, "_blank", false)
+    }
   }
 }
 
