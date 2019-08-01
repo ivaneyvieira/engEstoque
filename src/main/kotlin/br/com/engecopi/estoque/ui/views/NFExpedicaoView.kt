@@ -273,7 +273,7 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
           gridProdutos = grid(LocalizacaoNota::class) {
             val itens = notaSaida
             val abreviacaoItens = itens.groupBy {item ->
-              val abreviacao = viewModel.abreviacoes(item.prdno, item.grade)
+              val abreviacao = viewModel.abreviacoesExp(item.prdno, item.grade)
               abreviacao
             }
             val abreviacoes = abreviacaoItens.map {entry ->

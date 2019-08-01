@@ -220,9 +220,11 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
 
   fun findLoja(storeno: Int?): Loja? = Loja.findLoja(storeno)
 
-  fun abreviacoes(prdno: String?, grade: String?): String {
+  fun abreviacoesExp(prdno: String?, grade: String?): String {
     val produto = Produto.findProduto(prdno, grade) ?: return ""
-    return ViewProdutoLoc.abreviacoesProduto(produto).firstOrNull() ?: ""
+    val listAbreviacoes = ViewProdutoLoc.abreviacoesProduto(produto)
+    val listAbreviacoesExp = listAbreviacoes.filter { it.toUpperCase().startsWith("EXP") }
+    return listAbreviacoesExp.firstOrNull() ?: listAbreviacoes.firstOrNull() ?: ""
   }
 
   override fun QViewNotaExpedicao.filterString(text: String): QViewNotaExpedicao {
