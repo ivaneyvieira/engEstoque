@@ -192,7 +192,7 @@ class Produto: BaseModel() {
       .sumBy {it.quantidadeSaldo}
   }
 
-  fun saldoAbreviacao(abreviacao : String): Int {
+  fun saldoAbreviacao(abreviacao: String): Int {
     val loja = RegistryUserInfo.lojaDefault
     return ItemNota.where()
       .produto.id.eq(id)
@@ -201,7 +201,6 @@ class Produto: BaseModel() {
       .findList()
       .sumBy {it.quantidadeSaldo}
   }
-
 
   fun saldoTotal(): Int {
     return findItensNota().sumBy {it.quantidadeSaldo}
@@ -214,8 +213,10 @@ class Produto: BaseModel() {
   }
 
   fun findItensNota(): List<ItemNota> {
+    val loja = RegistryUserInfo.lojaDefault
     return ItemNota.where()
       .produto.id.eq(id)
+      .nota.loja.equalTo(loja)
       .findList()
   }
 

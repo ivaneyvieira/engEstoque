@@ -276,11 +276,14 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
               val abreviacao = viewModel.abreviacoesExp(item.prdno, item.grade)
               abreviacao
             }
-            val abreviacoes = abreviacaoItens.map {entry ->
-              LocalizacaoNota(entry.key, entry.value.map {notaSaci ->
-                val saldo = viewModel.saldoProduto(notaSaci, entry.key)
+            val abreviacoes = abreviacaoItens.map {e ->
+              val abrev = e.key
+              val list = e.value
+              val itensExpedicao = list.map {notaSaci ->
+                val saldo = viewModel.saldoProduto(notaSaci, abrev)
                 ItemExpedicao(notaSaci, saldo)
-              })
+              }
+              LocalizacaoNota(abrev, itensExpedicao)
             }
               .toList()
               .sortedBy {it.abreviacao}
@@ -382,7 +385,8 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
                   if(it.isSave()) {
                     Notification.show("Não pode ser selecionado. Já está salvo")
                     selectionModel.deselect(it)
-                  }else if(it.saldoFinal < 0){
+                  }
+                  else if(it.saldoFinal < 0) {
                     Notification.show("Não pode ser selecionado. Saldo insuficiente.")
                     selectionModel.deselect(it)
                   }
