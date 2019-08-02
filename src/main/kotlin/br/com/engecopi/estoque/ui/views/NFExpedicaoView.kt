@@ -276,11 +276,16 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
               val abreviacao = viewModel.abreviacoes(item.prdno, item.grade)
               abreviacao
             }
-            val abreviacoes = abreviacaoItens.map {entry ->
-              LocalizacaoNota(entry.key, entry.value.map {notaSaci ->
-                val saldo = viewModel.saldoProduto(notaSaci, entry.key)
-                ItemExpedicao(notaSaci, saldo)
-              })
+            val abreviacoes = abreviacaoItens.flatMap {e ->
+              val abrev = e.key
+              val list = e.value
+              abrev.map {ab ->
+                val itensNota = list.map {notaSaci ->
+                  val saldo = viewModel.saldoProduto(notaSaci, ab)
+                  ItemExpedicao(notaSaci, saldo)
+                }
+                LocalizacaoNota(ab, itensNota)
+              }
             }
               .toList()
               .sortedBy {it.abreviacao}
