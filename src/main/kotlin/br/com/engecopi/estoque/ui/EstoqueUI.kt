@@ -9,6 +9,7 @@ import br.com.engecopi.estoque.ui.views.EtiquetaView
 import br.com.engecopi.estoque.ui.views.HistoricoView
 import br.com.engecopi.estoque.ui.views.LabelView
 import br.com.engecopi.estoque.ui.views.NFExpedicaoView
+import br.com.engecopi.estoque.ui.views.PainelGeralView
 import br.com.engecopi.estoque.ui.views.ProdutoView
 import br.com.engecopi.estoque.ui.views.SaidaView
 import br.com.engecopi.estoque.ui.views.UsuarioView
@@ -98,6 +99,9 @@ class EstoqueUI: UI() {
               LoginService.logout()
             }
           }
+        }
+        section("Paineis") {
+          menuButton("Visão geral", NEWSPAPER, view = PainelGeralView::class.java)
         }
 
         if(user.expedicao || user.admin) {
