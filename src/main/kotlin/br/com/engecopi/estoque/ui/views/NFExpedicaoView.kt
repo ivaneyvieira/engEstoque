@@ -4,7 +4,6 @@ import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.viewmodel.NFExpedicaoViewModel
 import br.com.engecopi.estoque.viewmodel.NFExpedicaoVo
-import br.com.engecopi.estoque.viewmodel.NotaSaciLoc
 import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.dateFormat
 import br.com.engecopi.framework.ui.view.grupo
@@ -204,7 +203,7 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
 
 class DlgNotaLoc(val notaSaida: List<NotaSaci>,
                  val viewModel: NFExpedicaoViewModel,
-                 val execConfirma: (itens: List<NotaSaciLoc>) -> Unit): Window("Nota de Saída") {
+                 val execConfirma: (itens: List<NotaSaci>) -> Unit): Window("Nota de Saída") {
   private lateinit var gridProdutos: Grid<LocalizacaoNota>
 
   init {
@@ -255,9 +254,8 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
               addClickListener {
                 val itens = gridProdutos.dataProvider.getAll()
                   .flatMap {loc ->
-                    val abreviacao = loc.abreviacao
                     loc.itensExpedicao.filter {it.selecionado}
-                      .map {item -> NotaSaciLoc(item.notaSaci, abreviacao)}
+                      .map {item -> item.notaSaci}
                   }
                 execConfirma(itens)
                 close()
