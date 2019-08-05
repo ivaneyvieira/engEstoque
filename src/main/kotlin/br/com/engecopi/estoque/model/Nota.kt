@@ -173,6 +173,16 @@ class Nota: BaseModel() {
     fun findNotaSaidaKey(nfeKey: String): List<NotaSaci> {
       return saci.findNotaSaidaKey(nfeKey, usuarioDefault.admin)
     }
+
+    fun listSaidaCancel(): List<Nota> {
+      val data = LocalDate.now().minusDays(10)
+      val lista = Nota.where()
+        .tipoMov.eq(SAIDA)
+        .data.ge(data)
+        .tipoNota.notEqualTo(PEDIDO_S)
+        .findList()
+      return saci.findNotasSaidaCancelada(lista)
+    }
   }
 
   /*

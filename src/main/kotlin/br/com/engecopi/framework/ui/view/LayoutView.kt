@@ -25,6 +25,7 @@ import com.vaadin.event.ShortcutAction.KeyCode
 import com.vaadin.navigator.View
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 import com.vaadin.server.Page
+import com.vaadin.server.Sizeable
 import com.vaadin.server.StreamResource
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.Component
@@ -299,4 +300,9 @@ fun Window.showDialog() {
   UI.getCurrent()
     .addWindow(this)
   center()
+}
+
+fun (@VaadinDsl Component).expand(ratio: Int = 1) {
+  this.expandRatio = ratio * 1f
+  this.setSizeFull()
 }

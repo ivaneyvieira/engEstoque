@@ -1,5 +1,6 @@
 package br.com.engecopi.saci
 
+import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.saci.beans.ChaveProduto
 import br.com.engecopi.saci.beans.LojaSaci
 import br.com.engecopi.saci.beans.NfsKey
@@ -150,6 +151,17 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addParameter("typeno", typeno)
         .executeAndFetch(ChaveProduto::class.java)
     }
+  }
+
+  fun findNotasSaidaCancelada(lista: List<Nota>): List<Nota> {
+    val sqlTemp = temporaryTable("TempNotaSaida", lista) {nota ->
+      val storeno = nota.loja?.numero ?: 0
+      val nfno = nota.numero.split("/").getOrNull(0) ?: ""
+      val nfse = nota.numero.split("/").getOrNull(1) ?: ""
+      "$storeno AS storeno, '$nfno' AS nfno, '$nfse' AS nfse"
+    }
+    println(sqlTemp)
+    return lista
   }
 
   companion object {
