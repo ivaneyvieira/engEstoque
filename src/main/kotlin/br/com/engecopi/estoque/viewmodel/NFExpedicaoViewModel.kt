@@ -10,6 +10,7 @@ import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
+import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov
@@ -125,7 +126,7 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
       val item = ItemNota.find(notaSaci.notaSaci) ?: ItemNota.createItemNota(notaSaci.notaSaci, nota)
       val abreviacao = notaSaci.abreviacao
       return@mapNotNull item?.apply {
-        this.status = if(abreviacao.startsWith("EXP")) ENT_LOJA else INCLUIDA
+        this.status = if(abreviacao.startsWith("EXP")) ENTREGUE else INCLUIDA
         this.impresso = false
         this.usuario = usuarioDefault
         this.data = LocalDate.now()
@@ -167,6 +168,7 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
       else {
         val etiquetas = Etiqueta.findByStatus(INCLUIDA)
         val itens = notaRef.itensNota()
+          .filter {!it.localizacao.startsWith("EXP")}
 
         etiquetas.joinToString(separator = "\n") {etiqueta ->
           itens.map {imprimir(it, etiqueta)}
