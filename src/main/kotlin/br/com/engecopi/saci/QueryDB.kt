@@ -2,6 +2,7 @@ package br.com.engecopi.saci
 
 import br.com.engecopi.utils.SystemUtils
 import com.jolbox.bonecp.BoneCPDataSource
+import org.apache.commons.lang3.RandomStringUtils
 import org.sql2o.Connection
 import org.sql2o.Query
 import org.sql2o.Sql2o
@@ -79,5 +80,20 @@ open class QueryDB(private val driver: String, val url: String, val username: St
         println("SQL2O ==> $sql")
         return proc(con, query)
       }
+  }
+
+  protected fun <T> temporaryTable(tableName: String, lista: List<T>, fieldList: (T) -> String): String {
+    val stringBuild = StringBuilder()
+    val selectList = lista.joinToString(separator = "\nUNION\n") {item ->
+      "SELECT ${fieldList(item)} FROM DUAL"
+    }
+    stringBuild.append(
+      """
+        DROP TABLE IF EXISTS $tableName;
+        CREATE TEMPORARY TABLE $tableName
+        $selectList;
+      """.trimIndent()
+                      )
+    return stringBuild.toString()
   }
 }
