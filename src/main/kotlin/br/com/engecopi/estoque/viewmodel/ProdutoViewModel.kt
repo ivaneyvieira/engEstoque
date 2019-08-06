@@ -4,6 +4,7 @@ import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Produto
+import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
@@ -98,6 +99,7 @@ class ProdutoViewModel(view: IView): CrudViewModel<Produto, QProduto, ProdutoVo>
   fun localizacoes(bean: ProdutoVo?): List<LocProduto> {
     return bean?.produto?.localizacoes()
       .orEmpty()
+      .filter{it.startsWith(abreviacaoDefault)}
       .map {LocProduto(it)}
   }
 
