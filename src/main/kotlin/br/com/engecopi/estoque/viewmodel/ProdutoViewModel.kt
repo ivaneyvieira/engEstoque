@@ -98,6 +98,7 @@ class ProdutoViewModel(view: IView): CrudViewModel<Produto, QProduto, ProdutoVo>
   fun localizacoes(bean: ProdutoVo?): List<LocProduto> {
     return bean?.produto?.localizacoes()
       .orEmpty()
+      .filter {it.startsWith(abreviacaoDefault)}
       .map {LocProduto(it)}
   }
 
