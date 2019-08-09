@@ -150,7 +150,7 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
     val print = itemNota.printEtiqueta()
     itemNota.let {
       it.refresh()
-      it.impresso = true
+      it.impresso = !it.abreviacao.startsWith("EXP")
       it.update()
     }
     print.print(etiqueta.template)
@@ -165,8 +165,7 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
       else {
         val etiquetas = Etiqueta.findByStatus(INCLUIDA)
         val itens = notaRef.itensNota()
-         // .filter {!it.localizacao.startsWith("EXP")}
-
+        // .filter {!it.localizacao.startsWith("EXP")}
         etiquetas.joinToString(separator = "\n") {etiqueta ->
           itens.map {imprimir(it, etiqueta)}
             .distinct()

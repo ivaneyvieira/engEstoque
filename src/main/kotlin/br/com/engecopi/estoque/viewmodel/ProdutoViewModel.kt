@@ -5,6 +5,7 @@ import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
+import br.com.engecopi.estoque.model.RegistryUserInfo.userDefaultIsAdmin
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.Repositories
@@ -98,7 +99,7 @@ class ProdutoViewModel(view: IView): CrudViewModel<Produto, QProduto, ProdutoVo>
   fun localizacoes(bean: ProdutoVo?): List<LocProduto> {
     return bean?.produto?.localizacoes()
       .orEmpty()
-      .filter {it.startsWith(abreviacaoDefault)}
+      .filter {it.startsWith(abreviacaoDefault) || userDefaultIsAdmin}
       .map {LocProduto(it)}
   }
 
@@ -131,13 +132,16 @@ class ProdutoVo: EntityVo<Produto>() {
   val codebar: String?
     get() = produto?.codebar ?: ""
   val localizacao
-    get() = produto?.localizacoes().orEmpty().asSequence().distinct().joinToString(" / ")
+    get() = produto?.localizacoes().orEmpty().filter {
+      it.startsWith(
+        abreviacaoDefault)
+    }.asSequence().distinct().joinToString(" / ")
   val produto
     get() = toEntity()
   val temGrade get() = toEntity()?.temGrade
   val grade get() = produto?.grade ?: ""
   val saldo
-    get() = produto?.saldoTotal() ?: 0
+    get() = produto?.saldoAbreviacao(abreviacaoDefault) ?: 0
   val comprimento: Int?
     get() = produto?.vproduto?.comp
   val lagura: Int?
