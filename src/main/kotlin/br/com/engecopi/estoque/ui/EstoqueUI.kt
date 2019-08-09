@@ -100,9 +100,11 @@ class EstoqueUI: UI() {
             }
           }
         }
-        section("Paineis") {
-          menuButton("Visão geral", NEWSPAPER, view = PainelGeralView::class.java)
-        }
+
+        if(user.admin)
+          section("Paineis") {
+            menuButton("Visão geral", NEWSPAPER, view = PainelGeralView::class.java)
+          }
 
         if(user.expedicao || user.admin) {
           section("Expedição") {

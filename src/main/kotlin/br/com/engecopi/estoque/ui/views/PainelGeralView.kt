@@ -23,11 +23,11 @@ class PainelGeralView: LayoutView<PainelGeralModel>() {
     setSizeFull()
     horizontalLayout {
       expand()
-      cssLayout("Parte 1") {
+      cssLayout("Notas de saídas") {
         expand()
         addStyleName(ValoTheme.LAYOUT_CARD)
       }
-      cssLayout("Parte 2") {
+      cssLayout("Nota de entrada") {
         expand()
         addStyleName(ValoTheme.LAYOUT_CARD)
       }
@@ -35,7 +35,7 @@ class PainelGeralView: LayoutView<PainelGeralModel>() {
     horizontalLayout {
       isExpanded = true
       setSizeFull()
-      cssLayout("Parte 3") {
+      cssLayout("Produtos com saldo negativo") {
         expand()
         addStyleName(ValoTheme.LAYOUT_CARD)
       }
