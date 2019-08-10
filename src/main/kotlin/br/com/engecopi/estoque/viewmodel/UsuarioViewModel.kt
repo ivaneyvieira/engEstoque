@@ -114,8 +114,17 @@ class UsuarioCrudVo: EntityVo<Usuario>() {
   var expedicao: Boolean = false
   var admin: Boolean? = false
   var etiqueta = false
-  val tipoUsuarioStr = if(estoque) if(expedicao) "Estoque/Expedição"
-  else "Estoque"
-  else if(expedicao) "Expedição"
-  else ""
+  val tipoUsuarioStr
+    get() = tiposUsuario().joinToString(separator = "/")
+
+  private fun tiposUsuario(): List<String> {
+    val tipos = mutableListOf<String>()
+    if(admin == true) tipos.add("Administrado")
+    else {
+      if(estoque) tipos.add("Estoque")
+      if(expedicao) tipos.add("Expedicao")
+    }
+
+    return tipos
+  }
 }

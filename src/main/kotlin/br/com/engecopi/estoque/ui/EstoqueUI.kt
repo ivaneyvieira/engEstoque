@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.ui
 
 import br.com.engecopi.estoque.model.LoginInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.ui.views.AbreciacaoView
 import br.com.engecopi.estoque.ui.views.EntradaView
 import br.com.engecopi.estoque.ui.views.EntregaClienteEditorView
 import br.com.engecopi.estoque.ui.views.EntregaClienteView
@@ -25,6 +26,8 @@ import com.vaadin.annotations.VaadinServletConfiguration
 import com.vaadin.annotations.Viewport
 import com.vaadin.icons.VaadinIcons.BARCODE
 import com.vaadin.icons.VaadinIcons.INBOX
+import com.vaadin.icons.VaadinIcons.CART_O
+import com.vaadin.icons.VaadinIcons.CLUSTER
 import com.vaadin.icons.VaadinIcons.NEWSPAPER
 import com.vaadin.icons.VaadinIcons.OUT
 import com.vaadin.icons.VaadinIcons.OUTBOX
@@ -103,7 +106,7 @@ class EstoqueUI: UI() {
 
         if(user.admin)
           section("Paineis") {
-            menuButton("Visão geral", NEWSPAPER, view = PainelGeralView::class.java)
+            menuButton("Visão geral", CLUSTER, view = PainelGeralView::class.java)
           }
 
         if(user.expedicao || user.admin) {
@@ -121,11 +124,12 @@ class EstoqueUI: UI() {
             menuButton("Entrada", INBOX, view = EntradaView::class.java)
             menuButton("Saída", OUTBOX, view = SaidaView::class.java)
           }
-          section("Consulta") {
+          section("Configuração") {
             menuButton("Produtos", PACKAGE, view = ProdutoView::class.java)
             if(user.admin) {
               menuButton("Usuários", USER, view = UsuarioView::class.java)
               menuButton("Etiquetas", PAPERCLIP, view = EtiquetaView::class.java)
+              menuButton("Localizações", CART_O, view = AbreciacaoView::class.java)
             }
           }
         }

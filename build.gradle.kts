@@ -25,6 +25,9 @@ plugins {
 
 repositories {
   mavenCentral()
+  maven {
+    url = uri("https://maven.vaadin.com/vaadin-addons")
+  }
 }
 
 defaultTasks("clean", "build")
@@ -106,12 +109,14 @@ dependencies {
 
   compile("org.imgscalr:imgscalr-lib:4.2")
   compile("de.steinwedel.vaadin.addon:messagebox:4.0.21")
-  compile("org.vaadin.patrik:GridFastNavigation:2.4.3")
+  compile("org.vaadin.patrik:GridFastNavigation:2.4.8")
   compile("org.vaadin:viritin:2.9")
   //compile("org.vaadin.crudui:crudui:2.3.1")
   compile("org.vaadin.addons:filtering-grid:0.1.1")
   compile("com.fo0.advancedtokenfield:AdvancedTokenField:0.5.1")
   compile("org.vaadin:grideditorcolumnfix:0.3.1")
+  //compile("org.vaadin:grid-renderers-collection-addon:2.6.0")
+
   // heroku app runner
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
   testRuntime("org.junit.jupiter:junit-jupiter-engine:5.4.2")

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
+    <changeSet type="apply">
+        <addColumn tableName="abreviacoes">
+            <column name="loja_id" type="bigint" notnull="true" references="lojas.id" foreignKeyName="fk_abreviacoes_loja_id" foreignKeyIndex="ix_abreviacoes_loja_id"/>
+        </addColumn>
+    </changeSet>
+</migration>
