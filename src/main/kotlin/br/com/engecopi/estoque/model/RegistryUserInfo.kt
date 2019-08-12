@@ -38,6 +38,8 @@ object RegistryUserInfo {
     get() = usuarioDefault.admin
   val endereco
     get() = Page.getCurrent().webBrowser.address ?: ""
+  val impressora
+    get() = Abreviacao.findByAbreviacao(abreviacaoDefault)?.impressora ?: ""
 }
 
 data class LoginInfo(val usuario: Usuario, val abreviacao: String)

@@ -2,6 +2,8 @@ package br.com.engecopi.framework.ui.view
 
 import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.framework.viewmodel.ViewModel
+import br.com.engecopi.utils.CupsUtils
+import br.com.engecopi.utils.CupsUtils.printText
 import br.com.engecopi.utils.SystemUtils
 import com.fo0.advancedtokenfield.main.AdvancedTokenField
 import com.github.mvysny.karibudsl.v8.VAlign
@@ -95,7 +97,7 @@ abstract class LayoutView<V: ViewModel>: VerticalLayout(), View, IView {
     if(msg.isNotBlank()) MessageDialog.info(message = msg)
   }
 
-  fun showImage(title : String, image : ByteArray){
+  fun showImage(title: String, image: ByteArray) {
     MessageDialog.image(title, image)
   }
 
@@ -104,13 +106,30 @@ abstract class LayoutView<V: ViewModel>: VerticalLayout(), View, IView {
   }
 
   @Suppress("DEPRECATION")
-  open fun openText(text: String?) {
-    if(!text.isNullOrBlank()) {
-      val resource = StreamResource({IOUtils.toInputStream(text)}, "${SystemUtils.md5(text)}.txt")
-      resource.mimeType = "text/plain"
+  private fun openText(text: String) {
+    val resource = StreamResource({IOUtils.toInputStream(text)}, "${SystemUtils.md5(text)}.txt")
+    resource.mimeType = "text/plain"
 
-      Page.getCurrent()
-        .open(resource, "_blank", false)
+    Page.getCurrent()
+      .open(resource, "_blank", false)
+  }
+
+  private fun printCups(impressora: String, text: String) {
+    val printer = CupsUtils.printer(impressora)
+    if(printer == null)
+      showError("Impressora $impressora não está configurado no sistema operacional")
+    else
+      printer.printText(text) {
+        showInfo(it)
+      }
+  }
+
+  fun printText(impressora: String, text: String?) {
+    if(!text.isNullOrBlank()) {
+      if(CupsUtils.printerExists(impressora))
+        printCups(impressora, text)
+      else
+        openText(text)
     }
   }
 }

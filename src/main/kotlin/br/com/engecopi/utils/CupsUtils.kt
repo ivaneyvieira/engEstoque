@@ -1,10 +1,8 @@
 package br.com.engecopi.utils
 
-
 import org.cups4j.CupsClient
 import org.cups4j.CupsPrinter
 import org.cups4j.PrintJob
-
 
 object CupsUtils {
   private val cupsClient = CupsClient()

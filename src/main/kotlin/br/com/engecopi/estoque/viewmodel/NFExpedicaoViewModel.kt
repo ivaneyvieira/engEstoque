@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.viewmodel
 
+import br.com.engecopi.estoque.model.Abreviacao
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
@@ -98,7 +99,7 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
     }
   }
 
-  fun processaKey(notasSaci : List<NotaSaci>) = execValue {
+  fun processaKey(notasSaci: List<NotaSaci>) = execValue {
     if(notasSaci.all {it.isSave()}) throw EViewModel("Todos os itens dessa nota já estão lançados")
     return@execValue if(notasSaci.isNotEmpty()) processaNota(notasSaci)
     else throw EViewModel("Chave não encontrada")
@@ -156,15 +157,35 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
     print.print(etiqueta.template)
   }
 
-  fun imprimir(nota: Nota?) = execString {
-    if(nota == null) ""
+  fun imprimir(nota: Nota?) = execValue {
+    if(nota == null) emptyMap<String, String>()
     else {
       val id = nota.id
       val notaRef = Nota.byId(id)
-      if(notaRef == null) ""
+      if(notaRef == null) emptyMap<String, String>()
       else {
+        val itensAbreviacao = notaRef.itensNota()
+          .groupBy {it.abreviacao?.expedicao ?: false}
+return itensAbreviacao.flatMap {entry ->
+  if(entry.key){
+
+  }else {
+    val itensImpressora = entry.value.groupBy { it.abreviacao.impressora ?: ""}
+    itensImpressora.map {entryImpressora ->
+      val itens = entryImpressora.value
+      val etiquetas = Etiqueta.findByStatus(INCLUIDA)
+      // .filter {!it.localizacao.startsWith("EXP")}
+      val text = etiquetas.joinToString(separator = "\n") {etiqueta ->
+        itens.map {imprimir(it, etiqueta)}
+          .distinct()
+          .joinToString(separator = "\n")
+      }
+      Map.Entry(entryImpressora.key, text)
+    }
+  }
+
+}
         val etiquetas = Etiqueta.findByStatus(INCLUIDA)
-        val itens = notaRef.itensNota()
         // .filter {!it.localizacao.startsWith("EXP")}
         etiquetas.joinToString(separator = "\n") {etiqueta ->
           itens.map {imprimir(it, etiqueta)}
@@ -172,6 +193,15 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
             .joinToString(separator = "\n")
         }
       }
+      emptyMap<Abreviacao, String>()
+    }
+  }
+
+  private fun imprimeItens(etiquetas : List<Etiqueta>, itens : List<ItemNota>) : String {
+    etiquetas.joinToString(separator = "\n") {etiqueta ->
+      itens.map {imprimir(it, etiqueta)}
+        .distinct()
+        .joinToString(separator = "\n")
     }
   }
 
@@ -234,7 +264,7 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
     return data.eq(date)
   }
 
-  fun saldoProduto(notaSaci: NotaSaci, abreviacao : String): Int {
+  fun saldoProduto(notaSaci: NotaSaci, abreviacao: String): Int {
     val produto = Produto.findProduto(notaSaci.codigo(), notaSaci.grade)
     return produto?.saldoAbreviacao(abreviacao) ?: 0
   }

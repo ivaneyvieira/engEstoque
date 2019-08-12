@@ -1,6 +1,7 @@
 package br.com.engecopi.estoque.ui.views
 
 import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.viewmodel.NFExpedicaoViewModel
 import br.com.engecopi.estoque.viewmodel.NFExpedicaoVo
@@ -119,7 +120,9 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
           this.isEnabled = impresso == false || isAdmin
           this.icon = PRINT
           this.addClickListener {
-            openText(viewModel.imprimir(item?.entityVo?.nota))
+            val impressoa = item.abreviacao
+            val text = viewModel.imprimir(item?.entityVo?.nota)
+            printText(impressora, text)
             val print = item?.impresso ?: true
             it.button.isEnabled = print == false || isAdmin
             refreshGrid()

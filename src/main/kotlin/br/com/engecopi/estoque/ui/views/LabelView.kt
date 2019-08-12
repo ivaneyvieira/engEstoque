@@ -85,8 +85,9 @@ class LabelView: LayoutView<LabelViewModel>() {
             addClickListener {
               cmbTipoFiltro.value?.let {filtroView ->
                 filtroView.processaFiltro()
+                val impressora = RegistryUserInfo.impressora
                 val print = viewModel.impressao()
-                openText(print)
+                printText(impressora, print)
               }
             }
           }
