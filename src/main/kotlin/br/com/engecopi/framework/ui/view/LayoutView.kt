@@ -95,6 +95,10 @@ abstract class LayoutView<V: ViewModel>: VerticalLayout(), View, IView {
     if(msg.isNotBlank()) MessageDialog.info(message = msg)
   }
 
+  fun showImage(title : String, image : ByteArray){
+    MessageDialog.image(title, image)
+  }
+
   fun showQuestion(msg: String, execYes: () -> Unit, execNo: () -> Unit) {
     if(msg.isNotBlank()) MessageDialog.question(message = msg, execYes = execYes, execNo = execNo)
   }

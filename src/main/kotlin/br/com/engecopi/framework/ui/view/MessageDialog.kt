@@ -1,7 +1,10 @@
 package br.com.engecopi.framework.ui.view
 
+import br.com.engecopi.utils.SystemUtils.resize
+import br.com.engecopi.utils.makeResource
 import com.vaadin.server.Page
 import com.vaadin.ui.Component
+import com.vaadin.ui.Image
 import com.vaadin.ui.Notification
 import com.vaadin.ui.UI
 import de.steinwedel.messagebox.ButtonOption
@@ -26,16 +29,18 @@ object MessageDialog {
     if(ui.windows.isNotEmpty()) Notification(caption, message, Notification.Type.WARNING_MESSAGE, true).apply {
       delayMsec = 2000
     }.show(Page.getCurrent())
-    else MessageBox.createWarning().withCaption(caption).withHtmlMessage(message).withCloseButton(ButtonOption.caption("Fechar")).asModal(
-        true).open()
+    else MessageBox.createWarning().withCaption(caption).withHtmlMessage(message).withCloseButton(
+      ButtonOption.caption("Fechar")).asModal(
+      true).open()
   }
 
   fun error(caption: String = "Erro", message: String) {
     if(ui.windows.isNotEmpty()) Notification(caption, message, Notification.Type.ERROR_MESSAGE, true).apply {
       delayMsec = 2000
     }.show(Page.getCurrent())
-    else MessageBox.createError().withCaption(caption).withHtmlMessage(message).withCloseButton(ButtonOption.caption("Fechar")).asModal(
-        true).open()
+    else MessageBox.createError().withCaption(caption).withHtmlMessage(message).withCloseButton(
+      ButtonOption.caption("Fechar")).asModal(
+      true).open()
   }
 
   fun question(caption: String = "Questão", message: String, execYes: () -> Unit = {}, execNo: () -> Unit = {}) {
@@ -58,6 +63,15 @@ object MessageDialog {
       .withYesButton({execYes(message)}, arrayOf(ButtonOption.caption("Sim")))
       .withNoButton({execNo(message)}, arrayOf(ButtonOption.caption("Não")))
       .asModal(true)
+      .open()
+  }
+
+  fun image(title: String, image: ByteArray) {
+    val resource = resize(image, 400, 400)?.makeResource()
+    val comp = Image(title, resource)
+    MessageBox.create()
+      .withCaption(title)
+      .withMessage(comp)
       .open()
   }
 }

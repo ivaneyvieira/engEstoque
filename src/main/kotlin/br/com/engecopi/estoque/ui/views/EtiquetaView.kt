@@ -8,6 +8,7 @@ import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.default
 import br.com.engecopi.framework.ui.view.row
 import br.com.engecopi.utils.SystemUtils
+import br.com.engecopi.utils.ZPLPreview
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.alignment
 import com.github.mvysny.karibudsl.v8.bind
@@ -22,10 +23,13 @@ import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.w
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.Alignment
+import com.vaadin.ui.TextArea
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView
 class EtiquetaView: CrudLayoutView<EtiquetaVo, EtiquetaViewModel>() {
+  private lateinit var template: TextArea
+
   init {
     viewModel = EtiquetaViewModel(this)
     layoutForm {
@@ -58,9 +62,20 @@ class EtiquetaView: CrudLayoutView<EtiquetaVo, EtiquetaViewModel>() {
               showInfo(SystemUtils.readFile("/html/variaveis.html") ?: "")
             }
           }
+          button("Preview") {
+            alignment = Alignment.BOTTOM_RIGHT
+            expandRatio = 1f
+            icon = VaadinIcons.BARCODE
+            addClickListener {
+              val zpl = template.value
+              val image = ZPLPreview.createImage(zpl, 0)
+              if(image != null)
+                showImage("Preview", image)
+            }
+          }
         }
         row {
-          textArea("Template") {
+          template = textArea("Template") {
             h = 400.px
             expandRatio = 1f
             bind(binder).bind(EtiquetaVo::template)
