@@ -6,13 +6,19 @@ import br.com.engecopi.framework.viewmodel.ViewModel
 import com.github.mvysny.karibudsl.v8.AutoView
 
 class AbreciacaoViewModel(view: IView): ViewModel(view) {
-  fun saveAbreviacao(bean: Abreviacao?) = exec {
-    bean?.save()
+  fun saveAbreviacao() = exec {
+    abreviacaoes.forEach {it.save()}
   }
 
-  val abreviacaoes get() = Abreviacao.findAll()
+  val abreviacaoes = mutableListOf<Abreviacao>()
 
   init {
     Abreviacao.updateAbreviacao()
+    updateAbreviacao()
+  }
+
+  fun updateAbreviacao() {
+    abreviacaoes.clear()
+    abreviacaoes.addAll(Abreviacao.findAll())
   }
 }

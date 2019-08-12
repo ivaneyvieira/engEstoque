@@ -14,8 +14,8 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "abreviacoes")
+@Index(columnNames = ["loja_id", "abreviacao"], unique = true)
 class Abreviacao(
-  @Index(unique = true)
   @Length(6)
   var abreviacao: String,
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
@@ -25,14 +25,15 @@ class Abreviacao(
   var impressora: String
                 ): BaseModel() {
   companion object Find: AbreviacaoFinder() {
-    fun findByAbreviacao(abreviacao: String): Boolean {
+    fun findByAbreviacao(abreviacao: String): Abreviacao? {
       return where().abreviacao.eq(abreviacao)
         .loja.equalTo(lojaDefault)
-        .exists()
+        .findList()
+        .firstOrNull()
     }
 
     fun addAbreviacao(abreviacao: String) {
-      if(!findByAbreviacao(abreviacao)) {
+      if(findByAbreviacao(abreviacao) == null) {
         Abreviacao(abreviacao, lojaDefault, false, "").save()
       }
     }

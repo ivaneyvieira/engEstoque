@@ -125,7 +125,7 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
       val item = ItemNota.find(notaSaci) ?: ItemNota.createItemNota(notaSaci, nota)
 
       return@mapNotNull item?.apply {
-        this.status = if(abreviacao.startsWith("EXP")) CONFERIDA else INCLUIDA
+        this.status = if(abreviacao?.expedicao == true) CONFERIDA else INCLUIDA
         this.impresso = false
         this.usuario = usuarioDefault
         this.data = LocalDate.now()
@@ -150,7 +150,7 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
     val print = itemNota.printEtiqueta()
     itemNota.let {
       it.refresh()
-      it.impresso = !it.abreviacao.startsWith("EXP")
+      it.impresso = !(it.abreviacao?.expedicao ?: false)
       it.update()
     }
     print.print(etiqueta.template)

@@ -101,8 +101,10 @@ class ItemNota: BaseModel() {
     }
   val etiquetas: List<Etiqueta>
     @Transient get() = Etiqueta.findByStatus(status)
-  val abreviacao: String
+  private val abrev: String
     @Transient get() = localizacao.split('.').getOrNull(0) ?: ""
+  val abreviacao: Abreviacao?
+    @Transient get() = Abreviacao.findByAbreviacao(abrev)
 
   companion object Find: ItemNotaFinder() {
     fun find(nota: Nota?, produto: Produto?): ItemNota? {

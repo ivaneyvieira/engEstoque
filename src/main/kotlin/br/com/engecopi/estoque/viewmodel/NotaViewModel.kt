@@ -315,7 +315,7 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
   }
 
   private fun imprimir(itens: List<ItemNota>, etiqueta: Etiqueta): String {
-    return itens.filter {it.abreviacao == abreviacaoDefault}
+    return itens.filter {it.abreviacao?.abreviacao == abreviacaoDefault}
       .map {imprimir(it, etiqueta)}
       .distinct()
       .joinToString(separator = "\n")

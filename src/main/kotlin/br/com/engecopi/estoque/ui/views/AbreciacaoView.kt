@@ -51,17 +51,17 @@ class AbreciacaoView: LayoutView<AbreciacaoViewModel>() {
       }
 
       editor.isEnabled = true
-      //  val nav = FastNavigation(this, false, true)
-      //  nav.changeColumnAfterLastRow = true
-      //  nav.openEditorWithSingleClick = true
-      ///  nav.allowArrowToChangeRow = true
-      //   nav.openEditorOnTyping = true
-      //  nav.addEditorSaveShortcut(KeyCode.ENTER)
+      val nav = FastNavigation(this, false, true)
+      nav.changeColumnAfterLastRow = true
+      nav.openEditorWithSingleClick = true
+      nav.allowArrowToChangeRow = true
+      nav.openEditorOnTyping = true
+      nav.addEditorSaveShortcut(KeyCode.ENTER)
       editor.cancelCaption = "Cancelar"
       editor.saveCaption = "Salvar"
-      editor.isBuffered = true
-      editor.addSaveListener {
-        viewModel.saveAbreviacao(it.bean)
+      editor.isBuffered = false
+      nav.addEditorCloseListener {
+        viewModel.saveAbreviacao()
       }
     }
   }
