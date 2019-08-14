@@ -98,7 +98,7 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
     }
   }
 
-  fun processaKey(notasSaci : List<NotaSaci>) = execValue {
+  fun processaKey(notasSaci: List<NotaSaci>) = execValue {
     if(notasSaci.all {it.isSave()}) throw EViewModel("Todos os itens dessa nota já estão lançados")
     return@execValue if(notasSaci.isNotEmpty()) processaNota(notasSaci)
     else throw EViewModel("Chave não encontrada")
@@ -131,6 +131,8 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
         this.data = LocalDate.now()
         this.hora = LocalTime.now()
         this.save()
+        if(this.status == CONFERIDA)
+          this.recalculaSaldos()
       }
     }
 
@@ -234,7 +236,7 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
     return data.eq(date)
   }
 
-  fun saldoProduto(notaSaci: NotaSaci, abreviacao : String): Int {
+  fun saldoProduto(notaSaci: NotaSaci, abreviacao: String): Int {
     val produto = Produto.findProduto(notaSaci.codigo(), notaSaci.grade)
     return produto?.saldoAbreviacao(abreviacao) ?: 0
   }
