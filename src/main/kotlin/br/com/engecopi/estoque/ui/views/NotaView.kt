@@ -65,8 +65,6 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO>>: CrudLayoutView<VO
     }
   }
 
-
-
   fun btnDesfazer(): Button {
     return Button("Cancelar").apply {
       this.isVisible = usuario.admin
@@ -199,7 +197,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO>>: CrudLayoutView<VO
         bindItens(binder, "produtos")
         editor.addOpenListener {event ->
           event.bean.produto.let {produto ->
-            val locSulfixos = produto.localizacoes()
+            val locSulfixos = produto.localizacoes(RegistryUserInfo.abreviacaoDefault)
               .map {LocProduto(it)}
             comboLoc.setItems(locSulfixos)
             comboLoc.setItemCaptionGenerator {it.localizacao}

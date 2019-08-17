@@ -192,7 +192,7 @@ class Produto: BaseModel() {
       .sumBy {it.quantidadeSaldo}
   }
 
-  fun saldoAbreviacao(abreviacao : String): Int {
+  fun saldoAbreviacao(abreviacao: String): Int {
     val loja = RegistryUserInfo.lojaDefault
     return ItemNota.where()
       .produto.id.eq(id)
@@ -201,7 +201,6 @@ class Produto: BaseModel() {
       .findList()
       .sumBy {it.quantidadeSaldo}
   }
-
 
   fun saldoTotal(): Int {
     return findItensNota().sumBy {it.quantidadeSaldo}
@@ -219,12 +218,13 @@ class Produto: BaseModel() {
       .findList()
   }
 
-  fun localizacoes(): List<String> {
+  fun localizacoes(abreviacao: String): List<String> {
     return ViewProdutoLoc.localizacoesProduto(produto = this)
+      .filter {it.startsWith(abreviacao)}
   }
 
   fun prefixoLocalizacoes(): String {
-    val localizacoes = localizacoes()
+    val localizacoes = localizacoes(RegistryUserInfo.abreviacaoDefault)
     if(localizacoes.size == 1) return localizacoes[0]
     val localizacoesSplit = localizacoes.map {it.split("[.\\-]".toRegex())}
     val ctParte = localizacoesSplit.asSequence().map {it.size - 1}.min() ?: 0
@@ -250,7 +250,7 @@ class Produto: BaseModel() {
 
 private fun List<Produto>.filtroCD(): List<Produto> {
   return this.filter {
-    it.localizacoes()
+    it.localizacoes(RegistryUserInfo.abreviacaoDefault)
       .any {loc -> loc.startsWith(RegistryUserInfo.abreviacaoDefault)}
   }
 }

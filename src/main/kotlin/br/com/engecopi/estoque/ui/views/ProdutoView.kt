@@ -176,7 +176,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>() {
               }
               editor.addOpenListener {event ->
                 event.bean.produto?.let {produto ->
-                  val locSulfixos = produto.localizacoes()
+                  val locSulfixos = produto.localizacoes(RegistryUserInfo.abreviacaoDefault)
                     .map {LocProduto(it)}
                   comboLoc.setItems(locSulfixos.map {it.localizacao})
                   comboLoc.value = event.bean.localizacao
