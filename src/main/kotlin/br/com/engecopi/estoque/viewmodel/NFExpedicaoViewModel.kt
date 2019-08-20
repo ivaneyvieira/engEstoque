@@ -98,15 +98,16 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
     }
   }
 
-  fun processaKey(notasSaci: List<NotaSaci>) = execValue {
+  fun processaKey(notasSaci: List<ItemExpedicao>) = execValue {
     if(notasSaci.all {it.isSave()}) throw EViewModel("Todos os itens dessa nota já estão lançados")
     return@execValue if(notasSaci.isNotEmpty()) processaNota(notasSaci)
     else throw EViewModel("Chave não encontrada")
   }
 
-  private fun processaNota(notasSaci: List<NotaSaci>): Nota? {
+  private fun processaNota(itensExpedicao: List<ItemExpedicao>: List<ItemExpedicao>): Nota? {
     val loja = lojaDefault.numero
-    val lojaSaci = notasSaci.firstOrNull()?.storeno ?: throw EViewModel("Nota não encontrada")
+    val notaDoSaci = itensExpedicao.firstOrNull()?.notaSaci
+    val lojaSaci = notaDoSaci?.storeno ?: throw EViewModel("Nota não encontrada")
     if(loja != lojaSaci) throw EViewModel("Esta nota pertence a loja $lojaSaci")
     val nota: Nota? = Nota.createNota(notasSaci.firstOrNull())
       ?.let {
@@ -267,3 +268,18 @@ class NFExpedicaoVo: EntityVo<ViewNotaExpedicao>() {
     get() = LocalDateTime.of(data, hora)
 }
 
+data class LocalizacaoNota(val abreviacao: String, val itensExpedicao: List<ItemExpedicao>) {
+  val countSelecionado
+    get() = itensExpedicao.filter {it.selecionado || it.isSave()}.size
+}
+
+data class ItemExpedicao(val notaSaci: NotaSaci, val saldo: Int, val localizacao : String, var selecionado: Boolean =
+  false) {
+  val prdno = notaSaci.prdno
+  val grade = notaSaci.grade
+  val nome = notaSaci.nome
+  val quant = notaSaci.quant ?: 0
+  val saldoFinal = saldo - quant
+
+  fun isSave() = notaSaci.isSave()
+}
