@@ -11,6 +11,7 @@ import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
+import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov
@@ -157,48 +158,33 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
     print.print(etiqueta.template)
   }
 
-  fun imprimir(nota: Nota?) = execValue {
-    if(nota == null) emptyMap<String, String>()
+  fun imprimir(nota: Nota?) = execList<PacoteImpressao> {
+    if(nota == null) emptyList()
     else {
       val id = nota.id
-      val notaRef = Nota.byId(id)
-      if(notaRef == null) emptyMap<String, String>()
-      else {
-        val itensAbreviacao = notaRef.itensNota()
-          .groupBy {it.abreviacao?.expedicao ?: false}
-return itensAbreviacao.flatMap {entry ->
-  if(entry.key){
-
-  }else {
-    val itensImpressora = entry.value.groupBy { it.abreviacao.impressora ?: ""}
-    itensImpressora.map {entryImpressora ->
-      val itens = entryImpressora.value
-      val etiquetas = Etiqueta.findByStatus(INCLUIDA)
-      // .filter {!it.localizacao.startsWith("EXP")}
-      val text = etiquetas.joinToString(separator = "\n") {etiqueta ->
-        itens.map {imprimir(it, etiqueta)}
-          .distinct()
-          .joinToString(separator = "\n")
-      }
-      Map.Entry(entryImpressora.key, text)
-    }
-  }
-
-}
-        val etiquetas = Etiqueta.findByStatus(INCLUIDA)
-        // .filter {!it.localizacao.startsWith("EXP")}
-        etiquetas.joinToString(separator = "\n") {etiqueta ->
-          itens.map {imprimir(it, etiqueta)}
-            .distinct()
-            .joinToString(separator = "\n")
+      val notaRef = Nota.byId(id) ?: return@execList emptyList()
+      val listaItens = notaRef.itensNota()
+      val itensAbreviacao = listaItens
+        .groupBy {it.abreviacao}
+      val impressaoCD: List<PacoteImpressao> = itensAbreviacao.flatMap {entry ->
+        val abreviacao = entry.key ?: return@flatMap emptyList<PacoteImpressao>()
+        if(abreviacao.expedicao) {
+          val text = imprimeItens(CONFERIDA, entry.value)
+          listOf(PacoteImpressao(abreviacao.impressora, text))
         }
+        else
+          emptyList<PacoteImpressao>()
       }
-      emptyMap<Abreviacao, String>()
+      val text = imprimeItens(INCLUIDA, listaItens)
+      val impressaoEXP = listOf(PacoteImpressao("EXP4", text))
+
+      impressaoCD + impressaoEXP
     }
   }
 
-  private fun imprimeItens(etiquetas : List<Etiqueta>, itens : List<ItemNota>) : String {
-    etiquetas.joinToString(separator = "\n") {etiqueta ->
+  private fun imprimeItens(status: StatusNota, itens: List<ItemNota>): String {
+    val etiquetas = Etiqueta.findByStatus(status)
+    return etiquetas.joinToString(separator = "\n") {etiqueta ->
       itens.map {imprimir(it, etiqueta)}
         .distinct()
         .joinToString(separator = "\n")
@@ -294,4 +280,12 @@ class NFExpedicaoVo: EntityVo<ViewNotaExpedicao>() {
   val dataHoraLancamento
     get() = LocalDateTime.of(data, hora)
 }
+
+data class PacoteImpressao(val impressora: String, val text: String) {
+  companion object {
+    fun empty() = PacoteImpressao("", "")
+  }
+}
+
+
 

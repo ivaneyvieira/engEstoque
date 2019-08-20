@@ -42,6 +42,7 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.Window
 import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
+import java.awt.SystemColor.text
 
 @AutoView("nf_expedicao")
 class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
@@ -119,12 +120,14 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
           val impresso = item?.impresso ?: true
           this.isEnabled = impresso == false || isAdmin
           this.icon = PRINT
-          this.addClickListener {
+          this.addClickListener {click ->
             val impressoa = item.abreviacao
-            val text = viewModel.imprimir(item?.entityVo?.nota)
-            printText(impressora, text)
+            val pacotes = viewModel.imprimir(item?.entityVo?.nota)
+            pacotes.forEach {
+              printText(it.impressora, it.text)
+            }
             val print = item?.impresso ?: true
-            it.button.isEnabled = print == false || isAdmin
+            click.button.isEnabled = print == false || isAdmin
             refreshGrid()
           }
         }
@@ -186,7 +189,10 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
       if(notaSaida.isNotEmpty()) {
         val dialog = DlgNotaLoc(notaSaida, viewModel) {itens ->
           val nota = viewModel.processaKey(itens)
-          openText(viewModel.imprimir(nota))
+          val pacotes = viewModel.imprimir(nota)
+          pacotes.forEach {
+            printText(it.impressora, it.text)
+          }
         }
         dialog.showDialog()
       }
@@ -197,7 +203,9 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
     return Button("Imprime Etiquetas").apply {
       icon = PRINT
       addClickListener {
-        openText(viewModel.imprimeTudo())
+        val text = viewModel.imprimeTudo()
+        val impressora = RegistryUserInfo.impressora
+        printText(impressora, text)
         //grid.refreshGrid()
       }
     }

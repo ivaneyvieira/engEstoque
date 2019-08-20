@@ -25,7 +25,8 @@ class Abreviacao(
   var impressora: String
                 ): BaseModel() {
   companion object Find: AbreviacaoFinder() {
-    fun findByAbreviacao(abreviacao: String): Abreviacao? {
+    fun findByAbreviacao(abreviacao: String?): Abreviacao? {
+      abreviacao ?: return null
       return where().abreviacao.eq(abreviacao)
         .loja.equalTo(lojaDefault)
         .findList()
