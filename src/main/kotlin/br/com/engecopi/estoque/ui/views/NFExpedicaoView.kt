@@ -282,7 +282,7 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
               .flatten()
               .distinct()
               .map {abrev ->
-                val itens = abreviacaoItens.filter {it.key.contains(abrev)}
+                val itensExpedicao = abreviacaoItens.filter {it.key.contains(abrev)}
                   .map {it.value}
                   .flatten()
                   .distinct()
@@ -290,7 +290,7 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
                     val saldo = viewModel.saldoProduto(notaSaci, abrev)
                     ItemExpedicao(notaSaci, saldo, abrev)
                   }
-                LocalizacaoNota(abrev, itens)
+                LocalizacaoNota(abrev, itensExpedicao)
               }
               .toList()
               .sortedBy {it.abreviacao}

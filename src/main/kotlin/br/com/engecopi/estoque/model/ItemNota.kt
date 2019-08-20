@@ -129,11 +129,11 @@ class ItemNota: BaseModel() {
         .firstOrNull()
     }
 
-    fun createItemNota(notaSaci: NotaSaci, notaPrd: Nota?): ItemNota? {
+    fun createItemNota(notaSaci: NotaSaci, notaPrd: Nota?, abreviacao : String): ItemNota? {
       notaPrd ?: return null
       val produtoSaci = Produto.findProduto(notaSaci.prdno, notaSaci.grade) ?: return null
       val locProduto = ViewProdutoLoc.localizacoesProduto(produtoSaci).firstOrNull {
-        it.startsWith(RegistryUserInfo.abreviacaoDefault)
+        it.startsWith(abreviacao)
       } ?: ""
       val item = find(notaPrd, produtoSaci)
 

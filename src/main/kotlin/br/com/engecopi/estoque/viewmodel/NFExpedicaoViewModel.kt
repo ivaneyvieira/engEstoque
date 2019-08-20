@@ -104,12 +104,12 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
     else throw EViewModel("Chave não encontrada")
   }
 
-  private fun processaNota(itensExpedicao: List<ItemExpedicao>: List<ItemExpedicao>): Nota? {
+  private fun processaNota(itensExpedicao: List<ItemExpedicao>): Nota? {
     val loja = lojaDefault.numero
     val notaDoSaci = itensExpedicao.firstOrNull()?.notaSaci
     val lojaSaci = notaDoSaci?.storeno ?: throw EViewModel("Nota não encontrada")
     if(loja != lojaSaci) throw EViewModel("Esta nota pertence a loja $lojaSaci")
-    val nota: Nota? = Nota.createNota(notasSaci.firstOrNull())
+    val nota: Nota? = Nota.createNota(notaDoSaci)
       ?.let {
         //TODO Verificar notas já cadastrada
         if(it.existe()) Nota.findSaida(it.numero)
@@ -122,8 +122,9 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
         }
       }
     nota ?: throw EViewModel("Nota não encontrada")
-    val itens = notasSaci.mapNotNull {notaSaci ->
-      val item = ItemNota.find(notaSaci) ?: ItemNota.createItemNota(notaSaci, nota)
+    val itens = itensExpedicao.mapNotNull {itemExpedicao ->
+      val notaSaci = itemExpedicao.notaSaci
+      val item = ItemNota.find(notaSaci) ?: ItemNota.createItemNota(notaSaci, nota, itemExpedicao.abrevicao)
 
       return@mapNotNull item?.apply {
         this.status = if(abreviacao?.expedicao == true) CONFERIDA else INCLUIDA
@@ -273,7 +274,7 @@ data class LocalizacaoNota(val abreviacao: String, val itensExpedicao: List<Item
     get() = itensExpedicao.filter {it.selecionado || it.isSave()}.size
 }
 
-data class ItemExpedicao(val notaSaci: NotaSaci, val saldo: Int, val localizacao : String, var selecionado: Boolean =
+data class ItemExpedicao(val notaSaci: NotaSaci, val saldo: Int, val abrevicao : String, var selecionado: Boolean =
   false) {
   val prdno = notaSaci.prdno
   val grade = notaSaci.grade
