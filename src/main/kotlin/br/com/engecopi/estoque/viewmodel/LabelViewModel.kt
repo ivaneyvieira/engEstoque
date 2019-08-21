@@ -49,7 +49,7 @@ class LabelViewModel(view: LabelView): ViewModel(view) {
 
   fun addFaixaCodigoGrade(codigo: String?, grade: String?) = execList {
     val produto = Produto.findProduto(codigo, grade) ?: return@execList emptyList<Produto>()
-    val localizacoes = produto.localizacoes()
+    val localizacoes = produto.localizacoes(RegistryUserInfo.abreviacaoDefault)
     if(localizacoes.any{it.startsWith(RegistryUserInfo.abreviacaoDefault)}) {
       if(!listaProduto.contains(produto)) listaProduto.add(produto)
       listOfNotNull(produto)

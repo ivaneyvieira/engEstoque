@@ -393,9 +393,10 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
 
   private fun listItensEntrada(notaSaci: NotaSaci): List<ProdutoVO> {
     val prd = Produto.findProduto(notaSaci.prdno, notaSaci.grade) ?: return emptyList()
-    val localizacoes = prd.localizacoes()
+    val localizacoes = prd.localizacoes(abreviacaoNota)
+      .filter {it.startsWith(abreviacaoNota)}
       .sorted()
-    val ultimaLocalizacao = localizacoes.sorted().lastOrNull() ?: ""
+    val ultimaLocalizacao = localizacoes.max() ?: ""
     val produtoVo = ProdutoVO(prd, RECEBIDO, LocProduto(ultimaLocalizacao), notaSaci.isSave()).apply {
       quantidade = notaSaci.quant ?: 0
     }
@@ -405,9 +406,10 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   private fun listItensSaida(notaSaci: NotaSaci): List<ProdutoVO> {
     val prd = Produto.findProduto(notaSaci.prdno, notaSaci.grade) ?: return emptyList()
     var quant = notaSaci.quant ?: return emptyList()
-    val localizacoes = prd.localizacoes()
+    val localizacoes = prd.localizacoes(abreviacaoNota)
+      .filter {it.startsWith(abreviacaoNota)}
       .sorted()
-    val ultimaLocalizacao = localizacoes.sorted().lastOrNull() ?: ""
+    val ultimaLocalizacao = localizacoes.max() ?: ""
     val produtosLocais = localizacoes.map {localizacao ->
       ProdutoVO(prd, CONFERIDA, LocProduto(localizacao), notaSaci.isSave()).apply {
         if(quant > 0) if(quant > saldo) {
@@ -486,7 +488,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
     get() = produto?.saldoLoja(localizacao?.localizacao) ?: 0
   var localizacao: LocProduto? = null
   val localizacaoProduto
-    get() = produto?.localizacoes()?.map {LocProduto(it)}.orEmpty()
+    get() = produto?.localizacoes(abreviacaoNota)?.map {LocProduto(it)}.orEmpty()
   var status: StatusNota? = null
 }
 
@@ -510,7 +512,7 @@ class ProdutoVO(val produto: Produto, val statusNota: StatusNota, var localizaca
     get() = produto.barcodeGtin
   var dateUpdate: LocalDateTime = LocalDateTime.now()
   var grupoSelecao: ETipoGrupo = WHITE
-  val ordermSelecao : Int
+  val ordermSelecao: Int
     get() = grupoSelecao.ordem
 
   fun allowSelect(): Boolean {

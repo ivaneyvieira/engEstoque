@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.model
 
+import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
@@ -106,7 +107,7 @@ class Nota: BaseModel() {
       nota.usuario = usuarioDefault
       val itens = notasaci.mapNotNull {item ->
         val produto = Produto.findProduto(item.prdno, item.grade)
-        ItemNota.find(nota, produto) ?: ItemNota.createItemNota(item, nota)?.let {itemNota ->
+        ItemNota.find(nota, produto) ?: ItemNota.createItemNota(item, nota, abreviacaoDefault)?.let {itemNota ->
           itemNota.status = INCLUIDA
           itemNota.usuario = usuarioDefault
           itemNota

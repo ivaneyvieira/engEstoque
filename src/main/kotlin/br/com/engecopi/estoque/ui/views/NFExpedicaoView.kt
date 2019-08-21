@@ -3,6 +3,8 @@ package br.com.engecopi.estoque.ui.views
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
 import br.com.engecopi.estoque.model.TipoNota
+import br.com.engecopi.estoque.viewmodel.ItemExpedicao
+import br.com.engecopi.estoque.viewmodel.LocalizacaoNota
 import br.com.engecopi.estoque.viewmodel.NFExpedicaoViewModel
 import br.com.engecopi.estoque.viewmodel.NFExpedicaoVo
 import br.com.engecopi.framework.ui.view.CrudLayoutView
@@ -214,7 +216,7 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
 
 class DlgNotaLoc(val notaSaida: List<NotaSaci>,
                  val viewModel: NFExpedicaoViewModel,
-                 val execConfirma: (itens: List<NotaSaci>) -> Unit): Window("Nota de Saída") {
+                 val execConfirma: (itens: List<ItemExpedicao>) -> Unit): Window("Nota de Saída") {
   private lateinit var gridProdutos: Grid<LocalizacaoNota>
 
   init {
@@ -266,7 +268,6 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
                 val itens = gridProdutos.dataProvider.getAll()
                   .flatMap {loc ->
                     loc.itensExpedicao.filter {it.selecionado}
-                      .map {item -> item.notaSaci}
                   }
                 execConfirma(itens)
                 close()
@@ -292,15 +293,15 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
               .flatten()
               .distinct()
               .map {abrev ->
-                val itens = abreviacaoItens.filter {it.key.contains(abrev)}
+                val itensExpedicao = abreviacaoItens.filter {it.key.contains(abrev)}
                   .map {it.value}
                   .flatten()
                   .distinct()
                   .map {notaSaci ->
                     val saldo = viewModel.saldoProduto(notaSaci, abrev)
-                    ItemExpedicao(notaSaci, saldo)
+                    ItemExpedicao(notaSaci, saldo, abrev)
                   }
-                LocalizacaoNota(abrev, itens)
+                LocalizacaoNota(abrev, itensExpedicao)
               }
               .toList()
               .sortedBy {it.abreviacao}
@@ -336,20 +337,7 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
   }
 }
 
-data class LocalizacaoNota(val abreviacao: String, val itensExpedicao: List<ItemExpedicao>) {
-  val countSelecionado
-    get() = itensExpedicao.filter {it.selecionado || it.isSave()}.size
-}
 
-data class ItemExpedicao(val notaSaci: NotaSaci, val saldo: Int, var selecionado: Boolean = false) {
-  val prdno = notaSaci.prdno
-  val grade = notaSaci.grade
-  val nome = notaSaci.nome
-  val quant = notaSaci.quant ?: 0
-  val saldoFinal = saldo - quant
-
-  fun isSave() = notaSaci.isSave()
-}
 
 class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
                        val viewModel: NFExpedicaoViewModel,

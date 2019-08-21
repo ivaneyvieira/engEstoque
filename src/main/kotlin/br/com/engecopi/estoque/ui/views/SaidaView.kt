@@ -464,7 +464,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
             }
             editor.addOpenListener {event ->
               event.bean.produto.let {produto ->
-                val locSulfixos = produto.localizacoes()
+                val locSulfixos = produto.localizacoes(RegistryUserInfo.abreviacaoDefault)
                   .map {LocProduto(it)}
                 comboLoc.setItems(locSulfixos)
                 comboLoc.setItemCaptionGenerator {it.localizacao}
