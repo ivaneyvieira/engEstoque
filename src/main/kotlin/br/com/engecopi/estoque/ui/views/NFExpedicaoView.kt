@@ -206,7 +206,6 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
       icon = PRINT
       addClickListener {
         val text = viewModel.imprimeTudo()
-        val impressora = RegistryUserInfo.impressora
         printText(impressora, text)
         //grid.refreshGrid()
       }

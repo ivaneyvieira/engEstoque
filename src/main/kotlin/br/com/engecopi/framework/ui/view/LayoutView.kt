@@ -105,9 +105,9 @@ abstract class LayoutView<V: ViewModel>: VerticalLayout(), View, IView {
     if(msg.isNotBlank()) MessageDialog.question(message = msg, execYes = execYes, execNo = execNo)
   }
 
-  @Suppress("DEPRECATION")
-  private fun openText(text: String) {
-    val resource = StreamResource({IOUtils.toInputStream(text)}, "${SystemUtils.md5(text)}.txt")
+  private fun openText(impressora : String, text: String) {
+    val comentText = "### Impressora: $impressora\n$text"
+    val resource = StreamResource({IOUtils.toInputStream(comentText)}, "${SystemUtils.md5(comentText)}.txt")
     resource.mimeType = "text/plain"
 
     Page.getCurrent()
@@ -129,7 +129,7 @@ abstract class LayoutView<V: ViewModel>: VerticalLayout(), View, IView {
       if(CupsUtils.printerExists(impressora))
         printCups(impressora, text)
       else
-        openText(text)
+        openText(impressora, text)
     }
   }
 }

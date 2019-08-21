@@ -8,11 +8,16 @@ import java.io.InputStream
 import java.security.MessageDigest
 import javax.xml.bind.DatatypeConverter
 
-fun ByteArray.makeResource(): Resource {
+fun ByteArray.makeResource(): StreamResource {
   val nome = md5()
   val imagesource = BytesStreamSource(this)
-  val streamResource = StreamResource(imagesource, "$nome.jpg")
+  val streamResource = StreamResource(imagesource, "$nome.pdf")
   streamResource.cacheTime = 1000
+  streamResource.mimeType ="application/pdf"
+  streamResource.stream.setParameter(
+    "Content-Disposition",
+    "attachment; filename=$nome.pdf");
+
   return streamResource
 }
 

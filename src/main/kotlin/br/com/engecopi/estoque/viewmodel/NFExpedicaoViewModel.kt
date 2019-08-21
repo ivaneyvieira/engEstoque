@@ -175,7 +175,10 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
         val abreviacao = entry.key ?: return@flatMap emptyList<PacoteImpressao>()
         if(abreviacao.expedicao) {
           val text = imprimeItens(CONFERIDA, entry.value)
-          listOf(PacoteImpressao(abreviacao.impressora, text))
+          val impressoraName = if(abreviacao.impressora == "")
+            "Localizacao ${abreviacao.abreviacao}"
+          else abreviacao.impressora
+          listOf(PacoteImpressao(impressoraName, text))
         }
         else
           emptyList<PacoteImpressao>()

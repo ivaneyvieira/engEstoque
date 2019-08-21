@@ -68,7 +68,7 @@ class EtiquetaView: CrudLayoutView<EtiquetaVo, EtiquetaViewModel>() {
             icon = VaadinIcons.BARCODE
             addClickListener {
               val zpl = template.value
-              val image = ZPLPreview.createImage(zpl, 0)
+              val image = ZPLPreview.createImage(zpl, "4x2")
               if(image != null)
                 showImage("Preview", image)
             }

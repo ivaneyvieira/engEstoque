@@ -4,11 +4,15 @@ import br.com.engecopi.utils.SystemUtils.resize
 import br.com.engecopi.utils.makeResource
 import com.vaadin.server.Page
 import com.vaadin.ui.Component
+import com.vaadin.ui.Embedded
 import com.vaadin.ui.Image
 import com.vaadin.ui.Notification
 import com.vaadin.ui.UI
 import de.steinwedel.messagebox.ButtonOption
 import de.steinwedel.messagebox.MessageBox
+import com.whitestein.vaadin.widgets.wtpdfviewer.WTPdfViewer
+
+
 
 object MessageDialog {
   val ui = UI.getCurrent()!!
@@ -67,11 +71,20 @@ object MessageDialog {
   }
 
   fun image(title: String, image: ByteArray) {
-    val resource = resize(image, 400, 400)?.makeResource()
-    val comp = Image(title, resource)
+    val resource = image.makeResource()
+    //val resource = resize(image, 400, 400)?.makeResource()
+    //val comp = Image(title, image.makeResource())
+    //val pdfViewer = WTPdfViewer()
+    //pdfViewer.resource = image.makeResource()
+    //pdfViewer.firstPage()
+    val embedded = Embedded()
+    embedded.type = Embedded.TYPE_BROWSER
+    embedded.source = resource
     MessageBox.create()
       .withCaption(title)
-      .withMessage(comp)
+      .withMessage(embedded)
+      .withHeight("50%")
+      .withWidth("50%")
       .open()
   }
 }
