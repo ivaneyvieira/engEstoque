@@ -159,6 +159,10 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       val nfno = nota.numero.split("/").getOrNull(0) ?: ""
       val nfse = nota.numero.split("/").getOrNull(1) ?: ""
       "$storeno AS storeno, '$nfno' AS nfno, '$nfse' AS nfse"
+
+      listOf(FieldClause("$storeno", "storeno"),
+             FieldClause("'$nfno'", "nfno"),
+             FieldClause("'$nfse'", "nfse"))
     }
     println(sqlTemp)
     return lista

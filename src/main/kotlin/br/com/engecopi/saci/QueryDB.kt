@@ -82,10 +82,11 @@ open class QueryDB(private val driver: String, val url: String, val username: St
       }
   }
 
-  protected fun <T> temporaryTable(tableName: String, lista: List<T>, fieldList: (T) -> String): String {
+  protected fun <T> temporaryTable(tableName: String, lista: List<T>, fieldList: (T) -> List<FieldClause>): String {
     val stringBuild = StringBuilder()
     val selectList = lista.joinToString(separator = "\nUNION\n") {item ->
-      "SELECT ${fieldList(item)} FROM DUAL"
+      val fields = fieldList(item).joinToString(separator = ", ") {fc ->  "${fc.value} AS ${fc.name}"}
+      "SELECT $fields FROM DUAL"
     }
     stringBuild.append(
       """
@@ -97,3 +98,5 @@ open class QueryDB(private val driver: String, val url: String, val username: St
     return stringBuild.toString()
   }
 }
+
+data class FieldClause(val value : String, val name : String)
