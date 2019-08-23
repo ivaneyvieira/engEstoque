@@ -123,7 +123,6 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
           this.isEnabled = impresso == false || isAdmin
           this.icon = PRINT
           this.addClickListener {click ->
-            val impressoa = item.abreviacao
             val pacotes = viewModel.imprimir(item?.entityVo?.nota)
             pacotes.forEach {
               printText(it.impressora, it.text)
@@ -308,7 +307,7 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
 
             this.dataProvider = ListDataProvider(abreviacoes)
             removeAllColumns()
-            //setSelectionMode(MULTI)
+
             setSizeFull()
             addComponentColumn {item ->
               Button().apply {
