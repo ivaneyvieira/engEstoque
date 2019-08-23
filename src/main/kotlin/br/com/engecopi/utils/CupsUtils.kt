@@ -5,7 +5,7 @@ import org.cups4j.CupsPrinter
 import org.cups4j.PrintJob
 
 object CupsUtils {
-  private val cupsClient = CupsClient()
+  private val cupsClient = CupsClient("localhost", 631, "root")
   private val printers
     get() = cupsClient.printers.toList()
 
