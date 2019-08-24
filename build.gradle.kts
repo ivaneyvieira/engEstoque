@@ -85,7 +85,7 @@ dependencies {
   implementation("io.ebean:ebean-agent:11.41.1")
   
 
-  //compile "io.ebean:ebean-annotation:4.7"
+  //compile "io.ebean:ebean-anebean-agent notation:4.7"
   compile("io.ebean.tools:finder-generator:11.34.1")
 
   compile("com.vaadin:vaadin-themes:$vaadin8Version")
@@ -101,6 +101,7 @@ dependencies {
   compile("org.glassfish.jersey.core:jersey-client:2.27")
   compile("org.glassfish.jersey.media:jersey-media-multipart:2.27")
   compile("org.glassfish.jersey.inject:jersey-hk2:2.27")
+  compile("khttp:khttp:1.0.0")
 
   compile("org.xerial:sqlite-jdbc:3.21.0.1")
   compile("org.sql2o:sql2o:1.5.4")
