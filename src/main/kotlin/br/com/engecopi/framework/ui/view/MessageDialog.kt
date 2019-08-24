@@ -83,8 +83,8 @@ object MessageDialog {
     MessageBox.create()
       .withCaption(title)
       .withMessage(embedded)
-      .withHeight("50%")
-      .withWidth("50%")
+      .withHeight("100%")
+      .withWidth("100%")
       .open()
   }
 }
