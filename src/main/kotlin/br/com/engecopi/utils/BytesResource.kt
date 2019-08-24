@@ -21,10 +21,15 @@ fun ByteArray.makeResource(): StreamResource {
   return streamResource
 }
 
-fun ByteArray.md5(): String {
-  val md5Digest = MessageDigest.getInstance("MD5")
-  val bytes = md5Digest.digest(this)
-  return DatatypeConverter.printHexBinary(bytes)
+private fun ByteArray.md5(): String {
+  //val md5Digest = MessageDigest.getInstance("MD5")
+  //val bytes = md5Digest.digest(this)
+  //return DatatypeConverter.printHexBinary(bytes)
+  val md = MessageDigest.getInstance("MD5")
+  val digested = md.digest(this)
+  return digested.joinToString("") {
+    String.format("%02x", it)
+  }
 }
 
 class BytesStreamSource(private val imagem: ByteArray): StreamSource {
