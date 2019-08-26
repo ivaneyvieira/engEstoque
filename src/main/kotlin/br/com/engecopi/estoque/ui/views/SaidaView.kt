@@ -248,7 +248,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
     val text = viewModel.imprimir(item.itemNota, notaComleta)
     printText(impressora, text)
     val print = item.entityVo?.impresso ?: true
-    button.isEnabled = print == false || isAdmin
+    //button.isEnabled = print == false || isAdmin
     refreshGrid()
   }
 }
