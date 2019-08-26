@@ -230,9 +230,12 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
       val nota = viewModel.processaKey(key)
       if(nota == null || nota.vazio) showError("A nota não foi encontrada")
       else {
-        val dlg = DlgNotaSaida(nota, viewModel){itens ->
-          val text = viewModel.imprimir(itens)
-          printText(impressora, text)
+        val dlg = DlgNotaSaida(nota, viewModel) {itens ->
+          if(itens.isNotEmpty()) {
+            val text = viewModel.imprimir(itens)
+            printText(impressora, text)
+            refreshGrid()
+          }
         }
         dlg.showDialog()
         Thread.sleep(1000)
@@ -250,9 +253,9 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
   }
 }
 
-class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, execPrint : (List<ItemNota>) -> Unit): Window
-                                                                                                          ("Nota de " +
-                                                                                                       "Saída") {
+class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, execPrint: (List<ItemNota>) -> Unit): Window
+                                                                                                             ("Nota de " +
+                                                                                                              "Saída") {
   private lateinit var grupoSelecaoCol: Column<ProdutoVO, Int>
   private lateinit var dateUpdateCol: Column<ProdutoVO, LocalDateTime>
   private lateinit var gridProdutos: Grid<ProdutoVO>

@@ -119,9 +119,7 @@ abstract class LayoutView<V: ViewModel>: VerticalLayout(), View, IView {
     if(printer == null)
       showError("Impressora $impressora não está configurado no sistema operacional")
     else
-      printer.printText(text) {
-        showInfo(it)
-      }
+      printer.printText(text)
   }
 
   fun printText(impressora: String, text: String?) {
