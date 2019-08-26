@@ -39,16 +39,6 @@ class ItemNota: BaseModel() {
   var hora: LocalTime = LocalTime.now()
   var quantidade: Int = 0
   var quantidadeSaci: Int? = null
-  /*
-  fun quantidadeSaci() : Int {
-    return quantidadeSaci ?: updateQuantidadeSaci()
-  }
-  private fun updateQuantidadeSaci() : Int {
-    nota?.updateQuantSaci()
-    refresh()
-    return quantidadeSaci ?: 0
-  }
-  */
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var produto: Produto? = null
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])

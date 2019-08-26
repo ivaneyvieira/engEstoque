@@ -204,7 +204,7 @@ private fun <BEAN, FIELDVALUE> bind(binder: Binder<BEAN>,
 }
 
 fun Binder<*>.reload() {
-  bean = bean
+  this.bean = bean
 }
 
 inline fun <reified BEAN: Any, FIELDVALUE> HasValue<FIELDVALUE>.reloadBinderOnChange(binder: Binder<BEAN>,

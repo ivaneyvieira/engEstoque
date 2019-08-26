@@ -23,9 +23,11 @@ class HistoricoViewModel(view: IView): CrudViewModel<HistoricoEtiqueta, QHistori
   }
 
   override fun add(bean: HistoricoVo) {
+    //Não implementado
   }
 
   override fun delete(bean: HistoricoVo) {
+    //Não implementado
   }
 
   override fun newBean(): HistoricoVo {

@@ -16,8 +16,8 @@ import javax.imageio.ImageIO
 
 object SystemUtils {
   private val enviroment = System.getenv()
-  fun variable(`var`: String, def: String): String {
-    val envResult = SystemUtils.enviroment[`var`]
+  fun variable(variable: String, def: String): String {
+    val envResult = SystemUtils.enviroment[variable]
     return if(envResult == null || envResult.trim {it <= ' '} == "") {
       def
     }
@@ -38,8 +38,8 @@ object SystemUtils {
   @Throws(IOException::class)
   private fun toBufferedImage(imagem: ByteArray?): BufferedImage? {
     if(imagem == null) return null
-    val `in` = ByteArrayInputStream(imagem)
-    return ImageIO.read(`in`)
+    val inputStream = ByteArrayInputStream(imagem)
+    return ImageIO.read(inputStream)
   }
 
   @Throws(IOException::class)

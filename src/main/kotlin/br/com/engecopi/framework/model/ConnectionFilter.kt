@@ -13,6 +13,7 @@ import javax.servlet.annotation.WebFilter
 class ConnectionFilter: Filter {
   @Throws(ServletException::class)
   override fun init(arg0: FilterConfig) {
+    //Vazio
   }
 
   @Throws(IOException::class, ServletException::class)
@@ -23,5 +24,6 @@ class ConnectionFilter: Filter {
   }
 
   override fun destroy() {
+    //Vazio
   }
 }

@@ -35,7 +35,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   }
 
   private fun filtroDataRecente(notaSaci: NotaSaci): Boolean {
-    val dtEmissao = notaSaci.dt_emissao?.localDate() ?: return false
+    val dtEmissao = notaSaci.dtEmissao?.localDate() ?: return false
     val date = notaSaci.date?.localDate() ?: return false
     val dataLimite = LocalDate.now()
       .minusDays(45)

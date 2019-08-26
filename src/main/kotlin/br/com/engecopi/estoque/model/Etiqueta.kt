@@ -52,7 +52,6 @@ class Etiqueta: BaseModel() {
   }
 
   fun imprimivel(tipoNota: TipoNota): Boolean {
-    // return tipoNota != VENDA || isCliente
     return true
   }
 }

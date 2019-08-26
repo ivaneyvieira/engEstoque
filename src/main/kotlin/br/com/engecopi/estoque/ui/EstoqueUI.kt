@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.ui
 
 import br.com.engecopi.estoque.model.LoginInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.ui.views.AbreciacaoView
 import br.com.engecopi.estoque.ui.views.EntradaView
 import br.com.engecopi.estoque.ui.views.EntregaClienteEditorView
@@ -15,6 +16,8 @@ import br.com.engecopi.estoque.ui.views.ProdutoView
 import br.com.engecopi.estoque.ui.views.SaidaView
 import br.com.engecopi.estoque.ui.views.UsuarioView
 import br.com.engecopi.utils.SystemUtils
+import com.github.mvysny.karibudsl.v8.VaadinDsl
+import com.github.mvysny.karibudsl.v8.ValoMenu
 import com.github.mvysny.karibudsl.v8.autoViewProvider
 import com.github.mvysny.karibudsl.v8.onLeftClick
 import com.github.mvysny.karibudsl.v8.valoMenu
@@ -82,74 +85,120 @@ class EstoqueUI: UI() {
 
   private fun updateContent(contextPath: String) {
     val info = loginInfo
-    if(info == null) {
-      content = LoginForm("$title <p align=\"right\">$versao</p>")
-      navigator = null
+    if(info == null)
+      loginScreen()
+    else
+      appScreen(info, contextPath)
+  }
+
+  private fun appScreen(info: LoginInfo, contextPath: String) {
+    content = null
+    val user = info.usuario
+
+    valoMenu {
+      this.appTitle = title
+      sectionLogin(user, info)
+
+      if(user.rolePaineis())
+        sectionPaineis()
+
+      if(user.roleExpedicao())
+        sectionExpedicao(user)
+
+      if(user.roleMovimentacao())
+        sessionMovimentacao()
+
+      if(user.roleMovimentacao())
+        sectionConfiguracao(user)
+
+      if(user.roleEtiqueta())
+        sectionEtiqueta(user)
     }
-    else {
-      content = null
-      val user = info.usuario
 
-      valoMenu {
-        this.appTitle = title
-        section("Login") {
-          menuButton("Usuário:", badge = user.loginName)
-          if(user.estoque || user.admin) menuButton("Localizacao:", badge = info.abreviacao)
-          menuButton("Loja:", badge = info.usuario.loja?.sigla ?: "")
-          menuButton(caption = "Endereco: ", badge = RegistryUserInfo.endereco)
-          menuButton("Sair", icon = OUT) {
-            onLeftClick {
-              LoginService.logout()
-            }
-          }
-        }
+    navigator = Navigator(this, content as ViewDisplay)
+    navigator.addProvider(autoViewProvider)
 
-        if(user.admin)
-          section("Paineis") {
-            menuButton("Visão geral", CLUSTER, view = PainelGeralView::class.java)
-          }
 
-        if(user.expedicao || user.admin) {
-          section("Expedição") {
-            if(!user.estoque || user.admin) {
-              menuButton("Nota Fiscal", NEWSPAPER, view = NFExpedicaoView::class.java)
-            }
-            menuButton("Entrega ao Cliente", TRUCK, view = EntregaClienteView::class.java)
-            menuButton("Editor de Entrega", TRUCK, view = EntregaClienteEditorView::class.java)
-          }
-        }
+    setErrorHandler {e -> errorHandler(e)}
+    val contextPathDeafualt = if(user.expedicao && contextPath == "")
+      "nf_expedicao"
+    else
+      contextPath
 
-        if(user.estoque || user.admin) {
-          section("Movimentação") {
-            menuButton("Entrada", INBOX, view = EntradaView::class.java)
-            menuButton("Saída", OUTBOX, view = SaidaView::class.java)
-          }
-          section("Configuração") {
-            menuButton("Produtos", PACKAGE, view = ProdutoView::class.java)
-            if(user.admin) {
-              menuButton("Usuários", USER, view = UsuarioView::class.java)
-              menuButton("Etiquetas", PAPERCLIP, view = EtiquetaView::class.java)
-              menuButton("Localizações", CART_O, view = AbreciacaoView::class.java)
-            }
-          }
-        }
-        if(user.etiqueta || user.admin) {
-          section("Etiquetas") {
-            menuButton("Imprimir", BARCODE, view = LabelView::class.java)
-            if(user.admin)
-              menuButton("Histórico", BARCODE, view = HistoricoView::class.java)
-          }
+    navigator.navigateTo(contextPathDeafualt)
+  }
+
+  private fun @VaadinDsl ValoMenu.sectionEtiqueta(
+    user: Usuario) {
+    section("Etiquetas") {
+      menuButton("Imprimir", BARCODE, view = LabelView::class.java)
+      when {
+        user.admin -> menuButton("Histórico", BARCODE, view = HistoricoView::class.java)
+      }
+    }
+  }
+
+  private fun @VaadinDsl ValoMenu.sectionConfiguracao(
+    user: Usuario) {
+    section("Configuração") {
+      menuButton("Produtos", PACKAGE, view = ProdutoView::class.java)
+      if(user.admin) {
+        menuButton("Usuários", USER, view = UsuarioView::class.java)
+        menuButton("Etiquetas", PAPERCLIP, view = EtiquetaView::class.java)
+        menuButton("Localizações", CART_O, view = AbreciacaoView::class.java)
+      }
+    }
+  }
+
+  private fun @VaadinDsl ValoMenu.sessionMovimentacao() {
+    section("Movimentação") {
+      menuButton("Entrada", INBOX, view = EntradaView::class.java)
+      menuButton("Saída", OUTBOX, view = SaidaView::class.java)
+    }
+  }
+
+  private fun @VaadinDsl ValoMenu.sectionExpedicao(
+    user: Usuario) {
+    section("Expedição") {
+      if(!user.estoque || user.admin) {
+        menuButton("Nota Fiscal", NEWSPAPER, view = NFExpedicaoView::class.java)
+      }
+      menuButton("Entrega ao Cliente", TRUCK, view = EntregaClienteView::class.java)
+      menuButton("Editor de Entrega", TRUCK, view = EntregaClienteEditorView::class.java)
+    }
+  }
+
+  private fun @VaadinDsl ValoMenu.sectionPaineis() {
+    section("Paineis") {
+      menuButton("Visão geral", CLUSTER, view = PainelGeralView::class.java)
+    }
+  }
+
+  private fun @VaadinDsl ValoMenu.sectionLogin(
+    user: Usuario, info: LoginInfo) {
+    section("Login") {
+      menuButton("Usuário:", badge = user.loginName)
+      if(user.estoque || user.admin)
+        menuButton("Localizacao:", badge = info.abreviacao)
+      menuButton("Loja:", badge = info.usuario.loja?.sigla ?: "")
+      menuButton(caption = "Endereco: ", badge = RegistryUserInfo.endereco)
+      menuButton("Sair", icon = OUT) {
+        onLeftClick {
+          LoginService.logout()
         }
       }
-      // Read more about navigators here: https://github.com/mvysny/karibu-dsl
-      navigator = Navigator(this, content as ViewDisplay)
-      navigator.addProvider(autoViewProvider)
-
-
-      setErrorHandler {e -> errorHandler(e)}
-      if(user.expedicao) navigator.navigateTo(if(contextPath == "") "nf_expedicao" else contextPath)
-      else navigator.navigateTo(contextPath)
     }
+  }
+
+  private fun Usuario.rolePaineis() = this.admin
+  private fun Usuario.roleExpedicao() = this.admin || this.expedicao
+  private fun Usuario.roleMovimentacao() = this.admin || this.estoque
+  private fun Usuario.roleConfiguracao() = this.admin || this.estoque
+  private fun Usuario.roleEtiqueta() = this.admin || this.etiqueta
+
+  private fun loginScreen() {
+    content = LoginForm("$title <p align=\"right\">$versao</p>")
+    navigator = null
   }
 
   private fun errorHandler(e: ErrorEvent) {

@@ -27,7 +27,6 @@ class EntregaClienteEditorViewModel(view: IView): NotaViewModel<EntregaClienteVo
   override fun createVo() = EntregaClienteVo()
 
   fun notasConferidas(): List<EntregaClienteVo> {
-    //TODO Refatorar
     return ItemNota.where()
       .status.eq(CONFERIDA)
       .findList()

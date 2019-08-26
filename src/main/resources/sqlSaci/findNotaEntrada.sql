@@ -2,7 +2,7 @@
 select P.invno, N.storeno, cast(nfname as char) as numero, invse as serie,
        CAST(IFNULL(X.xrouteno, '') AS CHAR) AS rota,
        N.date,
-       N.issue_date                         AS dt_emissao,
+       N.issue_date                         AS dtEmissao,
        P.prdno                              AS prdno,
        P.grade, P.qtty/1000                 as quant, V.name as vendName,
   CASE

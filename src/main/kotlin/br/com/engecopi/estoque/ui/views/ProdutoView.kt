@@ -187,12 +187,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>() {
                 viewModel.saveItem(item)
                 binder.reload()
               }
-              //  val nav = FastNavigation(this, false, true)
-              //  nav.changeColumnAfterLastRow = true
-              // nav.openEditorWithSingleClick = true
-              // nav.allowArrowToChangeRow = true
-              // nav.openEditorOnTyping = true
-              // nav.addEditorSaveShortcut(KeyCode.ENTER)
+
               editor.cancelCaption = "Cancelar"
               editor.saveCaption = "Salvar"
               editor.isBuffered = true
@@ -225,7 +220,6 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>() {
       }
       column(ProdutoVo::localizacao) {
         expandRatio = 1
-        //setRenderer({ e -> e?.replace(" - ", " / ") }, HtmlRenderer())
         caption = "Localização"
         setSortProperty("localizacao")
       }

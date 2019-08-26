@@ -19,7 +19,7 @@ import javax.persistence.ManyToOne
 @Entity
 @View(name = "v_nota_expedicao", dependentTables = ["notas", "itens_nota"])
 class ViewNotaExpedicao: BaseModel() {
-  // var notaId: Long = 0
+
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var nota: Nota? = null
   var numero: String = ""

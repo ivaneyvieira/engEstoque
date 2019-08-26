@@ -34,20 +34,12 @@ object LoginService {
   fun login(loginInfo: LoginInfo) {
     EstoqueUI.current?.loginInfo = loginInfo
     Session[LoginInfo::class] = loginInfo
-    //    val httpSession = Session.current.session as? HttpSession
-    //    val ctx = Session.current.getContext() as WebApplicationContext
-    //    val session = ctx.getHttpSession()
-    //    VaadinSession.getAllSessions(httpSession ).forEach {
-    //    println("#####Session $it")
   }
-  //Page.getCurrent().reload()
   val currentUser: LoginInfo?
     get() = EstoqueUI.current?.loginInfo
 
   fun logout() {
     EstoqueUI.current?.loginInfo = null
-    // VaadinSession.getCurrent().close()
-    // Page.getCurrent()?.reload()
   }
 }
 

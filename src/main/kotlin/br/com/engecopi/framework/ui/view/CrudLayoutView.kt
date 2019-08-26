@@ -143,8 +143,11 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C>>: Layout
     }
 
     this.addItemClickListener {e ->
-      if(e.mouseEventDetails.isDoubleClick) if(!this.asSingleSelect().isEmpty) if(updateButton.isVisible) updateButtonClicked()
-      else readButtonClicked()
+      when {
+        e.mouseEventDetails.isDoubleClick && !this.asSingleSelect().isEmpty -> if(updateButton.isVisible)
+          updateButtonClicked()
+        else readButtonClicked()
+      }
     }
 
     this.dataProvider = dataLazyFilterProvider
@@ -248,8 +251,6 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C>>: Layout
 
   fun itemContains(item: C?): Boolean {
     return false
-    //    item ?: return false
-    //  return viewModel.existsBean(item)
   }
 
   private fun readButtonClicked() {
@@ -401,11 +402,12 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C>>: Layout
     if(itemContains(bean)) {
       grid.asSingleSelect()
         ?.value = bean
-      // TODO: grid.scrollTo(addedObject);
+      // falta fazer o scrool para a linha
     }
   }
 
   override fun updateModel() {
+    //Vazio
   }
 }
 
@@ -446,7 +448,7 @@ class CrudForm<C: EntityVo<*>>(val operation: CrudOperation,
   }
 
   fun focusFirst() {
-    val field = binder.fields.toList().firstOrNull {it is Component.Focusable} as?  Component.Focusable
+    val field = binder.fields.toList().firstOrNull {it is Component.Focusable} as? Component.Focusable
     field?.focus()
   }
 

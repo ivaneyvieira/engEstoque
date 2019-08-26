@@ -29,7 +29,6 @@ abstract class ViewModel(val view: IView) {
       }
     } catch(e: EViewModel) {
       updateView(e)
-      //throw e
     } finally {
       inTransaction = false
     }
@@ -84,7 +83,7 @@ abstract class ViewModel(val view: IView) {
   }
 }
 
-class EViewModel(msg: String): Exception(msg)
+open class EViewModel(msg: String): Exception(msg)
 
 interface IView {
   fun updateView()

@@ -50,7 +50,8 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
                                          private val abreviacaoNota: String): CrudViewModel<ItemNota, QItemNota, VO>(
   view) {
   override fun update(bean: VO) {
-    if(bean.localizacao?.localizacao.isNullOrBlank()) throw EViewModel("Não foi especificado a localização do item")
+    if(bean.localizacao?.localizacao.isNullOrBlank())
+      throw EViewModel("Não foi especificado a localização do item")
     val nota = updateNota(bean)
     val produto = saveProduto(bean.produto)
 
@@ -155,26 +156,14 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
   }
 
   private fun updateNota(bean: VO): Nota {
-    val nota: Nota = bean.nota ?: Nota()
-    nota.apply {
-      this.numero = if(bean.numeroNF.isNullOrBlank()) "${Nota.novoNumero()}"
-      else bean.numeroNF ?: ""
-      this.tipoMov = tipo
-      this.tipoNota = bean.tipoNota
-      this.loja = bean.lojaNF
-      this.data = bean.dataNota
-      this.dataEmissao = bean.dataEmissao
-      this.observacao = bean.observacaoNota ?: ""
-      this.rota = bean.rota ?: ""
-      this.fornecedor = bean.fornecedor
-      this.cliente = bean.cliente
-    }
-
-    nota.save()
-    return nota
+    return saveNota(bean)
   }
 
   private fun insertNota(bean: VO): Nota {
+    return saveNota(bean)
+  }
+
+  private fun saveNota(bean: VO): Nota {
     val nota: Nota = bean.nota ?: Nota()
     nota.apply {
       this.numero = if(bean.numeroNF.isNullOrBlank()) "${Nota.novoNumero()}"
@@ -213,7 +202,7 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
     }
 
   abstract fun createVo(): VO
-  //TODO fazer o createVo generico
+
   override fun ItemNota.toVO(): VO {
     val itemNota = this
     return createVo().apply {
@@ -308,7 +297,7 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
 
   fun imprimir(itens: List<ItemNota>) = execString {
     val etiquetas = Etiqueta.findByStatus(statusImpressao)
-    //TODO Refatorar
+
     etiquetas.joinToString(separator = "\n") {etiqueta ->
       imprimir(itens, etiqueta)
     }
@@ -376,7 +365,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
     get() = entityVo?.nota ?: Nota.findNota(numeroNF, tipo)
 
   private fun atualizaNota() {
-    if(!readOnly) if(entityVo == null) {
+    if(!readOnly && entityVo == null) {
       val nota = notaSaci ?: return
       tipoNota = TipoNota.value(nota.tipo) ?: OUTROS_E
       rota = nota.rota
@@ -444,7 +433,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   val horaLacamento: LocalDateTime
     get() = toEntity()?.let {LocalDateTime.of(it.data, it.hora)} ?: LocalDateTime.now()
   val dataEmissao: LocalDate
-    get() = toEntity()?.nota?.dataEmissao ?: notaSaci?.dt_emissao?.localDate() ?: LocalDate.now()
+    get() = toEntity()?.nota?.dataEmissao ?: notaSaci?.dtEmissao?.localDate() ?: LocalDate.now()
   val numeroInterno: Int
     get() = if(entityVo == null) notaSaci?.invno ?: 0
     else 0

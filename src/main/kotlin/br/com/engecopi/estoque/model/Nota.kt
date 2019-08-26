@@ -93,7 +93,7 @@ class Nota: BaseModel() {
         this.fornecedor = notasaci.vendName ?: ""
         this.cliente = notasaci.clienteName ?: ""
         this.data = notasaci.date?.localDate() ?: LocalDate.now()
-        this.dataEmissao = notasaci.dt_emissao?.localDate() ?: LocalDate.now()
+        this.dataEmissao = notasaci.dtEmissao?.localDate() ?: LocalDate.now()
         this.loja = Loja.findLoja(notasaci.storeno)
       }
     }
@@ -186,27 +186,6 @@ class Nota: BaseModel() {
     }
   }
 
-  /*
-  fun updateQuantSaci() {
-    val notaSaci = when(tipoMov) {
-      ENTRADA -> findNotaEntradaSaci(numero)
-      SAIDA   -> findNotaSaidaSaci(numero)
-    }
-    val itensNota = itensNota()
-    notaSaci.forEach {notaSaciProduto ->
-      val prdno = notaSaciProduto.prdno
-      val grade = notaSaciProduto.grade
-      val produto = Produto.findProduto(prdno, grade)
-      val quantidadeSaci = notaSaciProduto.quant
-      itensNota.filter {it.produto?.id == produto?.id}
-        .forEach {itemNota ->
-          itemNota.refresh()
-          itemNota.quantidadeSaci = quantidadeSaci
-          itemNota.save()
-        }
-    }
-  }
-*/
   fun existe(): Boolean {
     return where().loja.equalTo(loja).numero.eq(numero).findCount() > 0
   }
@@ -242,8 +221,8 @@ enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2:
   OUTROS_S(SAIDA, "Outros", "Outras Saidas", true),
   OUTRAS_NFS(SAIDA, "Outras NFS", "Outras NF Saida", true),
   SP_REME(SAIDA, "Simples Remessa", "Simples Remessa", true),
-  CANCELADA_E(ENTRADA, "Nota Cancelada", "Nota Cancelada"),
-  CANCELADA_S(SAIDA, "Nota Cancelada", "Nota Cancelada");
+  CANCELADA_E(ENTRADA, "Nota Cancelada", "NF Entrada Cancelada"),
+  CANCELADA_S(SAIDA, "Nota Cancelada", "NF Saída Cancelada");
 
   companion object {
     fun valuesEntrada(): List<TipoNota> = values().filter {it.tipoMov == ENTRADA}

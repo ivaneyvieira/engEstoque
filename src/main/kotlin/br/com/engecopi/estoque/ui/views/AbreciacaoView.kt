@@ -67,8 +67,10 @@ class AbreciacaoView: LayoutView<AbreciacaoViewModel>() {
   }
 
   override fun updateView() {
+    //Vazio
   }
 
   override fun updateModel() {
+    //Vazio
   }
 }

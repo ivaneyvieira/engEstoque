@@ -72,11 +72,7 @@ object MessageDialog {
 
   fun image(title: String, image: ByteArray) {
     val resource = image.makeResource()
-    //val resource = resize(image, 400, 400)?.makeResource()
-    //val comp = Image(title, image.makeResource())
-    //val pdfViewer = WTPdfViewer()
-    //pdfViewer.resource = image.makeResource()
-    //pdfViewer.firstPage()
+
     val embedded = Embedded()
     embedded.type = Embedded.TYPE_BROWSER
     embedded.source = resource

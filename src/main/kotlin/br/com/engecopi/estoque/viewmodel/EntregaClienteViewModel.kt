@@ -69,7 +69,6 @@ class EntregaClienteViewModel(view: IView): NotaViewModel<EntregaClienteVo>(view
   }
 
   fun notasConferidas(): List<EntregaClienteVo> {
-    //TODO Refatorar
     return ItemNota.where()
       .status.eq(CONFERIDA)
       .findList()

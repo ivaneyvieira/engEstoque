@@ -41,5 +41,6 @@ class PainelGeralView: LayoutView<PainelGeralViewModel>() {
   }
 
   override fun updateModel() {
+    //Vazio
   }
 }
