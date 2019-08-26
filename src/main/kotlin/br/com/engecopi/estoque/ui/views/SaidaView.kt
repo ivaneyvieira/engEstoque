@@ -328,9 +328,8 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, execPrint
                   .filter {it.allowSelect()}
                 val itensDeposito = itens.filter {it.value?.nota?.lancamentoOrigem == DEPOSITO}
                 val itensExpedicao = itens.filter {it.value?.nota?.lancamentoOrigem == EXPEDICAO}
-                viewModel.confirmaProdutos(itensDeposito, ENTREGUE)
-                val itensConfirma = viewModel.confirmaProdutos(itensExpedicao, CONFERIDA)
-                execPrint(itensConfirma)
+                execPrint(viewModel.confirmaProdutos(itensDeposito, ENTREGUE))
+                execPrint(viewModel.confirmaProdutos(itensExpedicao, CONFERIDA))
                 viewModel.confirmaProdutos(naoSelect, ENT_LOJA)
                 close()
               }
