@@ -68,7 +68,7 @@ abstract class LayoutView<V: ViewModel>: VerticalLayout(), View, IView {
   lateinit var viewModel: V
 
   init {
-    setSizeFull()
+    this.setSizeFull()
   }
 
   open fun form(titleForm: String, block: (@VaadinDsl VerticalLayout).() -> Unit = {}) {

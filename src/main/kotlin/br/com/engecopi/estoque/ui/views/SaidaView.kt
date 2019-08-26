@@ -149,7 +149,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
       grid.addComponentColumn {item ->
         Button().apply {
           val impresso = item?.entityVo?.impresso ?: true
-          isEnabled = impresso == false || isAdmin
+          isEnabled = isAdmin
           icon = VaadinIcons.PRINT
           addClickListener {
             item.itemNota?.recalculaSaldos()
