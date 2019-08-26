@@ -1,10 +1,12 @@
 package br.com.engecopi.estoque.ui.views
 
+import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.DEPOSITO
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
 import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.NotaItens
 import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
@@ -228,7 +230,10 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
       val nota = viewModel.processaKey(key)
       if(nota == null || nota.vazio) showError("A nota não foi encontrada")
       else {
-        val dlg = DlgNotaSaida(nota, viewModel)
+        val dlg = DlgNotaSaida(nota, viewModel){itens ->
+          val text = viewModel.imprimir(itens)
+          printText(impressora, text)
+        }
         dlg.showDialog()
         Thread.sleep(1000)
         dlg.focusEditor()
@@ -237,7 +242,6 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
   }
 
   protected fun imprimeItem(item: SaidaVo, button: Button, notaComleta: Boolean) {
-    val impressora = item.itemNota?.abreviacao?.impressora ?: ""
     val text = viewModel.imprimir(item.itemNota, notaComleta)
     printText(impressora, text)
     val print = item.entityVo?.impresso ?: true
@@ -246,7 +250,9 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
   }
 }
 
-class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("Nota de Saída") {
+class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, execPrint : (List<ItemNota>) -> Unit): Window
+                                                                                                          ("Nota de " +
+                                                                                                       "Saída") {
   private lateinit var grupoSelecaoCol: Column<ProdutoVO, Int>
   private lateinit var dateUpdateCol: Column<ProdutoVO, LocalDateTime>
   private lateinit var gridProdutos: Grid<ProdutoVO>
@@ -323,7 +329,8 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel): Window("
                 val itensDeposito = itens.filter {it.value?.nota?.lancamentoOrigem == DEPOSITO}
                 val itensExpedicao = itens.filter {it.value?.nota?.lancamentoOrigem == EXPEDICAO}
                 viewModel.confirmaProdutos(itensDeposito, ENTREGUE)
-                viewModel.confirmaProdutos(itensExpedicao, CONFERIDA)
+                val itensConfirma = viewModel.confirmaProdutos(itensExpedicao, CONFERIDA)
+                execPrint(itensConfirma)
                 viewModel.confirmaProdutos(naoSelect, ENT_LOJA)
                 close()
               }

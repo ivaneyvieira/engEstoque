@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.viewmodel
 
+import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.DEPOSITO
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
 import br.com.engecopi.estoque.model.Nota
@@ -71,9 +72,10 @@ class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE,
     return processaKeyNumero(numero)
   }
 
-  fun confirmaProdutos(itens: List<ProdutoVO>, situacao: StatusNota) = exec {
+  fun confirmaProdutos(itens: List<ProdutoVO>, situacao: StatusNota) = execList<ItemNota> {
     itens.firstOrNull()
       ?.value?.nota?.save()
+    val listMultable = mutableListOf<ItemNota>()
     itens.forEach {produtoVO ->
       produtoVO.value?.run {
         if(this.id != 0L) refresh()
@@ -88,10 +90,12 @@ class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE,
           this.quantidade = produtoVO.quantidade
           this.save()
           this.recalculaSaldos()
+          listMultable.add(this)
         }
         else showWarning("A quantidade do produto ${produto?.codigo} não pode ser maior que $quantidade")
       }
     }
+    listMultable
   }
 
   fun processaBarcodeProduto(barcode: String?): List<Produto> {

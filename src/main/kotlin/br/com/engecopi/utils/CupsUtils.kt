@@ -9,7 +9,10 @@ object CupsUtils {
   private val printers
     get() = cupsClient.printers.toList()
 
-  fun printerExists(printerName: String) = printers.any {it.name == printerName}
+  fun printerExists(printerName: String): Boolean {
+    val impressoras = printers
+    return impressoras.any {it.name == printerName}
+  }
 
   fun printer(printerName: String) = printers.firstOrNull {it.name == printerName}
 
