@@ -155,8 +155,8 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
             item.itemNota?.recalculaSaldos()
             val numero = item.numeroNF
             showQuestion(msg = "Imprimir todos os itens da nota $numero?",
-                         execYes = {imprimeItem(item, it.button, true)},
-                         execNo = {imprimeItem(item, it.button, false)})
+                         execYes = {imprimeItem(item, true)},
+                         execNo = {imprimeItem(item, false)})
           }
         }
       }
@@ -244,18 +244,16 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
     }
   }
 
-  protected fun imprimeItem(item: SaidaVo, button: Button, notaComleta: Boolean) {
+  protected fun imprimeItem(item: SaidaVo, notaComleta: Boolean) {
     val text = viewModel.imprimir(item.itemNota, notaComleta)
     printText(impressora, text)
     val print = item.entityVo?.impresso ?: true
-    //button.isEnabled = print == false || isAdmin
     refreshGrid()
   }
 }
 
-class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, execPrint: (List<ItemNota>) -> Unit): Window
-                                                                                                             ("Nota de " +
-                                                                                                              "Saída") {
+class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel,
+                   execPrint: (List<ItemNota>) -> Unit): Window("Nota de Saída") {
   private lateinit var grupoSelecaoCol: Column<ProdutoVO, Int>
   private lateinit var dateUpdateCol: Column<ProdutoVO, LocalDateTime>
   private lateinit var gridProdutos: Grid<ProdutoVO>

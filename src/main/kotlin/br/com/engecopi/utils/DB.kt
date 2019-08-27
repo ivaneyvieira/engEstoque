@@ -10,6 +10,7 @@ class DB(banco: String) {
   val url = prop?.getProperty("datasource.$banco.databaseUrl") ?: ""
   val username = prop?.getProperty("datasource.$banco.username") ?: ""
   val password = prop?.getProperty("datasource.$banco.password") ?: ""
+  val test = prop?.getProperty("test") == "true"
 
   companion object {
     private val propertieFile = System.getProperty("ebean.props.file")

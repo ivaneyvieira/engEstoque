@@ -155,6 +155,7 @@ class ItemNota: BaseModel() {
 
   fun recalculaSaldos() {
     produto?.recalculaSaldos(localizacao = localizacao)
+    this.refresh()
   }
 
   override fun save() {
