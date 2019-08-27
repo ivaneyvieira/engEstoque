@@ -261,12 +261,16 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C>>: Layout
     }
   }
 
+  open fun processAdd(domainObject: C) {
+  }
+
   private fun addButtonClicked() {
     viewModel.cleanBean()
     val domainObject = viewModel.crudBean ?: return
     showForm(ADD, domainObject, false, savedMessage) {
       viewModel.crudBean = domainObject
       viewModel.add()
+      processAdd(domainObject)
     }
   }
 

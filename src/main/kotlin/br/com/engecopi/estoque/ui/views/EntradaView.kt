@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.ui.views
 
+import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.viewmodel.EntradaViewModel
 import br.com.engecopi.estoque.viewmodel.EntradaVo
@@ -100,14 +101,14 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel>() {
       grid.addComponentColumn {item ->
         val button = Button()
         val impresso = item?.entityVo?.impresso ?: true
-        button.isEnabled = impresso == false || isAdmin
+        button.isEnabled = isAdmin
         button.icon = VaadinIcons.PRINT
         button.addClickListener {
           item.itemNota?.recalculaSaldos()
           val numero = item.numeroNF
           showQuestion(msg = "Imprimir todos os itens da nota $numero?",
-                       execYes = {imprimeItem(item, it.button, true)},
-                       execNo = {imprimeItem(item, it.button, false)})
+                       execYes = {imprimeItem(item, true)},
+                       execNo = {imprimeItem(item, false)})
         }
 
         button
@@ -171,14 +172,17 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel>() {
     }
   }
 
-  protected fun imprimeItem(item: EntradaVo, button: Button, notaComleta : Boolean) {
-    val impressora = item.itemNota?.abreviacao?.impressora ?: ""
-    val text = viewModel.imprimir(item.itemNota, notaComleta)
+  protected fun imprimeItem(item: EntradaVo, notaCompleta: Boolean) {
+    val text = viewModel.imprimir(item.itemNota, notaCompleta)
 
     printText(impressora, text)
     val print = item.entityVo?.impresso ?: true
-    button.isEnabled = print == false || isAdmin
     refreshGrid()
+  }
+
+  override fun processAdd(domainObject: EntradaVo) {
+    super.processAdd(domainObject)
+    imprimeItem(domainObject, true)
   }
 }
 
