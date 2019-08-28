@@ -100,7 +100,6 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel>() {
       }
       grid.addComponentColumn {item ->
         val button = Button()
-        val impresso = item?.entityVo?.impresso ?: true
         button.isEnabled = isAdmin
         button.icon = VaadinIcons.PRINT
         button.addClickListener {
@@ -173,10 +172,10 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel>() {
   }
 
   protected fun imprimeItem(item: EntradaVo, notaCompleta: Boolean) {
-    val text = viewModel.imprimir(item.itemNota, notaCompleta)
+    val itemNota = item.itemNota ?: item.findEntity()
+    val text = viewModel.imprimir(itemNota, notaCompleta)
 
     printText(impressora, text)
-    val print = item.entityVo?.impresso ?: true
     refreshGrid()
   }
 
