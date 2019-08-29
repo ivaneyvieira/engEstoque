@@ -50,6 +50,7 @@ import kotlin.streams.toList
 
 abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C>>: LayoutView<V>() {
   var isAddClose = true
+  var isStillShow = false
   val headerLayout = HorizontalLayout()
   val toolbarLayout = CssLayout()
   val filterLayout = HorizontalLayout()
@@ -290,6 +291,10 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C>>: Layout
     }
   }
 
+  open fun stillShow() {
+
+  }
+
   fun showForm(operation: CrudOperation,
                domainObject: C,
                readOnly: Boolean,
@@ -297,7 +302,12 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C>>: Layout
                buttonClickListener: () -> Unit) {
     fun operation(form: CrudForm<C>) {
       buttonClickListener()
-      if(operation != ADD || isAddClose) hideForm()
+      if(operation != ADD || isAddClose) {
+        if(isStillShow)
+          stillShow()
+        else
+          hideForm()
+      }
       else {
         viewModel.cleanBean()
         form.binder.bean = viewModel.crudBean

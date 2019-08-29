@@ -11,6 +11,7 @@ import br.com.engecopi.framework.ui.view.default
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.intFormat
 import br.com.engecopi.framework.ui.view.integerField
+import br.com.engecopi.framework.ui.view.reloadBinderOnChange
 import br.com.engecopi.framework.ui.view.row
 import br.com.engecopi.framework.ui.view.timeFormat
 import com.github.mvysny.karibudsl.v8.AutoView
@@ -21,15 +22,21 @@ import com.github.mvysny.karibudsl.v8.expandRatio
 import com.github.mvysny.karibudsl.v8.px
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.w
+import com.vaadin.data.Binder
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.Button
 import com.vaadin.ui.Button.ClickEvent
+import com.vaadin.ui.TextField
 import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView
 class EntradaView: NotaView<EntradaVo, EntradaViewModel>() {
+  private lateinit var formBinder: Binder<EntradaVo>
+  private lateinit var fieldNotaFiscal: TextField
+
   init {
+    isStillShow = true
     viewModel = EntradaViewModel(this)
     layoutForm {
       if(operation == ADD) {
@@ -37,12 +44,13 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel>() {
         binder.bean.usuario = usuario
       }
       formLayout.apply {
+        formBinder = binder
         w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
           .px
 
         grupo("Nota fiscal de entrada") {
           row {
-            notaFiscalField(operation, binder)
+            fieldNotaFiscal = notaFiscalField(operation, binder)
             lojaField(operation, binder)
             comboBox<TipoNota>("Tipo") {
               expandRatio = 2f
@@ -182,6 +190,10 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel>() {
   override fun processAdd(domainObject: EntradaVo) {
     super.processAdd(domainObject)
     imprimeItem(domainObject, true)
+  }
+
+  override fun stillShow() {
+    fieldNotaFiscal.reloadBinderOnChange(formBinder)
   }
 }
 

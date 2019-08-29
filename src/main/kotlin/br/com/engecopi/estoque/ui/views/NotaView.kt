@@ -38,6 +38,7 @@ import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.Grid.SelectionMode.MULTI
 import com.vaadin.ui.HasComponents
+import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
 import org.vaadin.patrik.FastNavigation
 
@@ -47,8 +48,8 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO>>: CrudLayoutView<VO
   val isAdmin = usuario.admin
 
   inline fun <reified V: NotaVo> (@VaadinDsl HasComponents).notaFiscalField(operation: CrudOperation?,
-                                                                            binder: Binder<V>) {
-    textField("Nota Fiscal") {
+                                                                            binder: Binder<V>): TextField {
+    return textField("Nota Fiscal") {
       expandRatio = 2f
       isReadOnly = operation != ADD
       bind(binder).bind("numeroNF")
