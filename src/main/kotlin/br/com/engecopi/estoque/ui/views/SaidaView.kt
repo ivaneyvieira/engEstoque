@@ -245,9 +245,8 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
   }
 
   protected fun imprimeItem(item: SaidaVo, notaComleta: Boolean) {
-    val text = viewModel.imprimir(item.itemNota, notaComleta)
+    val text = viewModel.imprimir(item.itemNota, notaComleta, false)
     printText(impressora, text)
-    val print = item.entityVo?.impresso ?: true
     refreshGrid()
   }
 }

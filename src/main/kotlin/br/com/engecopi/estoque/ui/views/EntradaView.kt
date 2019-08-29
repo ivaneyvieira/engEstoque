@@ -11,7 +11,6 @@ import br.com.engecopi.framework.ui.view.default
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.intFormat
 import br.com.engecopi.framework.ui.view.integerField
-import br.com.engecopi.framework.ui.view.reloadBinderOnChange
 import br.com.engecopi.framework.ui.view.row
 import br.com.engecopi.framework.ui.view.timeFormat
 import com.github.mvysny.karibudsl.v8.AutoView
@@ -25,7 +24,6 @@ import com.github.mvysny.karibudsl.v8.w
 import com.vaadin.data.Binder
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.Button
-import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.TextField
 import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
@@ -114,8 +112,8 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel>() {
           item.itemNota?.recalculaSaldos()
           val numero = item.numeroNF
           showQuestion(msg = "Imprimir todos os itens da nota $numero?",
-                       execYes = {imprimeItem(item, true)},
-                       execNo = {imprimeItem(item, false)})
+                       execYes = {imprimeItem(item, true, false)},
+                       execNo = {imprimeItem(item, false, false)})
         }
 
         button
@@ -179,9 +177,9 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel>() {
     }
   }
 
-  protected fun imprimeItem(item: EntradaVo, notaCompleta: Boolean) {
+  protected fun imprimeItem(item: EntradaVo, notaCompleta: Boolean, groupByHour: Boolean) {
     val itemNota = item.itemNota ?: item.findEntity()
-    val text = viewModel.imprimir(itemNota, notaCompleta)
+    val text = viewModel.imprimir(itemNota, notaCompleta, groupByHour)
 
     printText(impressora, text)
     refreshGrid()
@@ -189,11 +187,16 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel>() {
 
   override fun processAdd(domainObject: EntradaVo) {
     super.processAdd(domainObject)
-    imprimeItem(domainObject, true)
+    imprimeItem(domainObject, notaCompleta = true, groupByHour = true)
   }
 
   override fun stillShow() {
-    fieldNotaFiscal.reloadBinderOnChange(formBinder)
+    val bean = formBinder.bean
+    bean.entityVo = null
+    bean.atualizaNota()
+    formBinder.getBinding("produtos").ifPresent {binding ->
+      binding.read(bean)
+    }
   }
 }
 

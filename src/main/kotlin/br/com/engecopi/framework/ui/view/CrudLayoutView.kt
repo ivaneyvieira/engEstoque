@@ -263,6 +263,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C>>: Layout
   }
 
   open fun processAdd(domainObject: C) {
+    // vazio
   }
 
   private fun addButtonClicked() {
@@ -292,7 +293,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C>>: Layout
   }
 
   open fun stillShow() {
-
+    //vazio
   }
 
   fun showForm(operation: CrudOperation,
@@ -303,8 +304,11 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C>>: Layout
     fun operation(form: CrudForm<C>) {
       buttonClickListener()
       if(operation != ADD || isAddClose) {
-        if(isStillShow)
-          stillShow()
+        if(isStillShow) {
+          if(operation == ADD)
+            stillShow()
+          else hideForm()
+        }
         else
           hideForm()
       }

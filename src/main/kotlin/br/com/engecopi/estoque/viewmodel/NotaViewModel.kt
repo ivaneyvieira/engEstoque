@@ -42,6 +42,7 @@ import br.com.engecopi.saci.beans.NotaSaci
 import br.com.engecopi.utils.localDate
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 abstract class NotaViewModel<VO: NotaVo>(view: IView,
                                          val tipo: TipoMov,
@@ -67,13 +68,14 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
   override fun add(bean: VO) {
     val nota = insertNota(bean)
     val usuario = bean.usuario
+    val addTime = LocalTime.now()
     if(bean.notaSaci == null) {
       val produto = saveProduto(bean.produto)
       if(Nota.itemDuplicado(nota, produto)) {
         val msg = "O produto ${produto.codigo} - ${produto.descricao}. Já foi inserido na nota ${nota.numero}."
         view.showWarning(msg)
       }
-      else insertItemNota(nota, produto, bean.quantProduto ?: 0, usuario, bean.localizacao?.localizacao)
+      else insertItemNota(nota, produto, bean.quantProduto ?: 0, usuario, bean.localizacao?.localizacao, addTime)
     }
     else {
       val produtos = bean.produtos.filter {it.selecionado && it.quantidade != 0}
@@ -95,11 +97,13 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
                                                                prd.produto,
                                                                prd.quantidade,
                                                                usuario,
-                                                               prd.localizacao?.localizacao)
+                                                               prd.localizacao?.localizacao,
+                                                               addTime)
           }
         }
     }
-    val item = nota.itensNota().firstOrNull()
+    val item = nota.itensNota()
+      .firstOrNull()
     bean.entityVo = item
   }
 
@@ -107,7 +111,8 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
                              produto: Produto?,
                              quantProduto: Int,
                              usuario: Usuario,
-                             local: String?): ItemNota? {
+                             local: String?,
+                             addTime: LocalTime): ItemNota? {
     if(local.isNullOrBlank()) throw EViewModel("Não foi especificado a localização do item")
     val saldoLocal = produto?.saldoLoja(local) ?: 0
     return if(quantProduto != 0) {
@@ -125,6 +130,7 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
             this.quantidade = quantProduto
             this.usuario = usuario
             this.localizacao = local
+            this.hora = addTime
             this.status = statusDefault
           }
           item.insert()
@@ -270,12 +276,13 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
     print.print(etiqueta.template)
   }
 
-  fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean) = execString {
+  fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean, groupByHour: Boolean) = execString {
     itemNota ?: return@execString ""
     if(notaCompleta) {
       val itens = ItemNota.where()
         .nota.eq(itemNota.nota)
         .status.eq(itemNota.status)
+        .let {if(groupByHour) it.hora.eq(itemNota.hora) else it}
         .order()
         .nota.loja.numero.asc()
         .nota.numero.asc()
@@ -366,7 +373,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   val nota: Nota?
     get() = entityVo?.nota ?: Nota.findNota(numeroNF, tipo)
 
-  private fun atualizaNota() {
+  fun atualizaNota() {
     if(!readOnly && entityVo == null) {
       val nota = notaSaci ?: return
       tipoNota = TipoNota.value(nota.tipo) ?: OUTROS_E
