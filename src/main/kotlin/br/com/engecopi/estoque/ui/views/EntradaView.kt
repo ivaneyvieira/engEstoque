@@ -192,11 +192,15 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel>() {
 
   override fun stillShow() {
     val bean = formBinder.bean
+    if(gridProduto.editor.isOpen)
+      gridProduto.editor.save()
     bean.entityVo = null
     bean.atualizaNota()
     formBinder.getBinding("produtos").ifPresent {binding ->
       binding.read(bean)
     }
+    if(bean.produtosCompletos())
+      hideForm()
   }
 }
 

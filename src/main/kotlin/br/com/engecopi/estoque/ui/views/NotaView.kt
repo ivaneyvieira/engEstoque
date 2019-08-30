@@ -36,6 +36,7 @@ import com.vaadin.icons.VaadinIcons
 import com.vaadin.icons.VaadinIcons.PRINT
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
+import com.vaadin.ui.Grid
 import com.vaadin.ui.Grid.SelectionMode.MULTI
 import com.vaadin.ui.HasComponents
 import com.vaadin.ui.TextField
@@ -43,6 +44,7 @@ import com.vaadin.ui.VerticalLayout
 import org.vaadin.patrik.FastNavigation
 
 abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO>>: CrudLayoutView<VO, MODEL>() {
+  lateinit var gridProduto: Grid<ProdutoVO>
   val lojaDefault = RegistryUserInfo.lojaDefault
   val usuario = RegistryUserInfo.usuarioDefault
   val isAdmin = usuario.admin
@@ -136,7 +138,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO>>: CrudLayoutView<VO
     }
     row {
       this.bindVisible(binder, "temGrid")
-      grid(ProdutoVO::class) {
+      gridProduto = grid(ProdutoVO::class) {
         expandRatio = 2f
         this.h = 200.px
         editor.isEnabled = true

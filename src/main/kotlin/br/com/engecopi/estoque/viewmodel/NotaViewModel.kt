@@ -75,7 +75,14 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
         val msg = "O produto ${produto.codigo} - ${produto.descricao}. Já foi inserido na nota ${nota.numero}."
         view.showWarning(msg)
       }
-      else insertItemNota(nota, produto, bean.quantProduto ?: 0, usuario, bean.localizacao?.localizacao, addTime)
+      else {
+        bean.entityVo = insertItemNota(nota,
+                                       produto,
+                                       bean.quantProduto ?: 0,
+                                       usuario,
+                                       bean.localizacao?.localizacao,
+                                       addTime)
+      }
     }
     else {
       val produtos = bean.produtos.filter {it.selecionado && it.quantidade != 0}
@@ -93,18 +100,16 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
       produtos.filter {it.produto !in produtosJaInserido}
         .forEach {produto ->
           produto.let {prd ->
-            if(usuario.temProduto(prd.produto)) insertItemNota(nota,
-                                                               prd.produto,
-                                                               prd.quantidade,
-                                                               usuario,
-                                                               prd.localizacao?.localizacao,
-                                                               addTime)
+            if(usuario.temProduto(prd.produto))
+              bean.entityVo = insertItemNota(nota,
+                                             prd.produto,
+                                             prd.quantidade,
+                                             usuario,
+                                             prd.localizacao?.localizacao,
+                                             addTime)
           }
         }
     }
-    val item = nota.itensNota()
-      .firstOrNull()
-    bean.entityVo = item
   }
 
   private fun insertItemNota(nota: Nota,
@@ -428,6 +433,10 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
       }
     }
     return produtosLocais
+  }
+
+  fun produtosCompletos(): Boolean {
+    return produtos.all { it.isSave}
   }
 
   val tipoNotaDescricao: String
