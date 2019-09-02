@@ -25,6 +25,9 @@ import br.com.engecopi.framework.ui.view.intFormat
 import br.com.engecopi.framework.ui.view.row
 import br.com.engecopi.framework.ui.view.showDialog
 import br.com.engecopi.framework.ui.view.timeFormat
+import br.com.engecopi.saci.QuerySaci
+import br.com.engecopi.saci.saci
+import br.com.engecopi.utils.DB
 import br.com.engecopi.utils.IN
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.KeyShortcut
@@ -252,7 +255,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
 }
 
 class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel,
-                   execPrint: (List<ItemNota>) -> Unit): Window("Nota de Saída") {
+                   val execPrint: (List<ItemNota>) -> Unit): Window("Nota de Saída") {
   private lateinit var grupoSelecaoCol: Column<ProdutoVO, Int>
   private lateinit var dateUpdateCol: Column<ProdutoVO, LocalDateTime>
   private lateinit var gridProdutos: Grid<ProdutoVO>
@@ -326,10 +329,14 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel,
                 val naoSelect = allItens
                   .minus(itens)
                   .filter {it.allowSelect()}
-                val itensDeposito = itens.filter {it.value?.nota?.lancamentoOrigem == DEPOSITO}
-                val itensExpedicao = itens.filter {it.value?.nota?.lancamentoOrigem == EXPEDICAO}
-                execPrint(viewModel.confirmaProdutos(itensDeposito, ENTREGUE))
-                execPrint(viewModel.confirmaProdutos(itensExpedicao, CONFERIDA))
+                val itensDeposito = itens.filter {item ->
+                  item.value?.nota?.lancamentoOrigem == DEPOSITO
+                }
+                val itensExpedicao = itens.filter {item ->
+                  item.value?.nota?.lancamentoOrigem == EXPEDICAO
+                }
+                viewModel.confirmaProdutos(itensDeposito, ENTREGUE)
+                viewModel.confirmaProdutos(itensExpedicao, CONFERIDA)
                 viewModel.confirmaProdutos(naoSelect, ENT_LOJA)
                 close()
               }
@@ -351,9 +358,11 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel,
               focusEditor()
             }
 
-            this.valueChangeMode = LAZY
-            valueChangeTimeout = 200
-            this.blockCLipboard()
+            if(!QuerySaci.test) {
+              this.valueChangeMode = LAZY
+              valueChangeTimeout = 200
+              this.blockCLipboard()
+            }
           }
           this.addComponentsAndExpand(edtBarcode)
         }
@@ -519,12 +528,23 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel,
           val itemVO = produtosVO.filter {it.value?.produto?.id == produto.id}
           itemVO.forEach {item ->
             val codigo = item.value?.codigo?.trim()
-            if(item.saldoFinal < 0) viewModel.view.showWarning("O saldo final do produto '$codigo' está negativo")
-            else if(!item.allowSelect()) viewModel.view.showWarning("O produto '$codigo' não é selecionavel")
-            else {
-              gridProdutos.select(item)
-              item.selecionado = true
-              item.updateItem(true)
+            when {
+              item.saldoFinal < 0 -> viewModel.view.showWarning("O saldo final do produto '$codigo' está negativo")
+              item.allowSelect()  -> {
+                gridProdutos.select(item)
+                item.selecionado = true
+                item.updateItem(true)
+
+                val lancamentoOrigem  = item.value?.nota?.lancamentoOrigem
+                if(lancamentoOrigem == DEPOSITO){
+                  execPrint(viewModel.confirmaProdutos(listOf(item), ENTREGUE))
+                }
+
+                if(lancamentoOrigem == EXPEDICAO){
+                  execPrint(viewModel.confirmaProdutos(listOf(item), CONFERIDA))
+                }
+              }
+              else                -> viewModel.view.showWarning("O produto '$codigo' não é selecionavel")
             }
           }
         }
