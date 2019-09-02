@@ -33,6 +33,7 @@ import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.KeyShortcut
 import com.github.mvysny.karibudsl.v8.ModifierKey
 import com.github.mvysny.karibudsl.v8.VAlign
+import com.github.mvysny.karibudsl.v8.VaadinDsl
 import com.github.mvysny.karibudsl.v8.addColumnFor
 import com.github.mvysny.karibudsl.v8.addGlobalShortcutListener
 import com.github.mvysny.karibudsl.v8.align
@@ -50,6 +51,7 @@ import com.github.mvysny.karibudsl.v8.isExpanded
 import com.github.mvysny.karibudsl.v8.label
 import com.github.mvysny.karibudsl.v8.perc
 import com.github.mvysny.karibudsl.v8.px
+import com.github.mvysny.karibudsl.v8.refresh
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.verticalLayout
 import com.github.mvysny.karibudsl.v8.w
@@ -372,23 +374,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel,
             GridEditorColumnFix(this)
             setSizeFull()
             this.tabIndex = -1
-            val abreviacao = RegistryUserInfo.abreviacaoDefault
-            //nota.refresh()
-            val itens = nota.itens.filter {it.localizacao.startsWith(abreviacao)}
-            val itensProvider = itens.mapNotNull {item ->
-              val produto = item.produto
-              val statusNota = item.status
-              val isSave = item.id != 0L
-              if(produto != null) ProdutoVO(produto, statusNota, LocProduto(item.localizacao), isSave).apply {
-                this.quantidade = item.quantidade
-                this.value = item
-                this.updateItem(false)
-              }
-              else null
-            }
-              .sortedByDescending {it.dateUpdate}
-
-            this.dataProvider = ListDataProvider(itensProvider)
+            updateProdutosNota()
             removeAllColumns()
             val selectionModel = setSelectionMode(MULTI)
             selectionModel.addSelectionListener {select ->
@@ -509,6 +495,26 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel,
     }
   }
 
+  private fun @VaadinDsl Grid<ProdutoVO>.updateProdutosNota() {
+    val abreviacao = RegistryUserInfo.abreviacaoDefault
+    //nota.refresh()
+    val itens = nota.itens.filter {it.localizacao.startsWith(abreviacao)}
+    val itensProvider = itens.mapNotNull {item ->
+      val produto = item.produto
+      val statusNota = item.status
+      val isSave = item.id != 0L
+      if(produto != null) ProdutoVO(produto, statusNota, LocProduto(item.localizacao), isSave).apply {
+        this.quantidade = item.quantidade
+        this.value = item
+        this.updateItem(false)
+      }
+      else null
+    }
+      .sortedByDescending {it.dateUpdate}
+
+    this.dataProvider = ListDataProvider(itensProvider)
+  }
+
   private fun Grid<ProdutoVO>.sortDefault() {
     clearSortOrder()
     sortOrder = listOf(GridSortOrder(grupoSelecaoCol, ASCENDING),
@@ -538,11 +544,15 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel,
                 val lancamentoOrigem  = item.value?.nota?.lancamentoOrigem
                 if(lancamentoOrigem == DEPOSITO){
                   execPrint(viewModel.confirmaProdutos(listOf(item), ENTREGUE))
+                  gridProdutos.updateProdutosNota()
                 }
 
                 if(lancamentoOrigem == EXPEDICAO){
                   execPrint(viewModel.confirmaProdutos(listOf(item), CONFERIDA))
+                  gridProdutos.updateProdutosNota()
                 }
+                if(gridProdutos.dataProvider.getAll().all {!it.allowSelect()})
+                  close()
               }
               else                -> viewModel.view.showWarning("O produto '$codigo' não é selecionavel")
             }

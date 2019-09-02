@@ -89,6 +89,7 @@ class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE,
         if(this.quantidade >= produtoVO.quantidade) {
           this.quantidade = produtoVO.quantidade
           this.save()
+          produtoVO.isSave = true
           this.recalculaSaldos()
           listMultable.add(this)
         }
