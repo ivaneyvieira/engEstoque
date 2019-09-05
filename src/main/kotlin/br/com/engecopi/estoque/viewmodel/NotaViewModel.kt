@@ -499,7 +499,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   var status: StatusNota? = null
 }
 
-class ProdutoVO(val produto: Produto, val statusNota: StatusNota, var localizacao: LocProduto?, val isSave: Boolean) {
+class ProdutoVO(val produto: Produto, val statusNota: StatusNota, var localizacao: LocProduto?, var isSave: Boolean) {
   val codigo: String = produto.codigo
   val grade: String = produto.grade
   var quantidade: Int = 0
