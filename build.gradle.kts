@@ -94,6 +94,8 @@ dependencies {
   compile("javax.servlet:javax.servlet-api:3.1.0")
 
   compile("mysql:mysql-connector-java:8.0.17")
+  //compile("org.mariadb.jdbc:mariadb-java-client:2.4.3")
+
 
   compile("org.apache.commons:commons-dbcp2:2.3.0")
 
