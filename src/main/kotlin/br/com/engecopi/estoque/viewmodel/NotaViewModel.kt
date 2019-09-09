@@ -436,7 +436,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   }
 
   fun produtosCompletos(): Boolean {
-    return produtos.all { it.isSave}
+    return produtos.all {it.isSave}
   }
 
   val tipoNotaDescricao: String

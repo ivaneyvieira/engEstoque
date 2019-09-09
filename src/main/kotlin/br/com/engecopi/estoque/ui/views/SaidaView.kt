@@ -540,7 +540,6 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel,
                 gridProdutos.select(item)
                 item.selecionado = true
                 item.updateItem(true)
-
                 val lancamentoOrigem  = item.value?.nota?.lancamentoOrigem
                 if(lancamentoOrigem == DEPOSITO){
                   execPrint(viewModel.confirmaProdutos(listOf(item), ENTREGUE))
