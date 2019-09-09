@@ -93,7 +93,7 @@ dependencies {
   compile("com.vaadin:vaadin-client-compiled:$vaadin8Version")
   compile("javax.servlet:javax.servlet-api:3.1.0")
 
-  compile("mysql:mysql-connector-java:8.0.17")
+  compile("mysql:mysql-connector-java:5.1.48")
 
   compile("org.apache.commons:commons-dbcp2:2.3.0")
 
