@@ -7,21 +7,30 @@ import br.com.engecopi.framework.viewmodel.ViewModel
 import br.com.engecopi.saci.beans.NFEntrada
 import br.com.engecopi.saci.beans.NFSaida
 
-class PainelGeralViewModel(view: IView) : ViewModel(view) {
-val repository = RepositoryAvisoNotas
+class PainelGeralViewModel(view: IView): ViewModel(view) {
+  val repository = RepositoryAvisoNotas
 
   fun listSaidaCancelada(): List<NFSaida> {
-    return repository.notaSaidaCancelada().sortedBy { -it.date}
+    return repository.notaSaidaCancelada()
+      .sortedBy {-it.date}
   }
 
   fun listEntradaCancelada(): List<NFEntrada> {
-    return repository.notaEntradaCancelada().sortedBy { -it.date}
+    return repository.notaEntradaCancelada()
+      .sortedBy {-it.date}
   }
+
   fun listSaidaPendente(): List<NFSaida> {
-    return repository.notaSaidaPendente().sortedBy { -it.date}
+    return repository.notaSaidaPendente()
+      .sortedBy {-it.date}
   }
 
   fun listEntradaPendente(): List<NFEntrada> {
-    return repository.notaEntradaPendente().sortedBy { -it.date}
+    return repository.notaEntradaPendente()
+      .sortedBy {-it.date}
+  }
+
+  fun refresh() = exec {
+    repository.refresh()
   }
 }

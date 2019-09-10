@@ -41,7 +41,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     val dtEmissao = notaSaci.dtEmissao?.localDate() ?: return false
     val date = notaSaci.date?.localDate() ?: return false
     val dataLimite = LocalDate.now()
-      .minusDays(45)
+      .minusDays(150)
     return date.isAfter(dataLimite) || dtEmissao.isAfter(dataLimite)
   }
 

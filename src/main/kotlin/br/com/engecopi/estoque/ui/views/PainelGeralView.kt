@@ -9,12 +9,14 @@ import br.com.engecopi.saci.beans.NFEntrada
 import br.com.engecopi.saci.beans.NFSaida
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.addColumnFor
+import com.github.mvysny.karibudsl.v8.button
 import com.github.mvysny.karibudsl.v8.column
 import com.github.mvysny.karibudsl.v8.cssLayout
 import com.github.mvysny.karibudsl.v8.grid
 import com.github.mvysny.karibudsl.v8.horizontalLayout
 import com.github.mvysny.karibudsl.v8.isExpanded
 import com.vaadin.data.provider.ListDataProvider
+import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.CssLayout
 import com.vaadin.ui.Grid
 import com.vaadin.ui.renderers.TextRenderer
@@ -30,6 +32,17 @@ class PainelGeralView: LayoutView<PainelGeralViewModel>() {
   init {
     viewModel = PainelGeralViewModel(this)
     setSizeFull()
+    form("Painel de notas canceladas e pendente")
+    horizontalLayout {
+      cssLayout {
+        button {
+          icon = VaadinIcons.REFRESH
+          addClickListener {
+            viewModel.refresh()
+          }
+        }
+      }
+    }
     horizontalLayout {
       expand()
       cssLayout("Notas de saídas pendente") {
@@ -78,7 +91,7 @@ class PainelGeralView: LayoutView<PainelGeralViewModel>() {
     //Vazio
   }
 
-  private fun CssLayout.gridSaida(saidaDataProvider : ListDataProvider<NFSaida>): Grid<NFSaida> {
+  private fun CssLayout.gridSaida(saidaDataProvider: ListDataProvider<NFSaida>): Grid<NFSaida> {
     return grid(dataProvider = saidaDataProvider) {
       setSizeFull()
       addColumnFor(NFSaida::numeroSerie) {
@@ -95,7 +108,7 @@ class PainelGeralView: LayoutView<PainelGeralViewModel>() {
     }
   }
 
-  private fun CssLayout.gridEntrada(entradaDataProvider : ListDataProvider<NFEntrada>): Grid<NFEntrada> {
+  private fun CssLayout.gridEntrada(entradaDataProvider: ListDataProvider<NFEntrada>): Grid<NFEntrada> {
     return grid(dataProvider = entradaDataProvider) {
       setSizeFull()
       addColumnFor(NFEntrada::numeroSerie) {
@@ -108,9 +121,6 @@ class PainelGeralView: LayoutView<PainelGeralViewModel>() {
       addColumnFor(NFEntrada::tipo) {
         caption = "Tipo"
         setRenderer({tipo -> TipoNota.value(tipo)?.descricao ?: ""}, TextRenderer())
-      }
-      addColumnFor(NFEntrada::cancelado) {
-        caption = "Cancelado"
       }
     }
   }
