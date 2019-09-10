@@ -1,5 +1,6 @@
 package br.com.engecopi.saci.beans
 
+import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.utils.localDate
 
 class NFSaida(val storeno: Int,
@@ -18,4 +19,6 @@ class NFSaida(val storeno: Int,
     get() = dtEmissao.localDate()
   val boolCancelado
     get() = cancelado == 1
+  val tipoNota
+    get() = TipoNota.value(tipo)
 }

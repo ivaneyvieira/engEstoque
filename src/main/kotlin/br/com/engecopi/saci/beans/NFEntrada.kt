@@ -1,5 +1,6 @@
 package br.com.engecopi.saci.beans
 
+import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.utils.localDate
 
 data class NFEntrada(val invno: Int,
@@ -19,4 +20,6 @@ data class NFEntrada(val invno: Int,
     get() = dtEmissao.localDate()
   val boolCancelado
     get() = cancelado == 1
+  val tipoNota
+    get() = TipoNota.value(tipo)
 }

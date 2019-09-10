@@ -3,7 +3,6 @@ package br.com.engecopi.estoque.model
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
-import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
@@ -19,7 +18,7 @@ import br.com.engecopi.estoque.model.TipoNota.VENDA
 import br.com.engecopi.estoque.model.finder.NotaFinder
 import br.com.engecopi.estoque.model.query.QNota
 import br.com.engecopi.framework.model.BaseModel
-import br.com.engecopi.saci.beans.NotaSaci
+import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.saci.saci
 import br.com.engecopi.utils.localDate
 import io.ebean.annotation.Aggregation
@@ -82,7 +81,7 @@ class Nota: BaseModel() {
     get() = if(tipoNota == CANCELADA_E || tipoNota == CANCELADA_S) 0 else 1
 
   companion object Find: NotaFinder() {
-    fun createNota(notasaci: NotaSaci?): Nota? {
+    fun createNota(notasaci: NotaProdutoSaci?): Nota? {
       notasaci ?: return null
       val tn = TipoNota.value(notasaci.tipo) ?: return null
       val numero = notasaci.numeroSerie()
@@ -100,7 +99,7 @@ class Nota: BaseModel() {
       }
     }
 
-    fun createNotaItens(notasaci: List<NotaSaci>): NotaItens {
+    fun createNotaItens(notasaci: List<NotaProdutoSaci>): NotaItens {
       val notaSimples = notasaci.firstOrNull() ?: return NotaItens.VAZIO
       val numero = notaSimples.numeroSerie()
       val tipoNota = notaSimples.tipoNota() ?: return NotaItens.VAZIO
@@ -148,7 +147,7 @@ class Nota: BaseModel() {
       return numMax + 1
     }
 
-    fun findNotaEntradaSaci(numeroNF: String?): List<NotaSaci> {
+    fun findNotaEntradaSaci(numeroNF: String?): List<NotaProdutoSaci> {
       numeroNF ?: return emptyList()
       val loja = RegistryUserInfo.lojaDefault
       val numero = numeroNF.split("/").getOrNull(0) ?: return emptyList()
@@ -156,7 +155,7 @@ class Nota: BaseModel() {
       return saci.findNotaEntrada(loja.numero, numero, serie, usuarioDefault.admin)
     }
 
-    fun findNotaSaidaSaci(numeroNF: String?): List<NotaSaci> {
+    fun findNotaSaidaSaci(numeroNF: String?): List<NotaProdutoSaci> {
       numeroNF ?: return emptyList()
       val loja = RegistryUserInfo.lojaDefault
       val numero = numeroNF.split("/").getOrNull(0) ?: return emptyList()
@@ -173,7 +172,7 @@ class Nota: BaseModel() {
         produtoId).findCount() > 0
     }
 
-    fun findNotaSaidaKey(nfeKey: String): List<NotaSaci> {
+    fun findNotaSaidaKey(nfeKey: String): List<NotaProdutoSaci> {
       return saci.findNotaSaidaKey(nfeKey, usuarioDefault.admin)
     }
 

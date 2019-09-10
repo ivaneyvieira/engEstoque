@@ -38,7 +38,7 @@ import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.IView
-import br.com.engecopi.saci.beans.NotaSaci
+import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.utils.localDate
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -362,8 +362,8 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   val rotaDescricao: String?
     get() = if(tipoNota == TRANSFERENCIA_E || tipoNota == TRANSFERENCIA_S) rota
     else ""
-  private val mapNotaSaci = mutableMapOf<String?, List<NotaSaci>>()
-  private val notaProdutoSaci: List<NotaSaci>
+  private val mapNotaSaci = mutableMapOf<String?, List<NotaProdutoSaci>>()
+  private val notaProdutoProdutoSaci: List<NotaProdutoSaci>
     get() = if(entityVo == null) mapNotaSaci.getOrPut(numeroNF) {
       when(tipo) {
         SAIDA   -> Nota.findNotaSaidaSaci(numeroNF).filter {
@@ -374,7 +374,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
     }
     else emptyList()
   val notaSaci
-    get() = notaProdutoSaci.firstOrNull()
+    get() = notaProdutoProdutoSaci.firstOrNull()
   val nota: Nota?
     get() = entityVo?.nota ?: Nota.findNota(numeroNF, tipo)
 
@@ -384,7 +384,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
       tipoNota = TipoNota.value(nota.tipo) ?: OUTROS_E
       rota = nota.rota
       produtos.clear()
-      val produtosVo = notaProdutoSaci.flatMap {notaSaci ->
+      val produtosVo = notaProdutoProdutoSaci.flatMap {notaSaci ->
         if(tipoNota.tipoMov == SAIDA) listItensSaida(notaSaci)
         else listItensEntrada(notaSaci)
       }
@@ -394,27 +394,27 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
     }
   }
 
-  private fun listItensEntrada(notaSaci: NotaSaci): List<ProdutoVO> {
-    val prd = Produto.findProduto(notaSaci.prdno, notaSaci.grade) ?: return emptyList()
+  private fun listItensEntrada(notaProdutoSaci: NotaProdutoSaci): List<ProdutoVO> {
+    val prd = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return emptyList()
     val localizacoes = prd.localizacoes(abreviacaoNota)
       .filter {it.startsWith(abreviacaoNota)}
       .sorted()
     val ultimaLocalizacao = localizacoes.max() ?: ""
-    val produtoVo = ProdutoVO(prd, RECEBIDO, LocProduto(ultimaLocalizacao), notaSaci.isSave()).apply {
-      quantidade = notaSaci.quant ?: 0
+    val produtoVo = ProdutoVO(prd, RECEBIDO, LocProduto(ultimaLocalizacao), notaProdutoSaci.isSave()).apply {
+      quantidade = notaProdutoSaci.quant ?: 0
     }
     return listOf(produtoVo)
   }
 
-  private fun listItensSaida(notaSaci: NotaSaci): List<ProdutoVO> {
-    val prd = Produto.findProduto(notaSaci.prdno, notaSaci.grade) ?: return emptyList()
-    var quant = notaSaci.quant ?: return emptyList()
+  private fun listItensSaida(notaProdutoSaci: NotaProdutoSaci): List<ProdutoVO> {
+    val prd = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return emptyList()
+    var quant = notaProdutoSaci.quant ?: return emptyList()
     val localizacoes = prd.localizacoes(abreviacaoNota)
       .filter {it.startsWith(abreviacaoNota)}
       .sorted()
     val ultimaLocalizacao = localizacoes.max() ?: ""
     val produtosLocais = localizacoes.map {localizacao ->
-      ProdutoVO(prd, CONFERIDA, LocProduto(localizacao), notaSaci.isSave()).apply {
+      ProdutoVO(prd, CONFERIDA, LocProduto(localizacao), notaProdutoSaci.isSave()).apply {
         if(quant > 0) if(quant > saldo) {
           if(localizacao == ultimaLocalizacao) {
             quantidade = quant
@@ -463,7 +463,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   val produtoNota: List<Produto>
     get() {
       if(entityVo != null) return emptyList()
-      val nota = notaProdutoSaci
+      val nota = notaProdutoProdutoSaci
       val produtos = if(nota.isNotEmpty()) nota.asSequence().mapNotNull {notaSaci ->
         Produto.findProduto(notaSaci.prdno, notaSaci.grade)
       }.filter {produto ->
@@ -480,7 +480,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   var produto: Produto? = null
     set(value) {
       field = value
-      quantProduto = toEntity()?.quantidade ?: notaProdutoSaci.firstOrNull {neSaci ->
+      quantProduto = toEntity()?.quantidade ?: notaProdutoProdutoSaci.firstOrNull {neSaci ->
         (neSaci.prdno ?: "") == (value?.codigo?.trim() ?: "") && (neSaci.grade ?: "") == (value?.grade ?: "")
       }?.quant ?: 0
     }

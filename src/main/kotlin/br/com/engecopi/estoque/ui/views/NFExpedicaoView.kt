@@ -13,7 +13,7 @@ import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.row
 import br.com.engecopi.framework.ui.view.showDialog
 import br.com.engecopi.framework.ui.view.timeFormat
-import br.com.engecopi.saci.beans.NotaSaci
+import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.utils.localDate
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.VAlign
@@ -44,7 +44,6 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.Window
 import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
-import java.awt.SystemColor.text
 
 @AutoView("nf_expedicao")
 class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
@@ -212,13 +211,13 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
   }
 }
 
-class DlgNotaLoc(val notaSaida: List<NotaSaci>,
+class DlgNotaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
                  val viewModel: NFExpedicaoViewModel,
                  val execConfirma: (itens: List<ItemExpedicao>) -> Unit): Window("Nota de Saída") {
   private lateinit var gridProdutos: Grid<LocalizacaoNota>
 
   init {
-    val nota = notaSaida.firstOrNull()
+    val nota = notaProdutoSaida.firstOrNull()
     verticalLayout {
       w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
         .px
@@ -281,7 +280,7 @@ class DlgNotaLoc(val notaSaida: List<NotaSaci>,
         }
         row {
           gridProdutos = grid(LocalizacaoNota::class) {
-            val itens = notaSaida
+            val itens = notaProdutoSaida
             val abreviacaoItens = itens.groupBy {item ->
               val abreviacao = viewModel.abreviacoes(item.prdno, item.grade)
                 .sorted()

@@ -8,7 +8,7 @@ import br.com.engecopi.saci.beans.NFEntrada
 import br.com.engecopi.saci.beans.NFSaida
 
 class PainelGeralViewModel(view: IView): ViewModel(view) {
-  val repository = RepositoryAvisoNotas
+  val repository = RepositoryAvisoNotas()
 
   fun listSaidaCancelada(): List<NFSaida> {
     return repository.notaSaidaCancelada()

@@ -1,6 +1,5 @@
 package br.com.engecopi.estoque.viewmodel
 
-import br.com.engecopi.estoque.model.Abreviacao
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
@@ -26,7 +25,7 @@ import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.IView
-import br.com.engecopi.saci.beans.NotaSaci
+import br.com.engecopi.saci.beans.NotaProdutoSaci
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -109,7 +108,7 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
   private fun processaNota(itensExpedicao: List<ItemExpedicao>): Nota? {
     val loja = lojaDefault.numero
     val notaDoSaci = itensExpedicao.firstOrNull()
-      ?.notaSaci
+      ?.notaProdutoSaci
     val lojaSaci = notaDoSaci?.storeno ?: throw EViewModel("Nota não encontrada")
     if(loja != lojaSaci) throw EViewModel("Esta nota pertence a loja $lojaSaci")
     val nota: Nota? = Nota.createNota(notaDoSaci)
@@ -126,7 +125,7 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
       }
     nota ?: throw EViewModel("Nota não encontrada")
     val itens = itensExpedicao.mapNotNull {itemExpedicao ->
-      val notaSaci = itemExpedicao.notaSaci
+      val notaSaci = itemExpedicao.notaProdutoSaci
       val item = ItemNota.find(notaSaci) ?: ItemNota.createItemNota(notaSaci, nota, itemExpedicao.abrevicao)
 
       return@mapNotNull item?.apply {
@@ -237,7 +236,7 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
     }
   }
 
-  fun NotaSaci.notaSerie(): NotaSerie? {
+  fun NotaProdutoSaci.notaSerie(): NotaSerie? {
     val tipo = TipoNota.value(tipo)
     return NotaSerie.findByTipo(tipo)
   }
@@ -257,8 +256,8 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
     return data.eq(date)
   }
 
-  fun saldoProduto(notaSaci: NotaSaci, abreviacao: String): Int {
-    val produto = Produto.findProduto(notaSaci.codigo(), notaSaci.grade)
+  fun saldoProduto(notaProdutoSaci: NotaProdutoSaci, abreviacao: String): Int {
+    val produto = Produto.findProduto(notaProdutoSaci.codigo(), notaProdutoSaci.grade)
     return produto?.saldoAbreviacao(abreviacao) ?: 0
   }
 }
@@ -299,13 +298,13 @@ data class LocalizacaoNota(val abreviacao: String, val itensExpedicao: List<Item
     get() = itensExpedicao.filter {it.selecionado || it.isSave()}.size
 }
 
-data class ItemExpedicao(val notaSaci: NotaSaci, val saldo: Int, val abrevicao: String, var selecionado: Boolean =
+data class ItemExpedicao(val notaProdutoSaci: NotaProdutoSaci, val saldo: Int, val abrevicao: String, var selecionado: Boolean =
   false) {
-  val prdno = notaSaci.prdno
-  val grade = notaSaci.grade
-  val nome = notaSaci.nome
-  val quant = notaSaci.quant ?: 0
+  val prdno = notaProdutoSaci.prdno
+  val grade = notaProdutoSaci.grade
+  val nome = notaProdutoSaci.nome
+  val quant = notaProdutoSaci.quant ?: 0
   val saldoFinal = saldo - quant
 
-  fun isSave() = notaSaci.isSave()
+  fun isSave() = notaProdutoSaci.isSave()
 }

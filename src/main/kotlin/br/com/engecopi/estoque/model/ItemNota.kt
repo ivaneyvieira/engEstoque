@@ -8,7 +8,7 @@ import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.finder.ItemNotaFinder
 import br.com.engecopi.framework.model.BaseModel
-import br.com.engecopi.saci.beans.NotaSaci
+import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.utils.format
 import io.ebean.annotation.Cache
 import io.ebean.annotation.CacheQueryTuning
@@ -108,27 +108,27 @@ class ItemNota: BaseModel() {
         .firstOrNull()
     }
 
-    fun find(notaSaci: NotaSaci?): ItemNota? {
-      notaSaci ?: return null
-      val produtoSaci = Produto.findProduto(notaSaci.prdno, notaSaci.grade) ?: return null
+    fun find(notaProdutoSaci: NotaProdutoSaci?): ItemNota? {
+      notaProdutoSaci ?: return null
+      val produtoSaci = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return null
       return where().nota.fetchQuery()
-        .nota.numero.eq("${notaSaci.numero}/${notaSaci.serie}")
+        .nota.numero.eq("${notaProdutoSaci.numero}/${notaProdutoSaci.serie}")
         .nota.loja.equalTo(RegistryUserInfo.lojaDefault)
         .produto.equalTo(produtoSaci)
         .findList()
         .firstOrNull()
     }
 
-    fun createItemNota(notaSaci: NotaSaci, notaPrd: Nota?, abreviacao : String): ItemNota? {
+    fun createItemNota(notaProdutoSaci: NotaProdutoSaci, notaPrd: Nota?, abreviacao : String): ItemNota? {
       notaPrd ?: return null
-      val produtoSaci = Produto.findProduto(notaSaci.prdno, notaSaci.grade) ?: return null
+      val produtoSaci = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return null
       val locProduto = ViewProdutoLoc.localizacoesProduto(produtoSaci).firstOrNull {
         it.startsWith(abreviacao)
       } ?: ""
       val item = find(notaPrd, produtoSaci)
 
       return item ?: ItemNota().apply {
-        quantidade = notaSaci.quant ?: 0
+        quantidade = notaProdutoSaci.quant ?: 0
         quantidadeSaci = quantidade
         produto = produtoSaci
         nota = notaPrd
@@ -137,14 +137,14 @@ class ItemNota: BaseModel() {
       }
     }
 
-    fun isSave(notaSaci: NotaSaci): Boolean {
-      val numeroSerie = notaSaci.numeroSerie()
+    fun isSave(notaProdutoSaci: NotaProdutoSaci): Boolean {
+      val numeroSerie = notaProdutoSaci.numeroSerie()
       println("####################################################################")
       println("Nota e produto $numeroSerie")
       println("####################################################################")
-      val tipoMov = notaSaci.tipoNota()?.tipoMov ?: return false
+      val tipoMov = notaProdutoSaci.tipoNota()?.tipoMov ?: return false
       val nota = Nota.findNota(numeroSerie, tipoMov) ?: return false
-      val produto = Produto.findProduto(notaSaci.prdno, notaSaci.grade) ?: return false
+      val produto = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return false
       return where().produto.eq(produto)
         .nota.eq(nota)
         .exists()

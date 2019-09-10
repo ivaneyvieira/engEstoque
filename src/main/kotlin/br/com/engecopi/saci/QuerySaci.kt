@@ -6,7 +6,7 @@ import br.com.engecopi.saci.beans.DevolucaoFornecedor
 import br.com.engecopi.saci.beans.LojaSaci
 import br.com.engecopi.saci.beans.NfsKey
 import br.com.engecopi.saci.beans.NFEntrada
-import br.com.engecopi.saci.beans.NotaSaci
+import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.saci.beans.NFSaida
 import br.com.engecopi.saci.beans.UserSaci
 import br.com.engecopi.saci.beans.findChave
@@ -16,18 +16,18 @@ import br.com.engecopi.utils.lpad
 import java.time.LocalDate
 
 class QuerySaci: QueryDB(driver, url, username, password) {
-  fun findNotaEntrada(storeno: Int, nfname: String, invse: String, liberaNotasAntigas: Boolean): List<NotaSaci> {
+  fun findNotaEntrada(storeno: Int, nfname: String, invse: String, liberaNotasAntigas: Boolean): List<NotaProdutoSaci> {
     val sql = "/sqlSaci/findNotaEntrada.sql"
     return if(nfname == "") emptyList()
     else query(sql) {q ->
       q.addParameter("storeno", storeno)
         .addParameter("nfname", nfname)
         .addParameter("invse", invse)
-        .executeAndFetch(NotaSaci::class.java)
+        .executeAndFetch(NotaProdutoSaci::class.java)
     }.filter {liberaNotasAntigas || filtroDataRecente(it)}
   }
 
-  fun findNotaSaida(storeno: Int, nfno: String, nfse: String, liberaNotasAntigas: Boolean): List<NotaSaci> {
+  fun findNotaSaida(storeno: Int, nfno: String, nfse: String, liberaNotasAntigas: Boolean): List<NotaProdutoSaci> {
     return if(nfno == "") emptyList()
     else if(nfse == "") findNotaSaidaOrd(storeno, nfno)
     else {
@@ -37,40 +37,40 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }.filter {liberaNotasAntigas || filtroDataRecente(it)}
   }
 
-  private fun filtroDataRecente(notaSaci: NotaSaci): Boolean {
-    val dtEmissao = notaSaci.dtEmissao?.localDate() ?: return false
-    val date = notaSaci.date?.localDate() ?: return false
+  private fun filtroDataRecente(notaProdutoSaci: NotaProdutoSaci): Boolean {
+    val dtEmissao = notaProdutoSaci.dtEmissao?.localDate() ?: return false
+    val date = notaProdutoSaci.date?.localDate() ?: return false
     val dataLimite = LocalDate.now()
       .minusDays(150)
     return date.isAfter(dataLimite) || dtEmissao.isAfter(dataLimite)
   }
 
-  private fun findNotaSaidaNF(storeno: Int, nfno: String, nfse: String): List<NotaSaci> {
+  private fun findNotaSaidaNF(storeno: Int, nfno: String, nfse: String): List<NotaProdutoSaci> {
     val sql = "/sqlSaci/findNotaSaidaNF.sql"
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
         .addParameter("nfno", nfno)
         .addParameter("nfse", nfse)
-        .executeAndFetch(NotaSaci::class.java)
+        .executeAndFetch(NotaProdutoSaci::class.java)
     }
   }
 
-  private fun findNotaSaidaOrd(storeno: Int, nfno: String): List<NotaSaci> {
+  private fun findNotaSaidaOrd(storeno: Int, nfno: String): List<NotaProdutoSaci> {
     val sql = "/sqlSaci/findNotaSaidaOrd.sql"
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
         .addParameter("nfno", nfno)
-        .executeAndFetch(NotaSaci::class.java)
+        .executeAndFetch(NotaProdutoSaci::class.java)
     }
   }
 
-  private fun findNotaSaidaPxa(storeno: Int, nfno: String, nfse: String): List<NotaSaci> {
+  private fun findNotaSaidaPxa(storeno: Int, nfno: String, nfse: String): List<NotaProdutoSaci> {
     val sql = "/sqlSaci/findNotaSaidaPXA.sql"
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
         .addParameter("nfno", nfno)
         .addParameter("nfse", nfse)
-        .executeAndFetch(NotaSaci::class.java)
+        .executeAndFetch(NotaProdutoSaci::class.java)
     }
   }
 
@@ -100,7 +100,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
 
-  fun findNotaSaidaKey(nfeKey: String, liberaNotasAntigas: Boolean): List<NotaSaci> {
+  fun findNotaSaidaKey(nfeKey: String, liberaNotasAntigas: Boolean): List<NotaProdutoSaci> {
     val sql = "/sqlSaci/findNotaSaidaKey.sql"
     return query(sql) {q ->
       q.addParameter("nfekey", nfeKey)
