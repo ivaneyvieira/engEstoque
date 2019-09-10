@@ -82,11 +82,11 @@ fun Int.localDate(): LocalDate? {
   val strDate = this.toString()
   if(strDate.length != 8) return null
   val year = strDate.substring(0, 4)
-    .toInt()
+               .toIntOrNull() ?: return null
   val month = strDate.substring(4, 6)
-    .toInt()
+                .toIntOrNull() ?: return null
   val day = strDate.substring(6, 8)
-    .toInt()
+              .toIntOrNull() ?: return null
   return LocalDate.of(year, month, day)
 }
 

@@ -1,7 +1,9 @@
 package br.com.engecopi.estoque.model
 
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
+import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
@@ -176,13 +178,34 @@ class Nota: BaseModel() {
     }
 
     fun listSaidaCancel(): List<Nota> {
-      val data = LocalDate.now().minusDays(10)
+      val data = LocalDate.now()
+        .minusDays(10)
       val lista = Nota.where()
         .tipoMov.eq(SAIDA)
         .data.ge(data)
         .tipoNota.notEqualTo(PEDIDO_S)
         .findList()
       return saci.findNotasSaidaCancelada(lista)
+    }
+
+    fun notasSaidaSalva(): List<Nota> {
+      val dtInicial = LocalDate.now()
+        .minusDays(30)
+      return where().tipoMov.eq(SAIDA)
+        .loja.equalTo(lojaDefault)
+        .itensNota.localizacao.startsWith(abreviacaoDefault)
+        .data.after(dtInicial)
+        .findList()
+    }
+
+    fun notasEntradaSalva(): List<Nota> {
+      val dtInicial = LocalDate.now()
+        .minusDays(30)
+      return where().tipoMov.eq(ENTRADA)
+        .loja.equalTo(lojaDefault)
+        .itensNota.localizacao.startsWith(abreviacaoDefault)
+        .data.after(dtInicial)
+        .findList()
     }
   }
 
@@ -202,7 +225,8 @@ enum class TipoMov(val descricao: String) {
   SAIDA("Saida")
 }
 
-enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2: String, val isFree: Boolean = false) {
+enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2: String,
+                    val isFree: Boolean = false) {
   //Entrada
   COMPRA(ENTRADA, "Compra", "Compra"),
   TRANSFERENCIA_E(ENTRADA, "Transferencia", "Transferencia Entrada"),

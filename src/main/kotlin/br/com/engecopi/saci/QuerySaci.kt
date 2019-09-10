@@ -2,9 +2,12 @@ package br.com.engecopi.saci
 
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.saci.beans.ChaveProduto
+import br.com.engecopi.saci.beans.DevolucaoFornecedor
 import br.com.engecopi.saci.beans.LojaSaci
 import br.com.engecopi.saci.beans.NfsKey
+import br.com.engecopi.saci.beans.NFEntrada
 import br.com.engecopi.saci.beans.NotaSaci
+import br.com.engecopi.saci.beans.NFSaida
 import br.com.engecopi.saci.beans.UserSaci
 import br.com.engecopi.saci.beans.findChave
 import br.com.engecopi.utils.DB
@@ -162,6 +165,33 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
     println(sqlTemp)
     return lista
+  }
+
+  fun findNotaEntradaTodas(storeno: Int, abreviacao : String): List<NFEntrada> {
+    val sql = "/sqlSaci/findNotaEntradaTodas.sql"
+    return query(sql) {q ->
+      q.addParameter("storeno", storeno)
+        .addParameter("abreviacao", "${abreviacao}%")
+        .executeAndFetch(NFEntrada::class.java)
+    }
+  }
+
+  fun findNotaSaidaTodas(storeno: Int, abreviacao : String): List<NFSaida> {
+    val sql = "/sqlSaci/findNotaSaidaTodas.sql"
+    return query(sql) {q ->
+      q.addParameter("storeno", storeno)
+        .addParameter("abreviacao", "${abreviacao}%")
+        .executeAndFetch(NFSaida::class.java)
+    }
+  }
+
+  fun findDevolucaoFornecedor(storeno: Int, abreviacao : String): List<DevolucaoFornecedor> {
+    val sql = "/sqlSaci/findDevolucaoFornecedor.sql"
+    return query(sql) {q ->
+      q.addParameter("storeno", storeno)
+        .addParameter("abreviacao", "${abreviacao}%")
+        .executeAndFetch(DevolucaoFornecedor::class.java)
+    }
   }
 
   companion object {

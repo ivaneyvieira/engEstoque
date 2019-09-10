@@ -7,12 +7,12 @@ select P.invno, N.storeno, cast(nfname as char) as numero, invse as serie,
        P.grade, P.qtty/1000                 as quant, V.name as vendName,
   CASE
     WHEN invse = '66' then 'ACERTO_E'
-    WHEN type = 0 then "COMPRA"
-    WHEN type = 1 then "TRANSFERENCIA_E"
-    WHEN type = 2 then "DEV_CLI"
-    WHEN type = 8 then "RECLASSIFICACAO_E"
-    WHEN type = 10 AND N.remarks LIKE 'DEV%' then "DEV_CLI"
-    ELSE "NOTA_E"
+    WHEN type = 0 then 'COMPRA'
+    WHEN type = 1 then 'TRANSFERENCIA_E'
+    WHEN type = 2 then 'DEV_CLI'
+    WHEN type = 8 then 'RECLASSIFICACAO_E'
+    WHEN type = 10 AND N.remarks LIKE 'DEV%' then 'DEV_CLI'
+    ELSE 'NOTA_E'
   END                                       AS tipo
 from sqldados.inv AS N
   inner join sqldados.iprd AS P
