@@ -5,8 +5,7 @@ import br.com.engecopi.estoque.viewmodel.PainelGeralViewModel
 import br.com.engecopi.framework.ui.view.LayoutView
 import br.com.engecopi.framework.ui.view.dateFormat
 import br.com.engecopi.framework.ui.view.expand
-import br.com.engecopi.saci.beans.NFEntrada
-import br.com.engecopi.saci.beans.NFSaida
+import br.com.engecopi.saci.beans.NotaSaci
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.addColumnFor
 import com.github.mvysny.karibudsl.v8.button
@@ -24,10 +23,10 @@ import com.vaadin.ui.themes.ValoTheme
 
 @AutoView("painel")
 class PainelGeralView: LayoutView<PainelGeralViewModel>() {
-  val saidaPendenteDataProvider = ListDataProvider<NFSaida>(mutableListOf())
-  val entradaPendenteDataProvider = ListDataProvider<NFEntrada>(mutableListOf())
-  val saidaCanceladaDataProvider = ListDataProvider<NFSaida>(mutableListOf())
-  val entradaCanceladaDataProvider = ListDataProvider<NFEntrada>(mutableListOf())
+  val saidaPendenteDataProvider = ListDataProvider<NotaSaci>(mutableListOf())
+  val entradaPendenteDataProvider = ListDataProvider<NotaSaci>(mutableListOf())
+  val saidaCanceladaDataProvider = ListDataProvider<NotaSaci>(mutableListOf())
+  val entradaCanceladaDataProvider = ListDataProvider<NotaSaci>(mutableListOf())
 
   init {
     viewModel = PainelGeralViewModel(this)
@@ -48,12 +47,12 @@ class PainelGeralView: LayoutView<PainelGeralViewModel>() {
       cssLayout("Notas de saídas pendente") {
         expand()
         addStyleName(ValoTheme.LAYOUT_CARD)
-        this.gridSaida(saidaPendenteDataProvider)
+        this.gridNotaSaci(saidaPendenteDataProvider)
       }
       cssLayout("Nota de entrada pendente") {
         expand()
         addStyleName(ValoTheme.LAYOUT_CARD)
-        this.gridEntrada(entradaPendenteDataProvider)
+        this.gridNotaSaci(entradaPendenteDataProvider)
       }
     }
     horizontalLayout {
@@ -62,12 +61,12 @@ class PainelGeralView: LayoutView<PainelGeralViewModel>() {
       cssLayout("Notas de saídas cancelada") {
         expand()
         addStyleName(ValoTheme.LAYOUT_CARD)
-        this.gridSaida(saidaCanceladaDataProvider)
+        this.gridNotaSaci(saidaCanceladaDataProvider)
       }
       cssLayout("Nota de entrada cancelada") {
         expand()
         addStyleName(ValoTheme.LAYOUT_CARD)
-        this.gridEntrada(entradaCanceladaDataProvider)
+        this.gridNotaSaci(entradaCanceladaDataProvider)
       }
     }
     updateView()
@@ -91,34 +90,17 @@ class PainelGeralView: LayoutView<PainelGeralViewModel>() {
     //Vazio
   }
 
-  private fun CssLayout.gridSaida(saidaDataProvider: ListDataProvider<NFSaida>): Grid<NFSaida> {
-    return grid(dataProvider = saidaDataProvider) {
-      setSizeFull()
-      addColumnFor(NFSaida::numeroSerie) {
-        caption = "Número"
-      }
-      addColumnFor(NFSaida::localDate) {
-        caption = "Data"
-        dateFormat()
-      }
-      addColumnFor(NFSaida::tipo) {
-        caption = "Tipo"
-        setRenderer({tipo -> TipoNota.value(tipo)?.descricao ?: ""}, TextRenderer())
-      }
-    }
-  }
-
-  private fun CssLayout.gridEntrada(entradaDataProvider: ListDataProvider<NFEntrada>): Grid<NFEntrada> {
+  private fun CssLayout.gridNotaSaci(entradaDataProvider: ListDataProvider<NotaSaci>): Grid<NotaSaci> {
     return grid(dataProvider = entradaDataProvider) {
       setSizeFull()
-      addColumnFor(NFEntrada::numeroSerie) {
+      addColumnFor(NotaSaci::numeroSerie) {
         caption = "Número"
       }
-      addColumnFor(NFEntrada::localDate) {
+      addColumnFor(NotaSaci::localDate) {
         caption = "Data"
         dateFormat()
       }
-      addColumnFor(NFEntrada::tipo) {
+      addColumnFor(NotaSaci::tipo) {
         caption = "Tipo"
         setRenderer({tipo -> TipoNota.value(tipo)?.descricao ?: ""}, TextRenderer())
       }

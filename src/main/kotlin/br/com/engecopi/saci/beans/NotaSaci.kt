@@ -3,7 +3,7 @@ package br.com.engecopi.saci.beans
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.utils.localDate
 
-class NFSaida(val storeno: Int,
+class NotaSaci(val storeno: Int,
               val numero: String,
               val serie: String,
               val date: Int,

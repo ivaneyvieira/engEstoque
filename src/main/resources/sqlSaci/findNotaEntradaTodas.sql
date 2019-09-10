@@ -1,5 +1,4 @@
-SELECT N.invno,
-       N.storeno,
+SELECT N.storeno,
        cast(nfname AS CHAR)    AS numero,
        invse                   AS serie,
        N.date,

@@ -4,15 +4,14 @@ import br.com.engecopi.estoque.model.TipoNota.COMPRA
 import br.com.engecopi.estoque.model.TipoNota.DEV_CLI
 import br.com.engecopi.estoque.model.TipoNota.DEV_FOR
 import br.com.engecopi.saci.beans.DevolucaoFornecedor
-import br.com.engecopi.saci.beans.NFEntrada
-import br.com.engecopi.saci.beans.NFSaida
+import br.com.engecopi.saci.beans.NotaSaci
 import br.com.engecopi.saci.saci
 
 class RepositoryAvisoNotas {
   private val storeno = RegistryUserInfo.lojaDefault.numero
   private val abreviacao = RegistryUserInfo.abreviacaoDefault
-  private val notaSaidaTodas = mutableListOf<NFSaida>()
-  private val notaEntradaTodas = mutableListOf<NFEntrada>()
+  private val notaSaidaTodas = mutableListOf<NotaSaci>()
+  private val notaEntradaTodas = mutableListOf<NotaSaci>()
   private val devolucaoFornecedor = mutableListOf<DevolucaoFornecedor>()
   private val notaEntradaSalva = mutableListOf<Nota>()
   private val notaSaidaSalva = mutableListOf<Nota>()
@@ -48,16 +47,15 @@ class RepositoryAvisoNotas {
 
   private fun refreshNotaEntradaTodas() {
     notaEntradaTodas.clear()
-    notaEntradaTodas.addAll(saci.findNotaEntradaTodas(storeno, abreviacao))
+    notaEntradaTodas.addAll(saci.findNotaEntradaSaci(storeno, abreviacao))
   }
 
   private fun refreshNotaSaidaTodas() {
     notaSaidaTodas.clear()
-    notaSaidaTodas.addAll(saci.findNotaSaidaTodas(storeno, abreviacao
-                                                 ))
+    notaSaidaTodas.addAll(saci.findNotaSaidaSaci(storeno, abreviacao))
   }
 
-  fun notaEntradaDevolvida(): List<NFEntrada> {
+  fun notaEntradaDevolvida(): List<NotaSaci> {
     return notaEntradaTodas.filter {nfEntrada ->
       devolucaoFornecedor.any {dev ->
         dev.numeroSerieEntrada == nfEntrada.numero
@@ -65,7 +63,7 @@ class RepositoryAvisoNotas {
     }
   }
 
-  fun notaEntradaCancelada(): List<NFEntrada> {
+  fun notaEntradaCancelada(): List<NotaSaci> {
     return notaEntradaTodas.filter {nfEntrada ->
       notaEntradaSalva.any {nota ->
         nota.numero == nfEntrada.numeroSerie
@@ -73,7 +71,7 @@ class RepositoryAvisoNotas {
     }
   }
 
-  fun notaSaidaCancelada(): List<NFSaida> {
+  fun notaSaidaCancelada(): List<NotaSaci> {
     return notaSaidaTodas.filter {nfSaida ->
       notaSaidaSalva.any {nota ->
         nota.numero == nfSaida.numeroSerie
@@ -81,7 +79,7 @@ class RepositoryAvisoNotas {
     }
   }
 
-  fun notaEntradaPendente(): List<NFEntrada> {
+  fun notaEntradaPendente(): List<NotaSaci> {
     return notaEntradaTodas
       .filter {nfEntrada ->
         nfEntrada.entradaAceita() && !nfEntrada.boolCancelado
@@ -93,7 +91,7 @@ class RepositoryAvisoNotas {
       }
   }
 
-  fun notaSaidaPendente(): List<NFSaida> {
+  fun notaSaidaPendente(): List<NotaSaci> {
     return notaSaidaTodas
       .filter {nfSaida ->
         nfSaida.saidaAceita() && !nfSaida.boolCancelado
@@ -105,8 +103,8 @@ class RepositoryAvisoNotas {
       }
   }
 
-  private fun NFEntrada.entradaAceita() = tipoNota == DEV_CLI || tipoNota == COMPRA
-  private fun NFSaida.saidaAceita(): Boolean = tipoNota == DEV_FOR
+  private fun NotaSaci.entradaAceita() = tipoNota == DEV_CLI || tipoNota == COMPRA
+  private fun NotaSaci.saidaAceita(): Boolean = tipoNota == DEV_FOR
 }
 
 

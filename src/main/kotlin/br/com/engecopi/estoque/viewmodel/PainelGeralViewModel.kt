@@ -4,28 +4,27 @@ import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RepositoryAvisoNotas
 import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.framework.viewmodel.ViewModel
-import br.com.engecopi.saci.beans.NFEntrada
-import br.com.engecopi.saci.beans.NFSaida
+import br.com.engecopi.saci.beans.NotaSaci
 
 class PainelGeralViewModel(view: IView): ViewModel(view) {
   val repository = RepositoryAvisoNotas()
 
-  fun listSaidaCancelada(): List<NFSaida> {
+  fun listSaidaCancelada(): List<NotaSaci> {
     return repository.notaSaidaCancelada()
       .sortedBy {-it.date}
   }
 
-  fun listEntradaCancelada(): List<NFEntrada> {
+  fun listEntradaCancelada(): List<NotaSaci> {
     return repository.notaEntradaCancelada()
       .sortedBy {-it.date}
   }
 
-  fun listSaidaPendente(): List<NFSaida> {
+  fun listSaidaPendente(): List<NotaSaci> {
     return repository.notaSaidaPendente()
       .sortedBy {-it.date}
   }
 
-  fun listEntradaPendente(): List<NFEntrada> {
+  fun listEntradaPendente(): List<NotaSaci> {
     return repository.notaEntradaPendente()
       .sortedBy {-it.date}
   }
