@@ -22,7 +22,7 @@ SELECT N.storeno,
                 THEN 'OUTRAS_NFS'
             ELSE 'SP_REME' END AS tipo
 FROM sqldados.nf                    AS N
-         INNER JOIN sqldados.xaprd  AS X
+         INNER JOIN sqldados.xaprd2 AS X
                     USING (storeno, pdvno, xano)
          INNER JOIN sqldados.prdloc AS L
                     ON L.storeno = X.storeno AND L.prdno = X.prdno AND L.grade = X.grade
