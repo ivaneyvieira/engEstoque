@@ -1,5 +1,8 @@
 package br.com.engecopi.estoque.ui.views
 
+import br.com.engecopi.estoque.model.TipoMov
+import br.com.engecopi.estoque.model.TipoMov.ENTRADA
+import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.viewmodel.PainelGeralViewModel
 import br.com.engecopi.framework.ui.view.LayoutView
@@ -47,12 +50,12 @@ class PainelGeralView: LayoutView<PainelGeralViewModel>() {
       cssLayout("Notas de saídas pendente") {
         expand()
         addStyleName(ValoTheme.LAYOUT_CARD)
-        this.gridNotaSaci(saidaPendenteDataProvider)
+        this.gridNotaSaci(saidaPendenteDataProvider, SAIDA)
       }
       cssLayout("Nota de entrada pendente") {
         expand()
         addStyleName(ValoTheme.LAYOUT_CARD)
-        this.gridNotaSaci(entradaPendenteDataProvider)
+        this.gridNotaSaci(entradaPendenteDataProvider, ENTRADA)
       }
     }
     horizontalLayout {
@@ -61,12 +64,12 @@ class PainelGeralView: LayoutView<PainelGeralViewModel>() {
       cssLayout("Notas de saídas cancelada") {
         expand()
         addStyleName(ValoTheme.LAYOUT_CARD)
-        this.gridNotaSaci(saidaCanceladaDataProvider)
+        this.gridNotaSaci(saidaCanceladaDataProvider, SAIDA)
       }
       cssLayout("Nota de entrada cancelada") {
         expand()
         addStyleName(ValoTheme.LAYOUT_CARD)
-        this.gridNotaSaci(entradaCanceladaDataProvider)
+        this.gridNotaSaci(entradaCanceladaDataProvider, ENTRADA)
       }
     }
     updateView()
@@ -90,9 +93,14 @@ class PainelGeralView: LayoutView<PainelGeralViewModel>() {
     //Vazio
   }
 
-  private fun CssLayout.gridNotaSaci(entradaDataProvider: ListDataProvider<NotaSaci>): Grid<NotaSaci> {
-    return grid(dataProvider = entradaDataProvider) {
+  private fun CssLayout.gridNotaSaci(dataProvider: ListDataProvider<NotaSaci>, tipoMov : TipoMov): Grid<NotaSaci> {
+    return grid(dataProvider = dataProvider) {
       setSizeFull()
+      if(tipoMov == ENTRADA){
+        addColumnFor(NotaSaci::invno) {
+          caption = "NI"
+        }
+      }
       addColumnFor(NotaSaci::numeroSerie) {
         caption = "Número"
       }

@@ -1,4 +1,5 @@
-SELECT N.storeno,
+SELECT 0                       AS invno,
+       N.storeno,
        N.nfno                  AS numero,
        N.nfse                  AS serie,
        N.issuedate             AS date,
