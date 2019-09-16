@@ -5,8 +5,10 @@ import br.com.engecopi.saci.beans.ChaveProduto
 import br.com.engecopi.saci.beans.DevolucaoFornecedor
 import br.com.engecopi.saci.beans.LojaSaci
 import br.com.engecopi.saci.beans.NfsKey
+import br.com.engecopi.saci.beans.NotaProduto
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.saci.beans.NotaSaci
+import br.com.engecopi.saci.beans.ProdutoSaci
 import br.com.engecopi.saci.beans.UserSaci
 import br.com.engecopi.saci.beans.findChave
 import br.com.engecopi.utils.DB
@@ -166,25 +168,73 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     return lista
   }
 
-  fun findNotaEntradaSaci(storeno: Int, abreviacao : String): List<NotaSaci> {
+  fun findNotaEntradaSaci(storeno: Int, abreviacao: String): List<NotaSaci> {
     val sql = "/sqlSaci/findNotaEntradaTodas.sql"
-    return query(sql) {q ->
+    val notaProduto = query(sql) {q ->
       q.addParameter("storeno", storeno)
         .addParameter("abreviacao", "${abreviacao}%")
-        .executeAndFetch(NotaSaci::class.java)
+        .executeAndFetch(NotaProduto::class.java)
+    }
+    val notaGroup = notaProduto.groupBy {KeyNota(it.storeno, it.numero)}
+    ProdutoSaci.updateProduto()
+    return notaGroup.mapNotNull {(key, notaProdutos) ->
+      notaProduto.firstOrNull()
+        ?.let {notaProduto ->
+          val produtosValidos = notaProdutos.map {ProdutoSaci(it.prdno, it.grade)}
+            .filter {
+              val data = it.dataCadastro ?: return@filter false
+              data <= notaProduto.date.localDate()
+            }
+          if(produtosValidos.isNotEmpty())
+            null
+          else
+            NotaSaci(invno = notaProduto.invno,
+                     storeno = notaProduto.storeno,
+                     numero = notaProduto.numero,
+                     serie = notaProduto.serie,
+                     date = notaProduto.date,
+                     dtEmissao = notaProduto.dtEmissao,
+                     tipo = notaProduto.tipo,
+                     cancelado = notaProduto.cancelado,
+                     produtos = produtosValidos)
+        }
     }
   }
 
-  fun findNotaSaidaSaci(storeno: Int, abreviacao : String): List<NotaSaci> {
+  fun findNotaSaidaSaci(storeno: Int, abreviacao: String): List<NotaSaci> {
     val sql = "/sqlSaci/findNotaSaidaTodas.sql"
-    return query(sql) {q ->
+    val notaProduto = query(sql) {q ->
       q.addParameter("storeno", storeno)
         .addParameter("abreviacao", "${abreviacao}%")
-        .executeAndFetch(NotaSaci::class.java)
+        .executeAndFetch(NotaProduto::class.java)
+    }
+    val notaGroup = notaProduto.groupBy {KeyNota(it.storeno, it.numero)}
+    ProdutoSaci.updateProduto()
+    return notaGroup.mapNotNull {(key, notaProdutos) ->
+      notaProduto.firstOrNull()
+        ?.let {notaProduto ->
+          val produtosValidos = notaProdutos.map {ProdutoSaci(it.prdno, it.grade)}
+            .filter {
+              val data = it.dataCadastro ?: return@filter false
+              data <= notaProduto.date.localDate()
+            }
+          if(produtosValidos.isNotEmpty())
+            null
+          else
+            NotaSaci(invno = notaProduto.invno,
+                     storeno = notaProduto.storeno,
+                     numero = notaProduto.numero,
+                     serie = notaProduto.serie,
+                     date = notaProduto.date,
+                     dtEmissao = notaProduto.dtEmissao,
+                     tipo = notaProduto.tipo,
+                     cancelado = notaProduto.cancelado,
+                     produtos = produtosValidos)
+        }
     }
   }
 
-  fun findDevolucaoFornecedor(storeno: Int, abreviacao : String): List<DevolucaoFornecedor> {
+  fun findDevolucaoFornecedor(storeno: Int, abreviacao: String): List<DevolucaoFornecedor> {
     val sql = "/sqlSaci/findDevolucaoFornecedor.sql"
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
@@ -204,5 +254,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       .getOrNull(2)
   }
 }
+
+data class KeyNota(val storeno: Int, val numero: String)
 
 val saci = QuerySaci()

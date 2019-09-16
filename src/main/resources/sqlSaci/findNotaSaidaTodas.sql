@@ -21,7 +21,9 @@ SELECT 0                       AS invno,
                 THEN 'OUTRAS_NFS'
             WHEN tipo = 7
                 THEN 'OUTRAS_NFS'
-            ELSE 'SP_REME' END AS tipo
+            ELSE 'SP_REME' END AS tipo,
+       X.prdno,
+       X.grade
 FROM sqldados.nf                    AS N
          INNER JOIN sqldados.xaprd2 AS X
                     USING (storeno, pdvno, xano)
@@ -33,4 +35,6 @@ WHERE N.storeno = :storeno AND
       NOT (N.nfse = 1 AND N.cfo IN (5922, 6922))
 GROUP BY N.storeno,
          N.pdvno,
-         N.xano
+         N.xano,
+         X.prdno,
+         X.grade

@@ -17,7 +17,9 @@ SELECT N.invno,
             WHEN type = 10 AND N.remarks LIKE 'DEV%'
                 THEN 'DEV_CLI'
             ELSE 'NOTA_E' END  AS tipo,
-       N.bits & POW(2, 4) != 0 AS cancelado
+       N.bits & POW(2, 4) != 0 AS cancelado,
+       I.prdno,
+       I.grade
 FROM sqldados.inv                   AS N
          INNER JOIN sqldados.iprd   AS I
                     USING (invno)
@@ -26,4 +28,6 @@ FROM sqldados.inv                   AS N
 WHERE N.storeno = :storeno AND
       L.localizacao LIKE :abreviacao AND
       N.date > DATE_SUB(current_date, INTERVAL 30 DAY)
-GROUP BY invno
+GROUP BY invno,
+         prdno,
+         grade
