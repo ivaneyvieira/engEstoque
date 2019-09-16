@@ -170,55 +170,36 @@ class QuerySaci: QueryDB(driver, url, username, password) {
 
   fun findNotaEntradaSaci(storeno: Int, abreviacao: String): List<NotaSaci> {
     val sql = "/sqlSaci/findNotaEntradaTodas.sql"
-    val notaProduto = query(sql) {q ->
-      q.addParameter("storeno", storeno)
-        .addParameter("abreviacao", "${abreviacao}%")
-        .executeAndFetch(NotaProduto::class.java)
-    }
-    val notaGroup = notaProduto.groupBy {KeyNota(it.storeno, it.numero)}
-    ProdutoSaci.updateProduto()
-    return notaGroup.mapNotNull {(key, notaProdutos) ->
-      notaProduto.firstOrNull()
-        ?.let {notaProduto ->
-          val produtosValidos = notaProdutos.map {ProdutoSaci(it.prdno, it.grade)}
-            .filter {
-              val data = it.dataCadastro ?: return@filter false
-              data <= notaProduto.date.localDate()
-            }
-          if(produtosValidos.isNotEmpty())
-            null
-          else
-            NotaSaci(invno = notaProduto.invno,
-                     storeno = notaProduto.storeno,
-                     numero = notaProduto.numero,
-                     serie = notaProduto.serie,
-                     date = notaProduto.date,
-                     dtEmissao = notaProduto.dtEmissao,
-                     tipo = notaProduto.tipo,
-                     cancelado = notaProduto.cancelado,
-                     produtos = produtosValidos)
-        }
-    }
+    return findNotaSaci(sql, storeno, abreviacao)
   }
 
   fun findNotaSaidaSaci(storeno: Int, abreviacao: String): List<NotaSaci> {
     val sql = "/sqlSaci/findNotaSaidaTodas.sql"
-    val notaProduto = query(sql) {q ->
-      q.addParameter("storeno", storeno)
-        .addParameter("abreviacao", "${abreviacao}%")
-        .executeAndFetch(NotaProduto::class.java)
+    return findNotaSaci(sql, storeno, abreviacao)
+  }
+
+  private fun findNotaSaci(sql: String, storeno: Int,
+                           abreviacao: String): List<NotaSaci> {
+    val notaProdutoList = query(sql) {q ->
+      q.run {
+        addParameter("storeno", storeno)
+            .addParameter("abreviacao", "${abreviacao}%")
+            .executeAndFetch(NotaProduto::class.java)
+      }
     }
-    val notaGroup = notaProduto.groupBy {KeyNota(it.storeno, it.numero)}
+    val notaGroup = notaProdutoList.groupBy {KeyNota(it.storeno, it.numero, it.serie)}
     ProdutoSaci.updateProduto()
     return notaGroup.mapNotNull {(key, notaProdutos) ->
-      notaProduto.firstOrNull()
+      notaProdutos.firstOrNull()
         ?.let {notaProduto ->
           val produtosValidos = notaProdutos.map {ProdutoSaci(it.prdno, it.grade)}
             .filter {
-              val data = it.dataCadastro ?: return@filter false
-              data <= notaProduto.date.localDate()
+              val dataCadastro = it.dataCadastro ?: return@filter false
+              dataCadastro <= notaProduto.date.localDate()
             }
-          if(produtosValidos.isNotEmpty())
+          if(notaProduto.cancelado == "S")
+            println("Cancelado")
+          if(produtosValidos.isEmpty())
             null
           else
             NotaSaci(invno = notaProduto.invno,
@@ -255,6 +236,6 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   }
 }
 
-data class KeyNota(val storeno: Int, val numero: String)
+data class KeyNota(val storeno: Int, val numero: String, val serie : String)
 
 val saci = QuerySaci()

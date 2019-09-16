@@ -1,10 +1,10 @@
-SELECT 0                       AS invno,
+SELECT 0                          AS invno,
        N.storeno,
-       N.nfno                  AS numero,
-       N.nfse                  AS serie,
-       N.issuedate             AS date,
-       N.issuedate             AS dtEmissao,
-       N.status = 1            AS cancelado,
+       N.nfno                     AS numero,
+       N.nfse                     AS serie,
+       N.issuedate                AS date,
+       N.issuedate                AS dtEmissao,
+       IF(N.status = 1, 'S', 'N') AS cancelado,
        CASE WHEN N.nfse = 1 AND N.cfo IN (5922, 6922)
                 THEN ''
             WHEN N.nfse = '66'
@@ -21,20 +21,16 @@ SELECT 0                       AS invno,
                 THEN 'OUTRAS_NFS'
             WHEN tipo = 7
                 THEN 'OUTRAS_NFS'
-            ELSE 'SP_REME' END AS tipo,
+            ELSE 'SP_REME' END    AS tipo,
        X.prdno,
        X.grade
-FROM sqldados.nf                    AS N
-         INNER JOIN sqldados.xaprd2 AS X
-                    USING (storeno, pdvno, xano)
-         INNER JOIN sqldados.prdloc AS L
-                    ON L.storeno = X.storeno AND L.prdno = X.prdno AND L.grade = X.grade
-WHERE N.storeno = :storeno AND
+FROM sqldados.xaprd2               AS X
+         LEFT JOIN sqldados.nf     AS N
+                   USING (storeno, pdvno, xano)
+         LEFT JOIN sqldados.prdloc AS L
+                   ON L.storeno = X.storeno AND L.prdno = X.prdno AND L.grade = X.grade
+WHERE X.storeno = :storeno AND
       L.localizacao LIKE :abreviacao AND
-      N.issuedate > DATE_SUB(current_date, INTERVAL 30 DAY) AND
-      NOT (N.nfse = 1 AND N.cfo IN (5922, 6922))
-GROUP BY N.storeno,
-         N.pdvno,
-         N.xano,
-         X.prdno,
-         X.grade
+      X.date > DATE_SUB(current_date, INTERVAL 30 DAY)
+HAVING tipo <> ''
+

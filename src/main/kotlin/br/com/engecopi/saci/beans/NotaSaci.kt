@@ -10,7 +10,7 @@ class NotaSaci(val invno: Int,
                val date: Int,
                val dtEmissao: Int,
                val tipo: String,
-               val cancelado: Int,
+               val cancelado: String,
                val produtos: List<ProdutoSaci>
               ) {
   val numeroSerie
@@ -19,8 +19,6 @@ class NotaSaci(val invno: Int,
     get() = date.localDate()
   val localDtEmissao
     get() = dtEmissao.localDate()
-  val boolCancelado
-    get() = cancelado == 1
   val tipoNota
     get() = TipoNota.value(tipo)
 }

@@ -64,25 +64,28 @@ class RepositoryAvisoNotas {
   }
 
   fun notaEntradaCancelada(): List<NotaSaci> {
-    return notaEntradaTodas.filter {nfEntrada ->
+    val canceladas = notaSaidaTodas.filter {it.cancelado == "S"}
+    return canceladas.filter {nfEntrada ->
       notaEntradaSalva.any {nota ->
         nota.numero == nfEntrada.numeroSerie
-      } && nfEntrada.boolCancelado
+      }
     }
   }
 
   fun notaSaidaCancelada(): List<NotaSaci> {
-    return notaSaidaTodas.filter {nfSaida ->
+    val canceladas = notaSaidaTodas.filter {it.cancelado == "S"}
+    return canceladas.filter {nfSaida ->
       notaSaidaSalva.any {nota ->
         nota.numero == nfSaida.numeroSerie
-      } && nfSaida.boolCancelado
+      }
     }
   }
 
   fun notaEntradaPendente(): List<NotaSaci> {
-    return notaEntradaTodas
-      .filter {nfEntrada ->
-        nfEntrada.entradaAceita() && !nfEntrada.boolCancelado
+    val naoCanceladas = notaSaidaTodas.filter {it.cancelado == "N"}
+    return naoCanceladas
+      .filter {nfSaida ->
+        nfSaida.entradaAceita()
       }
       .filter {nfEntrada ->
         !notaEntradaSalva.any {nota ->
@@ -92,9 +95,10 @@ class RepositoryAvisoNotas {
   }
 
   fun notaSaidaPendente(): List<NotaSaci> {
-    return notaSaidaTodas
+    val naoCanceladas = notaSaidaTodas.filter {it.cancelado == "N"}
+    return naoCanceladas
       .filter {nfSaida ->
-        nfSaida.saidaAceita() && !nfSaida.boolCancelado
+        nfSaida.saidaAceita()
       }
       .filter {nfSaida ->
         !notaSaidaSalva.any {nota ->
