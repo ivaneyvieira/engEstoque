@@ -27,8 +27,9 @@ FROM sqldados.iprd                 AS I
                    ON L.storeno = I.storeno AND L.prdno = I.prdno AND L.grade = I.grade
 WHERE I.storeno = :storeno AND
       L.localizacao LIKE :abreviacao AND
-      I.date > DATE_SUB(current_date, INTERVAL 30 DAY)
+      I.date > DATE_SUB(current_date, INTERVAL 30 DAY) AND
+      nfname IS NOT NULL AND
+      type IN (2, 0)
 GROUP BY I.invno,
          I.prdno,
          I.grade
-HAVING numero is not null

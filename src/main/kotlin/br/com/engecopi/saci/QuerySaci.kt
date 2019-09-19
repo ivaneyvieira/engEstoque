@@ -183,32 +183,32 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     val notaProdutoList = query(sql) {q ->
       q.run {
         addParameter("storeno", storeno)
-            .addParameter("abreviacao", "${abreviacao}%")
-            .executeAndFetch(NotaProduto::class.java)
+          .addParameter("abreviacao", "${abreviacao}%")
+          .executeAndFetch(NotaProduto::class.java)
       }
-    }
+    }.toList()
     val notaGroup = notaProdutoList.groupBy {KeyNota(it.storeno, it.numero, it.serie)}
     ProdutoSaci.updateProduto()
-    return notaGroup.mapNotNull {(key, notaProdutos) ->
-      notaProdutos.firstOrNull()
-        ?.let {notaProduto ->
-          val produtosValidos = notaProdutos.map {ProdutoSaci(it.prdno, it.grade)}
-            .filter {
-              val dataCadastro = it.dataCadastro ?: return@filter false
-              dataCadastro <= notaProduto.date.localDate()
+    return notaGroup.mapNotNull {(key, produtosChave) ->
+      produtosChave.firstOrNull()
+        ?.let {nota ->
+          val produtosValidos = produtosChave.map {ProdutoSaci(it.prdno, it.grade)}
+            .filter {produto ->
+              val dataCadastroProduto = produto.dataCadastro ?: return@filter false
+              dataCadastroProduto <= nota.date.localDate()
             }
-          if(produtosValidos.isEmpty())
-            null
-          else
-            NotaSaci(invno = notaProduto.invno,
-                     storeno = notaProduto.storeno,
-                     numero = notaProduto.numero,
-                     serie = notaProduto.serie,
-                     date = notaProduto.date,
-                     dtEmissao = notaProduto.dtEmissao,
-                     tipo = notaProduto.tipo,
-                     cancelado = notaProduto.cancelado,
-                     produtos = produtosValidos)
+          when {
+            produtosValidos.isNotEmpty() -> NotaSaci(invno = nota.invno,
+                                                     storeno = nota.storeno,
+                                                     numero = nota.numero,
+                                                     serie = nota.serie,
+                                                     date = nota.date,
+                                                     dtEmissao = nota.dtEmissao,
+                                                     tipo = nota.tipo,
+                                                     cancelado = nota.cancelado,
+                                                     produtos = produtosValidos)
+            else                         -> null
+          }
         }
     }
   }
@@ -234,6 +234,6 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   }
 }
 
-data class KeyNota(val storeno: Int, val numero: String, val serie : String)
+data class KeyNota(val storeno: Int, val numero: String, val serie: String)
 
 val saci = QuerySaci()

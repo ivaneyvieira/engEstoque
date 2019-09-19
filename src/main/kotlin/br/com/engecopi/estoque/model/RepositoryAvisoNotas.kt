@@ -112,8 +112,7 @@ class RepositoryAvisoNotas {
   }
 
   fun qtWarning(): Int {
-    return 0 // notaSaidaCancelada().size + notaSaidaPendente().size + notaEntradaCancelada().size + notaEntradaPendente
-    //().size
+    return notaSaidaCancelada().size + notaSaidaPendente().size + notaEntradaCancelada().size + notaEntradaPendente().size
   }
 
   private fun NotaSaci.entradaAceita() = tipoNota == DEV_CLI || tipoNota == COMPRA

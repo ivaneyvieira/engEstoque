@@ -31,6 +31,7 @@ FROM sqldados.xaprd2               AS X
                    ON L.storeno = X.storeno AND L.prdno = X.prdno AND L.grade = X.grade
 WHERE X.storeno = :storeno AND
       L.localizacao LIKE :abreviacao AND
-      X.date > DATE_SUB(current_date, INTERVAL 30 DAY)
-HAVING tipo <> '' AND numero is not null
+      X.date > DATE_SUB(current_date, INTERVAL 30 DAY) AND
+      X.auxShort4 = 0 AND
+      N.nfno IS NOT NULL AND tipo = 2
 
