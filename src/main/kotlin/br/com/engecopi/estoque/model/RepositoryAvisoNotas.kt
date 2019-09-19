@@ -3,6 +3,7 @@ package br.com.engecopi.estoque.model
 import br.com.engecopi.estoque.model.TipoNota.COMPRA
 import br.com.engecopi.estoque.model.TipoNota.DEV_CLI
 import br.com.engecopi.estoque.model.TipoNota.DEV_FOR
+import br.com.engecopi.estoque.ui.log
 import br.com.engecopi.saci.beans.DevolucaoFornecedor
 import br.com.engecopi.saci.beans.NotaSaci
 import br.com.engecopi.saci.saci
@@ -21,12 +22,16 @@ class RepositoryAvisoNotas {
   }
 
   fun refresh() {
-    synchronized(this) {
-      refreshDevolucaoFornecedor()
-      refreshNotaSaidaTodas()
-      refreshNotaEntradaTodas()
-      refreshNotaEntradaApp()
-      refreshNotaSaidaApp()
+    try {
+      synchronized(this) {
+        refreshDevolucaoFornecedor()
+        refreshNotaSaidaTodas()
+        refreshNotaEntradaTodas()
+        refreshNotaEntradaApp()
+        refreshNotaSaidaApp()
+      }
+    } catch(e: Throwable) {
+      log?.warn("Erro no refresh")
     }
   }
 
