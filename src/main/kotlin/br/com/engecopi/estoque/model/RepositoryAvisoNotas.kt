@@ -32,6 +32,7 @@ class RepositoryAvisoNotas {
       }
     } catch(e: Throwable) {
       log?.warn("Erro no refresh")
+      e.printStackTrace()
     }
   }
 

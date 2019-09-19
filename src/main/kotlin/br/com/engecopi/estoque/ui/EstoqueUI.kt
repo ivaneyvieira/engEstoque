@@ -244,7 +244,7 @@ class EstoqueUI: UI() {
             }
           }
         }
-        Thread.sleep(120 * 1000)
+        sleep(60 * 1000)
       }
     }
   }
