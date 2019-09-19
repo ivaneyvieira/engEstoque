@@ -177,7 +177,7 @@ class EstoqueUI: UI() {
   private fun @VaadinDsl ValoMenu.sectionPaineis() {
     section("Paineis") {
       menuVisaoGeral = menuButton("Visão geral", CLUSTER, view = PainelGeralView::class.java)
-      WarnThread(menuVisaoGeral).start()
+      // WarnThread(menuVisaoGeral).start()
     }
   }
 

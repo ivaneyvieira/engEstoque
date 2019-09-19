@@ -21,9 +21,9 @@ SELECT N.invno,
        I.prdno,
        I.grade
 FROM sqldados.iprd                 AS I
-         INNER JOIN sqldados.inv    AS N
+         LEFT JOIN sqldados.inv    AS N
                    USING (invno)
-         INNER JOIN sqldados.prdloc AS L
+         LEFT JOIN sqldados.prdloc AS L
                    ON L.storeno = I.storeno AND L.prdno = I.prdno AND L.grade = I.grade
 WHERE I.storeno = :storeno AND
       L.localizacao LIKE :abreviacao AND
@@ -31,3 +31,4 @@ WHERE I.storeno = :storeno AND
 GROUP BY I.invno,
          I.prdno,
          I.grade
+HAVING numero is not null
