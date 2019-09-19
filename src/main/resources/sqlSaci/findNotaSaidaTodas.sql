@@ -25,9 +25,9 @@ SELECT 0                          AS invno,
        X.prdno,
        X.grade
 FROM sqldados.xaprd2               AS X
-         LEFT JOIN sqldados.nf     AS N
+         INNER JOIN sqldados.nf     AS N
                    USING (storeno, pdvno, xano)
-         LEFT JOIN sqldados.prdloc AS L
+         INNER JOIN sqldados.prdloc AS L
                    ON L.storeno = X.storeno AND L.prdno = X.prdno AND L.grade = X.grade
 WHERE X.storeno = :storeno AND
       L.localizacao LIKE :abreviacao AND

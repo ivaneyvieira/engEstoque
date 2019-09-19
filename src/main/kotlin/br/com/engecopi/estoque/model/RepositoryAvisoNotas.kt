@@ -42,7 +42,7 @@ class RepositoryAvisoNotas {
 
   private fun refreshDevolucaoFornecedor() {
     devolucaoFornecedor.clear()
-    devolucaoFornecedor.addAll(saci.findDevolucaoFornecedor(storeno, abreviacao))
+    //   devolucaoFornecedor.addAll(saci.findDevolucaoFornecedor(storeno, abreviacao))
   }
 
   private fun refreshNotaEntradaTodas() {
@@ -105,6 +105,14 @@ class RepositoryAvisoNotas {
           nota.numero == nfSaida.numeroSerie
         }
       }
+  }
+
+  fun hasWarning(): Boolean {
+    return qtWarning() > 0
+  }
+
+  fun qtWarning(): Int {
+    return notaSaidaCancelada().size + notaSaidaPendente().size + notaEntradaCancelada().size + notaEntradaPendente().size
   }
 
   private fun NotaSaci.entradaAceita() = tipoNota == DEV_CLI || tipoNota == COMPRA

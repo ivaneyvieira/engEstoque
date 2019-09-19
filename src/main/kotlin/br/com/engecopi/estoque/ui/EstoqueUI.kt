@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.ui
 
 import br.com.engecopi.estoque.model.LoginInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.RepositoryAvisoNotas
 import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.ui.views.AbreciacaoView
 import br.com.engecopi.estoque.ui.views.EntradaView
@@ -16,6 +17,7 @@ import br.com.engecopi.estoque.ui.views.ProdutoView
 import br.com.engecopi.estoque.ui.views.SaidaView
 import br.com.engecopi.estoque.ui.views.UsuarioView
 import br.com.engecopi.utils.SystemUtils
+import com.github.mvysny.karibudsl.v8.MenuButton
 import com.github.mvysny.karibudsl.v8.VaadinDsl
 import com.github.mvysny.karibudsl.v8.ValoMenu
 import com.github.mvysny.karibudsl.v8.autoViewProvider
@@ -23,6 +25,7 @@ import com.github.mvysny.karibudsl.v8.onLeftClick
 import com.github.mvysny.karibudsl.v8.valoMenu
 import com.vaadin.annotations.JavaScript
 import com.vaadin.annotations.PreserveOnRefresh
+import com.vaadin.annotations.Push
 import com.vaadin.annotations.Theme
 import com.vaadin.annotations.Title
 import com.vaadin.annotations.VaadinServletConfiguration
@@ -66,7 +69,9 @@ import javax.servlet.http.Cookie
 @JavaScript("https://code.jquery.com/jquery-2.1.4.min.js", "https://code.responsivevoice.org/responsivevoice.js")
 @PushStateNavigation
 @PreserveOnRefresh
+@Push
 class EstoqueUI: UI() {
+  private lateinit var menuVisaoGeral: MenuButton
   val title = "<h3>Estoque <strong>Engecopi</strong></h3>"
   private val versao = SystemUtils.readFile("/versao.txt")
   var loginInfo: LoginInfo? = null
@@ -80,6 +85,7 @@ class EstoqueUI: UI() {
       current?.loginInfo
     }
     isResponsive = true
+
     updateContent(request?.contextPath ?: "")
   }
 
@@ -170,7 +176,8 @@ class EstoqueUI: UI() {
 
   private fun @VaadinDsl ValoMenu.sectionPaineis() {
     section("Paineis") {
-      menuButton("Visão geral", CLUSTER, view = PainelGeralView::class.java)
+      menuVisaoGeral = menuButton("Visão geral", CLUSTER, view = PainelGeralView::class.java)
+      WarnThread(menuVisaoGeral).start()
     }
   }
 
@@ -216,6 +223,28 @@ class EstoqueUI: UI() {
   companion object {
     val current
       get() = getCurrent() as? EstoqueUI
+  }
+
+  inner class WarnThread(val menuVisaoGeral: MenuButton): Thread() {
+    private val repositoryAvisoNotas = RepositoryAvisoNotas()
+
+    override fun run() {
+      while(true) {
+        access {
+          if(loginInfo != null) {
+            repositoryAvisoNotas.refresh()
+            val qtWarnings = repositoryAvisoNotas.qtWarning()
+            if(qtWarnings == 0) {
+              menuVisaoGeral.badge = ""
+            }
+            else {
+              menuVisaoGeral.badge = "$qtWarnings"
+            }
+          }
+        }
+        Thread.sleep(120 * 1000)
+      }
+    }
   }
 }
 

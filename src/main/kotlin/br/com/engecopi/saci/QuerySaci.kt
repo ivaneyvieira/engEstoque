@@ -197,8 +197,6 @@ class QuerySaci: QueryDB(driver, url, username, password) {
               val dataCadastro = it.dataCadastro ?: return@filter false
               dataCadastro <= notaProduto.date.localDate()
             }
-          if(notaProduto.cancelado == "S")
-            println("Cancelado")
           if(produtosValidos.isEmpty())
             null
           else

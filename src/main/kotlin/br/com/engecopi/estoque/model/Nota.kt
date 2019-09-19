@@ -188,19 +188,18 @@ class Nota: BaseModel() {
     }
 
     fun notasSaidaSalva(): List<Nota> {
-      val dtInicial = LocalDate.now()
-        .minusDays(30)
-      return where().tipoMov.eq(SAIDA)
-        .loja.equalTo(lojaDefault)
-        .itensNota.localizacao.startsWith(abreviacaoDefault)
-        .data.after(dtInicial)
-        .findList()
+      return notasSalva(SAIDA)
     }
 
     fun notasEntradaSalva(): List<Nota> {
+      return notasSalva(ENTRADA)
+    }
+
+    private fun notasSalva(
+      tipoNota: TipoMov): MutableList<Nota> {
       val dtInicial = LocalDate.now()
         .minusDays(30)
-      return where().tipoMov.eq(ENTRADA)
+      return where().tipoMov.eq(tipoNota)
         .loja.equalTo(lojaDefault)
         .itensNota.localizacao.startsWith(abreviacaoDefault)
         .data.after(dtInicial)
