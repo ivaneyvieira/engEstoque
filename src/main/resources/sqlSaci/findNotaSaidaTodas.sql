@@ -25,12 +25,12 @@ SELECT 0                          AS invno,
        X.prdno,
        X.grade
 FROM sqldados.xaprd2               AS X
-         INNER JOIN sqldados.nf     AS N
+         LEFT JOIN sqldados.nf     AS N
                    USING (storeno, pdvno, xano)
-         INNER JOIN sqldados.prdloc AS L
+         LEFT JOIN sqldados.prdloc AS L
                    ON L.storeno = X.storeno AND L.prdno = X.prdno AND L.grade = X.grade
 WHERE X.storeno = :storeno AND
       L.localizacao LIKE :abreviacao AND
       X.date > DATE_SUB(current_date, INTERVAL 30 DAY)
-HAVING tipo <> ''
+HAVING tipo <> '' AND numero is not null
 
