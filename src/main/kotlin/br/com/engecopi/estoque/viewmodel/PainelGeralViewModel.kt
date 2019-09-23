@@ -7,7 +7,9 @@ import br.com.engecopi.framework.viewmodel.ViewModel
 import br.com.engecopi.saci.beans.NotaSaci
 
 class PainelGeralViewModel(view: IView): ViewModel(view) {
-  val repository = RepositoryAvisoNotas()
+  val repository = RepositoryAvisoNotas().apply {
+    refresh()
+  }
 
   fun listSaidaCancelada(): List<NotaSaci> {
     return repository.notaSaidaCancelada()
