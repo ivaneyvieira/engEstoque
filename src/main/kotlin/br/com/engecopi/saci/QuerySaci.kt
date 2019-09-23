@@ -14,6 +14,7 @@ import br.com.engecopi.saci.beans.findChave
 import br.com.engecopi.utils.DB
 import br.com.engecopi.utils.localDate
 import br.com.engecopi.utils.lpad
+import br.com.engecopi.utils.toSaciDate
 import java.time.LocalDate
 
 class QuerySaci: QueryDB(driver, url, username, password) {
@@ -180,29 +181,39 @@ class QuerySaci: QueryDB(driver, url, username, password) {
 
   private fun findNotaSaci(sql: String, storeno: Int,
                            abreviacao: String): List<NotaSaci> {
+    val data = LocalDate.now()
+      .minusDays(7)
+      .toSaciDate()
     val notaProdutoList = query(sql) {q ->
       q.run {
         addParameter("storeno", storeno)
           .addParameter("abreviacao", "${abreviacao}%")
+          .addParameter("data", data)
           .executeAndFetch(NotaProduto::class.java)
       }
     }.toList()
     val notaGroup = notaProdutoList.groupBy {KeyNota(it.storeno, it.numero, it.serie)}
-
+    ProdutoSaci.updateProduto()
     return notaGroup.mapNotNull {(key, produtosChave) ->
       produtosChave.firstOrNull()
         ?.let {nota ->
-          val produtosValidos = produtosChave.map {ProdutoSaci(it.prdno, it.grade)}.distinct()
-
-          NotaSaci(invno = nota.invno,
-                   storeno = nota.storeno,
-                   numero = nota.numero,
-                   serie = nota.serie,
-                   date = nota.date,
-                   dtEmissao = nota.dtEmissao,
-                   tipo = nota.tipo,
-                   cancelado = nota.cancelado,
-                   produtos = produtosValidos)
+          val produtosValidos = produtosChave.map {ProdutoSaci(it.prdno, it.grade)}
+            .filter {produto ->
+              val dataCadastroProduto = produto.dataCadastro ?: return@filter false
+              dataCadastroProduto <= nota.date.localDate()
+            }.distinct()
+          when {
+            produtosValidos.isNotEmpty() -> NotaSaci(invno = nota.invno,
+                                                     storeno = nota.storeno,
+                                                     numero = nota.numero,
+                                                     serie = nota.serie,
+                                                     date = nota.date,
+                                                     dtEmissao = nota.dtEmissao,
+                                                     tipo = nota.tipo,
+                                                     cancelado = nota.cancelado,
+                                                     produtos = produtosValidos)
+            else                         -> null
+          }
         }
     }
   }

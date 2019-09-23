@@ -226,9 +226,7 @@ class EstoqueUI: UI() {
   }
 
   inner class WarnThread(val menuVisaoGeral: MenuButton): Thread() {
-    private val repositoryAvisoNotas: RepositoryAvisoNotas by lazy {
-      RepositoryAvisoNotas()
-    }
+    private val repositoryAvisoNotas = RepositoryAvisoNotas()
 
     override fun run() {
       while(true) {
@@ -244,7 +242,7 @@ class EstoqueUI: UI() {
             }
           }
         }
-        sleep(60 * 1000)
+        Thread.sleep(120 * 1000)
       }
     }
   }

@@ -17,10 +17,6 @@ class RepositoryAvisoNotas {
   private val notaEntradaSalva = mutableListOf<Nota>()
   private val notaSaidaSalva = mutableListOf<Nota>()
 
-  init {
-    refresh()
-  }
-
   fun refresh() {
     try {
       synchronized(this) {
@@ -32,7 +28,6 @@ class RepositoryAvisoNotas {
       }
     } catch(e: Throwable) {
       log?.warn("Erro no refresh")
-      e.printStackTrace()
     }
   }
 

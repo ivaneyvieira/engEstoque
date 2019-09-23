@@ -106,7 +106,8 @@ dependencies {
   compile("org.xerial:sqlite-jdbc:3.21.0.1")
   compile("org.sql2o:sql2o:1.5.4")
   // https://mvnrepository.com/artifact/com.jolbox/bonecp
-  compile("com.jolbox:bonecp:0.8.0.RELEASE")
+  //compile("com.jolbox:bonecp:0.8.0.RELEASE")
+  compile("com.zaxxer:HikariCP:3.4.1")
 
   compile("org.imgscalr:imgscalr-lib:4.2")
   compile("de.steinwedel.vaadin.addon:messagebox:4.0.21")

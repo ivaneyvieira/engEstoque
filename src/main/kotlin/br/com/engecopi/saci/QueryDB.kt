@@ -1,27 +1,31 @@
 package br.com.engecopi.saci
 
 import br.com.engecopi.utils.SystemUtils
-import com.jolbox.bonecp.BoneCPDataSource
-import org.apache.commons.lang3.RandomStringUtils
 import org.sql2o.Connection
 import org.sql2o.Query
 import org.sql2o.Sql2o
+import com.zaxxer.hikari.HikariConfig
+import br.com.engecopi.saci.QueryDB
+import com.zaxxer.hikari.HikariDataSource
 
 open class QueryDB(private val driver: String, val url: String, val username: String, val password: String) {
   private val sql2o: Sql2o
 
   init {
     registerDriver(driver)
-    val ds = BoneCPDataSource()
-    ds.jdbcUrl = url
-    ds.username = username
-    ds.password = password
-    ds.minConnectionsPerPartition = 2
-    ds.maxConnectionsPerPartition = 4
-    ds.partitionCount = 1
+
+    val config = HikariConfig()
+    config.jdbcUrl = url
+    config.username = username
+    config.password = password
+    config.addDataSourceProperty("cachePrepStmts", "true")
+    config.addDataSourceProperty("prepStmtCacheSize", "250")
+    config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048")
+    val ds = HikariDataSource(config)
+    ds.maximumPoolSize = 5
+
     this.sql2o = Sql2o(ds)
     //this.sql2o = Sql2o(url, username, password)
-    //this.sql2o = Sql2o(dataSourceConfig())
   }
 
   private fun registerDriver(driver: String) {
@@ -74,11 +78,15 @@ open class QueryDB(private val driver: String, val url: String, val username: St
 
   private fun <T> buildQuery(file: String, proc: (Connection, Query) -> T): T {
     val sql = SystemUtils.readFile(file)
-    this.sql2o.open()
-      .trywr {con ->
+    return this.sql2o.open()
+      .use {con ->
         val query = con.createQuery(sql)
+        val time = System.currentTimeMillis()
         println("SQL2O ==> $sql")
-        return proc(con, query)
+       val result = proc(con, query)
+        val difTime = System.currentTimeMillis() - time
+        println("######################## TEMPO QUERY $difTime ms ########################")
+        result
       }
   }
 

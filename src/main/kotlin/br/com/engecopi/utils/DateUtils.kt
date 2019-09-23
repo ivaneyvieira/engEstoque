@@ -90,6 +90,13 @@ fun Int.localDate(): LocalDate? {
   return LocalDate.of(year, month, day)
 }
 
+fun LocalDate.toSaciDate() : Int {
+  val ano = this.year
+  val mes = this.monthValue
+  val dia = this.dayOfMonth
+  return ano * 10000 + mes * 100 + dia
+}
+
 fun String?.parserDate(): LocalDate? {
   return try {
     LocalDate.parse(this, DATE_FORMATTER)
