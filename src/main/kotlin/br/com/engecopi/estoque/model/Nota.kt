@@ -208,7 +208,7 @@ class Nota: BaseModel() {
   }
 
   fun existe(): Boolean {
-    return where().loja.equalTo(loja).numero.eq(numero).findCount() > 0
+    return where().loja.equalTo(loja).tipoMov.eq(tipoMov).numero.eq(numero).findCount() > 0
   }
 
   fun itensNota(): List<ItemNota> {
