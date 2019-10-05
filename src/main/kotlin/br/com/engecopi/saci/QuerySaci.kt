@@ -181,8 +181,13 @@ class QuerySaci: QueryDB(driver, url, username, password) {
 
   private fun findNotaSaci(sql: String, storeno: Int,
                            abreviacao: String): List<NotaSaci> {
+    /*
     val data = LocalDate.now()
       .minusDays(7)
+      .toSaciDate()
+      *
+     */
+    val data = LocalDate.of(2019, 1, 1)
       .toSaciDate()
     val notaProdutoList = query(sql) {q ->
       q.run {
@@ -201,7 +206,8 @@ class QuerySaci: QueryDB(driver, url, username, password) {
             .filter {produto ->
               val dataCadastroProduto = produto.dataCadastro ?: return@filter false
               dataCadastroProduto <= nota.date.localDate()
-            }.distinct()
+            }
+            .distinct()
           when {
             produtosValidos.isNotEmpty() -> NotaSaci(invno = nota.invno,
                                                      storeno = nota.storeno,
