@@ -187,7 +187,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       .toSaciDate()
       *
      */
-    val data = LocalDate.of(2019, 1, 1)
+    val data = LocalDate.of(2019, 9, 1)
       .toSaciDate()
     val notaProdutoList = query(sql) {q ->
       q.run {
