@@ -15,7 +15,7 @@ SELECT 0                          AS invno,
                 THEN 'VENDA'
             WHEN tipo = 1
                 THEN 'TRANSFERENCIA_S'
-            WHEN tipo = 2
+            WHEN tipo = 2 AND N.remarks like '%GARANTIA%'
                 THEN 'DEV_FOR'
             WHEN tipo = 3
                 THEN 'OUTRAS_NFS'
