@@ -1,6 +1,7 @@
 package br.com.engecopi.estoque.ui
 
 import br.com.engecopi.estoque.model.LoginInfo
+import br.com.engecopi.estoque.model.RepositoryAvisoNotas
 import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.framework.ui.Session
 import br.com.engecopi.saci.saci
@@ -34,6 +35,7 @@ object LoginService {
   fun login(loginInfo: LoginInfo) {
     EstoqueUI.current?.loginInfo = loginInfo
     Session[LoginInfo::class] = loginInfo
+
   }
   val currentUser: LoginInfo?
     get() = EstoqueUI.current?.loginInfo
@@ -144,6 +146,7 @@ class LoginForm(private val appTitle: String): VerticalLayout() {
       else {
         val loginInfo = LoginInfo(usuario, abrev)
         LoginService.login(loginInfo)
+
       }
     }
   }

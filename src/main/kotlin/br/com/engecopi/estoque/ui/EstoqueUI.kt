@@ -54,6 +54,7 @@ import com.vaadin.ui.Notification
 import com.vaadin.ui.Notification.Type.ERROR_MESSAGE
 import com.vaadin.ui.UI
 import com.vaadin.ui.themes.ValoTheme
+import khttp.async
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.bridge.SLF4JBridgeHandler
@@ -87,6 +88,20 @@ class EstoqueUI: UI() {
     isResponsive = true
 
     updateContent(request?.contextPath ?: "")
+  }
+
+  private fun updateBag(repo: RepositoryAvisoNotas) {
+    access {
+      if(loginInfo != null) {
+        val qtWarnings = repo.qtWarning()
+        if(qtWarnings == 0) {
+          menuVisaoGeral.badge = ""
+        }
+        else {
+          menuVisaoGeral.badge = "$qtWarnings"
+        }
+      }
+    }
   }
 
   private fun updateContent(contextPath: String) {
@@ -177,7 +192,9 @@ class EstoqueUI: UI() {
   private fun @VaadinDsl ValoMenu.sectionPaineis() {
     section("Paineis") {
       menuVisaoGeral = menuButton("Visão geral", CLUSTER, view = PainelGeralView::class.java)
-      //WarnThread(menuVisaoGeral).start()
+      RepositoryAvisoNotas.addEvent {repo ->
+        updateBag(repo)
+      }
     }
   }
 
@@ -223,28 +240,6 @@ class EstoqueUI: UI() {
   companion object {
     val current
       get() = getCurrent() as? EstoqueUI
-  }
-
-  inner class WarnThread(val menuVisaoGeral: MenuButton): Thread() {
-    private val repositoryAvisoNotas = RepositoryAvisoNotas()
-
-    override fun run() {
-      while(true) {
-        access {
-          if(loginInfo != null) {
-            repositoryAvisoNotas.refresh()
-            val qtWarnings = repositoryAvisoNotas.qtWarning()
-            if(qtWarnings == 0) {
-              menuVisaoGeral.badge = ""
-            }
-            else {
-              menuVisaoGeral.badge = "$qtWarnings"
-            }
-          }
-        }
-        Thread.sleep(120 * 1000)
-      }
-    }
   }
 }
 

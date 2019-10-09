@@ -195,10 +195,9 @@ class Nota: BaseModel() {
       return notasSalva(ENTRADA)
     }
 
-    private fun notasSalva(
-      tipoNota: TipoMov): MutableList<Nota> {
+    private fun notasSalva(tipoNota: TipoMov): MutableList<Nota> {
       val dtInicial = LocalDate.now()
-        .minusDays(30)
+        .minusDays(180)
       return where().tipoMov.eq(tipoNota)
         .loja.equalTo(lojaDefault)
         .itensNota.localizacao.startsWith(abreviacaoDefault)

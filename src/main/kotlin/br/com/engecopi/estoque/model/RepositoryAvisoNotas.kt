@@ -8,7 +8,7 @@ import br.com.engecopi.saci.beans.DevolucaoFornecedor
 import br.com.engecopi.saci.beans.NotaSaci
 import br.com.engecopi.saci.saci
 
-class RepositoryAvisoNotas {
+object RepositoryAvisoNotas {
   private val storeno = RegistryUserInfo.lojaDefault.numero
   private val abreviacao = RegistryUserInfo.abreviacaoDefault
   private val notaSaidaTodas = mutableListOf<NotaSaci>()
@@ -16,6 +16,13 @@ class RepositoryAvisoNotas {
   private val devolucaoFornecedor = mutableListOf<DevolucaoFornecedor>()
   private val notaEntradaSalva = mutableListOf<Nota>()
   private val notaSaidaSalva = mutableListOf<Nota>()
+
+  private val listEvents = ArrayList<(RepositoryAvisoNotas) -> Unit>()
+
+  fun addEvent(event : (RepositoryAvisoNotas) -> Unit) {
+    listEvents.clear()
+    listEvents.add (event)
+  }
 
   fun refresh() {
     try {
@@ -25,9 +32,11 @@ class RepositoryAvisoNotas {
         refreshNotaEntradaTodas()
         refreshNotaEntradaApp()
         refreshNotaSaidaApp()
+        listEvents.forEach {event -> event(this)}
       }
     } catch(e: Throwable) {
       log?.warn("Erro no refresh")
+      e.printStackTrace()
     }
   }
 

@@ -7,31 +7,31 @@ import br.com.engecopi.framework.viewmodel.ViewModel
 import br.com.engecopi.saci.beans.NotaSaci
 
 class PainelGeralViewModel(view: IView): ViewModel(view) {
-  val repository = RepositoryAvisoNotas().apply {
-    refresh()
+  init {
+    RepositoryAvisoNotas.refresh()
   }
 
   fun listSaidaCancelada(): List<NotaSaci> {
-    return repository.notaSaidaCancelada()
+    return RepositoryAvisoNotas.notaSaidaCancelada()
       .sortedBy {-it.date}
   }
 
   fun listEntradaCancelada(): List<NotaSaci> {
-    return repository.notaEntradaCancelada()
+    return RepositoryAvisoNotas.notaEntradaCancelada()
       .sortedBy {-it.date}
   }
 
   fun listSaidaPendente(): List<NotaSaci> {
-    return repository.notaSaidaPendente()
+    return RepositoryAvisoNotas.notaSaidaPendente()
       .sortedBy {-it.date}
   }
 
   fun listEntradaPendente(): List<NotaSaci> {
-    return repository.notaEntradaPendente()
+    return RepositoryAvisoNotas.notaEntradaPendente()
       .sortedBy {-it.date}
   }
 
   fun refresh() = exec {
-    repository.refresh()
+    RepositoryAvisoNotas.refresh()
   }
 }
