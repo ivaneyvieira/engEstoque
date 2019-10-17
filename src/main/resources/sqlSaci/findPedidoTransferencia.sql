@@ -10,10 +10,10 @@ SELECT DISTINCT
        C.name        AS clienteName,
        'PEDIDO_S'    AS tipo
 FROM sqldados.eord                  AS N
-         INNER JOIN sqldados.prdloc AS L
-                    USING (prdno, grade)
          INNER JOIN sqldados.eoprd  AS P
                     USING (storeno, ordno)
+         INNER JOIN sqldados.prdloc AS L
+                    USING (prdno, grade)
          INNER JOIN sqldados.custp  AS C
                     ON C.no = N.custno
          INNER JOIN sqldados.store  AS S
