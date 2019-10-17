@@ -28,6 +28,7 @@ class PedidoTransferenciaViewModel(view: IView): ViewModel(view) {
 }
 
 class PedidoTransferenciaVo(val notaProdutoSaci: NotaProdutoSaci) {
+  val numero = "${notaProdutoSaci.storeno}${notaProdutoSaci.numero}"
   val lojaNF = Loja.findLoja(notaProdutoSaci.storeno)
   val lancamento = notaProdutoSaci.date?.localDate()
   val quantProduto = notaProdutoSaci.quant

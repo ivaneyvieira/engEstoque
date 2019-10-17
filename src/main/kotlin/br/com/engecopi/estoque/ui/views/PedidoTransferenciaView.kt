@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.ui.views
 
 import br.com.engecopi.estoque.viewmodel.PedidoTransferenciaViewModel
 import br.com.engecopi.estoque.viewmodel.PedidoTransferenciaVo
+import br.com.engecopi.estoque.viewmodel.SaidaVo
 import br.com.engecopi.framework.ui.view.LayoutView
 import br.com.engecopi.framework.ui.view.dateFormat
 import br.com.engecopi.framework.ui.view.expand
@@ -39,6 +40,9 @@ class PedidoTransferenciaView : LayoutView<PedidoTransferenciaViewModel>() {
     gridPedido = grid(dataProvider = ListDataProvider(mutableListOf())) {
       expand()
 
+      addColumnFor(PedidoTransferenciaVo::numero) {
+        caption = "Número"
+      }
       addColumnFor(PedidoTransferenciaVo::lojaNF) {
         caption = "Loja NF"
         setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
