@@ -14,6 +14,7 @@ import com.github.mvysny.karibudsl.v8.column
 import com.github.mvysny.karibudsl.v8.cssLayout
 import com.github.mvysny.karibudsl.v8.grid
 import com.github.mvysny.karibudsl.v8.horizontalLayout
+import com.github.mvysny.karibudsl.v8.refresh
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.Grid
@@ -84,6 +85,7 @@ class PedidoTransferenciaView : LayoutView<PedidoTransferenciaViewModel>() {
     val dataProvider = gridPedido?.dataProvider as? ListDataProvider
     dataProvider?.items?.clear()
     dataProvider?.items?.addAll(viewModel.pedidosTransferencia)
+    gridPedido?.refresh()
   }
 
   override fun updateModel() {
