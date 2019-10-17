@@ -1,6 +1,7 @@
 package br.com.engecopi.saci
 
 import br.com.engecopi.estoque.model.Nota
+import br.com.engecopi.estoque.model.dtos.VendasCaixa
 import br.com.engecopi.saci.beans.ChaveProduto
 import br.com.engecopi.saci.beans.DevolucaoFornecedor
 import br.com.engecopi.saci.beans.LojaSaci
@@ -230,6 +231,21 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addParameter("storeno", storeno)
         .addParameter("abreviacao", "${abreviacao}%")
         .executeAndFetch(DevolucaoFornecedor::class.java)
+    }
+  }
+
+  fun findVendasCaixa() : List<VendasCaixa> {
+    val sql = "/sqlSaci/findVendaCaixa.sql"
+    return query(sql) {q ->
+      q.executeAndFetch(VendasCaixa::class.java)
+    }
+  }
+
+  fun findPedidoTransferencia(storeno : Int) : List<NotaProdutoSaci>{
+    val sql = "/sqlSaci/findPedidoTransferencia.sql"
+    return query(sql) {q ->
+      q.addParameter("storeno", "$storeno")
+        .executeAndFetch(NotaProdutoSaci::class.java)
     }
   }
 

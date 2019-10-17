@@ -4,6 +4,7 @@ import br.com.engecopi.estoque.model.LoginInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RepositoryAvisoNotas
 import br.com.engecopi.estoque.model.Usuario
+import br.com.engecopi.estoque.model.etlSaci.EtlVendasCliente
 import br.com.engecopi.estoque.ui.views.AbreciacaoView
 import br.com.engecopi.estoque.ui.views.EntradaView
 import br.com.engecopi.estoque.ui.views.EntregaClienteEditorView
@@ -13,9 +14,11 @@ import br.com.engecopi.estoque.ui.views.HistoricoView
 import br.com.engecopi.estoque.ui.views.LabelView
 import br.com.engecopi.estoque.ui.views.NFExpedicaoView
 import br.com.engecopi.estoque.ui.views.PainelGeralView
+import br.com.engecopi.estoque.ui.views.PedidoTransferenciaView
 import br.com.engecopi.estoque.ui.views.ProdutoView
 import br.com.engecopi.estoque.ui.views.SaidaView
 import br.com.engecopi.estoque.ui.views.UsuarioView
+import br.com.engecopi.estoque.viewmodel.NFExpedicaoViewModel
 import br.com.engecopi.utils.SystemUtils
 import com.github.mvysny.karibudsl.v8.MenuButton
 import com.github.mvysny.karibudsl.v8.VaadinDsl
@@ -41,6 +44,7 @@ import com.vaadin.icons.VaadinIcons.PACKAGE
 import com.vaadin.icons.VaadinIcons.PAPERCLIP
 import com.vaadin.icons.VaadinIcons.TRUCK
 import com.vaadin.icons.VaadinIcons.USER
+import com.vaadin.icons.VaadinIcons.LINES_LIST
 import com.vaadin.navigator.Navigator
 import com.vaadin.navigator.PushStateNavigation
 import com.vaadin.navigator.ViewDisplay
@@ -195,6 +199,7 @@ class EstoqueUI: UI() {
       RepositoryAvisoNotas.addEvent {repo ->
         updateBag(repo)
       }
+      menuButton("Pedidos de Transferencia", LINES_LIST, view = PedidoTransferenciaView::class.java)
     }
   }
 
@@ -268,6 +273,11 @@ class MyUIServlet: VaadinServlet() {
       // Vaadin logs into java.util.logging. Redirect that, so that all logging goes through slf4j.
       SLF4JBridgeHandler.removeHandlersForRootLogger()
       SLF4JBridgeHandler.install()
+     // EtlVendasCliente.start()
+      val model = NFExpedicaoViewModel()
+      EtlVendasCliente.listenerInsert = {venda ->
+        model.processaVendas(venda)
+      }
     }
   }
 }

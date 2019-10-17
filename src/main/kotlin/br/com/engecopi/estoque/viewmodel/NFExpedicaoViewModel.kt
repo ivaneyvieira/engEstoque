@@ -19,8 +19,10 @@ import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.model.ViewNotaExpedicao
 import br.com.engecopi.estoque.model.ViewProdutoLoc
+import br.com.engecopi.estoque.model.dtos.VendasCaixa
 import br.com.engecopi.estoque.model.query.QViewNotaExpedicao
 import br.com.engecopi.estoque.ui.log
+import br.com.engecopi.framework.ui.view.ViewEmpty
 import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
@@ -30,7 +32,9 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewNotaExpedicao, NFExpedicaoVo>(view) {
+class NFExpedicaoViewModel(view: IView = ViewEmpty()): CrudViewModel<ViewNotaExpedicao, QViewNotaExpedicao,
+  NFExpedicaoVo>
+                                                       (view) {
   override fun newBean(): NFExpedicaoVo {
     return NFExpedicaoVo()
   }
@@ -113,7 +117,6 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
     if(loja != lojaSaci) throw EViewModel("Esta nota pertence a loja $lojaSaci")
     val nota: Nota? = Nota.createNota(notaDoSaci)
       ?.let {
-
         if(it.existe()) Nota.findSaida(it.numero)
         else {
           it.sequencia = Nota.maxSequencia() + 1
@@ -229,7 +232,8 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
         val tipo = notaSerie.tipoNota
         when {
           usuarioDefault.isTipoCompativel(tipo) -> notaSaci
-          else                                  -> throw EViewModel("O usuário não está habilitado para lançar esse tipo de nota (${notaSerie.descricao})")
+          else                                  -> throw EViewModel(
+            "O usuário não está habilitado para lançar esse tipo de nota (${notaSerie.descricao})")
         }
       }
       else notaSaci
@@ -259,6 +263,12 @@ class NFExpedicaoViewModel(view: IView): CrudViewModel<ViewNotaExpedicao, QViewN
   fun saldoProduto(notaProdutoSaci: NotaProdutoSaci, abreviacao: String): Int {
     val produto = Produto.findProduto(notaProdutoSaci.codigo(), notaProdutoSaci.grade)
     return produto?.saldoAbreviacao(abreviacao) ?: 0
+  }
+
+  fun processaVendas(venda: VendasCaixa) {
+    val produto = Produto.findProduto(venda.prdno, venda.grade) ?: return
+    val locacalizacoes = produto.viewProdutoLoc ?: return
+    locacalizacoes.filter {it.abreviacao == "S"}
   }
 }
 
@@ -298,8 +308,8 @@ data class LocalizacaoNota(val abreviacao: String, val itensExpedicao: List<Item
     get() = itensExpedicao.filter {it.selecionado || it.isSave()}.size
 }
 
-data class ItemExpedicao(val notaProdutoSaci: NotaProdutoSaci, val saldo: Int, val abrevicao: String, var selecionado: Boolean =
-  false) {
+data class ItemExpedicao(val notaProdutoSaci: NotaProdutoSaci, val saldo: Int, val abrevicao: String,
+                         var selecionado: Boolean = false) {
   val prdno = notaProdutoSaci.prdno
   val grade = notaProdutoSaci.grade
   val nome = notaProdutoSaci.nome
