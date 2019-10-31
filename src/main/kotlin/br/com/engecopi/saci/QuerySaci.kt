@@ -1,6 +1,7 @@
 package br.com.engecopi.saci
 
 import br.com.engecopi.estoque.model.Nota
+import br.com.engecopi.estoque.model.dtos.PedidoSaci
 import br.com.engecopi.estoque.model.dtos.VendasCaixa
 import br.com.engecopi.saci.beans.ChaveProduto
 import br.com.engecopi.saci.beans.DevolucaoFornecedor
@@ -241,11 +242,11 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
 
-  fun findPedidoTransferencia(storeno : Int) : List<NotaProdutoSaci>{
+  fun findPedidoTransferencia(storeno : Int) : List<PedidoSaci>{
     val sql = "/sqlSaci/findPedidoTransferencia.sql"
     return query(sql) {q ->
       q.addParameter("storeno", "$storeno")
-        .executeAndFetch(NotaProdutoSaci::class.java)
+        .executeAndFetch(PedidoSaci::class.java)
     }
   }
 

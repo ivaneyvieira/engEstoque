@@ -1,14 +1,14 @@
 SELECT DISTINCT
-       R.no          AS rota,
+       MD5(CONCAT(N.storeno, N.ordno, SUBSTRING_INDEX(L.localizacao, '.', 1))) AS id,
+       R.no                                   AS rota,
        N.storeno,
-       N.ordno       AS numero,
+       N.ordno                                AS numero,
        N.date,
-       N.date        AS dtEmissao,
-       P.prdno,
-       P.grade,
-       P.qtty / 1000 AS quant,
-       C.name        AS clienteName,
-       'PEDIDO_S'    AS tipo
+       C.name                                 AS clienteName,
+       SUBSTRING_INDEX(L.localizacao, '.', 1) AS abreviacao,
+       nf.nfno,
+       nf.nfse,
+       N.status
 FROM sqldados.eord                  AS N
          INNER JOIN sqldados.eoprd  AS P
                     USING (storeno, ordno)
@@ -20,12 +20,9 @@ FROM sqldados.eord                  AS N
                     ON C.cpf_cgc = S.cgc
          INNER JOIN sqldados.xroute AS R
                     ON R.storenoFrom = N.storeno AND R.storenoTo = S.no
+         LEFT JOIN  sqldados.nf
+                    ON N.storeno = nf.storeno AND N.ordno = nf.eordno
 WHERE N.storeno = :storeno AND
-      N.status = 2 AND
+      (N.status = 2 OR nf.nfno IS NOT NULL) AND
       localizacao <> ''
 ORDER BY N.date DESC
-
-
-
-
-

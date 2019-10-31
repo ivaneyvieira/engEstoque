@@ -4,8 +4,6 @@ import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.framework.viewmodel.ViewModel
 import br.com.engecopi.saci.QuerySaci
 import br.com.engecopi.utils.CupsUtils
-import br.com.engecopi.utils.CupsUtils.printText
-import br.com.engecopi.utils.DB
 import br.com.engecopi.utils.SystemUtils
 import br.com.engecopi.utils.ZPLPreview
 import com.fo0.advancedtokenfield.main.AdvancedTokenField
@@ -115,24 +113,15 @@ abstract class LayoutView<V: ViewModel>: VerticalLayout(), View, IView {
       .open(resource, "_blank", false)
   }
 
-  private fun printCups(impressora: String, text: String) {
-    val printer = CupsUtils.printer(impressora)
-    if(printer == null)
-      showError("Impressora $impressora não está configurado no sistema operacional")
-    else
-      printer.printText(text)
-  }
-
   fun printText(impressora: String, text: String?) {
     if(!text.isNullOrBlank()) {
       when {
-        QuerySaci.test                      -> {
+        QuerySaci.test -> {
           val image = ZPLPreview.createPdf(text, "4x2")
           if(image != null)
             showImage("Preview", image)
         }
-        CupsUtils.printerExists(impressora) -> printCups(impressora, text)
-        else                                -> openText(impressora, text)
+        else           -> CupsUtils.printCups(impressora, text)
       }
     }
   }

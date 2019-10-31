@@ -1,5 +1,8 @@
 package br.com.engecopi.utils
 
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.memberProperties
+
 fun String?.lpad(size: Int, filler: String): String {
   var str = this ?: ""
   if(str.length > size) return str.substring(0, size)
@@ -44,4 +47,21 @@ fun String.mid(start: Int, len: Int): String {
 
 fun String.mid(start: Int): String {
   return mid(start, start + length)
+}
+
+fun parameterNames(sql: String): List<String> {
+  val regex = Regex(":([a-zA-Z0-9]+)")
+  val matches = regex.findAll(sql)
+  return matches.map {it.groupValues}
+    .toList()
+    .flatten()
+}
+
+@Suppress("UNCHECKED_CAST")
+fun readInstanceProperty(instance: Any, propertyName: String): Any? {
+  val property = instance::class.memberProperties
+    // don't cast here to <Any, R>, it would succeed silently
+    .firstOrNull {it.name == propertyName} as? KProperty1<Any, *>
+  // force a invalid cast exception if incorrect type here
+  return property?.get(instance)
 }

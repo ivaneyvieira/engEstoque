@@ -1,5 +1,7 @@
 package br.com.engecopi.estoque.ui.views
 
+import br.com.engecopi.estoque.model.etlSaci.ETLPedidos
+import br.com.engecopi.estoque.ui.EstoqueUI
 import br.com.engecopi.estoque.viewmodel.PedidoTransferenciaViewModel
 import br.com.engecopi.estoque.viewmodel.PedidoTransferenciaVo
 import br.com.engecopi.estoque.viewmodel.SaidaVo
@@ -18,10 +20,11 @@ import com.github.mvysny.karibudsl.v8.refresh
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.Grid
+import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView("pedidosTransf")
-class PedidoTransferenciaView : LayoutView<PedidoTransferenciaViewModel>() {
+class PedidoTransferenciaView: LayoutView<PedidoTransferenciaViewModel>() {
   private var gridPedido: Grid<PedidoTransferenciaVo>? = null
 
   init {
@@ -42,7 +45,7 @@ class PedidoTransferenciaView : LayoutView<PedidoTransferenciaViewModel>() {
       expand()
 
       addColumnFor(PedidoTransferenciaVo::numero) {
-        caption = "Número"
+        caption = "Pedido"
       }
       addColumnFor(PedidoTransferenciaVo::lojaNF) {
         caption = "Loja NF"
@@ -52,31 +55,23 @@ class PedidoTransferenciaView : LayoutView<PedidoTransferenciaViewModel>() {
         caption = "Data"
         dateFormat()
       }
-      addColumnFor(PedidoTransferenciaVo::quantProduto) {
-        caption = "Quantidade"
-        intFormat()
-      }
-      addColumnFor(PedidoTransferenciaVo::codigo) {
-        caption = "Código"
-        setSortProperty("produto.codigo")
-      }
-      addColumnFor(PedidoTransferenciaVo::descricaoProduto) {
-        caption = "Descrição"
-      }
-      addColumnFor(PedidoTransferenciaVo::grade) {
-        caption = "Grade"
-      }
-      addColumnFor(PedidoTransferenciaVo::localizacao) {
-        caption = "Localização"
-      }
-      addColumnFor(PedidoTransferenciaVo::usuario) {
-        caption = "Usuário"
+      addColumnFor(PedidoTransferenciaVo::abreviacao) {
+        caption = "Abreviação"
       }
       addColumnFor(PedidoTransferenciaVo::rotaDescricao) {
         caption = "Rota"
       }
       addColumnFor(PedidoTransferenciaVo::cliente) {
         caption = "Cliente"
+      }
+      addColumnFor(PedidoTransferenciaVo::nfTransferencia) {
+        caption = "Nota Fiscal"
+      }
+    }
+    ETLPedidos.addListener("updatePedidos") {
+      ui?.access {
+        viewModel.refresh()
+        ui.push()
       }
     }
   }

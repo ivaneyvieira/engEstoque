@@ -4,7 +4,7 @@ import br.com.engecopi.estoque.model.LoginInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RepositoryAvisoNotas
 import br.com.engecopi.estoque.model.Usuario
-import br.com.engecopi.estoque.model.etlSaci.EtlVendasCliente
+import br.com.engecopi.estoque.model.etlSaci.ETLPedidos
 import br.com.engecopi.estoque.ui.views.AbreciacaoView
 import br.com.engecopi.estoque.ui.views.EntradaView
 import br.com.engecopi.estoque.ui.views.EntregaClienteEditorView
@@ -34,9 +34,10 @@ import com.vaadin.annotations.Title
 import com.vaadin.annotations.VaadinServletConfiguration
 import com.vaadin.annotations.Viewport
 import com.vaadin.icons.VaadinIcons.BARCODE
-import com.vaadin.icons.VaadinIcons.INBOX
 import com.vaadin.icons.VaadinIcons.CART_O
 import com.vaadin.icons.VaadinIcons.CLUSTER
+import com.vaadin.icons.VaadinIcons.INBOX
+import com.vaadin.icons.VaadinIcons.LINES_LIST
 import com.vaadin.icons.VaadinIcons.NEWSPAPER
 import com.vaadin.icons.VaadinIcons.OUT
 import com.vaadin.icons.VaadinIcons.OUTBOX
@@ -44,7 +45,6 @@ import com.vaadin.icons.VaadinIcons.PACKAGE
 import com.vaadin.icons.VaadinIcons.PAPERCLIP
 import com.vaadin.icons.VaadinIcons.TRUCK
 import com.vaadin.icons.VaadinIcons.USER
-import com.vaadin.icons.VaadinIcons.LINES_LIST
 import com.vaadin.navigator.Navigator
 import com.vaadin.navigator.PushStateNavigation
 import com.vaadin.navigator.ViewDisplay
@@ -54,11 +54,11 @@ import com.vaadin.server.VaadinRequest
 import com.vaadin.server.VaadinService
 import com.vaadin.server.VaadinServlet
 import com.vaadin.shared.Position.TOP_CENTER
+import com.vaadin.shared.communication.PushMode
 import com.vaadin.ui.Notification
 import com.vaadin.ui.Notification.Type.ERROR_MESSAGE
 import com.vaadin.ui.UI
 import com.vaadin.ui.themes.ValoTheme
-import khttp.async
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.bridge.SLF4JBridgeHandler
@@ -74,7 +74,7 @@ import javax.servlet.http.Cookie
 @JavaScript("https://code.jquery.com/jquery-2.1.4.min.js", "https://code.responsivevoice.org/responsivevoice.js")
 @PushStateNavigation
 @PreserveOnRefresh
-@Push
+@Push(PushMode.MANUAL)
 class EstoqueUI: UI() {
   private lateinit var menuVisaoGeral: MenuButton
   val title = "<h3>Estoque <strong>Engecopi</strong></h3>"
@@ -82,13 +82,11 @@ class EstoqueUI: UI() {
   var loginInfo: LoginInfo? = null
     set(value) {
       field = value
+      RegistryUserInfo.loginInfo = value
       updateContent("")
     }
 
   override fun init(request: VaadinRequest?) {
-    RegistryUserInfo.register {
-      current?.loginInfo
-    }
     isResponsive = true
 
     updateContent(request?.contextPath ?: "")
@@ -273,11 +271,10 @@ class MyUIServlet: VaadinServlet() {
       // Vaadin logs into java.util.logging. Redirect that, so that all logging goes through slf4j.
       SLF4JBridgeHandler.removeHandlersForRootLogger()
       SLF4JBridgeHandler.install()
-     // EtlVendasCliente.start()
+      //EtlVendasCliente.start()
+      ETLPedidos.start()
       val model = NFExpedicaoViewModel()
-      EtlVendasCliente.listenerInsert = {venda ->
-        model.processaVendas(venda)
-      }
+      //EtlVendasCliente.listenerInsert{}
     }
   }
 }

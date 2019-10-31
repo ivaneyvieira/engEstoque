@@ -89,7 +89,7 @@ abstract class NotaViewModel<VO: NotaVo>(view: IView,
       val produtosJaInserido = produtos.asSequence()
         .distinctBy {it.produto?.id}
         .filter {prd ->
-          prd.produto.let {Nota.itemDuplicado(nota, it)} ?: false
+          prd.produto.let {Nota.itemDuplicado(nota, it)}
         }
         .map {it.produto}
         .filterNotNull()
