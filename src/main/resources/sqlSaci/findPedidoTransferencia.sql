@@ -22,7 +22,7 @@ FROM sqldados.eord                  AS N
                     ON R.storenoFrom = N.storeno AND R.storenoTo = S.no
          LEFT JOIN  sqldados.nf
                     ON N.storeno = nf.storeno AND N.ordno = nf.eordno
-WHERE N.storeno = :storeno AND
+WHERE (N.storeno = :storeno) AND
       (N.status = 2 OR nf.nfno IS NOT NULL) AND
-      localizacao <> ''
+      (localizacao <> '')
 ORDER BY N.date DESC

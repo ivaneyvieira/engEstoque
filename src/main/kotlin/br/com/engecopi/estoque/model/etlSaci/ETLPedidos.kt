@@ -1,11 +1,15 @@
 package br.com.engecopi.estoque.model.etlSaci
 
-import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.Abreviacao
+import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
+import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.dtos.PedidoSaci
-import br.com.engecopi.estoque.model.dtos.VendasCaixa
-import br.com.engecopi.estoque.model.etlSaci.ETLVendasCaixa.Companion
 import br.com.engecopi.saci.saci
+import br.com.engecopi.utils.CupsUtils
+import br.com.engecopi.utils.ECupsPrinter
+import br.com.engecopi.utils.format
+import br.com.engecopi.utils.localDate
 import io.ebean.DB
 
 class ETLPedidos(): ETL<PedidoSaci>() {
@@ -40,7 +44,31 @@ class ETLPedidos(): ETL<PedidoSaci>() {
     override fun getTarget() = DB
       .findDto(PedidoSaci::class.java, sql)
       .findList()
+
+    init {
+      addListenerInsert("ImprimeInsert") {pedido ->
+        if(pedido.status == 2) {
+          try {
+            val etiqueta = etiquetaPedido(pedido)
+            val impressora = Abreviacao.findByAbreviacao(pedido.abreviacao)?.impressora ?: ""
+            CupsUtils.printCups(impressora, etiqueta)
+          }catch(e : ECupsPrinter){
+            //Vazio
+          }
+        }
+      }
+    }
   }
 }
 
-
+fun etiquetaPedido(pedido: PedidoSaci): String {
+  val data = pedido.date?.localDate()
+    .format()
+  return """^XA
+  ^FT50,060^A0N,40,40^FH^FDPedido de transferencia^FS
+  ^FT50,130^A0N,40,40^FH^FDNumero: ${pedido.numero}^FS
+  ^FT50,180^A0N,40,40^FH^FDLocalizacao: ${pedido.abreviacao}^FS
+  ^FT50,230^A0N,40,40^FH^FDRota: ${pedido.rota}^FS
+  ^FT50,280^A0N,40,40^FH^FDData: ${data}^FS
+  ^XZ"""
+}
