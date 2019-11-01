@@ -24,5 +24,6 @@ FROM sqldados.eord                  AS N
                     ON N.storeno = nf.storeno AND N.ordno = nf.eordno
 WHERE (N.storeno = :storeno) AND
       (N.status = 2 OR nf.nfno IS NOT NULL) AND
-      (localizacao <> '')
+      (localizacao <> '') AND
+      N.date > 20180101
 ORDER BY N.date DESC
