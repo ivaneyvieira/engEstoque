@@ -6,6 +6,7 @@ import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
 import br.com.engecopi.estoque.viewmodel.EntradaVo
+import br.com.engecopi.estoque.viewmodel.INotaView
 import br.com.engecopi.estoque.viewmodel.NotaViewModel
 import br.com.engecopi.estoque.viewmodel.NotaVo
 import br.com.engecopi.estoque.viewmodel.ProdutoVO
@@ -43,7 +44,7 @@ import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
 import org.vaadin.patrik.FastNavigation
 
-abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO>>: CrudLayoutView<VO, MODEL>() {
+abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V : INotaView>: CrudLayoutView<VO, MODEL>() {
   lateinit var gridProduto: Grid<ProdutoVO>
   val lojaDefault = RegistryUserInfo.lojaDefault
   val usuario = RegistryUserInfo.usuarioDefault

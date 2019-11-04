@@ -37,6 +37,7 @@ import br.com.engecopi.estoque.viewmodel.ETipoGrupo.WHITE
 import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
+import br.com.engecopi.framework.viewmodel.ICrudView
 import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.utils.localDate
@@ -44,12 +45,12 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-abstract class NotaViewModel<VO: NotaVo>(view: IView,
+abstract class NotaViewModel<VO: NotaVo, V : INotaView>(view: V,
                                          val tipo: TipoMov,
                                          private val statusDefault: StatusNota,
                                          private val statusImpressao: StatusNota,
-                                         private val abreviacaoNota: String): CrudViewModel<ItemNota, QItemNota, VO>(
-  view) {
+                                         private val abreviacaoNota: String): CrudViewModel<ItemNota, QItemNota, VO, V>
+                                                                                                                                     (view) {
   override fun update(bean: VO) {
     if(bean.localizacao?.localizacao.isNullOrBlank())
       throw EViewModel("Não foi especificado a localização do item")
@@ -555,4 +556,8 @@ enum class ETipoGrupo(val ordem: Int) {
   WHITE(2),
   BLUE(3),
   GREEN(4)
+}
+
+interface INotaView : ICrudView {
+
 }

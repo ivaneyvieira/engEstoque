@@ -7,9 +7,10 @@ import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.model.query.QUsuario
 import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
+import br.com.engecopi.framework.viewmodel.ICrudView
 import br.com.engecopi.framework.viewmodel.IView
 
-class UsuarioViewModel(view: IView): CrudViewModel<Usuario, QUsuario, UsuarioCrudVo>(view) {
+class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, UsuarioCrudVo, IUsuarioView>(view) {
   override fun newBean(): UsuarioCrudVo {
     return UsuarioCrudVo()
   }
@@ -128,3 +129,5 @@ class UsuarioCrudVo: EntityVo<Usuario>() {
     return tipos
   }
 }
+
+interface IUsuarioView : ICrudView

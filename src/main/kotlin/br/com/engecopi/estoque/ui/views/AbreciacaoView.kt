@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.ui.views
 
 import br.com.engecopi.estoque.model.Abreviacao
 import br.com.engecopi.estoque.viewmodel.AbreciacaoViewModel
+import br.com.engecopi.estoque.viewmodel.IAbreciacaoView
 import br.com.engecopi.framework.ui.view.LayoutView
 import br.com.engecopi.framework.ui.view.expand
 import br.com.engecopi.framework.ui.view.title
@@ -17,9 +18,10 @@ import com.vaadin.ui.TextField
 import com.vaadin.ui.renderers.TextRenderer
 import org.vaadin.patrik.FastNavigation
 import org.vaadin.viritin.grid.MGrid
+import sun.security.util.PropertyExpander.expand
 
 @AutoView
-class AbreciacaoView: LayoutView<AbreciacaoViewModel>() {
+class AbreciacaoView: LayoutView<AbreciacaoViewModel>(), IAbreciacaoView {
 
   init {
     viewModel = AbreciacaoViewModel(this)
@@ -64,13 +66,5 @@ class AbreciacaoView: LayoutView<AbreciacaoViewModel>() {
         viewModel.saveAbreviacao()
       }
     }
-  }
-
-  override fun updateView() {
-    //Vazio
-  }
-
-  override fun updateModel() {
-    //Vazio
   }
 }

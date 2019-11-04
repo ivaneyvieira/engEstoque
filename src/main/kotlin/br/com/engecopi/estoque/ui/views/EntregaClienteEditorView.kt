@@ -4,6 +4,7 @@ import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.viewmodel.EntregaClienteEditorViewModel
 import br.com.engecopi.estoque.viewmodel.EntregaClienteVo
+import br.com.engecopi.estoque.viewmodel.IEntregaClienteEditorView
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
 import br.com.engecopi.framework.ui.view.dateFormat
@@ -25,7 +26,8 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView("entrega_cliente_editor")
-class EntregaClienteEditorView: NotaView<EntregaClienteVo, EntregaClienteEditorViewModel>() {
+class EntregaClienteEditorView: NotaView<EntregaClienteVo, EntregaClienteEditorViewModel, IEntregaClienteEditorView>(),
+                                IEntregaClienteEditorView {
   init {
     viewModel = EntregaClienteEditorViewModel(this)
     layoutForm {

@@ -7,13 +7,15 @@ import br.com.engecopi.estoque.model.query.QEtiqueta
 import br.com.engecopi.estoque.model.query.QHistoricoEtiqueta
 import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
+import br.com.engecopi.framework.viewmodel.ICrudView
 import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.utils.lpad
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class HistoricoViewModel(view: IView): CrudViewModel<HistoricoEtiqueta, QHistoricoEtiqueta, HistoricoVo>(view) {
+class HistoricoViewModel(view: IHistoricoView): CrudViewModel<HistoricoEtiqueta, QHistoricoEtiqueta, HistoricoVo, IHistoricoView>
+                                                (view) {
   override fun update(bean: HistoricoVo) {
     bean.findEntity()
       ?.let {hist ->
@@ -78,3 +80,5 @@ class HistoricoVo: EntityVo<HistoricoEtiqueta>() {
     get() = findEntity()?.gtin
   var gtinOk: Boolean = false
 }
+
+interface IHistoricoView :ICrudView

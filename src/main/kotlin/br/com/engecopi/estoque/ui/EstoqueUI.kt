@@ -273,7 +273,7 @@ class MyUIServlet: VaadinServlet() {
       SLF4JBridgeHandler.install()
       //EtlVendasCliente.start()
       ETLPedidos.start()
-      val model = NFExpedicaoViewModel()
+      //val model = NFExpedicaoViewModel()
       //EtlVendasCliente.listenerInsert{}
     }
   }

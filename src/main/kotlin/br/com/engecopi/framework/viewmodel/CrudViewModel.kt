@@ -7,8 +7,8 @@ import io.ebean.typequery.TQRootBean
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-abstract class CrudViewModel<MODEL: BaseModel, Q: TQRootBean<MODEL, Q>, VO: EntityVo<MODEL>>(view: IView): ViewModel(
-  view) {
+abstract class CrudViewModel<MODEL: BaseModel, Q: TQRootBean<MODEL, Q>, VO: EntityVo<MODEL>, V : ICrudView>(view: V):
+  ViewModel<V>(view) {
   private var queryView: QueryView? = null
   private var pagedList: PagedList<MODEL>? = null
   var crudBean: VO? = null
@@ -31,6 +31,7 @@ abstract class CrudViewModel<MODEL: BaseModel, Q: TQRootBean<MODEL, Q>, VO: Enti
       update(bean)
       resultadoOK = true
     }
+    view.updateView()
   }
 
   fun add() = exec {
@@ -39,6 +40,7 @@ abstract class CrudViewModel<MODEL: BaseModel, Q: TQRootBean<MODEL, Q>, VO: Enti
       add(bean)
       resultadoOK = true
     }
+    view.updateView()
   }
 
   fun delete() = exec {
@@ -158,3 +160,7 @@ abstract class EntityVo<MODEL: BaseModel> {
 }
 
 data class QueryView(val offset: Int, val limit: Int, val filter: String, val sorts: List<Sort>)
+
+interface ICrudView: IView{
+  fun updateView()
+}

@@ -6,7 +6,7 @@ import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.framework.viewmodel.ViewModel
 import br.com.engecopi.saci.beans.NotaSaci
 
-class PainelGeralViewModel(view: IView): ViewModel(view) {
+class PainelGeralViewModel(view: IPainelGeralView): ViewModel<IPainelGeralView>(view) {
   init {
     RepositoryAvisoNotas.refresh()
   }
@@ -33,5 +33,10 @@ class PainelGeralViewModel(view: IView): ViewModel(view) {
 
   fun refresh() = exec {
     RepositoryAvisoNotas.refresh()
+    view.updateView()
   }
+}
+
+interface IPainelGeralView : IView{
+  fun updateView()
 }

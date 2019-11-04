@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.ui.views
 
 import br.com.engecopi.estoque.viewmodel.HistoricoViewModel
 import br.com.engecopi.estoque.viewmodel.HistoricoVo
+import br.com.engecopi.estoque.viewmodel.IHistoricoView
 import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.dateFormat
 import br.com.engecopi.framework.ui.view.timeFormat
@@ -9,7 +10,7 @@ import com.github.mvysny.karibudsl.v8.AutoView
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView
-class HistoricoView : CrudLayoutView<HistoricoVo, HistoricoViewModel>() {
+class HistoricoView : CrudLayoutView<HistoricoVo, HistoricoViewModel>(), IHistoricoView {
   init {
     viewModel = HistoricoViewModel(this)
     layoutForm {

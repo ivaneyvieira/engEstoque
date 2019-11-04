@@ -15,11 +15,12 @@ import br.com.engecopi.estoque.model.query.QProduto
 import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
+import br.com.engecopi.framework.viewmodel.ICrudView
 import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.utils.lpad
 import java.time.LocalDate
 
-class ProdutoViewModel(view: IView): CrudViewModel<Produto, QProduto, ProdutoVo>(view) {
+class ProdutoViewModel(view: IProdutoView): CrudViewModel<Produto, QProduto, ProdutoVo, IProdutoView>(view) {
   override fun newBean(): ProdutoVo {
     val bean = crudBean ?: ProdutoVo()
     return bean.apply {
@@ -173,3 +174,5 @@ class ProdutoVo: EntityVo<Produto>() {
         .toList()
     }
 }
+
+interface IProdutoView : ICrudView

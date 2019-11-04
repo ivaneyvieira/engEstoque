@@ -4,6 +4,7 @@ import br.com.engecopi.estoque.model.TipoMov
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.TipoNota
+import br.com.engecopi.estoque.viewmodel.IPainelGeralView
 import br.com.engecopi.estoque.viewmodel.PainelGeralViewModel
 import br.com.engecopi.framework.ui.view.LayoutView
 import br.com.engecopi.framework.ui.view.dateFormat
@@ -25,7 +26,7 @@ import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
 
 @AutoView("painel")
-class PainelGeralView: LayoutView<PainelGeralViewModel>() {
+class PainelGeralView: LayoutView<PainelGeralViewModel>(), IPainelGeralView {
   val saidaPendenteDataProvider = ListDataProvider<NotaSaci>(mutableListOf())
   val entradaPendenteDataProvider = ListDataProvider<NotaSaci>(mutableListOf())
   val saidaCanceladaDataProvider = ListDataProvider<NotaSaci>(mutableListOf())
@@ -87,10 +88,6 @@ class PainelGeralView: LayoutView<PainelGeralViewModel>() {
 
     entradaCanceladaDataProvider.items.clear()
     entradaCanceladaDataProvider.items.addAll(viewModel.listEntradaCancelada())
-  }
-
-  override fun updateModel() {
-    //Vazio
   }
 
   private fun CssLayout.gridNotaSaci(dataProvider: ListDataProvider<NotaSaci>, tipoMov : TipoMov): Grid<NotaSaci> {

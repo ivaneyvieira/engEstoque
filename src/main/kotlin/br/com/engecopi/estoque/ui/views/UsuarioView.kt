@@ -3,6 +3,7 @@ package br.com.engecopi.estoque.ui.views
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.NotaSerie
 import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.viewmodel.IUsuarioView
 import br.com.engecopi.estoque.viewmodel.UsuarioCrudVo
 import br.com.engecopi.estoque.viewmodel.UsuarioViewModel
 import br.com.engecopi.framework.ui.view.CrudLayoutView
@@ -29,7 +30,7 @@ import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
 
 @AutoView
-class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>() {
+class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>(), IUsuarioView {
   private val isAdmin = RegistryUserInfo.usuarioDefault.admin
 
   init {

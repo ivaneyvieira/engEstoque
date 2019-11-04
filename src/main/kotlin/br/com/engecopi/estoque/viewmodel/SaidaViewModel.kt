@@ -16,12 +16,12 @@ import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.ViewCodBarConferencia
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.framework.viewmodel.EViewModel
-import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.utils.mid
 import java.time.LocalDate
 import java.time.LocalTime
 
-class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE, CONFERIDA, abreviacaoDefault) {
+class SaidaViewModel(view: ISaidaView):
+  NotaViewModel<SaidaVo, ISaidaView>(view, SAIDA, ENTREGUE, CONFERIDA, abreviacaoDefault) {
   override fun newBean(): SaidaVo {
     return SaidaVo()
   }
@@ -106,3 +106,5 @@ class SaidaViewModel(view: IView): NotaViewModel<SaidaVo>(view, SAIDA, ENTREGUE,
 }
 
 class SaidaVo: NotaVo(SAIDA, abreviacaoDefault)
+
+interface ISaidaView: INotaView

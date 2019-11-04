@@ -6,9 +6,10 @@ import br.com.engecopi.estoque.model.query.QEtiqueta
 import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
-import br.com.engecopi.framework.viewmodel.IView
+import br.com.engecopi.framework.viewmodel.ICrudView
 
-class EtiquetaViewModel(view: IView): CrudViewModel<Etiqueta, QEtiqueta, EtiquetaVo>(view) {
+class EtiquetaViewModel(view: IEtiquetaView):
+  CrudViewModel<Etiqueta, QEtiqueta, EtiquetaVo, IEtiquetaView>(view) {
   override fun newBean(): EtiquetaVo {
     return EtiquetaVo()
   }
@@ -68,3 +69,5 @@ class EtiquetaVo: EntityVo<Etiqueta>() {
   var statusNota: StatusNota? = null
   var etiquetaDefault: Boolean = false
 }
+
+interface IEtiquetaView: ICrudView

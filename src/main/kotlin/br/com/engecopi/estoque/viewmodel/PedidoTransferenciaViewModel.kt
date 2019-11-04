@@ -8,7 +8,7 @@ import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.framework.viewmodel.ViewModel
 import br.com.engecopi.utils.localDate
 
-class PedidoTransferenciaViewModel(view: IView): ViewModel(view) {
+class PedidoTransferenciaViewModel(view: IPedidoTransferenciaView): ViewModel<IPedidoTransferenciaView>(view) {
   val pedidosTransferencia = mutableListOf<PedidoTransferenciaVo>()
 
   init {
@@ -22,6 +22,7 @@ class PedidoTransferenciaViewModel(view: IView): ViewModel(view) {
       .filter {pedido -> RegistryUserInfo.abreviacaoDefault == pedido.abreviacao}
       .map {PedidoTransferenciaVo(it)}
     pedidosTransferencia.addAll(notas)
+    view.updateView()
   }
 }
 
@@ -39,4 +40,8 @@ class PedidoTransferenciaVo(val pedidoSaci: PedidoSaci) {
       else "${pedidoSaci.nfno}/${pedidoSaci.nfse}"
     }
   val status = pedidoSaci.status
+}
+
+interface IPedidoTransferenciaView : IView{
+  fun updateView()
 }

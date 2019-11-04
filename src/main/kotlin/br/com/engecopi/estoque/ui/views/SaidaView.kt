@@ -7,12 +7,14 @@ import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.NotaItens
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.viewmodel.EntradaVo
+import br.com.engecopi.estoque.viewmodel.ISaidaView
 import br.com.engecopi.estoque.viewmodel.ProdutoVO
 import br.com.engecopi.estoque.viewmodel.SaidaViewModel
 import br.com.engecopi.estoque.viewmodel.SaidaVo
@@ -82,9 +84,10 @@ import org.vaadin.grideditorcolumnfix.GridEditorColumnFix
 import org.vaadin.patrik.FastNavigation
 import org.vaadin.viritin.fields.IntegerField
 import java.time.LocalDateTime
+import javax.ws.rs.client.Entity.form
 
 @AutoView("")
-class SaidaView: NotaView<SaidaVo, SaidaViewModel>() {
+class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
   var formCodBar: PnlCodigoBarras? = null
   override fun enter(event: ViewChangeEvent) {
     super.enter(event)

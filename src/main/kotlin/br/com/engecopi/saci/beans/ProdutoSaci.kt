@@ -8,7 +8,7 @@ class ProdutoSaci(val prdno: String, val grade: String) {
   val dataCadastro = prd?.dataCadastro
 
   companion object {
-    val produtos = mutableListOf<Produto>()
+    private val produtos = mutableListOf<Produto>()
 
     fun updateProduto() {
       produtos.clear()

@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.ui.views
 
 import br.com.engecopi.estoque.model.etlSaci.ETLPedidos
 import br.com.engecopi.estoque.ui.EstoqueUI
+import br.com.engecopi.estoque.viewmodel.IPedidoTransferenciaView
 import br.com.engecopi.estoque.viewmodel.PedidoTransferenciaViewModel
 import br.com.engecopi.estoque.viewmodel.PedidoTransferenciaVo
 import br.com.engecopi.estoque.viewmodel.SaidaVo
@@ -24,7 +25,7 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView("pedidosTransf")
-class PedidoTransferenciaView: LayoutView<PedidoTransferenciaViewModel>() {
+class PedidoTransferenciaView: LayoutView<PedidoTransferenciaViewModel>(), IPedidoTransferenciaView {
   private var gridPedido: Grid<PedidoTransferenciaVo>? = null
 
   init {
@@ -81,9 +82,5 @@ class PedidoTransferenciaView: LayoutView<PedidoTransferenciaViewModel>() {
     dataProvider?.items?.clear()
     dataProvider?.items?.addAll(viewModel.pedidosTransferencia)
     gridPedido?.refresh()
-  }
-
-  override fun updateModel() {
-    //Vazio
   }
 }

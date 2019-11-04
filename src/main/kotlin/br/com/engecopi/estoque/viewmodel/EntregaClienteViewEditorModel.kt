@@ -8,9 +8,10 @@ import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.query.QItemNota
-import br.com.engecopi.framework.viewmodel.IView
 
-class EntregaClienteEditorViewModel(view: IView): NotaViewModel<EntregaClienteVo>(view, SAIDA, ENTREGUE, ENTREGUE, "") {
+class EntregaClienteEditorViewModel(view: IEntregaClienteEditorView):
+  NotaViewModel<EntregaClienteVo, IEntregaClienteEditorView>(view, SAIDA,
+                                                             ENTREGUE, ENTREGUE, "") {
   override fun newBean(): EntregaClienteVo {
     return EntregaClienteVo()
   }
@@ -34,3 +35,4 @@ class EntregaClienteEditorViewModel(view: IView): NotaViewModel<EntregaClienteVo
   }
 }
 
+interface IEntregaClienteEditorView: INotaView

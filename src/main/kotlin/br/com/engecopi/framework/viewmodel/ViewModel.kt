@@ -2,18 +2,13 @@ package br.com.engecopi.framework.viewmodel
 
 import br.com.engecopi.framework.model.Transaction
 
-abstract class ViewModel(val view: IView) {
+abstract class  ViewModel<V: IView>(val view: V) {
   private var inTransaction = false
 
   private fun updateView(exception: EViewModel? = null) {
     exception?.message?.let {message ->
       view.showError(message)
     }
-    view.updateView()
-  }
-
-  private fun updateModel() {
-    view.updateModel()
   }
 
   @Throws(EViewModel::class)
@@ -22,9 +17,7 @@ abstract class ViewModel(val view: IView) {
       if(inTransaction) block()
       else transaction {
         inTransaction = true
-        updateModel()
         block()
-        updateView()
         inTransaction = false
       }
     } catch(e: EViewModel) {
@@ -41,7 +34,6 @@ abstract class ViewModel(val view: IView) {
     else transaction {
       try {
         inTransaction = true
-        updateModel()
         ret = block()
         updateView()
         inTransaction = false
@@ -86,8 +78,6 @@ abstract class ViewModel(val view: IView) {
 open class EViewModel(msg: String): Exception(msg)
 
 interface IView {
-  fun updateView()
-  fun updateModel()
   fun showWarning(msg: String)
   fun showError(msg: String)
   fun showInfo(msg: String)

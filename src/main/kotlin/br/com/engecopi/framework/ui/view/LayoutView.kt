@@ -63,7 +63,7 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 import kotlin.streams.toList
 
-abstract class LayoutView<V: ViewModel>: VerticalLayout(), View, IView {
+abstract class LayoutView<V: ViewModel<*>>: VerticalLayout(), View {
   lateinit var viewModel: V
 
   init {
@@ -77,22 +77,22 @@ abstract class LayoutView<V: ViewModel>: VerticalLayout(), View, IView {
   }
 
   override fun enter(event: ViewChangeEvent) {
-    if(::viewModel.isInitialized) updateView()
+    //if(::viewModel.isInitialized) updateView()
   }
 
   fun <T> Grid<T>.actionSelected(msgErro: String = "Selecione um item", action: (T) -> Unit) {
     this.selectedItems.firstOrNull()?.let {item -> action(item)} ?: showWarning(msgErro)
   }
 
-  override fun showWarning(msg: String) {
+  fun showWarning(msg: String) {
     if(msg.isNotBlank()) MessageDialog.warning(message = msg)
   }
 
-  override fun showError(msg: String) {
+  fun showError(msg: String) {
     if(msg.isNotBlank()) MessageDialog.error(message = msg)
   }
 
-  override fun showInfo(msg: String) {
+  fun showInfo(msg: String) {
     if(msg.isNotBlank()) MessageDialog.info(message = msg)
   }
 

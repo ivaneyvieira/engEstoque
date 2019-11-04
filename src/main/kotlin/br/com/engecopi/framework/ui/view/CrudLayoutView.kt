@@ -6,6 +6,7 @@ import br.com.engecopi.framework.ui.view.CrudOperation.READ
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
 import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
+import br.com.engecopi.framework.viewmodel.ICrudView
 import br.com.engecopi.framework.viewmodel.QueryView
 import br.com.engecopi.framework.viewmodel.Sort
 import com.github.mvysny.karibudsl.v8.VaadinDsl
@@ -48,7 +49,7 @@ import kotlin.collections.set
 import kotlin.reflect.KProperty1
 import kotlin.streams.toList
 
-abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C>>: LayoutView<V>() {
+abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: LayoutView<V>(), ICrudView {
   var isAddClose = true
   var isStillShow = false
   val headerLayout = HorizontalLayout()
@@ -422,10 +423,6 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C>>: Layout
         ?.value = bean
       // falta fazer o scrool para a linha
     }
-  }
-
-  override fun updateModel() {
-    //Vazio
   }
 }
 

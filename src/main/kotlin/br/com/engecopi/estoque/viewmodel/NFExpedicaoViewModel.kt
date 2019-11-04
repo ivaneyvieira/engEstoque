@@ -22,19 +22,17 @@ import br.com.engecopi.estoque.model.ViewProdutoLoc
 import br.com.engecopi.estoque.model.dtos.VendasCaixa
 import br.com.engecopi.estoque.model.query.QViewNotaExpedicao
 import br.com.engecopi.estoque.ui.log
-import br.com.engecopi.framework.ui.view.ViewEmpty
 import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
-import br.com.engecopi.framework.viewmodel.IView
+import br.com.engecopi.framework.viewmodel.ICrudView
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class NFExpedicaoViewModel(view: IView = ViewEmpty()): CrudViewModel<ViewNotaExpedicao, QViewNotaExpedicao,
-  NFExpedicaoVo>
-                                                       (view) {
+class NFExpedicaoViewModel(view: INFExpedicaoView)
+  : CrudViewModel<ViewNotaExpedicao, QViewNotaExpedicao, NFExpedicaoVo, INFExpedicaoView>(view) {
   override fun newBean(): NFExpedicaoVo {
     return NFExpedicaoVo()
   }
@@ -318,3 +316,5 @@ data class ItemExpedicao(val notaProdutoSaci: NotaProdutoSaci, val saldo: Int, v
 
   fun isSave() = notaProdutoSaci.isSave()
 }
+
+interface INFExpedicaoView: ICrudView

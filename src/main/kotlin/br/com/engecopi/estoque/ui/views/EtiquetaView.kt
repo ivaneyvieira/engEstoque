@@ -4,6 +4,7 @@ import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.viewmodel.EtiquetaViewModel
 import br.com.engecopi.estoque.viewmodel.EtiquetaVo
+import br.com.engecopi.estoque.viewmodel.IEtiquetaView
 import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.default
 import br.com.engecopi.framework.ui.view.row
@@ -27,7 +28,7 @@ import com.vaadin.ui.TextArea
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView
-class EtiquetaView: CrudLayoutView<EtiquetaVo, EtiquetaViewModel>() {
+class EtiquetaView: CrudLayoutView<EtiquetaVo, EtiquetaViewModel>(), IEtiquetaView {
   private lateinit var template: TextArea
 
   init {

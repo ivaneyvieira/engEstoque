@@ -14,10 +14,11 @@ import br.com.engecopi.estoque.model.ViewCodBarCliente
 import br.com.engecopi.estoque.model.ViewCodBarConferencia
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.framework.viewmodel.EViewModel
-import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.utils.mid
 
-class EntregaClienteViewModel(view: IView): NotaViewModel<EntregaClienteVo>(view, SAIDA, ENTREGUE, CONFERIDA, "") {
+class EntregaClienteViewModel(view: IEntregaClienteView):
+  NotaViewModel<EntregaClienteVo, IEntregaClienteView>(view, SAIDA, ENTREGUE,
+                                                       CONFERIDA, "") {
   override fun newBean(): EntregaClienteVo {
     return EntregaClienteVo()
   }
@@ -77,3 +78,5 @@ class EntregaClienteViewModel(view: IView): NotaViewModel<EntregaClienteVo>(view
 }
 
 class EntregaClienteVo: NotaVo(SAIDA, "")
+
+interface IEntregaClienteView: INotaView

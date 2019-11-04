@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.ui.views
 
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.viewmodel.ILabelView
 import br.com.engecopi.estoque.viewmodel.LabelViewModel
 import br.com.engecopi.framework.ui.view.LayoutView
 import br.com.engecopi.framework.ui.view.default
@@ -14,6 +15,7 @@ import com.github.mvysny.karibudsl.v8.alignment
 import com.github.mvysny.karibudsl.v8.button
 import com.github.mvysny.karibudsl.v8.comboBox
 import com.github.mvysny.karibudsl.v8.expandRatio
+import com.github.mvysny.karibudsl.v8.getAll
 import com.github.mvysny.karibudsl.v8.grid
 import com.github.mvysny.karibudsl.v8.horizontalLayout
 import com.github.mvysny.karibudsl.v8.isExpanded
@@ -31,7 +33,7 @@ import com.vaadin.ui.renderers.TextRenderer
 import org.vaadin.viritin.fields.IntegerField
 
 @AutoView
-class LabelView: LayoutView<LabelViewModel>() {
+class LabelView: LayoutView<LabelViewModel>(), ILabelView {
   private lateinit var gridProduto: Grid<Produto>
   private lateinit var cmbTipoFiltro: ComboBox<FiltroView>
   private lateinit var pnlFiltro: HorizontalLayout
@@ -120,15 +122,12 @@ class LabelView: LayoutView<LabelViewModel>() {
     setFiltro(filtroCodigoGrade)
   }
 
-  override fun updateView() {
-    viewModel.run {
-      gridProduto.setItems(listaProduto)
-    }
-  }
 
-  override fun updateModel() {
-    viewModel.run { }
-  }
+  override var listaProduto
+    get() = gridProduto.dataProvider.getAll()
+    set(value) {
+      gridProduto.setItems(value)
+    }
 
   private fun setFiltro(pnlFIltro: FiltroView) {
     cmbTipoFiltro.value = pnlFIltro
@@ -144,7 +143,7 @@ abstract class FiltroView(val viewModel: LabelViewModel, val descricao: String):
     isMargin = false
   }
 
-  abstract fun processaFiltro(): List<Produto>
+  abstract fun processaFiltro()
 }
 
 class FiltroFaixaCodigo(viewModel: LabelViewModel): FiltroView(viewModel, "Faixa de Código") {
@@ -279,9 +278,9 @@ class FiltroCodigoGrade(viewModel: LabelViewModel): FiltroView(viewModel, "Códi
             val grades = viewModel.pesquisaGrades(it.value)
             edtGrade.setItems(grades)
             edtGrade.value = null
-            val produtos = processaFiltro()
-            // edtCodigo.value = ""
-            if(produtos.isNotEmpty()) edtCodigo.selectAll()
+             processaFiltro()
+            val listaProduto = viewModel.view.listaProduto
+            if(listaProduto.isNotEmpty()) edtCodigo.selectAll()
           }
         }
       }

@@ -4,9 +4,10 @@ import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.StatusNota.RECEBIDO
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.query.QItemNota
-import br.com.engecopi.framework.viewmodel.IView
 
-class EntradaViewModel(view: IView): NotaViewModel<EntradaVo>(view, ENTRADA, RECEBIDO, RECEBIDO, abreviacaoDefault) {
+class EntradaViewModel(view: IEntradaView): NotaViewModel<EntradaVo, IEntradaView>(view, ENTRADA, RECEBIDO,
+                                                                                         RECEBIDO,
+                                                                                         abreviacaoDefault) {
   override fun newBean(): EntradaVo {
     return EntradaVo()
   }
@@ -19,3 +20,6 @@ class EntradaViewModel(view: IView): NotaViewModel<EntradaVo>(view, ENTRADA, REC
 }
 
 class EntradaVo: NotaVo(ENTRADA, abreviacaoDefault)
+
+interface IEntradaView: INotaView {
+}

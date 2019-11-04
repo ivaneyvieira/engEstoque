@@ -3,6 +3,7 @@ package br.com.engecopi.estoque.ui.views
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
 import br.com.engecopi.estoque.model.TipoNota
+import br.com.engecopi.estoque.viewmodel.INFExpedicaoView
 import br.com.engecopi.estoque.viewmodel.ItemExpedicao
 import br.com.engecopi.estoque.viewmodel.LocalizacaoNota
 import br.com.engecopi.estoque.viewmodel.NFExpedicaoViewModel
@@ -46,7 +47,7 @@ import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
 
 @AutoView("nf_expedicao")
-class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>() {
+class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), INFExpedicaoView {
   var formCodBar: PnlCodigoBarras? = null
   private val isAdmin
     get() = RegistryUserInfo.userDefaultIsAdmin

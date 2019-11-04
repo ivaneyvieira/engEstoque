@@ -5,6 +5,7 @@ import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.TipoNota
+import br.com.engecopi.estoque.viewmodel.IProdutoView
 import br.com.engecopi.estoque.viewmodel.ProdutoViewModel
 import br.com.engecopi.estoque.viewmodel.ProdutoVo
 import br.com.engecopi.framework.ui.view.CrudLayoutView
@@ -40,7 +41,7 @@ import com.vaadin.ui.themes.ValoTheme
 import java.text.DecimalFormat
 
 @AutoView
-class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>() {
+class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
   init {
     viewModel = ProdutoViewModel(this)
     isAddClose = false
