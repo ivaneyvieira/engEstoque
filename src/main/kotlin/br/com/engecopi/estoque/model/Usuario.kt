@@ -46,7 +46,7 @@ class Usuario: BaseModel() {
   val isEstoqueExpedicao
     get() = !admin && expedicao && estoque
   val isEstoqueVendaFutura
-    get() = !admin && expedicao && estoque
+    get() = !admin && entregaFutura && estoque
 
   private fun mapNotaSerie(idStr: String): NotaSerie? {
     val id = idStr.trim().toLongOrNull() ?: return null

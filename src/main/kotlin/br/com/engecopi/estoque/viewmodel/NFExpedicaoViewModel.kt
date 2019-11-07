@@ -16,6 +16,7 @@ import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.TipoNota
+import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.model.ViewNotaExpedicao
 import br.com.engecopi.estoque.model.ViewProdutoLoc
@@ -103,8 +104,10 @@ class NFExpedicaoViewModel(view: INFExpedicaoView)
 
   fun processaKey(notasSaci: List<ItemExpedicao>) = execValue {
     if(notasSaci.all {it.isSave()}) throw EViewModel("Todos os itens dessa nota já estão lançados")
-    return@execValue if(notasSaci.isNotEmpty()) processaNota(notasSaci)
+    val ret = if(notasSaci.isNotEmpty()) processaNota(notasSaci)
     else throw EChaveNaoEncontrada()
+    view.updateView()
+    ret
   }
 
   private fun processaNota(itensExpedicao: List<ItemExpedicao>): Nota? {
@@ -160,11 +163,13 @@ class NFExpedicaoViewModel(view: INFExpedicaoView)
       it.impresso = !(it.abreviacao?.expedicao ?: false)
       it.update()
     }
-    print.print(etiqueta.template)
+    val ret = print.print(etiqueta.template)
+    view.updateView()
+    ret
   }
 
   fun imprimir(nota: Nota?) = execList<PacoteImpressao> {
-    if(nota == null) emptyList()
+    val ret = if(nota == null) emptyList()
     else {
       val id = nota.id
       val notaRef = Nota.byId(id) ?: return@execList emptyList()
@@ -188,6 +193,8 @@ class NFExpedicaoViewModel(view: INFExpedicaoView)
 
       impressaoCD + impressaoEXP
     }
+    view.updateView()
+    ret
   }
 
   private fun imprimeItens(status: StatusNota, itens: List<ItemNota>): String {
@@ -205,11 +212,13 @@ class NFExpedicaoViewModel(view: INFExpedicaoView)
       .impresso.eq(false)
       .status.eq(INCLUIDA)
       .findList()
-    etiquetas.joinToString(separator = "\n") {etiqueta ->
+    val ret = etiquetas.joinToString(separator = "\n") {etiqueta ->
       itens.map {item -> imprimir(item, etiqueta)}
         .distinct()
         .joinToString(separator = "\n")
     }
+    view.updateView()
+    ret
   }
 
   fun findNotaSaidaKey(key: String) = execList {
@@ -222,9 +231,11 @@ class NFExpedicaoViewModel(view: INFExpedicaoView)
         else                              -> true
       }
     }
-    when {
-      notaSaci.isEmpty() -> throw EChaveNaoEncontrada()
-      else               -> if(usuarioDefault.isEstoqueExpedicao) {
+    val numero = notaSaci.firstOrNull()?.numero ?: ""
+    val ret = when {
+      notaSaci.isEmpty()                           -> throw EChaveNaoEncontrada()
+      notaSaci.firstOrNull()?.tipoNota() == VENDAF -> throw ENotaEntregaFutura(numero)
+      else                                         -> if(usuarioDefault.isEstoqueExpedicao) {
         val nota = notaSaci.firstOrNull() ?: throw EChaveNaoEncontrada()
         val notaSerie = nota.notaSerie() ?: throw EChaveNaoEncontrada()
         val tipo = notaSerie.tipoNota
@@ -236,6 +247,8 @@ class NFExpedicaoViewModel(view: INFExpedicaoView)
       }
       else notaSaci
     }
+    view.updateView()
+    ret
   }
 
   fun NotaProdutoSaci.notaSerie(): NotaSerie? {

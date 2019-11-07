@@ -15,12 +15,15 @@ import br.com.engecopi.estoque.model.TipoNota.OUTROS_S
 import br.com.engecopi.estoque.model.TipoNota.PEDIDO_S
 import br.com.engecopi.estoque.model.TipoNota.TRANSFERENCIA_S
 import br.com.engecopi.estoque.model.TipoNota.VENDA
+import br.com.engecopi.estoque.model.TipoNota.VENDAF
+import br.com.engecopi.estoque.model.dtos.EntregaFutura
 import br.com.engecopi.estoque.model.finder.NotaFinder
 import br.com.engecopi.estoque.model.query.QNota
 import br.com.engecopi.framework.model.BaseModel
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.saci.saci
 import br.com.engecopi.utils.localDate
+import io.ebean.DB
 import io.ebean.annotation.Aggregation
 import io.ebean.annotation.Cache
 import io.ebean.annotation.CacheQueryTuning
@@ -125,6 +128,15 @@ class Nota: BaseModel() {
       val loja = RegistryUserInfo.lojaDefault
       return if(numero.isNullOrBlank()) null
       else Nota.where().tipoMov.eq(ENTRADA).numero.eq(numero).loja.id.eq(loja.id).findList().firstOrNull()
+    }
+
+    fun findNotaFutura(key: String): String? {
+      val sql = "select * from t_entrega_futura where nfekey_entrega = ? AND nfekey_entrega <> ''"
+      return DB.findDto(EntregaFutura::class.java, sql)
+        .setParameter(1, key)
+        .findList()
+        .map {it.numero_venda}
+        .firstOrNull()
     }
 
     fun findSaida(numero: String?): Nota? {
@@ -272,7 +284,8 @@ data class NotaSerie(val id: Long, val tipoNota: TipoNota) {
                         NotaSerie(4, ACERTO_S),
                         NotaSerie(5, PEDIDO_S),
                         NotaSerie(6, DEV_FOR),
-                        NotaSerie(7, OUTROS_S))
+                        NotaSerie(7, VENDAF),
+                        NotaSerie(6, OUTROS_S))
   }
 }
 

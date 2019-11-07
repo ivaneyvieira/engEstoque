@@ -10,6 +10,7 @@ import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
+import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.ViewCodBarCliente
 import br.com.engecopi.estoque.model.ViewCodBarConferencia
 import br.com.engecopi.estoque.model.query.QItemNota
@@ -24,6 +25,10 @@ class EntregaFututaViewModel(view: IEntregaFututaView):
                                                      CONFERIDA, "") {
   override fun newBean(): EntregaFututaVo {
     return EntregaFututaVo()
+  }
+
+  override fun QItemNota.filtroTipoNota(): QItemNota {
+    return this.nota.tipoNota.eq(VENDAF)
   }
 
   override fun QItemNota.filtroStatus(): QItemNota {
@@ -49,11 +54,12 @@ class EntregaFututaViewModel(view: IEntregaFututaView):
         item.save()
       }
     }
-    return@execList itens
+    view.updateView()
+    itens
   }
 
   private fun findItens(key: String): List<ItemNota> {
-    val itemUnico = processaKeyBarcodeCliente(key)
+    val itemUnico = processaKeyBarcodeNotaEntrega(key)
     val itens = if(itemUnico.isEmpty()) {
       val itensConferencia = ViewCodBarConferencia.findKeyItemNota(key)
       if(itensConferencia.isEmpty()) ViewCodBarCliente.findKeyItemNota(key, CONFERIDA)
@@ -63,10 +69,8 @@ class EntregaFututaViewModel(view: IEntregaFututaView):
     return itens.filter {it.status == CONFERIDA}
   }
 
-  private fun processaKeyBarcodeCliente(key: String): List<ItemNota> {
-    val loja = if(key.isNotEmpty()) key.mid(0, 1).toIntOrNull() ?: return emptyList() else return emptyList()
-    val numero = if(key.length > 1) key.mid(1) else return emptyList()
-    if(loja != RegistryUserInfo.lojaDefault.numero) return emptyList()
+  private fun processaKeyBarcodeNotaEntrega(key: String): List<ItemNota> {
+    val numero = Nota.findNotaFutura(key) ?: return emptyList()
     return Nota.findSaida(numero)
       ?.itensNota()
       .orEmpty()

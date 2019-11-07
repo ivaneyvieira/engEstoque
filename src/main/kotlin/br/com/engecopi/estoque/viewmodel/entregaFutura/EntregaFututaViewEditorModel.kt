@@ -7,6 +7,7 @@ import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
+import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.viewmodel.INotaView
 import br.com.engecopi.estoque.viewmodel.NotaViewModel
@@ -16,6 +17,10 @@ class EntregaFututaEditorViewModel(view: IEntregaFututaEditorView):
                                                            ENTREGUE, ENTREGUE, "") {
   override fun newBean(): EntregaFututaVo {
     return EntregaFututaVo()
+  }
+
+  override fun QItemNota.filtroTipoNota(): QItemNota {
+    return this.nota.tipoNota.eq(VENDAF)
   }
 
   override fun QItemNota.filtroStatus(): QItemNota {

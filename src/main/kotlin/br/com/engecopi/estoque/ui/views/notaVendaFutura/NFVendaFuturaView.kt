@@ -84,7 +84,7 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
         }
       }
     }
-    form("Nota Fiscal (Expedição)")
+    form("Nota Fiscal (Entrega Futura)")
     gridCrud {
       addCustomToolBarComponent(btnImprimeTudo())
       formCodBar = formCodbar()

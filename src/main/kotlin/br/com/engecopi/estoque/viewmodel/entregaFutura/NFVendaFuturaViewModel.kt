@@ -16,6 +16,7 @@ import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.TipoNota
+import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.model.ViewNotaFutura
 import br.com.engecopi.estoque.model.ViewProdutoLoc
@@ -23,6 +24,7 @@ import br.com.engecopi.estoque.model.dtos.VendasCaixa
 import br.com.engecopi.estoque.model.query.QViewNotaFutura
 import br.com.engecopi.estoque.ui.log
 import br.com.engecopi.estoque.viewmodel.EChaveNaoEncontrada
+import br.com.engecopi.estoque.viewmodel.ENotaNaoEntregaFutura
 import br.com.engecopi.estoque.viewmodel.PacoteImpressao
 import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EViewModel
@@ -87,28 +89,30 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView)
     val bean = this
     return NFVendaFuturaVo()
       .apply {
-      numero = bean.numero
-      tipoMov = bean.tipoMov
-      tipoNota = bean.tipoNota
-      rota = bean.rota
-      fornecedor = bean.fornecedor
-      cliente = bean.cliente
-      data = bean.data
-      dataEmissao = bean.dataEmissao
-      lancamento = bean.lancamento
-      hora = bean.hora
-      observacao = bean.observacao
-      loja = bean.loja
-      sequencia = bean.sequencia
-      usuario = bean.usuario
-      abreviacao = bean.abreviacao
-    }
+        numero = bean.numero
+        tipoMov = bean.tipoMov
+        tipoNota = bean.tipoNota
+        rota = bean.rota
+        fornecedor = bean.fornecedor
+        cliente = bean.cliente
+        data = bean.data
+        dataEmissao = bean.dataEmissao
+        lancamento = bean.lancamento
+        hora = bean.hora
+        observacao = bean.observacao
+        loja = bean.loja
+        sequencia = bean.sequencia
+        usuario = bean.usuario
+        abreviacao = bean.abreviacao
+      }
   }
 
   fun processaKey(notasSaci: List<ItemVendaFutura>) = execValue {
     if(notasSaci.all {it.isSave()}) throw EViewModel("Todos os itens dessa nota já estão lançados")
-    return@execValue if(notasSaci.isNotEmpty()) processaNota(notasSaci)
+    val ret = if(notasSaci.isNotEmpty()) processaNota(notasSaci)
     else throw EChaveNaoEncontrada()
+    view.updateView()
+    ret
   }
 
   private fun processaNota(itensVendaFutura: List<ItemVendaFutura>): Nota? {
@@ -129,7 +133,6 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView)
         }
       }
     nota ?: throw EViewModel("Nota não encontrada")
-    
     val itens = itensVendaFutura.mapNotNull {itemVendaFutura ->
       val notaSaci = itemVendaFutura.notaProdutoSaci
       val item = ItemNota.find(notaSaci) ?: ItemNota.createItemNota(notaSaci, nota, itemVendaFutura.abrevicao)
@@ -165,11 +168,13 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView)
       it.impresso = !(it.abreviacao?.expedicao ?: false)
       it.update()
     }
-    print.print(etiqueta.template)
+    val ret = print.print(etiqueta.template)
+    view.updateView()
+    ret
   }
 
   fun imprimir(nota: Nota?) = execList<PacoteImpressao> {
-    if(nota == null) emptyList()
+    val ret = if(nota == null) emptyList()
     else {
       val id = nota.id
       val notaRef = Nota.byId(id) ?: return@execList emptyList()
@@ -193,6 +198,8 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView)
 
       impressaoCD + impressaoEXP
     }
+    view.updateView()
+    ret
   }
 
   private fun imprimeItens(status: StatusNota, itens: List<ItemNota>): String {
@@ -210,11 +217,13 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView)
       .impresso.eq(false)
       .status.eq(INCLUIDA)
       .findList()
-    etiquetas.joinToString(separator = "\n") {etiqueta ->
+    val ret = etiquetas.joinToString(separator = "\n") {etiqueta ->
       itens.map {item -> imprimir(item, etiqueta)}
         .distinct()
         .joinToString(separator = "\n")
     }
+    view.updateView()
+    ret
   }
 
   fun findNotaSaidaKey(key: String) = execList {
@@ -227,9 +236,11 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView)
         else                                -> true
       }
     }
-    when {
-      notaSaci.isEmpty() -> throw EChaveNaoEncontrada()
-      else               -> if(usuarioDefault.isEstoqueVendaFutura) {
+    val numero = notaSaci.firstOrNull()?.numero ?: ""
+    val ret = when {
+      notaSaci.isEmpty()                           -> throw EChaveNaoEncontrada()
+      notaSaci.firstOrNull()?.tipoNota() != VENDAF -> throw ENotaNaoEntregaFutura(numero)
+      else                                         -> if(usuarioDefault.isEstoqueVendaFutura) {
         val nota = notaSaci.firstOrNull() ?: throw EChaveNaoEncontrada()
         val notaSerie = nota.notaSerie() ?: throw EChaveNaoEncontrada()
         val tipo = notaSerie.tipoNota
@@ -241,6 +252,8 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView)
       }
       else notaSaci
     }
+    view.updateView()
+    ret
   }
 
   fun NotaProdutoSaci.notaSerie(): NotaSerie? {

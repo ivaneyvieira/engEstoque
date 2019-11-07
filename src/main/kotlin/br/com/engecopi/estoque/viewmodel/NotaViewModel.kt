@@ -38,19 +38,19 @@ import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.ICrudView
-import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.utils.localDate
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-abstract class NotaViewModel<VO: NotaVo, V : INotaView>(view: V,
-                                         val tipo: TipoMov,
-                                         private val statusDefault: StatusNota,
-                                         private val statusImpressao: StatusNota,
-                                         private val abreviacaoNota: String): CrudViewModel<ItemNota, QItemNota, VO, V>
-                                                                                                                                     (view) {
+abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
+                                                       val tipo: TipoMov,
+                                                       private val statusDefault: StatusNota,
+                                                       private val statusImpressao: StatusNota,
+                                                       private val abreviacaoNota: String):
+  CrudViewModel<ItemNota, QItemNota, VO, V>
+  (view) {
   override fun update(bean: VO) {
     if(bean.localizacao?.localizacao.isNullOrBlank())
       throw EViewModel("Não foi especificado a localização do item")
@@ -207,6 +207,7 @@ abstract class NotaViewModel<VO: NotaVo, V : INotaView>(view: V,
         .fetch("produto.vproduto")
         .fetch("produto.viewProdutoLoc")
         .nota.tipoMov.eq(tipo)
+        .filtroTipoNota()
         .filtroStatus()
         .nota.loja.id.eq(lojaDefault.id)
         .let {query ->
@@ -279,12 +280,15 @@ abstract class NotaViewModel<VO: NotaVo, V : INotaView>(view: V,
       it.impresso = true
       it.update()
     }
-    print.print(etiqueta.template)
+
+    val ret = print.print(etiqueta.template)
+    view.updateView()
+    ret
   }
 
   fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean, groupByHour: Boolean) = execString {
     itemNota ?: return@execString ""
-    if(notaCompleta) {
+    val ret = if(notaCompleta) {
       val itens = ItemNota.where()
         .nota.eq(itemNota.nota)
         .status.eq(itemNota.status)
@@ -297,6 +301,8 @@ abstract class NotaViewModel<VO: NotaVo, V : INotaView>(view: V,
     }
     else
       imprimir(listOf(itemNota))
+    view.updateView()
+    ret
   }
 
   fun imprimir() = execString {
@@ -307,15 +313,19 @@ abstract class NotaViewModel<VO: NotaVo, V : INotaView>(view: V,
       .nota.loja.numero.asc()
       .nota.numero.asc()
       .findList()
-    imprimir(itens)
+    val ret = imprimir(itens)
+    view.updateView()
+    ret
   }
 
   fun imprimir(itens: List<ItemNota>) = execString {
     val etiquetas = Etiqueta.findByStatus(statusImpressao)
 
-    etiquetas.joinToString(separator = "\n") {etiqueta ->
+    val ret = etiquetas.joinToString(separator = "\n") {etiqueta ->
       imprimir(itens, etiqueta)
     }
+    view.updateView()
+    ret
   }
 
   private fun imprimir(itens: List<ItemNota>, etiqueta: Etiqueta): String {
@@ -327,8 +337,11 @@ abstract class NotaViewModel<VO: NotaVo, V : INotaView>(view: V,
 
   abstract fun QItemNota.filtroStatus(): QItemNota
 
+  abstract fun QItemNota.filtroTipoNota(): QItemNota
+
   fun desfazOperacao(item: ItemNota?) = exec {
     item?.desfazerOperacao()
+    view.updateView()
   }
 }
 
@@ -558,6 +571,5 @@ enum class ETipoGrupo(val ordem: Int) {
   GREEN(4)
 }
 
-interface INotaView : ICrudView {
-
+interface INotaView: ICrudView {
 }

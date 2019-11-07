@@ -13,6 +13,7 @@ import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
+import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.ViewCodBarConferencia
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.framework.viewmodel.EViewModel
@@ -24,6 +25,10 @@ class SaidaViewModel(view: ISaidaView):
   NotaViewModel<SaidaVo, ISaidaView>(view, SAIDA, ENTREGUE, CONFERIDA, abreviacaoDefault) {
   override fun newBean(): SaidaVo {
     return SaidaVo()
+  }
+
+  override fun QItemNota.filtroTipoNota(): QItemNota {
+    return this
   }
 
   override fun QItemNota.filtroStatus(): QItemNota {
@@ -38,8 +43,10 @@ class SaidaViewModel(view: ISaidaView):
 
   fun processaKey(key: String) = execValue {
     val notaItens = processaKeyNumeroNota(key)
-    if(notaItens.vazio) processaKeyBarcodeConferencia(key)
+    val ret = if(notaItens.vazio) processaKeyBarcodeConferencia(key)
     else notaItens
+    view.updateView()
+    ret
   }
 
   private fun processaKeyNumero(numeroNota: String): NotaItens {
@@ -68,8 +75,10 @@ class SaidaViewModel(view: ISaidaView):
     else return NotaItens.VAZIO
     if(loja != lojaDefault.numero) return NotaItens.VAZIO
     val numero = if(key.length > 1) key.mid(1) else return NotaItens.VAZIO
-
-    return processaKeyNumero(numero)
+    val notaItem = processaKeyNumero(numero)
+    return if(notaItem.nota?.tipoNota == VENDAF)
+      NotaItens.VAZIO
+    else notaItem
   }
 
   fun confirmaProdutos(itens: List<ProdutoVO>, situacao: StatusNota) = execList<ItemNota> {
@@ -96,6 +105,7 @@ class SaidaViewModel(view: ISaidaView):
         else showWarning("A quantidade do produto ${produto?.codigo} não pode ser maior que $quantidade")
       }
     }
+    view.updateView()
     listMultable
   }
 

@@ -229,7 +229,6 @@ class NotaPrint(val item: ItemNota) {
 enum class StatusNota(val descricao: String, val tipoMov: TipoMov, val multiplicador: Int) {
   RECEBIDO("Recebido", ENTRADA, 1),
   INCLUIDA("Incluída", SAIDA, 0),
-  INCLUIDAF("Futura", SAIDA, -1),
   CONFERIDA("Conferida", SAIDA, -1),
   ENTREGUE("Entregue", SAIDA, -1),
   ENT_LOJA("Entregue na Loja", SAIDA, 0),

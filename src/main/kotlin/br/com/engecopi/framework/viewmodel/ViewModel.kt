@@ -5,7 +5,7 @@ import br.com.engecopi.framework.model.Transaction
 abstract class  ViewModel<V: IView>(val view: V) {
   private var inTransaction = false
 
-  private fun updateView(exception: EViewModel? = null) {
+  private fun updateView(exception: EViewModel) {
     exception?.message?.let {message ->
       view.showError(message)
     }
@@ -35,7 +35,6 @@ abstract class  ViewModel<V: IView>(val view: V) {
       try {
         inTransaction = true
         ret = block()
-        updateView()
         inTransaction = false
       } catch(e: EViewModel) {
         updateView(e)
