@@ -45,6 +45,8 @@ class Usuario: BaseModel() {
     }
   val isEstoqueExpedicao
     get() = !admin && expedicao && estoque
+  val isEstoqueVendaFutura
+    get() = !admin && expedicao && estoque
 
   private fun mapNotaSerie(idStr: String): NotaSerie? {
     val id = idStr.trim().toLongOrNull() ?: return null
@@ -52,9 +54,11 @@ class Usuario: BaseModel() {
   }
 
   private fun usuarioSaci() = saci.findUser(loginName)
+
   var admin: Boolean = false
   var estoque: Boolean = true
   var expedicao: Boolean = false
+  var entregaFutura: Boolean = false
   var etiqueta: Boolean = true
   val nome: String?
     @Transient get() = usuarioSaci()?.name

@@ -40,6 +40,7 @@ class QUsuario : TQRootBean<Usuario, QUsuario> {
   lateinit var admin: PBoolean<QUsuario>
   lateinit var estoque: PBoolean<QUsuario>
   lateinit var expedicao: PBoolean<QUsuario>
+  lateinit var entregaFutura: PBoolean<QUsuario>
   lateinit var etiqueta: PBoolean<QUsuario>
 
 

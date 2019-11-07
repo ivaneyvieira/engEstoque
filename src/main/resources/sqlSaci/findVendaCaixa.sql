@@ -8,7 +8,7 @@ SELECT cast(MD5(CAST(CONCAT(storeno, pdvno, xano, prdno, grade) AS CHAR)) AS CHA
 FROM sqlpdv.pxa                   AS P
          INNER JOIN sqlpdv.pxaprd AS I
                     USING (storeno, pdvno, xano)
-WHERE P.date = current_date * 1 AND
+WHERE P.date = :data_atual AND
       storeno = 4 AND
       nfse BETWEEN 10 AND 20
 GROUP BY storeno,

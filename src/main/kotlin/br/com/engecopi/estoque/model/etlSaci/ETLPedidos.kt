@@ -1,8 +1,6 @@
 package br.com.engecopi.estoque.model.etlSaci
 
 import br.com.engecopi.estoque.model.Abreviacao
-import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
-import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.dtos.PedidoSaci
 import br.com.engecopi.saci.saci
@@ -20,14 +18,7 @@ class ETLPedidos(): ETL<PedidoSaci>() {
     """.trimIndent()
   override val sqlUpdate = """
       UPDATE t_pedido 
-      SET  rota=:rota,
-           storeno=:storeno, 
-           numero=:numero, 
-           date=:date, 
-           clienteName=:clienteName, 
-           abreviacao=:abreviacao, 
-           nfno=:nfno, 
-           nfse=:nfse, 
+      SET  abreviacao=:abreviacao, 
            status=:status
       WHERE id = :id
     """.trimIndent()
@@ -36,10 +27,9 @@ class ETLPedidos(): ETL<PedidoSaci>() {
     val sql
       get() = """select id, rota, storeno, numero, date, clienteName, abreviacao, nfno, nfse, status 
       |from t_pedido
-      |where storeno = ${lojaDefault.numero}
       |""".trimMargin()
 
-    override fun getSource() = saci.findPedidoTransferencia(lojaDefault.numero)
+    override fun getSource() = saci.findPedidoTransferencia()
 
     override fun getTarget() = DB
       .findDto(PedidoSaci::class.java, sql)
@@ -51,8 +41,8 @@ class ETLPedidos(): ETL<PedidoSaci>() {
           try {
             val etiqueta = etiquetaPedido(pedido)
             val impressora = Abreviacao.findByAbreviacao(pedido.abreviacao)?.impressora ?: ""
-            CupsUtils.printCups(impressora, etiqueta)
-          }catch(e : ECupsPrinter){
+            //CupsUtils.printCups(impressora, etiqueta)
+          } catch(e: ECupsPrinter) {
             //Vazio
           }
         }

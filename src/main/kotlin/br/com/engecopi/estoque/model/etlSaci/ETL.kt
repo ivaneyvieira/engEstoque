@@ -5,7 +5,6 @@ import br.com.engecopi.utils.parameterNames
 import br.com.engecopi.utils.readInstanceProperty
 import io.ebean.DB
 import io.ebean.SqlUpdate
-import org.eclipse.jdt.internal.compiler.parser.Parser.name
 
 typealias ListenerEventUpdate<T> = (source: T, target: T) -> Unit
 typealias ListenerEventInsert<T> = (source: T) -> Unit
@@ -110,7 +109,8 @@ abstract class EntryID(val id: String) {
 }
 
 fun <T: Any> SqlUpdate.setParameter(bean: T): SqlUpdate {
-  parameterNames(sql).forEach {param ->
+  val parameterNames = parameterNames(sql)
+  parameterNames.forEach {param ->
     val value = readInstanceProperty(bean, param)
     setParameter(param, value)
   }
@@ -147,12 +147,11 @@ abstract class ETLThread<T: EntryID>(private val etl: ETL<T>) {
 
   private val thread = Thread {
     while(true) {
-      if(isLogged)
-        try {
-          update()
-        } catch(e: Throwable) {
-          e.printStackTrace()
-        }
+      try {
+        update()
+      } catch(e: Throwable) {
+        e.printStackTrace()
+      }
       Thread.sleep(10000)
     }
   }

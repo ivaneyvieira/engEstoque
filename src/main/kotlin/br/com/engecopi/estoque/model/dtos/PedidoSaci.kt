@@ -18,5 +18,5 @@ class PedidoSaci(id: String,
                  val nfse: String?,
                  val status: Int?): EntryID(id) {
   override val chave: String
-    get() = "$storeno$numero$rota$date$clienteName$abreviacao$status"
+    get() = "$abreviacao$status"
 }

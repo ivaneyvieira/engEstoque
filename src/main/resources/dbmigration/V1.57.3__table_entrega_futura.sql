@@ -1,6 +1,6 @@
 
 DROP TABLE IF EXISTS t_entrega_futura;
-CREATE TEMPORARY TABLE t_entrega_futura (
+CREATE TABLE t_entrega_futura (
   `id` varchar(32) NOT NULL DEFAULT '',
   `storeno` smallint(5) NOT NULL DEFAULT '0',
   `ordno` int(10) NOT NULL DEFAULT '0',

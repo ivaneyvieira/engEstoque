@@ -36,6 +36,7 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
       usuario.estoque = bean.estoque
       usuario.series = bean.series.toList()
       usuario.expedicao = bean.expedicao
+      usuario.entregaFutura = bean.entregaFutura
       usuario.admin = bean.admin ?: false
       usuario.etiqueta = bean.etiqueta
       usuario.update()
@@ -50,6 +51,7 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
       this.series = bean.series.toList()
       this.estoque = bean.estoque
       this.expedicao = bean.expedicao
+      this.entregaFutura = bean.entregaFutura
       this.admin = bean.admin ?: false
       this.etiqueta = bean.etiqueta
     }
@@ -69,6 +71,7 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
       this.series = usuario.series.toSet()
       this.estoque = usuario.estoque
       this.expedicao = usuario.expedicao
+      this.entregaFutura = usuario.entregaFutura
       this.admin = usuario.admin
       this.etiqueta = usuario.etiqueta
     }
@@ -113,6 +116,7 @@ class UsuarioCrudVo: EntityVo<Usuario>() {
     get() = localizacaoes.joinToString()
   var estoque: Boolean = true
   var expedicao: Boolean = false
+  var entregaFutura: Boolean = false
   var admin: Boolean? = false
   var etiqueta = false
   val tipoUsuarioStr
@@ -124,6 +128,7 @@ class UsuarioCrudVo: EntityVo<Usuario>() {
     else {
       if(estoque) tipos.add("Estoque")
       if(expedicao) tipos.add("Expedicao")
+      if(entregaFutura) tipos.add("Entrega Futura")
     }
 
     return tipos

@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.model
 
+import br.com.engecopi.estoque.model.finder.ViewNotaFuturaFinder
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.finder.ViewNotaExpedicaoFinder
 import br.com.engecopi.framework.model.BaseModel
@@ -17,8 +18,8 @@ import javax.persistence.ManyToOne
 
 @Cache(enableQueryCache = false)
 @Entity
-@View(name = "v_nota_expedicao", dependentTables = ["notas", "itens_nota"])
-class ViewNotaExpedicao: BaseModel() {
+@View(name = "v_nota_futura", dependentTables = ["notas", "itens_nota"])
+class ViewNotaFutura: BaseModel() {
 
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var nota: Nota? = null
@@ -42,8 +43,8 @@ class ViewNotaExpedicao: BaseModel() {
   var usuario: Usuario? = null
   var abreviacao: String? = ""
 
-  companion object Find: ViewNotaExpedicaoFinder() {
-    fun findSaida(numero: String?, abreviacao: String?): ViewNotaExpedicao? {
+  companion object Find: ViewNotaFuturaFinder() {
+    fun findSaida(numero: String?, abreviacao: String?): ViewNotaFutura? {
       numero ?: return null
       abreviacao ?: return null
       return where().numero.eq(numero)
@@ -53,7 +54,7 @@ class ViewNotaExpedicao: BaseModel() {
         .firstOrNull()
     }
 
-    fun findExpedicao(nota: Nota): ViewNotaExpedicao? {
+    fun findNotaFutura(nota: Nota): ViewNotaFutura? {
       return where().numero.eq(nota.numero)
         .loja.equalTo(nota.loja)
         .findList()

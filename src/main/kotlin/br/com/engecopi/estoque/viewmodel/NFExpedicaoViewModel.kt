@@ -295,17 +295,6 @@ class NFExpedicaoVo: EntityVo<ViewNotaExpedicao>() {
     get() = LocalDateTime.of(data, hora)
 }
 
-data class PacoteImpressao(val impressora: String, val text: String) {
-  companion object {
-    fun empty() = PacoteImpressao("", "")
-  }
-}
-
-data class LocalizacaoNota(val abreviacao: String, val itensExpedicao: List<ItemExpedicao>) {
-  val countSelecionado
-    get() = itensExpedicao.filter {it.selecionado || it.isSave()}.size
-}
-
 data class ItemExpedicao(val notaProdutoSaci: NotaProdutoSaci, val saldo: Int, val abrevicao: String,
                          var selecionado: Boolean = false) {
   val prdno = notaProdutoSaci.prdno

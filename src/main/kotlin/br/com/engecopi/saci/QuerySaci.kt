@@ -1,6 +1,7 @@
 package br.com.engecopi.saci
 
 import br.com.engecopi.estoque.model.Nota
+import br.com.engecopi.estoque.model.dtos.EntregaFutura
 import br.com.engecopi.estoque.model.dtos.PedidoSaci
 import br.com.engecopi.estoque.model.dtos.VendasCaixa
 import br.com.engecopi.saci.beans.ChaveProduto
@@ -235,18 +236,35 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
 
-  fun findVendasCaixa() : List<VendasCaixa> {
+  fun findVendasCaixa(): List<VendasCaixa> {
     val sql = "/sqlSaci/findVendaCaixa.sql"
+    val data_atual = LocalDate.now()
+      .toSaciDate()
     return query(sql) {q ->
-      q.executeAndFetch(VendasCaixa::class.java)
+      q.addParameter("data_atual", "$data_atual")
+        .executeAndFetch(VendasCaixa::class.java)
     }
   }
 
-  fun findPedidoTransferencia(storeno : Int) : List<PedidoSaci>{
+  fun findPedidoTransferencia(): List<PedidoSaci> {
     val sql = "/sqlSaci/findPedidoTransferencia.sql"
+    val data_inicial = LocalDate.now()
+      .minusMonths(6)
+      .toSaciDate()
     return query(sql) {q ->
-      q.addParameter("storeno", "$storeno")
+      q.addParameter("data_inicial", "$data_inicial")
         .executeAndFetch(PedidoSaci::class.java)
+    }
+  }
+
+  fun findEntregaFutura(): List<EntregaFutura> {
+    val sql = "/sqlSaci/findEntragaFutura.sql"
+    val data_inicial = LocalDate.now()
+      .minusMonths(6)
+      .toSaciDate()
+    return query(sql) {q ->
+      q.addParameter("data_inicial", "$data_inicial")
+        .executeAndFetch(EntregaFutura::class.java)
     }
   }
 

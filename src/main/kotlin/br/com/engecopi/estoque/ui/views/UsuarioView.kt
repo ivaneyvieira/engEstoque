@@ -88,6 +88,11 @@ class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>(), IUsuarioVi
               bind(binder).bind(UsuarioCrudVo::etiqueta)
               alignment = Alignment.BOTTOM_RIGHT
             }
+            checkBox("Entrega Futura") {
+              expandRatio = 1f
+              bind(binder).bind(UsuarioCrudVo::entregaFutura)
+              alignment = Alignment.BOTTOM_RIGHT
+            }
           }
           row {
             checkBoxGroup<NotaSerie> {

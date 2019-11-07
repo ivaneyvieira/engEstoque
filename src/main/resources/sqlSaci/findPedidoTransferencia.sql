@@ -1,5 +1,5 @@
 SELECT DISTINCT
-       MD5(CONCAT(N.storeno, N.ordno, SUBSTRING_INDEX(L.localizacao, '.', 1))) AS id,
+       cast(MD5(CONCAT(N.storeno, N.ordno, SUBSTRING_INDEX(L.localizacao, '.', 1))) as char) AS id,
        R.no                                   AS rota,
        N.storeno,
        N.ordno                                AS numero,
@@ -22,8 +22,8 @@ FROM sqldados.eord                  AS N
                     ON R.storenoFrom = N.storeno AND R.storenoTo = S.no
          LEFT JOIN  sqldados.nf
                     ON N.storeno = nf.storeno AND N.ordno = nf.eordno
-WHERE (N.storeno = :storeno) AND
+WHERE (N.storeno = 4) AND
       (N.status = 2 OR nf.nfno IS NOT NULL) AND
       (localizacao <> '') AND
-      N.date > 20180101
+      N.date > :data_inicial
 ORDER BY N.date DESC

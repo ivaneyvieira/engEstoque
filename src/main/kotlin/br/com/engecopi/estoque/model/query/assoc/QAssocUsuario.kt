@@ -31,6 +31,7 @@ class QAssocUsuario<R>(name: String, root: R) : TQAssocBean<Usuario,R>(name, roo
   lateinit var admin: PBoolean<R>
   lateinit var estoque: PBoolean<R>
   lateinit var expedicao: PBoolean<R>
+  lateinit var entregaFutura: PBoolean<R>
   lateinit var etiqueta: PBoolean<R>
 
   /**

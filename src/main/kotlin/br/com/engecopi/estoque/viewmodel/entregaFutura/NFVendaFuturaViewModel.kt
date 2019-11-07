@@ -1,4 +1,4 @@
-package br.com.engecopi.estoque.viewmodel
+package br.com.engecopi.estoque.viewmodel.entregaFutura
 
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
@@ -22,6 +22,8 @@ import br.com.engecopi.estoque.model.ViewProdutoLoc
 import br.com.engecopi.estoque.model.dtos.VendasCaixa
 import br.com.engecopi.estoque.model.query.QViewNotaFutura
 import br.com.engecopi.estoque.ui.log
+import br.com.engecopi.estoque.viewmodel.EChaveNaoEncontrada
+import br.com.engecopi.estoque.viewmodel.PacoteImpressao
 import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
@@ -83,7 +85,8 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView)
 
   override fun ViewNotaFutura.toVO(): NFVendaFuturaVo {
     val bean = this
-    return NFVendaFuturaVo().apply {
+    return NFVendaFuturaVo()
+      .apply {
       numero = bean.numero
       tipoMov = bean.tipoMov
       tipoNota = bean.tipoNota

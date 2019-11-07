@@ -1,4 +1,4 @@
-package br.com.engecopi.estoque.viewmodel
+package br.com.engecopi.estoque.viewmodel.entregaFutura
 
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
@@ -8,10 +8,12 @@ import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.query.QItemNota
+import br.com.engecopi.estoque.viewmodel.INotaView
+import br.com.engecopi.estoque.viewmodel.NotaViewModel
 
 class EntregaFututaEditorViewModel(view: IEntregaFututaEditorView):
   NotaViewModel<EntregaFututaVo, IEntregaFututaEditorView>(view, SAIDA,
-                                                             ENTREGUE, ENTREGUE, "") {
+                                                           ENTREGUE, ENTREGUE, "") {
   override fun newBean(): EntregaFututaVo {
     return EntregaFututaVo()
   }

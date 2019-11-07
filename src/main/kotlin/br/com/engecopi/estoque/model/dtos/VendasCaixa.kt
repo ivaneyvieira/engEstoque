@@ -12,5 +12,5 @@ class VendasCaixa(
   val qtty: Double
                  ): EntryID(id) {
   override val chave: String
-    get() = "$prdno$grade$qtty"
+    get() = "$qtty"
 }

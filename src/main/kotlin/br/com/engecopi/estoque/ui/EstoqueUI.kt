@@ -4,11 +4,15 @@ import br.com.engecopi.estoque.model.LoginInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RepositoryAvisoNotas
 import br.com.engecopi.estoque.model.Usuario
+import br.com.engecopi.estoque.model.etlSaci.ETLEntregaFutura
 import br.com.engecopi.estoque.model.etlSaci.ETLPedidos
+import br.com.engecopi.estoque.model.etlSaci.ETLVendasCaixa
 import br.com.engecopi.estoque.ui.views.AbreciacaoView
 import br.com.engecopi.estoque.ui.views.EntradaView
 import br.com.engecopi.estoque.ui.views.EntregaClienteEditorView
 import br.com.engecopi.estoque.ui.views.EntregaClienteView
+import br.com.engecopi.estoque.ui.views.EntregaFuturaEditorView
+import br.com.engecopi.estoque.ui.views.EntregaFuturaView
 import br.com.engecopi.estoque.ui.views.EtiquetaView
 import br.com.engecopi.estoque.ui.views.HistoricoView
 import br.com.engecopi.estoque.ui.views.LabelView
@@ -18,7 +22,7 @@ import br.com.engecopi.estoque.ui.views.PedidoTransferenciaView
 import br.com.engecopi.estoque.ui.views.ProdutoView
 import br.com.engecopi.estoque.ui.views.SaidaView
 import br.com.engecopi.estoque.ui.views.UsuarioView
-import br.com.engecopi.estoque.viewmodel.NFExpedicaoViewModel
+import br.com.engecopi.estoque.ui.views.notaVendaFutura.NFVendaFuturaView
 import br.com.engecopi.utils.SystemUtils
 import com.github.mvysny.karibudsl.v8.MenuButton
 import com.github.mvysny.karibudsl.v8.VaadinDsl
@@ -128,6 +132,9 @@ class EstoqueUI: UI() {
       if(user.roleExpedicao())
         sectionExpedicao(user)
 
+      if(user.roleFutura())
+        sectionFutura(user)
+
       if(user.roleMovimentacao())
         sessionMovimentacao()
 
@@ -151,8 +158,7 @@ class EstoqueUI: UI() {
     navigator.navigateTo(contextPathDeafualt)
   }
 
-  private fun @VaadinDsl ValoMenu.sectionEtiqueta(
-    user: Usuario) {
+  private fun @VaadinDsl ValoMenu.sectionEtiqueta(user: Usuario) {
     section("Etiquetas") {
       menuButton("Imprimir", BARCODE, view = LabelView::class.java)
       when {
@@ -161,8 +167,7 @@ class EstoqueUI: UI() {
     }
   }
 
-  private fun @VaadinDsl ValoMenu.sectionConfiguracao(
-    user: Usuario) {
+  private fun @VaadinDsl ValoMenu.sectionConfiguracao(user: Usuario) {
     section("Configuração") {
       menuButton("Produtos", PACKAGE, view = ProdutoView::class.java)
       if(user.admin) {
@@ -180,14 +185,23 @@ class EstoqueUI: UI() {
     }
   }
 
-  private fun @VaadinDsl ValoMenu.sectionExpedicao(
-    user: Usuario) {
+  private fun @VaadinDsl ValoMenu.sectionExpedicao(user: Usuario) {
     section("Expedição") {
       if(!user.estoque || user.admin) {
         menuButton("Nota Fiscal", NEWSPAPER, view = NFExpedicaoView::class.java)
       }
       menuButton("Entrega ao Cliente", TRUCK, view = EntregaClienteView::class.java)
       menuButton("Editor de Entrega", TRUCK, view = EntregaClienteEditorView::class.java)
+    }
+  }
+
+  private fun @VaadinDsl ValoMenu.sectionFutura(user: Usuario) {
+    section("Entrega Futura") {
+      if(!user.estoque || user.admin) {
+        menuButton("Nota Fiscal", NEWSPAPER, view = NFVendaFuturaView::class.java)
+      }
+      menuButton("Entrega ao Cliente", TRUCK, view = EntregaFuturaView::class.java)
+      menuButton("Editor de Entrega", TRUCK, view = EntregaFuturaEditorView::class.java)
     }
   }
 
@@ -201,8 +215,7 @@ class EstoqueUI: UI() {
     }
   }
 
-  private fun @VaadinDsl ValoMenu.sectionLogin(
-    user: Usuario, info: LoginInfo) {
+  private fun @VaadinDsl ValoMenu.sectionLogin(user: Usuario, info: LoginInfo) {
     section("Login") {
       menuButton("Usuário:", badge = user.loginName)
       if(user.estoque || user.admin)
@@ -219,6 +232,7 @@ class EstoqueUI: UI() {
 
   private fun Usuario.rolePaineis() = this.admin
   private fun Usuario.roleExpedicao() = this.admin || this.expedicao
+  private fun Usuario.roleFutura() = this.admin || this.entregaFutura
   private fun Usuario.roleMovimentacao() = this.admin || this.estoque
   private fun Usuario.roleConfiguracao() = this.admin || this.estoque
   private fun Usuario.roleEtiqueta() = this.admin || this.etiqueta
@@ -271,10 +285,10 @@ class MyUIServlet: VaadinServlet() {
       // Vaadin logs into java.util.logging. Redirect that, so that all logging goes through slf4j.
       SLF4JBridgeHandler.removeHandlersForRootLogger()
       SLF4JBridgeHandler.install()
-      //EtlVendasCliente.start()
+
+      ETLVendasCaixa.start()
       ETLPedidos.start()
-      //val model = NFExpedicaoViewModel()
-      //EtlVendasCliente.listenerInsert{}
+      ETLEntregaFutura.start()
     }
   }
 }

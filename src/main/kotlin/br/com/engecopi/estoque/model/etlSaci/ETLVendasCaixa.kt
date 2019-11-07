@@ -22,7 +22,7 @@ class ETLVendasCaixa: ETL<VendasCaixa>() {
     val sql
       get()= "select id, storeno, nfno, nfse, prdno, grade, qtty from t_vendas_caixa"
 
-    override fun getSource() = saci.findVendasCaixa(lojaDefault.numero)
+    override fun getSource() = saci.findVendasCaixa()
 
     override fun getTarget() = DB
       .findDto(VendasCaixa::class.java, sql)

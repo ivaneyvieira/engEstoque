@@ -1,4 +1,4 @@
-package br.com.engecopi.estoque.viewmodel
+package br.com.engecopi.estoque.viewmodel.entregaFutura
 
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.Nota
@@ -13,12 +13,15 @@ import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.ViewCodBarCliente
 import br.com.engecopi.estoque.model.ViewCodBarConferencia
 import br.com.engecopi.estoque.model.query.QItemNota
+import br.com.engecopi.estoque.viewmodel.INotaView
+import br.com.engecopi.estoque.viewmodel.NotaViewModel
+import br.com.engecopi.estoque.viewmodel.NotaVo
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.utils.mid
 
 class EntregaFututaViewModel(view: IEntregaFututaView):
   NotaViewModel<EntregaFututaVo, IEntregaFututaView>(view, SAIDA, ENTREGUE,
-                                                       CONFERIDA, "") {
+                                                     CONFERIDA, "") {
   override fun newBean(): EntregaFututaVo {
     return EntregaFututaVo()
   }
