@@ -1,5 +1,7 @@
 package br.com.engecopi.estoque.model.etlSaci
 
+import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.dtos.VendasCaixa
 import br.com.engecopi.saci.saci
 import io.ebean.DB
@@ -12,19 +14,15 @@ class ETLVendasCaixa: ETL<VendasCaixa>() {
     """.trimIndent()
   override val sqlUpdate = """
       UPDATE t_vendas_caixa 
-      SET  storeno=:storeno, 
-           nfno=:nfno, 
-           nfse=:nfse, 
-           prdno=:prdno, 
-           grade=:grade, 
-           qtty=:qtty
+      SET  qtty=:qtty
       WHERE id = :id
     """.trimIndent()
 
   companion object: ETLThread<VendasCaixa>(ETLVendasCaixa()) {
-    val sql = "select id, storeno, nfno, nfse, prdno, grade, qtty from t_vendas_caixa"
+    val sql
+      get()= "select id, storeno, nfno, nfse, prdno, grade, qtty from t_vendas_caixa"
 
-    override fun getSource() = saci.findVendasCaixa()
+    override fun getSource() = saci.findVendasCaixa(lojaDefault.numero)
 
     override fun getTarget() = DB
       .findDto(VendasCaixa::class.java, sql)

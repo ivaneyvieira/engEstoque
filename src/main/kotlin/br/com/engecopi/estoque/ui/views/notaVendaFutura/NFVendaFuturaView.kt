@@ -1,0 +1,445 @@
+package br.com.engecopi.estoque.ui.views
+
+import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
+import br.com.engecopi.estoque.model.TipoNota
+import br.com.engecopi.estoque.viewmodel.INFVendaFuturaView
+import br.com.engecopi.estoque.viewmodel.ItemVendaFutura
+import br.com.engecopi.estoque.viewmodel.LocalizacaoVendaFutura
+import br.com.engecopi.estoque.viewmodel.NFVendaFuturaViewModel
+import br.com.engecopi.estoque.viewmodel.NFVendaFuturaVo
+import br.com.engecopi.framework.ui.view.CrudLayoutView
+import br.com.engecopi.framework.ui.view.dateFormat
+import br.com.engecopi.framework.ui.view.grupo
+import br.com.engecopi.framework.ui.view.row
+import br.com.engecopi.framework.ui.view.showDialog
+import br.com.engecopi.framework.ui.view.timeFormat
+import br.com.engecopi.saci.beans.NotaProdutoSaci
+import br.com.engecopi.utils.localDate
+import com.github.mvysny.karibudsl.v8.AutoView
+import com.github.mvysny.karibudsl.v8.VAlign
+import com.github.mvysny.karibudsl.v8.addColumnFor
+import com.github.mvysny.karibudsl.v8.align
+import com.github.mvysny.karibudsl.v8.alignment
+import com.github.mvysny.karibudsl.v8.button
+import com.github.mvysny.karibudsl.v8.dateField
+import com.github.mvysny.karibudsl.v8.expandRatio
+import com.github.mvysny.karibudsl.v8.getAll
+import com.github.mvysny.karibudsl.v8.grid
+import com.github.mvysny.karibudsl.v8.horizontalLayout
+import com.github.mvysny.karibudsl.v8.px
+import com.github.mvysny.karibudsl.v8.refresh
+import com.github.mvysny.karibudsl.v8.textField
+import com.github.mvysny.karibudsl.v8.verticalLayout
+import com.github.mvysny.karibudsl.v8.w
+import com.vaadin.data.provider.ListDataProvider
+import com.vaadin.icons.VaadinIcons
+import com.vaadin.icons.VaadinIcons.PRINT
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
+import com.vaadin.ui.Alignment
+import com.vaadin.ui.Button
+import com.vaadin.ui.Grid
+import com.vaadin.ui.Grid.SelectionMode.MULTI
+import com.vaadin.ui.Notification
+import com.vaadin.ui.UI
+import com.vaadin.ui.Window
+import com.vaadin.ui.renderers.TextRenderer
+import com.vaadin.ui.themes.ValoTheme
+
+@AutoView("nf_venda_futura")
+class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>(), INFVendaFuturaView {
+  var formCodBar: PnlCodigoBarras? = null
+  private val isAdmin
+    get() = RegistryUserInfo.userDefaultIsAdmin
+
+  override fun enter(event: ViewChangeEvent) {
+    super.enter(event)
+    formCodBar?.focusEdit()
+  }
+
+  init {
+    viewModel = NFVendaFuturaViewModel(this)
+    layoutForm {
+      formLayout.apply {
+        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+          .px
+        val nota = binder.bean
+        grupo("Nota fiscal de saída") {
+          verticalLayout {
+            row {
+              textField("Nota Fiscal") {
+                expandRatio = 2f
+                isReadOnly = true
+                value = nota.numero
+              }
+              textField("Loja") {
+                expandRatio = 2f
+                isReadOnly = true
+                value = nota.loja?.sigla
+              }
+              textField("Tipo") {
+                expandRatio = 2f
+                isReadOnly = true
+                value = nota.tipoNota?.descricao
+              }
+              dateField("Data") {
+                expandRatio = 1f
+                isReadOnly = true
+                value = nota.data
+              }
+              textField("Rota") {
+                expandRatio = 1f
+                isReadOnly = true
+                value = nota.rota
+              }
+            }
+            row {
+              textField("Observação da nota fiscal") {
+                expandRatio = 1f
+                isReadOnly = true
+                value = nota.observacao
+              }
+            }
+          }
+        }
+      }
+    }
+    form("Nota Fiscal (Expedição)")
+    gridCrud {
+      addCustomToolBarComponent(btnImprimeTudo())
+      formCodBar = formCodbar()
+      addCustomFormComponent(formCodBar)
+      updateOperationVisible = false
+      addOperationVisible = false
+      deleteOperationVisible = RegistryUserInfo.usuarioDefault.admin
+      column(NFVendaFuturaVo::numero) {
+        caption = "Número NF"
+        setSortProperty("numero")
+      }
+      grid.addComponentColumn {item ->
+        Button().apply {
+          //print {viewModel.imprimir(item)}.extend(this)
+          val impresso = item?.impresso ?: true
+          this.isEnabled = impresso == false || isAdmin
+          this.icon = PRINT
+          this.addClickListener {click ->
+            val pacotes = viewModel.imprimir(item?.entityVo?.nota)
+            pacotes.forEach {
+              printText(it.impressora, it.text)
+            }
+            val print = item?.impresso ?: true
+            click.button.isEnabled = print == false || isAdmin
+            refreshGrid()
+          }
+        }
+      }
+        .id = "btnPrint"
+      column(NFVendaFuturaVo::loja) {
+        caption = "Loja NF"
+        setRenderer({loja ->
+                      loja?.sigla ?: ""
+                    }, TextRenderer())
+      }
+      column(NFVendaFuturaVo::tipoNota) {
+        caption = "TipoNota"
+        setRenderer({tipo ->
+                      tipo?.descricao ?: ""
+                    }, TextRenderer())
+        setSortProperty("tipo_nota")
+      }
+      column(NFVendaFuturaVo::lancamento) {
+        caption = "Data"
+        dateFormat()
+        setSortProperty("data", "hora")
+      }
+      column(NFVendaFuturaVo::dataHoraLancamento) {
+        caption = "Hora"
+        timeFormat()
+        setSortProperty("data", "hora")
+      }
+
+      column(NFVendaFuturaVo::dataEmissao) {
+        caption = "Emissao"
+        dateFormat()
+        setSortProperty("dataEmissao", "data", "hora")
+      }
+      column(NFVendaFuturaVo::abreviacao) {
+        caption = "Localização"
+        setSortProperty("abreviacao")
+      }
+      column(NFVendaFuturaVo::usuario) {
+        caption = "Usuário"
+        setRenderer({
+                      it?.loginName ?: ""
+                    }, TextRenderer())
+        setSortProperty("usuario.loginName")
+      }
+      column(NFVendaFuturaVo::rota) {
+        caption = "Rota"
+      }
+      column(NFVendaFuturaVo::cliente) {
+        caption = "Cliente"
+        setSortProperty("cliente")
+      }
+    }
+  }
+
+  private fun formCodbar(): PnlCodigoBarras {
+    return PnlCodigoBarras("Chave da Nota Fiscal") {key ->
+      val notaSaida = viewModel.findNotaSaidaKey(key)
+      if(notaSaida.isNotEmpty()) {
+        val dialog = DlgNotaFuturaLoc(notaSaida, viewModel) {itens ->
+          val nota = viewModel.processaKey(itens)
+          val pacotes = viewModel.imprimir(nota)
+          pacotes.forEach {
+            printText(it.impressora, it.text)
+          }
+        }
+        dialog.showDialog()
+      }
+    }
+  }
+
+  private fun btnImprimeTudo(): Button {
+    return Button("Imprime Etiquetas").apply {
+      icon = PRINT
+      addClickListener {
+        val text = viewModel.imprimeTudo()
+        printText(impressora, text)
+        //grid.refreshGrid()
+      }
+    }
+  }
+}
+
+class DlgNotaFuturaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
+                 val viewModel: NFVendaFuturaViewModel,
+                 val execConfirma: (itens: List<ItemVendaFutura>) -> Unit): Window("Nota de Saída") {
+  private lateinit var gridProdutos: Grid<LocalizacaoVendaFutura>
+
+  init {
+    val nota = notaProdutoSaida.firstOrNull()
+    verticalLayout {
+      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+        .px
+
+      grupo("Nota fiscal de saída") {
+        verticalLayout {
+          row {
+            textField("Nota Fiscal") {
+              expandRatio = 2f
+              isReadOnly = true
+              value = nota?.numero
+            }
+            textField("Loja") {
+              expandRatio = 2f
+              isReadOnly = true
+              value = viewModel.findLoja(nota?.storeno)
+                ?.sigla
+            }
+            textField("Tipo") {
+              expandRatio = 2f
+              isReadOnly = true
+              value = TipoNota.value(nota?.tipo)
+                ?.descricao
+            }
+            dateField("Data") {
+              expandRatio = 1f
+              isReadOnly = true
+              value = nota?.date?.localDate()
+            }
+            textField("Rota") {
+              expandRatio = 1f
+              isReadOnly = true
+              value = nota?.rota
+            }
+          }
+        }
+      }
+
+      grupo("Localizações") {
+        row {
+          horizontalLayout {
+            button("Confirma") {
+              addStyleName(ValoTheme.BUTTON_PRIMARY)
+              addClickListener {
+                val itens = gridProdutos.dataProvider.getAll()
+                  .flatMap {loc ->
+                    loc.itensVendaFutura.filter {it.selecionado}
+                  }
+                execConfirma(itens)
+                close()
+              }
+            }
+            button("Cancela") {
+              alignment = Alignment.BOTTOM_RIGHT
+              addClickListener {
+                close()
+              }
+            }
+          }
+        }
+        row {
+          gridProdutos = grid(LocalizacaoVendaFutura::class) {
+            val itens = notaProdutoSaida
+            val abreviacaoItens = itens.groupBy {item ->
+              val abreviacao = viewModel.abreviacoes(item.prdno, item.grade)
+                .sorted()
+              abreviacao
+            }
+            val abreviacoes = abreviacaoItens.keys.asSequence()
+              .flatten()
+              .distinct()
+              .map {abrev ->
+                val itensVendaFutura = abreviacaoItens.filter {it.key.contains(abrev)}
+                  .map {it.value}
+                  .flatten()
+                  .distinct()
+                  .map {notaSaci ->
+                    val saldo = viewModel.saldoProduto(notaSaci, abrev)
+                    ItemVendaFutura(notaSaci, saldo, abrev)
+                  }
+                LocalizacaoVendaFutura(abrev, itensVendaFutura)
+              }
+              .toList()
+              .sortedBy {it.abreviacao}
+              .toList()
+
+            this.dataProvider = ListDataProvider(abreviacoes)
+            removeAllColumns()
+
+            setSizeFull()
+            addComponentColumn {item ->
+              Button().apply {
+                this.icon = VaadinIcons.CHECK
+                this.addClickListener {
+                  val dlg = DlgNotaVendaFutura(item, viewModel) {
+                    gridProdutos.refresh()
+                  }
+                  dlg.showDialog()
+                }
+              }
+            }.id = "btnPrintItens"
+            addColumnFor(LocalizacaoVendaFutura::abreviacao) {
+              expandRatio = 1
+              caption = "Código"
+            }
+            addColumnFor(LocalizacaoVendaFutura::countSelecionado) {
+              caption = "Selecionados"
+              align = VAlign.Right
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+class DlgNotaVendaFutura(val localizacaoNota: LocalizacaoVendaFutura,
+                       val viewModel: NFVendaFuturaViewModel,
+                       val update: () -> Unit): Window("Itens da expedição") {
+  private lateinit var gridProdutos: Grid<ItemVendaFutura>
+
+  init {
+    verticalLayout {
+      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+        .px
+
+      grupo("Expedição ${localizacaoNota.abreviacao}") {
+        row {
+          horizontalLayout {
+            alignment = Alignment.BOTTOM_LEFT
+            button("Confirma") {
+              alignment = Alignment.BOTTOM_RIGHT
+              addStyleName(ValoTheme.BUTTON_PRIMARY)
+              addClickListener {
+                localizacaoNota.itensVendaFutura.forEach {
+                  it.selecionado = false
+                }
+                val itensSelecionado = gridProdutos.selectedItems.toList()
+                  .filter {!it.isSave()}
+
+                itensSelecionado.forEach {
+                  it.selecionado = true
+                }
+                update()
+                close()
+              }
+            }
+            button("Cancela") {
+              alignment = Alignment.BOTTOM_LEFT
+              addClickListener {
+                close()
+              }
+            }
+          }
+        }
+        row {
+          gridProdutos = grid(ItemVendaFutura::class) {
+            val itens = localizacaoNota.itensVendaFutura
+
+            this.dataProvider = ListDataProvider(itens)
+            removeAllColumns()
+            val selectionModel = setSelectionMode(MULTI)
+            selectionModel.addSelectionListener {select ->
+              if(select.isUserOriginated) {
+                select.allSelectedItems.forEach {
+                  if(it.isSave()) {
+                    Notification.show("Não pode ser selecionado. Já está salvo")
+                    selectionModel.deselect(it)
+                  }
+                  else if(it.saldoFinal < 0) {
+                    Notification.show("Não pode ser selecionado. Saldo insuficiente.")
+                    selectionModel.deselect(it)
+                  }
+                }
+              }
+            }
+
+            setSizeFull()
+
+            addColumnFor(ItemVendaFutura::prdno) {
+              expandRatio = 1
+              caption = "Código"
+            }
+            addColumnFor(ItemVendaFutura::nome) {
+              expandRatio = 5
+              caption = "Descrição"
+            }
+            addColumnFor(ItemVendaFutura::grade) {
+              expandRatio = 1
+              caption = "Grade"
+            }
+            addColumnFor(ItemVendaFutura::saldo) {
+              expandRatio = 1
+              caption = "Saldo"
+              align = VAlign.Right
+            }
+            addColumnFor(ItemVendaFutura::quant) {
+              expandRatio = 1
+              caption = "Qtd Saida"
+              align = VAlign.Right
+            }
+            addColumnFor(ItemVendaFutura::saldoFinal) {
+              expandRatio = 1
+              caption = "Saldo Final"
+              align = VAlign.Right
+            }
+
+            this.setStyleGenerator {
+              when {
+                it.isSave()       -> "ok"
+                it.saldoFinal < 0 -> "error_row"
+                else              -> null
+              }
+            }
+          }
+          localizacaoNota.itensVendaFutura.forEach {item ->
+            if(item.selecionado) gridProdutos.select(item)
+            else gridProdutos.deselect(item)
+          }
+        }
+      }
+    }
+  }
+}
