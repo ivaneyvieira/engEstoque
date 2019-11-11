@@ -41,6 +41,7 @@ import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.ICrudView
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.utils.localDate
+import br.com.engecopi.utils.mid
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -228,9 +229,12 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
       readOnly = true
       entityVo = itemNota
       val nota = itemNota.nota
+      val lojaTransf = nota?.numeroEntrega?.mid(0, 1) ?: ""
+      val numeroTransf = nota?.numeroEntrega?.mid(1) ?: ""
+      val seq = nota?.sequencia ?: 0
       this.numeroNF = nota?.numero
       this.numeroCodigo = itemNota.codigoBarraConferencia
-      this.numeroCodigoReduzido = itemNota.codigoBarraCliente
+      this.numeroCodigoReduzido = if(nota?.numeroEntrega == "") itemNota.codigoBarraCliente else "$lojaTransf $numeroTransf $seq"
       this.lojaNF = nota?.loja
       this.observacaoNota = nota?.observacao
       this.produto = itemNota.produto

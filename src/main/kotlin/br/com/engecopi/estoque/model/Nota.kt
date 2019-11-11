@@ -17,6 +17,7 @@ import br.com.engecopi.estoque.model.TipoNota.TRANSFERENCIA_S
 import br.com.engecopi.estoque.model.TipoNota.VENDA
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.dtos.EntregaFutura
+import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
 import br.com.engecopi.estoque.model.finder.NotaFinder
 import br.com.engecopi.estoque.model.query.QNota
 import br.com.engecopi.framework.model.BaseModel
@@ -235,6 +236,9 @@ class Nota: BaseModel() {
         .findList()
     }
   }
+
+  fun numeroEntrega(): String =
+    TransferenciaAutomatica.notaTransfencia(loja?.numero, numero)?.numeroTransf ?: ""
 
   fun existe(): Boolean {
     return where().loja.equalTo(loja).tipoMov.eq(tipoMov).numero.eq(numero).findCount() > 0

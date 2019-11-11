@@ -5,18 +5,18 @@ import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
-import br.com.engecopi.estoque.model.RegistryUserInfo.userDefaultIsAdmin
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
+import br.com.engecopi.estoque.model.RegistryUserInfo.userDefaultIsAdmin
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.Repositories
 import br.com.engecopi.estoque.model.TipoNota
+import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.ViewProdutoSaci
 import br.com.engecopi.estoque.model.query.QProduto
 import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.ICrudView
-import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.utils.lpad
 import java.time.LocalDate
 
@@ -162,7 +162,8 @@ class ProdutoVo: EntityVo<Produto>() {
         .orEmpty()
         .asSequence()
         .filter {item ->
-          (lojaDefault?.let {lDef -> item.nota?.loja?.id == lDef.id} ?: true) && (filtroDI?.let {di ->
+          (lojaDefault?.let {lDef -> item.nota?.loja?.id == lDef.id || item.nota?.tipoNota == VENDAF} ?: true) &&
+          (filtroDI?.let {di ->
             (item.nota?.data?.isAfter(di) ?: true) || (item.nota?.data?.isEqual(di) ?: true)
           } ?: true) && (filtroDF?.let {df ->
             (item.nota?.data?.isBefore(df) ?: true) || (item.nota?.data?.isEqual(df) ?: true)

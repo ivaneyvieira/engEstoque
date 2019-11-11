@@ -16,6 +16,8 @@ class TransferenciaAutomatica(
                              ): EntryID(id) {
   override val chave: String
     get() = "$storenoFat$nffat$storenoTransf$nftransf"
+  val numeroTransf get() = "$storenoTransf$nftransf"
+  val numeroFat get() = "$storenoFat$nffat"
 
   companion object {
     fun notaFutura(lojaTransferencia: Int?, numeroSerieTransferencia: String?): TransferenciaAutomatica? {
@@ -24,6 +26,19 @@ class TransferenciaAutomatica(
       val sql = """select * from t_transferencia_automatica
         |where storenoTransf = $lojaTransferencia
         |  AND nftransf = '$numeroSerieTransferencia'
+      """.trimMargin()
+      return DB
+        .findDto(TransferenciaAutomatica::class.java, sql)
+        .findList()
+        .firstOrNull()
+    }
+
+    fun notaTransfencia(lojaFatura: Int?, numeroSerieFatura: String?): TransferenciaAutomatica? {
+      lojaFatura ?: return null
+      numeroSerieFatura ?: return null
+      val sql = """select * from t_transferencia_automatica
+        |where storenoFat = $lojaFatura
+        |  AND nffat = '$numeroSerieFatura'
       """.trimMargin()
       return DB
         .findDto(TransferenciaAutomatica::class.java, sql)

@@ -74,7 +74,7 @@ class ItemNota: BaseModel() {
   val grade: String?
     @Transient get() = produto?.grade
   val numeroNota: String?
-    @Transient get() = nota?.numero
+    @Transient get() = if(nota?.numeroEntrega == "") nota?.numero else nota?.numeroEntrega
   val rota: String?
     @Transient get() = nota?.rota
   val tipoMov: TipoMov?

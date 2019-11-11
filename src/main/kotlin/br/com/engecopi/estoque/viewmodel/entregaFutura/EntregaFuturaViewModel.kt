@@ -50,6 +50,12 @@ class EntregaFututaViewModel(view: IEntregaFututaView):
       else if(item.status == CONFERIDA) {
         item.status = ENTREGUE
         item.save()
+        item.nota?.let {nota ->
+          if(nota.tipoNota == VENDAF) {
+            nota.numeroEntrega = nota.numeroEntrega()
+            nota.save()
+          }
+        }
       }
     }
     view.updateView()
