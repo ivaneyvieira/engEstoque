@@ -31,6 +31,7 @@ import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.ICrudView
 import br.com.engecopi.saci.beans.NotaProdutoSaci
+import br.com.engecopi.utils.mid
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -61,7 +62,10 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView)
 
   override val query: QViewNotaFutura
     get() = ViewNotaFutura.where().let {query ->
-      query.loja.id.eq(lojaDefault.id)
+      query.or()
+        .loja.id.eq(lojaDefault.id)
+        .nota.tipoNota.eq(VENDAF)
+        .endOr()
         .let {q ->
           if(usuarioDefault.isEstoqueVendaFutura)
             q.abreviacao.eq(abreviacaoDefault).filtroNotaSerie()
@@ -120,7 +124,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView)
     val notaDoSaci = itensVendaFutura.firstOrNull()
       ?.notaProdutoSaci
     val lojaSaci = notaDoSaci?.storeno ?: throw EViewModel("Nota não encontrada")
-    if(loja != lojaSaci) throw EViewModel("Esta nota pertence a loja $lojaSaci")
+    //if(loja != lojaSaci) throw EViewModel("Esta nota pertence a loja $lojaSaci")
     val nota: Nota? = Nota.createNota(notaDoSaci)
       ?.let {
         if(it.existe()) Nota.findSaida(it.numero)
@@ -157,20 +161,18 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView)
     return nota
   }
 
-  private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta) = execString {
-    if(usuarioDefault.isEstoqueVendaFutura) return@execString ""
-    itemNota ?: return@execString ""
-    val tipoNota = itemNota.tipoNota ?: return@execString ""
-    if(!etiqueta.imprimivel(tipoNota)) return@execString ""
+  private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {
+    if(usuarioDefault.isEstoqueVendaFutura) return ""
+    itemNota ?: return ""
+    val tipoNota = itemNota.tipoNota ?: return ""
+    if(!etiqueta.imprimivel(tipoNota)) return ""
     val print = itemNota.printEtiqueta()
     itemNota.let {
       it.refresh()
       it.impresso = !(it.abreviacao?.expedicao ?: false)
       it.update()
     }
-    val ret = print.print(etiqueta.template)
-    view.updateView()
-    ret
+    return print.print(etiqueta.template)
   }
 
   fun imprimir(nota: Nota?) = execList<PacoteImpressao> {
@@ -227,15 +229,16 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView)
   }
 
   fun findNotaSaidaKey(key: String) = execList {
-    val notaSaci = when {
-      key.length == 44 -> Nota.findNotaSaidaKey(key)
-      else             -> Nota.findNotaSaidaSaci(key)
-    }.filter {ns ->
-      when {
-        usuarioDefault.isEstoqueVendaFutura -> ViewProdutoLoc.filtraLoc(ns.prdno, ns.grade)
-        else                                -> true
+    val storeno = key.mid(0, 1)
+      .toIntOrNull()
+    val nfno = key.mid(1)
+    val notaSaci = Nota.findNotaSaidaSaci(storeno, nfno)
+      .filter {ns ->
+        when {
+          usuarioDefault.isEstoqueVendaFutura -> ViewProdutoLoc.filtraLoc(ns.prdno, ns.grade)
+          else                                -> true
+        }
       }
-    }
     val numero = notaSaci.firstOrNull()?.numero ?: ""
     val ret = when {
       notaSaci.isEmpty()                           -> throw EChaveNaoEncontrada()

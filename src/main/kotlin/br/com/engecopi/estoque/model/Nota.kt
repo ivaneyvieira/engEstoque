@@ -168,11 +168,16 @@ class Nota: BaseModel() {
     }
 
     fun findNotaSaidaSaci(numeroNF: String?): List<NotaProdutoSaci> {
-      numeroNF ?: return emptyList()
       val loja = RegistryUserInfo.lojaDefault
+      return findNotaSaidaSaci(loja.numero, numeroNF)
+    }
+
+    fun findNotaSaidaSaci(storeno: Int?, numeroNF: String?): List<NotaProdutoSaci> {
+      numeroNF ?: return emptyList()
+      storeno ?: return emptyList()
       val numero = numeroNF.split("/").getOrNull(0) ?: return emptyList()
       val serie = numeroNF.split("/").getOrNull(1) ?: ""
-      return saci.findNotaSaida(loja.numero, numero, serie, usuarioDefault.admin)
+      return saci.findNotaSaida(storeno, numero, serie, usuarioDefault.admin)
     }
 
     fun itemDuplicado(nota: Nota?, produto: Produto?): Boolean {

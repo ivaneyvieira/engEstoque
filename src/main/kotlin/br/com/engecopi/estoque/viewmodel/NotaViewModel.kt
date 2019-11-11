@@ -26,6 +26,7 @@ import br.com.engecopi.estoque.model.TipoNota.PEDIDO_E
 import br.com.engecopi.estoque.model.TipoNota.PEDIDO_S
 import br.com.engecopi.estoque.model.TipoNota.TRANSFERENCIA_E
 import br.com.engecopi.estoque.model.TipoNota.TRANSFERENCIA_S
+import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.model.ViewProdutoLoc
 import br.com.engecopi.estoque.model.query.QItemNota
@@ -209,7 +210,10 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
         .nota.tipoMov.eq(tipo)
         .filtroTipoNota()
         .filtroStatus()
+        .or()
         .nota.loja.id.eq(lojaDefault.id)
+        .nota.tipoNota.eq(VENDAF)
+        .endOr()
         .let {query ->
           if(abreviacaoNota == "") query
           else query.localizacao.startsWith(abreviacaoNota)
@@ -270,10 +274,10 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
     return ViewProdutoLoc.localizacoesAbreviacaoCache(abreviacaoNota)
   }
 
-  private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta) = execString {
-    itemNota ?: return@execString ""
-    val tipoNota = itemNota.tipoNota ?: return@execString ""
-    if(!etiqueta.imprimivel(tipoNota)) return@execString ""
+  private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {
+    itemNota ?: return ""
+    val tipoNota = itemNota.tipoNota ?: return ""
+    if(!etiqueta.imprimivel(tipoNota)) return ""
     val print = itemNota.printEtiqueta()
     if(!usuarioDefault.admin) itemNota.let {
       it.refresh()
@@ -281,9 +285,7 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
       it.update()
     }
 
-    val ret = print.print(etiqueta.template)
-    view.updateView()
-    ret
+    return print.print(etiqueta.template)
   }
 
   fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean, groupByHour: Boolean) = execString {
@@ -320,7 +322,6 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
 
   fun imprimir(itens: List<ItemNota>) = execString {
     val etiquetas = Etiqueta.findByStatus(statusImpressao)
-
     val ret = etiquetas.joinToString(separator = "\n") {etiqueta ->
       imprimir(itens, etiqueta)
     }

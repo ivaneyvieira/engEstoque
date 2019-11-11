@@ -152,7 +152,7 @@ abstract class ETLThread<T: EntryID>(private val etl: ETL<T>) {
       } catch(e: Throwable) {
         e.printStackTrace()
       }
-      Thread.sleep(10000)
+      Thread.sleep(30000)
     }
   }
 

@@ -1,8 +1,6 @@
 package br.com.engecopi.estoque.model.etlSaci
 
-import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.dtos.EntregaFutura
-import br.com.engecopi.estoque.model.dtos.PedidoSaci
 import br.com.engecopi.saci.saci
 import io.ebean.DB
 

@@ -6,6 +6,7 @@ import br.com.engecopi.estoque.model.RepositoryAvisoNotas
 import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.model.etlSaci.ETLEntregaFutura
 import br.com.engecopi.estoque.model.etlSaci.ETLPedidos
+import br.com.engecopi.estoque.model.etlSaci.ETLTransferenciaAutomatica
 import br.com.engecopi.estoque.model.etlSaci.ETLVendasCaixa
 import br.com.engecopi.estoque.ui.views.AbreciacaoView
 import br.com.engecopi.estoque.ui.views.EntradaView
@@ -289,6 +290,7 @@ class MyUIServlet: VaadinServlet() {
       ETLVendasCaixa.start()
       ETLPedidos.start()
       ETLEntregaFutura.start()
+      ETLTransferenciaAutomatica.start()
     }
   }
 }

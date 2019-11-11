@@ -3,6 +3,7 @@ package br.com.engecopi.saci
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.dtos.EntregaFutura
 import br.com.engecopi.estoque.model.dtos.PedidoSaci
+import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
 import br.com.engecopi.estoque.model.dtos.VendasCaixa
 import br.com.engecopi.saci.beans.ChaveProduto
 import br.com.engecopi.saci.beans.DevolucaoFornecedor
@@ -265,6 +266,17 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     return query(sql) {q ->
       q.addParameter("data_inicial", "$data_inicial")
         .executeAndFetch(EntregaFutura::class.java)
+    }
+  }
+
+  fun findTransferenciaAutomatica(): List<TransferenciaAutomatica> {
+    val sql = "/sqlSaci/findTransferenciaAutomatica.sql"
+    val data_inicial = LocalDate.now()
+      .minusMonths(6)
+      .toSaciDate()
+    return query(sql) {q ->
+      q.addParameter("data_inicial", "$data_inicial")
+        .executeAndFetch(TransferenciaAutomatica::class.java)
     }
   }
 

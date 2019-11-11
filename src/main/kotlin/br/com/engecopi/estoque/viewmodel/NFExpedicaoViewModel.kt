@@ -152,20 +152,18 @@ class NFExpedicaoViewModel(view: INFExpedicaoView)
     return nota
   }
 
-  private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta) = execString {
-    if(usuarioDefault.isEstoqueExpedicao) return@execString ""
-    itemNota ?: return@execString ""
-    val tipoNota = itemNota.tipoNota ?: return@execString ""
-    if(!etiqueta.imprimivel(tipoNota)) return@execString ""
+  private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {
+    if(usuarioDefault.isEstoqueExpedicao) return ""
+    itemNota ?: return ""
+    val tipoNota = itemNota.tipoNota ?: return ""
+    if(!etiqueta.imprimivel(tipoNota)) return ""
     val print = itemNota.printEtiqueta()
     itemNota.let {
       it.refresh()
       it.impresso = !(it.abreviacao?.expedicao ?: false)
       it.update()
     }
-    val ret = print.print(etiqueta.template)
-    view.updateView()
-    ret
+    return print.print(etiqueta.template)
   }
 
   fun imprimir(nota: Nota?) = execList<PacoteImpressao> {
