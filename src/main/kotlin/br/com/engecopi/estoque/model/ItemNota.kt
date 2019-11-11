@@ -97,6 +97,14 @@ class ItemNota: BaseModel() {
     @Transient get() = Abreviacao.findByAbreviacao(abrev)
 
   companion object Find: ItemNotaFinder() {
+    fun find(loja: Int?, numero: String?): List<ItemNota> {
+      loja ?: return emptyList()
+      numero ?: return emptyList()
+      return where().nota.loja.numero.eq(loja)
+        .nota.numero.eq(numero)
+        .findList()
+    }
+
     fun find(nota: Nota?, produto: Produto?): ItemNota? {
       //TODO Depois pensar na possibilidade de mais de um
       nota ?: return null

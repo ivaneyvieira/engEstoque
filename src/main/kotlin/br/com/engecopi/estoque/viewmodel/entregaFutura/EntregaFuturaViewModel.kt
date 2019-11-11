@@ -2,7 +2,6 @@ package br.com.engecopi.estoque.viewmodel.entregaFutura
 
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.Nota
-import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
@@ -11,8 +10,7 @@ import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
-import br.com.engecopi.estoque.model.ViewCodBarCliente
-import br.com.engecopi.estoque.model.ViewCodBarConferencia
+import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.viewmodel.INotaView
 import br.com.engecopi.estoque.viewmodel.NotaViewModel
@@ -43,7 +41,7 @@ class EntregaFututaViewModel(view: IEntregaFututaView):
   override fun createVo() = EntregaFututaVo()
 
   fun processaKey(key: String) = execList {
-    val itens = findItens(key)
+    val itens = findItensNotaTransferencia(key)
     if(itens.isEmpty()) throw EViewModel("Produto não encontrado")
     itens.forEach {item ->
       val codigoProduto = item.produto?.codigo?.trim() ?: ""
@@ -58,22 +56,27 @@ class EntregaFututaViewModel(view: IEntregaFututaView):
     itens
   }
 
-  private fun findItens(key: String): List<ItemNota> {
-    val itemUnico = processaKeyBarcodeNotaEntrega(key)
-    val itens = if(itemUnico.isEmpty()) {
-      val itensConferencia = ViewCodBarConferencia.findKeyItemNota(key)
-      if(itensConferencia.isEmpty()) ViewCodBarCliente.findKeyItemNota(key, CONFERIDA)
-      else itensConferencia
+  private fun findItensNotaTransferencia(key: String): List<ItemNota> {
+    val notaTransferencia = Nota.findNotaSaidaKey(key)
+      .firstOrNull()
+    return if(notaTransferencia == null) {
+      val storeno = key.mid(0, 1).toIntOrNull() ?: return emptyList()
+      val numero = key.mid(1)
+      findItensNotaTransferencia(storeno, numero)
     }
-    else itemUnico
-    return itens.filter {it.status == CONFERIDA}
+    else {
+      val lojaTransferencia = notaTransferencia.storeno ?: return emptyList()
+      val numeroSerieTransferencia = notaTransferencia.numeroSerie()
+      findItensNotaTransferencia(lojaTransferencia, numeroSerieTransferencia)
+    }
   }
 
-  private fun processaKeyBarcodeNotaEntrega(key: String): List<ItemNota> {
-    val numero = Nota.findNotaFutura(key) ?: return emptyList()
-    return Nota.findSaida(numero)
-      ?.itensNota()
-      .orEmpty()
+  private fun findItensNotaTransferencia(storeno: Int, numero: String): List<ItemNota> {
+    val notaFutura = TransferenciaAutomatica.notaFutura(storeno, numero)
+                     ?: return emptyList()
+    val lojaFaturamento = notaFutura.storenoFat
+    val numeroFaturamento = notaFutura.nffat
+    return ItemNota.find(lojaFaturamento, numeroFaturamento)
   }
 
   fun notasConferidas(): List<EntregaFututaVo> {

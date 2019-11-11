@@ -52,6 +52,9 @@ class Nota: BaseModel() {
   @Size(max = 40)
   @Index(unique = false)
   var numero: String = ""
+  @Size(max = 40)
+  @Index(unique = false)
+  var numeroEntrega: String = ""
   @Enumerated(EnumType.STRING)
   var tipoMov: TipoMov = ENTRADA
   @Enumerated(EnumType.STRING)
@@ -139,10 +142,20 @@ class Nota: BaseModel() {
         .firstOrNull()
     }
 
-    fun findSaida(numero: String?): Nota? {
-      val loja = RegistryUserInfo.lojaDefault
+    fun findSaida(storeno: Int?, numero: String?): Nota? {
+      storeno ?: return null
       return if(numero.isNullOrBlank()) null
-      else Nota.where().tipoMov.eq(SAIDA).numero.eq(numero).loja.id.eq(loja.id).findList().firstOrNull()
+      else Nota.where()
+        .tipoMov.eq(SAIDA)
+        .numero.eq(numero)
+        .loja.numero.eq(storeno)
+        .findList()
+        .firstOrNull()
+    }
+
+    fun findSaida(numero: String?): Nota? {
+      val storeno = lojaDefault.numero
+      return findSaida(storeno, numero)
     }
 
     fun findNota(numero: String?, tipoMov: TipoMov): Nota? {

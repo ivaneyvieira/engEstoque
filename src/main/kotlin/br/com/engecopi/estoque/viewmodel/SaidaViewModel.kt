@@ -65,7 +65,7 @@ class SaidaViewModel(view: ISaidaView):
   private fun processaKeyBarcodeConferencia(key: String): NotaItens {
     val item = ViewCodBarConferencia.findNota(key) ?: return NotaItens.VAZIO
     if(item.abreviacao != abreviacaoDefault) throw EViewModel("Esta nota não pertence ao cd $abreviacaoDefault")
-    val nota = Nota.findSaida(item.numero) ?: return NotaItens.VAZIO
+    val nota = Nota.findSaida(item.storeno, item.numero) ?: return NotaItens.VAZIO
     if(nota.lancamentoOrigem != EXPEDICAO) throw EViewModel("Essa nota não foi lançada pela a expedição")
     return NotaItens(nota, nota.itensNota())
   }

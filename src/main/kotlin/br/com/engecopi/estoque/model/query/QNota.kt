@@ -39,6 +39,7 @@ class QNota : TQRootBean<Nota, QNota> {
   lateinit var updatedAt: PLocalDateTime<QNota>
   lateinit var version: PInteger<QNota>
   lateinit var numero: PString<QNota>
+  lateinit var numeroEntrega: PString<QNota>
   lateinit var tipoMov: PEnum<QNota,TipoMov>
   lateinit var tipoNota: PEnum<QNota,TipoNota>
   lateinit var rota: PString<QNota>

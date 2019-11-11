@@ -29,6 +29,7 @@ class QAssocNota<R>(name: String, root: R) : TQAssocBean<Nota,R>(name, root) {
   lateinit var updatedAt: PLocalDateTime<R>
   lateinit var version: PInteger<R>
   lateinit var numero: PString<R>
+  lateinit var numeroEntrega: PString<R>
   lateinit var tipoMov: PEnum<R,TipoMov>
   lateinit var tipoNota: PEnum<R,TipoNota>
   lateinit var rota: PString<R>
