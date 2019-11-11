@@ -151,10 +151,11 @@ class EstoqueUI: UI() {
 
 
     setErrorHandler {e -> errorHandler(e)}
-    val contextPathDeafualt = if(user.expedicao && contextPath == "")
-      "nf_expedicao"
-    else
-      contextPath
+    val contextPathDeafualt = when {
+      user.roleExpedicao() && contextPath == "" -> "nf_expedicao"
+      user.roleFutura() && contextPath == ""    -> "nf_venda_futura"
+      else                                      -> contextPath
+    }
 
     navigator.navigateTo(contextPathDeafualt)
   }
