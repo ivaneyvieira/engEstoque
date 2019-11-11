@@ -238,7 +238,8 @@ class Nota: BaseModel() {
   }
 
   fun numeroEntrega(): String =
-    TransferenciaAutomatica.notaTransfencia(loja?.numero, numero)?.numeroTransf ?: ""
+    TransferenciaAutomatica.notaTransfencia(loja?.numero, numero)?.numeroTransf
+    ?: EntregaFutura.entrega(numero)?.numeroEntrega ?: ""
 
   fun existe(): Boolean {
     return where().loja.equalTo(loja).tipoMov.eq(tipoMov).numero.eq(numero).findCount() > 0
