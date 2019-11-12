@@ -27,6 +27,7 @@ class QAssocUsuario<R>(name: String, root: R) : TQAssocBean<Usuario,R>(name, roo
   lateinit var loja: QAssocLoja<R>
   lateinit var localizacaoes: PString<R>
   lateinit var notaSeries: PString<R>
+  lateinit var impressora: PString<R>
   lateinit var itensNota: QAssocItemNota<R>
   lateinit var admin: PBoolean<R>
   lateinit var estoque: PBoolean<R>

@@ -68,6 +68,11 @@ class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>(), IUsuarioVi
               reloadBinderOnChange(binder)
             }
 
+            textField("Impressora") {
+              expandRatio = 1f
+              bind(binder).bind(UsuarioCrudVo::impressora)
+            }
+
             checkBox("Administrador") {
               expandRatio = 1f
               bind(binder).bind(UsuarioCrudVo::admin)

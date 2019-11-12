@@ -1,7 +1,6 @@
 package br.com.engecopi.estoque.ui.views.notaVendaFutura
 
 import br.com.engecopi.estoque.model.RegistryUserInfo
-import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
 import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
 import br.com.engecopi.estoque.viewmodel.entregaFutura.INFVendaFuturaView
 import br.com.engecopi.estoque.viewmodel.entregaFutura.NFVendaFuturaViewModel
@@ -185,6 +184,7 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
       icon = PRINT
       addClickListener {
         val text = viewModel.imprimeTudo()
+        val impressora = RegistryUserInfo.usuarioDefault.impressora
         printText(impressora, text)
         //grid.refreshGrid()
       }

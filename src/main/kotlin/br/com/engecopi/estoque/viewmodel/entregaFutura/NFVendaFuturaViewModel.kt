@@ -176,6 +176,9 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView)
   }
 
   fun imprimir(nota: Nota?) = execList<PacoteImpressao> {
+    val impressoraName = if(usuarioDefault.impressora == "")
+      "Localizacao ${usuarioDefault.impressora}"
+    else usuarioDefault.impressora
     val ret = if(nota == null) emptyList()
     else {
       val id = nota.id
@@ -187,16 +190,14 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView)
         val abreviacao = entry.key ?: return@flatMap emptyList<PacoteImpressao>()
         if(abreviacao.expedicao) {
           val text = imprimeItens(CONFERIDA, entry.value)
-          val impressoraName = if(abreviacao.impressora == "")
-            "Localizacao ${abreviacao.abreviacao}"
-          else abreviacao.impressora
+
           listOf(PacoteImpressao(impressoraName, text))
         }
         else
           emptyList<PacoteImpressao>()
       }
       val text = imprimeItens(INCLUIDA, listaItens)
-      val impressaoEXP = listOf(PacoteImpressao("EXP4", text))
+      val impressaoEXP = listOf(PacoteImpressao(impressoraName, text))
 
       impressaoCD + impressaoEXP
     }

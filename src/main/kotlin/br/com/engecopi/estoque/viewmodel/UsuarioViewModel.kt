@@ -8,7 +8,6 @@ import br.com.engecopi.estoque.model.query.QUsuario
 import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.ICrudView
-import br.com.engecopi.framework.viewmodel.IView
 
 class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, UsuarioCrudVo, IUsuarioView>(view) {
   override fun newBean(): UsuarioCrudVo {
@@ -39,6 +38,7 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
       usuario.entregaFutura = bean.entregaFutura
       usuario.admin = bean.admin ?: false
       usuario.etiqueta = bean.etiqueta
+      usuario.impressora = bean.impressora ?: ""
       usuario.update()
     }
   }
@@ -46,6 +46,7 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
   override fun add(bean: UsuarioCrudVo) {
     val usuario = Usuario().apply {
       this.loginName = bean.loginName ?: ""
+      this.impressora = bean.impressora ?: ""
       this.loja = bean.loja
       this.locais = bean.localizacaoes.toList()
       this.series = bean.series.toList()
@@ -66,6 +67,7 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
     return UsuarioCrudVo().apply {
       entityVo = usuario
       this.loginName = usuario.loginName
+      this.impressora = usuario.impressora
       this.loja = usuario.loja
       this.localizacaoes = usuario.locais.toHashSet()
       this.series = usuario.series.toSet()
@@ -98,6 +100,7 @@ class UsuarioCrudVo: EntityVo<Usuario>() {
   }
 
   var loginName: String? = ""
+  var impressora: String? = ""
   var loja: Loja? = null
     set(value) {
       field = value

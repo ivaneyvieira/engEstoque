@@ -27,6 +27,8 @@ class Usuario: BaseModel() {
   var localizacaoes: String = ""
   @Length(4000)
   var notaSeries: String = ""
+  @Length(40)
+  var impressora: String = ""
   @OneToMany(mappedBy = "usuario", cascade = [PERSIST, MERGE, REFRESH])
   val itensNota: List<ItemNota>? = null
   var locais: List<String>
