@@ -100,34 +100,24 @@ class ItemNota: BaseModel() {
     fun find(loja: Int?, numero: String?): List<ItemNota> {
       loja ?: return emptyList()
       numero ?: return emptyList()
-      return where().nota.loja.numero.eq(loja)
-        .nota.numero.eq(numero)
-        .findList()
+      return where().nota.loja.numero.eq(loja).nota.numero.eq(numero).findList()
     }
 
     fun find(nota: Nota?, produto: Produto?): ItemNota? {
       //TODO Depois pensar na possibilidade de mais de um
       nota ?: return null
       produto ?: return null
-      return where().nota.fetchQuery()
-        .nota.id.eq(nota.id)
-        .produto.id.eq(produto.id)
-        .findList()
-        .firstOrNull()
+      return where().nota.fetchQuery().nota.id.eq(nota.id).produto.id.eq(produto.id).findList().firstOrNull()
     }
 
     fun find(notaProdutoSaci: NotaProdutoSaci?): ItemNota? {
       notaProdutoSaci ?: return null
       val produtoSaci = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return null
-      return where().nota.fetchQuery()
-        .nota.numero.eq("${notaProdutoSaci.numero}/${notaProdutoSaci.serie}")
-        .nota.loja.equalTo(RegistryUserInfo.lojaDefault)
-        .produto.equalTo(produtoSaci)
-        .findList()
-        .firstOrNull()
+      return where().nota.fetchQuery().nota.numero.eq("${notaProdutoSaci.numero}/${notaProdutoSaci.serie}")
+        .nota.loja.equalTo(RegistryUserInfo.lojaDefault).produto.equalTo(produtoSaci).findList().firstOrNull()
     }
 
-    fun createItemNota(notaProdutoSaci: NotaProdutoSaci, notaPrd: Nota?, abreviacao : String): ItemNota? {
+    fun createItemNota(notaProdutoSaci: NotaProdutoSaci, notaPrd: Nota?, abreviacao: String): ItemNota? {
       notaPrd ?: return null
       val produtoSaci = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return null
       val locProduto = ViewProdutoLoc.localizacoesProduto(produtoSaci).firstOrNull {
@@ -153,9 +143,7 @@ class ItemNota: BaseModel() {
       val tipoMov = notaProdutoSaci.tipoNota()?.tipoMov ?: return false
       val nota = Nota.findNota(numeroSerie, tipoMov) ?: return false
       val produto = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return false
-      return where().produto.eq(produto)
-        .nota.eq(nota)
-        .exists()
+      return where().produto.eq(produto).nota.eq(nota).exists()
     }
   }
 

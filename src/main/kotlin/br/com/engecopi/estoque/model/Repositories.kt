@@ -7,8 +7,7 @@ import io.ebean.Ebean
 import java.time.LocalDateTime
 
 object Repositories {
-  private var time: LocalDateTime = LocalDateTime.now()
-    .minusSeconds(100)
+  private var time: LocalDateTime = LocalDateTime.now().minusSeconds(100)
   private lateinit var viewProdutosLocProdutoKey: Map<ProdutoKey, List<ViewProdutoLoc>>
   private lateinit var viewProdutosLocLojaAbreviacaoKey: Map<LojaAbreviacaoKey, List<ViewProdutoLoc>>
   private lateinit var viewProdutosLocLojaKey: Map<Int, List<ViewProdutoLoc>>
@@ -27,11 +26,7 @@ object Repositories {
     updateTabelas()
     val serverCacheManager = Ebean.getServerCacheManager()
     serverCacheManager.clear(ViewProdutoLoc::class.java)
-    val list = ViewProdutoLoc.where()
-      .fetch("produto")
-      .fetch("loja")
-      .findList()
-      .toList()
+    val list = ViewProdutoLoc.where().fetch("produto").fetch("loja").findList().toList()
     viewProdutosLocProdutoKey = list.groupBy {ProdutoKey(it.produto.id, it.storeno, it.abreviacao)}
     viewProdutosLocLojaAbreviacaoKey = list.groupBy {LojaAbreviacaoKey(it.storeno, it.abreviacao)}
     viewProdutosLocLojaKey = list.groupBy {it.storeno}
@@ -39,8 +34,7 @@ object Repositories {
   }
 
   private fun newViewProdutosLoc() {
-    val agora = LocalDateTime.now()
-      .minusSeconds(10)
+    val agora = LocalDateTime.now().minusSeconds(10)
     if(agora >= time) {
       time = LocalDateTime.now()
       atualizaRepositorio()

@@ -48,8 +48,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
     layoutForm {
       binder.bean.lojaDefault = RegistryUserInfo.lojaDefault
       formLayout.apply {
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-          .px
+        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
         h = 300.px
         grupo("Produtos") {
           row {
@@ -177,8 +176,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
               }
               editor.addOpenListener {event ->
                 event.bean.produto?.let {produto ->
-                  val locSulfixos = produto.localizacoes(RegistryUserInfo.abreviacaoDefault)
-                    .map {LocProduto(it)}
+                  val locSulfixos = produto.localizacoes(RegistryUserInfo.abreviacaoDefault).map {LocProduto(it)}
                   comboLoc.setItems(locSulfixos.map {it.localizacao})
                   comboLoc.value = event.bean.localizacao
                 }

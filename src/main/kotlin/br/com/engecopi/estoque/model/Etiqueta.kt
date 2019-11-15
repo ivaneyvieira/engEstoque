@@ -32,10 +32,7 @@ class Etiqueta: BaseModel() {
     fun find(titulo: String?, statusNota: StatusNota?): Etiqueta? {
       titulo ?: return null
       statusNota ?: return null
-      return where().titulo.eq(titulo)
-        .statusNota.eq(statusNota)
-        .findList()
-        .firstOrNull()
+      return where().titulo.eq(titulo).statusNota.eq(statusNota).findList().firstOrNull()
     }
 
     fun findByStatus(statusNota: StatusNota?): List<Etiqueta> =

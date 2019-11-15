@@ -44,8 +44,7 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel, IEntradaView>(), IEntra
       }
       formLayout.apply {
         formBinder = binder
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-          .px
+        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
 
         grupo("Nota fiscal de entrada") {
           row {
@@ -79,8 +78,7 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel, IEntradaView>(), IEntra
             integerField("Número Interno") {
               expandRatio = 1f
               isReadOnly = true
-              this.bind(binder)
-                .bind(EntradaVo::numeroInterno.name)
+              this.bind(binder).bind(EntradaVo::numeroInterno.name)
             }
             textField("Fornecedor") {
               expandRatio = 2f
@@ -118,8 +116,7 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel, IEntradaView>(), IEntra
         }
 
         button
-      }
-        .id = "btnPrint"
+      }.id = "btnPrint"
       column(EntradaVo::lojaNF) {
         caption = "Loja NF"
         setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
@@ -193,15 +190,13 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel, IEntradaView>(), IEntra
 
   override fun stillShow() {
     val bean = formBinder.bean
-    if(gridProduto.editor.isOpen)
-      gridProduto.editor.save()
+    if(gridProduto.editor.isOpen) gridProduto.editor.save()
     bean.entityVo = null
     bean.atualizaNota()
     formBinder.getBinding("produtos").ifPresent {binding ->
       binding.read(bean)
     }
-    if(bean.produtosCompletos())
-      hideForm()
+    if(bean.produtosCompletos()) hideForm()
   }
 }
 

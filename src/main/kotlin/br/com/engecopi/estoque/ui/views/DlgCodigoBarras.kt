@@ -77,8 +77,7 @@ fun readString(msg: String, confirmaClose: Boolean, processaleitura: (Nota?, Str
       this.w = 400.px
     }
     val dlg = DlgCodigoBarras(textField, confirmaClose, processaleitura)
-    UI.getCurrent()
-      .addWindow(dlg)
+    UI.getCurrent().addWindow(dlg)
     textField.focus()
   }
 }

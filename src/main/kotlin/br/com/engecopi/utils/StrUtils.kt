@@ -52,10 +52,7 @@ fun String.mid(start: Int): String {
 fun parameterNames(sql: String): List<String> {
   val regex = Regex(":([a-zA-Z0-9_]+)")
   val matches = regex.findAll(sql)
-  return matches.map {it.groupValues}
-    .toList()
-    .flatten()
-    .filter {!it.startsWith(":")}
+  return matches.map {it.groupValues}.toList().flatten().filter {!it.startsWith(":")}
 }
 
 @Suppress("UNCHECKED_CAST")

@@ -17,9 +17,11 @@ import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.utils.mid
 
-class EntregaClienteViewModel(view: IEntregaClienteView):
-  NotaViewModel<EntregaClienteVo, IEntregaClienteView>(view, SAIDA, ENTREGUE,
-                                                       CONFERIDA, "") {
+class EntregaClienteViewModel(view: IEntregaClienteView): NotaViewModel<EntregaClienteVo, IEntregaClienteView>(view,
+                                                                                                               SAIDA,
+                                                                                                               ENTREGUE,
+                                                                                                               CONFERIDA,
+                                                                                                               "") {
   override fun newBean(): EntregaClienteVo {
     return EntregaClienteVo()
   }
@@ -29,12 +31,10 @@ class EntregaClienteViewModel(view: IEntregaClienteView):
   }
 
   override fun QItemNota.filtroStatus(): QItemNota {
-    return status.`in`(CONFERIDA)
-      .nota.usuario.isNotNull.nota.sequencia.ne(0)
-      .let {q ->
-        if(usuarioDefault.isEstoqueExpedicao) q.localizacao.startsWith(abreviacaoDefault)
-        else q
-      }
+    return status.`in`(CONFERIDA).nota.usuario.isNotNull.nota.sequencia.ne(0).let {q ->
+      if(usuarioDefault.isEstoqueExpedicao) q.localizacao.startsWith(abreviacaoDefault)
+      else q
+    }
   }
 
   override fun createVo() = EntregaClienteVo()
@@ -71,16 +71,11 @@ class EntregaClienteViewModel(view: IEntregaClienteView):
     val loja = if(key.isNotEmpty()) key.mid(0, 1).toIntOrNull() ?: return emptyList() else return emptyList()
     val numero = if(key.length > 1) key.mid(1) else return emptyList()
     if(loja != RegistryUserInfo.lojaDefault.numero) return emptyList()
-    return Nota.findSaida(numero)
-      ?.itensNota()
-      .orEmpty()
+    return Nota.findSaida(numero)?.itensNota().orEmpty()
   }
 
   fun notasConferidas(): List<EntregaClienteVo> {
-    return ItemNota.where()
-      .status.eq(CONFERIDA)
-      .findList()
-      .map {it.toVO()}
+    return ItemNota.where().status.eq(CONFERIDA).findList().map {it.toVO()}
   }
 }
 

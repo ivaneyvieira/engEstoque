@@ -136,22 +136,14 @@ class Nota: BaseModel() {
 
     fun findNotaFutura(key: String): String? {
       val sql = "select * from t_entrega_futura where nfekey_entrega = ? AND nfekey_entrega <> ''"
-      return DB.findDto(EntregaFutura::class.java, sql)
-        .setParameter(1, key)
-        .findList()
-        .map {it.numero_venda}
+      return DB.findDto(EntregaFutura::class.java, sql).setParameter(1, key).findList().map {it.numero_venda}
         .firstOrNull()
     }
 
     fun findSaida(storeno: Int?, numero: String?): Nota? {
       storeno ?: return null
       return if(numero.isNullOrBlank()) null
-      else Nota.where()
-        .tipoMov.eq(SAIDA)
-        .numero.eq(numero)
-        .loja.numero.eq(storeno)
-        .findList()
-        .firstOrNull()
+      else Nota.where().tipoMov.eq(SAIDA).numero.eq(numero).loja.numero.eq(storeno).findList().firstOrNull()
     }
 
     fun findSaida(numero: String?): Nota? {
@@ -208,13 +200,8 @@ class Nota: BaseModel() {
     }
 
     fun listSaidaCancel(): List<Nota> {
-      val data = LocalDate.now()
-        .minusDays(10)
-      val lista = Nota.where()
-        .tipoMov.eq(SAIDA)
-        .data.ge(data)
-        .tipoNota.notEqualTo(PEDIDO_S)
-        .findList()
+      val data = LocalDate.now().minusDays(10)
+      val lista = Nota.where().tipoMov.eq(SAIDA).data.ge(data).tipoNota.notEqualTo(PEDIDO_S).findList()
       return saci.findNotasSaidaCancelada(lista)
     }
 
@@ -227,28 +214,21 @@ class Nota: BaseModel() {
     }
 
     private fun notasSalva(tipoNota: TipoMov): MutableList<Nota> {
-      val dtInicial = LocalDate.now()
-        .minusDays(180)
-      return where().tipoMov.eq(tipoNota)
-        .loja.equalTo(lojaDefault)
-        .itensNota.localizacao.startsWith(abreviacaoDefault)
-        .data.after(dtInicial)
-        .findList()
+      val dtInicial = LocalDate.now().minusDays(180)
+      return where().tipoMov.eq(tipoNota).loja.equalTo(lojaDefault).itensNota.localizacao.startsWith(abreviacaoDefault)
+        .data.after(dtInicial).findList()
     }
   }
 
-  fun numeroEntrega(): String =
-    TransferenciaAutomatica.notaTransfencia(loja?.numero, numero)?.numeroTransf
-    ?: EntregaFutura.entrega(numero)?.numeroEntrega ?: ""
+  fun numeroEntrega(): String = TransferenciaAutomatica.notaTransfencia(loja?.numero, numero)?.numeroTransf
+                                ?: EntregaFutura.entrega(numero)?.numeroEntrega ?: ""
 
   fun existe(): Boolean {
     return where().loja.equalTo(loja).tipoMov.eq(tipoMov).numero.eq(numero).findCount() > 0
   }
 
   fun itensNota(): List<ItemNota> {
-    return ItemNota.where()
-      .nota.equalTo(this)
-      .findList()
+    return ItemNota.where().nota.equalTo(this).findList()
   }
 }
 
@@ -257,8 +237,7 @@ enum class TipoMov(val descricao: String) {
   SAIDA("Saida")
 }
 
-enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2: String,
-                    val isFree: Boolean = false) {
+enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2: String, val isFree: Boolean = false) {
   //Entrada
   COMPRA(ENTRADA, "Compra", "Compra"),
   TRANSFERENCIA_E(ENTRADA, "Transferencia", "Transferencia Entrada"),

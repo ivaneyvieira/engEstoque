@@ -4,8 +4,8 @@ import br.com.engecopi.estoque.model.dtos.EntregaFutura
 import br.com.engecopi.saci.saci
 import io.ebean.DB
 
-class ETLEntregaFutura(): ETL<EntregaFutura>() {
-  override val sqlDelete= "DELETE FROM t_entrega_futura where id = :id"
+class ETLEntregaFutura: ETL<EntregaFutura>() {
+  override val sqlDelete = "DELETE FROM t_entrega_futura where id = :id"
   override val sqlInsert = """
     INSERT INTO t_entrega_futura(id, storeno, ordno, numero_venda, nfno_venda, nfse_venda, 
                                  numero_entrega, nfno_entrega, nfse_entrega, nfekey_entrega) 
@@ -30,8 +30,6 @@ class ETLEntregaFutura(): ETL<EntregaFutura>() {
 
     override fun getSource() = saci.findEntregaFutura()
 
-    override fun getTarget() = DB
-      .findDto(EntregaFutura::class.java, sql)
-      .findList()
+    override fun getTarget() = DB.findDto(EntregaFutura::class.java, sql).findList()
   }
 }

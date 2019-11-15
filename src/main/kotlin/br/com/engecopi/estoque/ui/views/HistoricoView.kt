@@ -10,18 +10,16 @@ import com.github.mvysny.karibudsl.v8.AutoView
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView
-class HistoricoView : CrudLayoutView<HistoricoVo, HistoricoViewModel>(), IHistoricoView {
+class HistoricoView: CrudLayoutView<HistoricoVo, HistoricoViewModel>(), IHistoricoView {
   init {
     viewModel = HistoricoViewModel(this)
     layoutForm {
-      formLayout.apply {
-
-      }
+      formLayout.apply {}
     }
     form("Histórico")
     gridCrud {
       deleteOperationVisible = false
-      updateOperationVisible =false
+      updateOperationVisible = false
       addOperationVisible = false
 
       column(HistoricoVo::data) {

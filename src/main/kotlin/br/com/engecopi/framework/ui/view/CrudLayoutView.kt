@@ -12,9 +12,7 @@ import br.com.engecopi.framework.viewmodel.Sort
 import com.github.mvysny.karibudsl.v8.VaadinDsl
 import com.github.mvysny.karibudsl.v8.addGlobalShortcutListener
 import com.github.mvysny.karibudsl.v8.expandRatio
-import com.github.mvysny.karibudsl.v8.h
 import com.github.mvysny.karibudsl.v8.init
-import com.github.mvysny.karibudsl.v8.perc
 import com.github.mvysny.karibudsl.v8.w
 import com.github.mvysny.karibudsl.v8.wrapContent
 import com.vaadin.data.BeanValidationBinder
@@ -127,8 +125,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
   val count = CallbackDataProvider.CountCallback<C, String> {query ->
     countQuery(query)
   }
-  private val dataLazyFilterProvider = DataProvider.fromFilteringCallbacks(find, count)
-    .withConfigurableFilter()
+  private val dataLazyFilterProvider = DataProvider.fromFilteringCallbacks(find, count).withConfigurableFilter()
   private val filtroEdt = TextField("Pesquisa") {
     val value = if(it.value.isNullOrBlank()) null else it.value
     dataLazyFilterProvider.setFilter(value)
@@ -146,8 +143,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
 
     this.addItemClickListener {e ->
       when {
-        e.mouseEventDetails.isDoubleClick && !this.asSingleSelect().isEmpty -> if(updateButton.isVisible)
-          updateButtonClicked()
+        e.mouseEventDetails.isDoubleClick && !this.asSingleSelect().isEmpty -> if(updateButton.isVisible) updateButtonClicked()
         else readButtonClicked()
       }
     }
@@ -246,8 +242,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
   }
 
   protected fun findAllButtonClicked() {
-    grid.asSingleSelect()
-      ?.clear()
+    grid.asSingleSelect()?.clear()
     refreshGrid()
   }
 
@@ -306,12 +301,10 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
       buttonClickListener()
       if(operation != ADD || isAddClose) {
         if(isStillShow) {
-          if(operation == ADD)
-            stillShow()
+          if(operation == ADD) stillShow()
           else hideForm()
         }
-        else
-          hideForm()
+        else hideForm()
       }
       else {
         viewModel.cleanBean()
@@ -322,13 +315,10 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
     }
 
     fun cancel(form: CrudForm<C>) {
-      val selected = grid.asSingleSelect()
-        ?.value
+      val selected = grid.asSingleSelect()?.value
       hideForm()
-      grid.asSingleSelect()
-        ?.clear()
-      grid.asSingleSelect()
-        ?.value = selected
+      grid.asSingleSelect()?.clear()
+      grid.asSingleSelect()?.value = selected
     }
 
     val form = buildNewForm(operation, domainObject, readOnly, ::cancel, ::operation)
@@ -373,8 +363,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
       this.center()
     }
 
-    UI.getCurrent()
-      .addWindow(formWindow)
+    UI.getCurrent().addWindow(formWindow)
   }
 
   fun showForm(operation: CrudOperation, form: Component) {
@@ -389,8 +378,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
 
   private fun findQuery(query: Query<C, String>): Stream<C> {
     viewModel.updateQueryView(query.viewQuery())
-    return viewModel.findQuery()
-      .stream()
+    return viewModel.findQuery().stream()
   }
 
   private fun countQuery(query: Query<C, String>): Int {
@@ -419,8 +407,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
     refreshGrid()
     val bean = viewModel.crudBean
     if(itemContains(bean)) {
-      grid.asSingleSelect()
-        ?.value = bean
+      grid.asSingleSelect()?.value = bean
       // falta fazer o scrool para a linha
     }
   }

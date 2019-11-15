@@ -21,8 +21,11 @@ import br.com.engecopi.utils.mid
 import java.time.LocalDate
 import java.time.LocalTime
 
-class SaidaViewModel(view: ISaidaView):
-  NotaViewModel<SaidaVo, ISaidaView>(view, SAIDA, ENTREGUE, CONFERIDA, abreviacaoDefault) {
+class SaidaViewModel(view: ISaidaView): NotaViewModel<SaidaVo, ISaidaView>(view,
+                                                                           SAIDA,
+                                                                           ENTREGUE,
+                                                                           CONFERIDA,
+                                                                           abreviacaoDefault) {
   override fun newBean(): SaidaVo {
     return SaidaVo()
   }
@@ -50,11 +53,9 @@ class SaidaViewModel(view: ISaidaView):
   }
 
   private fun processaKeyNumero(numeroNota: String): NotaItens {
-    val notasSaci = Nota.findNotaSaidaSaci(numeroNota)
-      .filter {loc ->
-        loc.localizacaoes()
-          .any {it.abreviacao == abreviacaoDefault}
-      }
+    val notasSaci = Nota.findNotaSaidaSaci(numeroNota).filter {loc ->
+      loc.localizacaoes().any {it.abreviacao == abreviacaoDefault}
+    }
     val notaSaci = notasSaci.firstOrNull() ?: return NotaItens.VAZIO
     return if(usuarioDefault.isTipoCompativel(notaSaci.tipoNota())) Nota.createNotaItens(notasSaci).apply {
       this.nota?.lancamentoOrigem = DEPOSITO
@@ -76,14 +77,12 @@ class SaidaViewModel(view: ISaidaView):
     if(loja != lojaDefault.numero) return NotaItens.VAZIO
     val numero = if(key.length > 1) key.mid(1) else return NotaItens.VAZIO
     val notaItem = processaKeyNumero(numero)
-    return if(notaItem.nota?.tipoNota == VENDAF)
-      NotaItens.VAZIO
+    return if(notaItem.nota?.tipoNota == VENDAF) NotaItens.VAZIO
     else notaItem
   }
 
   fun confirmaProdutos(itens: List<ProdutoVO>, situacao: StatusNota) = execList<ItemNota> {
-    itens.firstOrNull()
-      ?.value?.nota?.save()
+    itens.firstOrNull()?.value?.nota?.save()
     val listMultable = mutableListOf<ItemNota>()
     itens.forEach {produtoVO ->
       produtoVO.value?.run {

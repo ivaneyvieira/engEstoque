@@ -32,8 +32,8 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class NFExpedicaoViewModel(view: INFExpedicaoView)
-  : CrudViewModel<ViewNotaExpedicao, QViewNotaExpedicao, NFExpedicaoVo, INFExpedicaoView>(view) {
+class NFExpedicaoViewModel(view: INFExpedicaoView): CrudViewModel<ViewNotaExpedicao, QViewNotaExpedicao, NFExpedicaoVo, INFExpedicaoView>(
+  view) {
   override fun newBean(): NFExpedicaoVo {
     return NFExpedicaoVo()
   }
@@ -50,19 +50,15 @@ class NFExpedicaoViewModel(view: INFExpedicaoView)
     val nota = bean.findEntity() ?: return
     val saida = Nota.findSaida(nota.numero) ?: return
 
-    ItemNota.where()
-      .nota.equalTo(saida)
-      .localizacao.startsWith(bean.abreviacao)
-      .delete()
+    ItemNota.where().nota.equalTo(saida).localizacao.startsWith(bean.abreviacao).delete()
   }
 
   override val query: QViewNotaExpedicao
     get() = ViewNotaExpedicao.where().let {query ->
-      query.loja.id.eq(lojaDefault.id)
-        .let {q ->
-          if(usuarioDefault.isEstoqueExpedicao) q.abreviacao.eq(abreviacaoDefault).filtroNotaSerie()
-          else q
-        }
+      query.loja.id.eq(lojaDefault.id).let {q ->
+        if(usuarioDefault.isEstoqueExpedicao) q.abreviacao.eq(abreviacaoDefault).filtroNotaSerie()
+        else q
+      }
     }
 
   private fun QViewNotaExpedicao.filtroNotaSerie(): QViewNotaExpedicao {
@@ -76,9 +72,7 @@ class NFExpedicaoViewModel(view: INFExpedicaoView)
   }
 
   override fun QViewNotaExpedicao.orderQuery(): QViewNotaExpedicao {
-    return this.order()
-      .lancamento.desc()
-      .id.desc()
+    return this.order().lancamento.desc().id.desc()
   }
 
   override fun ViewNotaExpedicao.toVO(): NFExpedicaoVo {
@@ -112,21 +106,19 @@ class NFExpedicaoViewModel(view: INFExpedicaoView)
 
   private fun processaNota(itensExpedicao: List<ItemExpedicao>): Nota? {
     val loja = lojaDefault.numero
-    val notaDoSaci = itensExpedicao.firstOrNull()
-      ?.notaProdutoSaci
+    val notaDoSaci = itensExpedicao.firstOrNull()?.notaProdutoSaci
     val lojaSaci = notaDoSaci?.storeno ?: throw EViewModel("Nota não encontrada")
     if(loja != lojaSaci) throw EViewModel("Esta nota pertence a loja $lojaSaci")
-    val nota: Nota? = Nota.createNota(notaDoSaci)
-      ?.let {
-        if(it.existe()) Nota.findSaida(it.numero)
-        else {
-          it.sequencia = Nota.maxSequencia() + 1
-          it.usuario = usuarioDefault
-          it.lancamentoOrigem = EXPEDICAO
-          it.save()
-          it
-        }
+    val nota: Nota? = Nota.createNota(notaDoSaci)?.let {
+      if(it.existe()) Nota.findSaida(it.numero)
+      else {
+        it.sequencia = Nota.maxSequencia() + 1
+        it.usuario = usuarioDefault
+        it.lancamentoOrigem = EXPEDICAO
+        it.save()
+        it
       }
+    }
     nota ?: throw EViewModel("Nota não encontrada")
     val itens = itensExpedicao.mapNotNull {itemExpedicao ->
       val notaSaci = itemExpedicao.notaProdutoSaci
@@ -139,15 +131,13 @@ class NFExpedicaoViewModel(view: INFExpedicaoView)
         this.data = LocalDate.now()
         this.hora = LocalTime.now()
         this.save()
-        if(this.status == CONFERIDA)
-          this.recalculaSaldos()
+        if(this.status == CONFERIDA) this.recalculaSaldos()
       }
     }
 
     if(itens.isEmpty()) throw EViewModel("Essa nota não possui itens com localização")
 
-    crudBean = ViewNotaExpedicao.findExpedicao(nota)
-      ?.toVO()
+    crudBean = ViewNotaExpedicao.findExpedicao(nota)?.toVO()
 
     return nota
   }
@@ -172,19 +162,16 @@ class NFExpedicaoViewModel(view: INFExpedicaoView)
       val id = nota.id
       val notaRef = Nota.byId(id) ?: return@execList emptyList()
       val listaItens = notaRef.itensNota()
-      val itensAbreviacao = listaItens
-        .groupBy {it.abreviacao}
+      val itensAbreviacao = listaItens.groupBy {it.abreviacao}
       val impressaoCD: List<PacoteImpressao> = itensAbreviacao.flatMap {entry ->
         val abreviacao = entry.key ?: return@flatMap emptyList<PacoteImpressao>()
         if(abreviacao.expedicao) {
           val text = imprimeItens(CONFERIDA, entry.value)
-          val impressoraName = if(abreviacao.impressora == "")
-            "Localizacao ${abreviacao.abreviacao}"
+          val impressoraName = if(abreviacao.impressora == "") "Localizacao ${abreviacao.abreviacao}"
           else abreviacao.impressora
           listOf(PacoteImpressao(impressoraName, text))
         }
-        else
-          emptyList<PacoteImpressao>()
+        else emptyList<PacoteImpressao>()
       }
       val text = imprimeItens(INCLUIDA, listaItens)
       val impressaoEXP = listOf(PacoteImpressao("EXP4", text))
@@ -198,22 +185,15 @@ class NFExpedicaoViewModel(view: INFExpedicaoView)
   private fun imprimeItens(status: StatusNota, itens: List<ItemNota>): String {
     val etiquetas = Etiqueta.findByStatus(status)
     return etiquetas.joinToString(separator = "\n") {etiqueta ->
-      itens.map {imprimir(it, etiqueta)}
-        .distinct()
-        .joinToString(separator = "\n")
+      itens.map {imprimir(it, etiqueta)}.distinct().joinToString(separator = "\n")
     }
   }
 
   fun imprimeTudo() = execString {
     val etiquetas = Etiqueta.findByStatus(INCLUIDA)
-    val itens = ItemNota.where()
-      .impresso.eq(false)
-      .status.eq(INCLUIDA)
-      .findList()
+    val itens = ItemNota.where().impresso.eq(false).status.eq(INCLUIDA).findList()
     val ret = etiquetas.joinToString(separator = "\n") {etiqueta ->
-      itens.map {item -> imprimir(item, etiqueta)}
-        .distinct()
-        .joinToString(separator = "\n")
+      itens.map {item -> imprimir(item, etiqueta)}.distinct().joinToString(separator = "\n")
     }
     view.updateView()
     ret
@@ -239,8 +219,7 @@ class NFExpedicaoViewModel(view: INFExpedicaoView)
         val tipo = notaSerie.tipoNota
         when {
           usuarioDefault.isTipoCompativel(tipo) -> notaSaci
-          else                                  -> throw EViewModel(
-            "O usuário não está habilitado para lançar esse tipo de nota (${notaSerie.descricao})")
+          else                                  -> throw EViewModel("O usuário não está habilitado para lançar esse tipo de nota (${notaSerie.descricao})")
         }
       }
       else notaSaci

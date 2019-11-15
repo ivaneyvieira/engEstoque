@@ -1,7 +1,7 @@
 package br.com.engecopi.estoque.ui.views.notaVendaFutura
 
-import br.com.engecopi.estoque.viewmodel.entregaFutura.ItemVendaFutura
 import br.com.engecopi.estoque.viewmodel.LocalizacaoVendaFutura
+import br.com.engecopi.estoque.viewmodel.entregaFutura.ItemVendaFutura
 import br.com.engecopi.estoque.viewmodel.entregaFutura.NFVendaFuturaViewModel
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.row
@@ -31,8 +31,7 @@ class DlgNotaVendaFutura(val localizacaoNota: LocalizacaoVendaFutura,
 
   init {
     verticalLayout {
-      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-        .px
+      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
 
       grupo("Expedição ${localizacaoNota.abreviacao}") {
         row {
@@ -45,8 +44,7 @@ class DlgNotaVendaFutura(val localizacaoNota: LocalizacaoVendaFutura,
                 localizacaoNota.itensVendaFutura.forEach {
                   it.selecionado = false
                 }
-                val itensSelecionado = gridProdutos.selectedItems.toList()
-                  .filter {!it.isSave()}
+                val itensSelecionado = gridProdutos.selectedItems.toList().filter {!it.isSave()}
 
                 itensSelecionado.forEach {
                   it.selecionado = true

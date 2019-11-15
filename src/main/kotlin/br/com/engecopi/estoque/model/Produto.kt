@@ -58,32 +58,24 @@ class Produto: BaseModel() {
     val localizacaoUser = user.localizacoesProduto(this)
     val locs = ViewProdutoLoc.findCache(produto = this)
 
-    return locs.firstOrNull {localizacaoUser.contains(it.localizacao)}
-      ?.localizacao
+    return locs.firstOrNull {localizacaoUser.contains(it.localizacao)}?.localizacao
   }
 
   @Transactional
   fun recalculaSaldos() {
-    ViewProdutoLoc.findCache(this)
-      .map {it.localizacao}
-      .forEach {localizacao ->
-        recalculaSaldos(localizacao)
-      }
+    ViewProdutoLoc.findCache(this).map {it.localizacao}.forEach {localizacao ->
+      recalculaSaldos(localizacao)
+    }
   }
 
   @Transactional
   fun recalculaSaldos(localizacao: String): Int {
     val loja = RegistryUserInfo.lojaDefault
     var saldo = 0
-    val itensNotNull = ItemNota.where()
-      .produto.id.eq(id)
-      .nota.loja.equalTo(loja)
-      .localizacao.like(if(localizacao == "") "%" else localizacao)
-      .findList()
-    itensNotNull.asSequence()
-      .filter {it.nota?.loja?.id == loja.id && it.localizacao == localizacao}
-      .sortedWith(compareBy(ItemNota::data, ItemNota::hora))
-      .forEach {item ->
+    val itensNotNull = ItemNota.where().produto.id.eq(id).nota.loja.equalTo(loja)
+      .localizacao.like(if(localizacao == "") "%" else localizacao).findList()
+    itensNotNull.asSequence().filter {it.nota?.loja?.id == loja.id && it.localizacao == localizacao}
+      .sortedWith(compareBy(ItemNota::data, ItemNota::hora)).forEach {item ->
         item.refresh()
         saldo += item.quantidadeSaldo
         item.saldo = saldo
@@ -95,10 +87,7 @@ class Produto: BaseModel() {
   companion object Find: ProdutoFinder() {
     fun findProduto(codigo: String?, grade: String?): Produto? {
       codigo ?: return null
-      return where().codigo.eq(codigo.trim().lpad(16, " "))
-        .grade.eq(grade ?: "")
-        .findList()
-        .firstOrNull()
+      return where().codigo.eq(codigo.trim().lpad(16, " ")).grade.eq(grade ?: "").findList().firstOrNull()
     }
 
     fun findBarcode(barcode: String?): List<Produto> {
@@ -111,8 +100,7 @@ class Produto: BaseModel() {
     fun findProdutos(codigo: String?): List<Produto> {
       codigo ?: return emptyList()
 
-      return where().codigo.eq(codigo.lpad(16, " "))
-        .findList()
+      return where().codigo.eq(codigo.lpad(16, " ")).findList()
     }
 
     fun findGradesProduto(codigo: String?): List<String> {
@@ -144,42 +132,32 @@ class Produto: BaseModel() {
     fun findFaixaCodigo(codigoI: String?, codigoF: String?): List<Produto> {
       val prdnoI = codigoI?.lpad(16, " ") ?: return emptyList()
       val prdnoF = codigoF?.lpad(16, " ") ?: return emptyList()
-      return where().codigo.between(prdnoI, prdnoF)
-        .findList()
-        .filtroCD()
+      return where().codigo.between(prdnoI, prdnoF).findList().filtroCD()
     }
 
     fun findFaixaNome(nomeI: String?, nomeF: String?): List<Produto> {
-      return where().vproduto.nome.between(nomeI, nomeF)
-        .findList()
-        .filtroCD()
+      return where().vproduto.nome.between(nomeI, nomeF).findList().filtroCD()
     }
 
     fun findFaixaFabricante(vendno: Int?): List<Produto> {
       vendno ?: return emptyList()
-      return saci.findFornecedor(vendno)
-        .mapNotNull {
-          findProduto(it.codigo, it.grade)
-        }
-        .filtroCD()
+      return saci.findFornecedor(vendno).mapNotNull {
+        findProduto(it.codigo, it.grade)
+      }.filtroCD()
     }
 
     fun findFaixaCentroLucro(clno: Int?): List<Produto> {
       clno ?: return emptyList()
-      return saci.findCentroLucro(clno)
-        .mapNotNull {
-          findProduto(it.codigo, it.grade)
-        }
-        .filtroCD()
+      return saci.findCentroLucro(clno).mapNotNull {
+        findProduto(it.codigo, it.grade)
+      }.filtroCD()
     }
 
     fun findTipoProduto(typeno: Int?): List<Produto> {
       typeno ?: return emptyList()
-      return saci.findTipoProduto(typeno)
-        .mapNotNull {
-          findProduto(it.codigo, it.grade)
-        }
-        .filtroCD()
+      return saci.findTipoProduto(typeno).mapNotNull {
+        findProduto(it.codigo, it.grade)
+      }.filtroCD()
     }
   }
 
@@ -187,18 +165,13 @@ class Produto: BaseModel() {
     localizacao ?: return 0
     if(localizacao == "") return 0
     val loja = RegistryUserInfo.lojaDefault
-    return findItensNota().asSequence()
-      .filter {it.nota?.loja?.id == loja.id && it.localizacao == localizacao}
+    return findItensNota().asSequence().filter {it.nota?.loja?.id == loja.id && it.localizacao == localizacao}
       .sumBy {it.quantidadeSaldo}
   }
 
   fun saldoAbreviacao(abreviacao: String): Int {
     val loja = RegistryUserInfo.lojaDefault
-    return ItemNota.where()
-      .produto.id.eq(id)
-      .nota.loja.eq(loja)
-      .localizacao.startsWith(abreviacao)
-      .findList()
+    return ItemNota.where().produto.id.eq(id).nota.loja.eq(loja).localizacao.startsWith(abreviacao).findList()
       .sumBy {it.quantidadeSaldo}
   }
 
@@ -207,20 +180,15 @@ class Produto: BaseModel() {
   }
 
   fun ultimaNota(): ItemNota? {
-    return findItensNota().asSequence()
-      .sortedBy {it.id}
-      .lastOrNull()
+    return findItensNota().asSequence().sortedBy {it.id}.lastOrNull()
   }
 
   fun findItensNota(): List<ItemNota> {
-    return ItemNota.where()
-      .produto.id.eq(id)
-      .findList()
+    return ItemNota.where().produto.id.eq(id).findList()
   }
 
   fun localizacoes(abreviacao: String): List<String> {
-    return ViewProdutoLoc.localizacoesProduto(produto = this)
-      .filter {it.startsWith(abreviacao)}
+    return ViewProdutoLoc.localizacoesProduto(produto = this).filter {it.startsWith(abreviacao)}
   }
 
   fun prefixoLocalizacoes(): String {
@@ -229,11 +197,8 @@ class Produto: BaseModel() {
     val localizacoesSplit = localizacoes.map {it.split("[.\\-]".toRegex())}
     val ctParte = localizacoesSplit.asSequence().map {it.size - 1}.min() ?: 0
     for(i in ctParte downTo 0) {
-      val prefix = localizacoesSplit.asSequence()
-        .map {it.subList(0, i)}
-        .map {it.joinToString(separator = ".")}
-        .distinct()
-        .toList()
+      val prefix =
+        localizacoesSplit.asSequence().map {it.subList(0, i)}.map {it.joinToString(separator = ".")}.distinct().toList()
 
       if(prefix.count() == 1) return prefix[0]
     }
@@ -250,14 +215,12 @@ class Produto: BaseModel() {
 
 private fun List<Produto>.filtroCD(): List<Produto> {
   return this.filter {
-    it.localizacoes(RegistryUserInfo.abreviacaoDefault)
-      .any {loc -> loc.startsWith(RegistryUserInfo.abreviacaoDefault)}
+    it.localizacoes(RegistryUserInfo.abreviacaoDefault).any {loc -> loc.startsWith(RegistryUserInfo.abreviacaoDefault)}
   }
 }
 
 data class LocProduto(val localizacao: String): Comparable<LocProduto> {
   val prefixo = localizacao.split("-").getOrNull(0) ?: localizacao
-
   val abreviacao = localizacao.split('.').getOrNull(0) ?: ""
 
   override fun compareTo(other: LocProduto): Int {

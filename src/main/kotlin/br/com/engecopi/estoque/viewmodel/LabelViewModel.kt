@@ -33,9 +33,7 @@ class LabelViewModel(view: ILabelView): ViewModel<ILabelView>(view) {
   fun addFaixaCodigoGrade(codigo: String?, grade: String?) = exec {
     val produto = Produto.findProduto(codigo, grade) ?: return@exec
     val localizacoes = produto.localizacoes(RegistryUserInfo.abreviacaoDefault)
-    if(localizacoes.any {it.startsWith(RegistryUserInfo.abreviacaoDefault)}
-       && !view.listaProduto.contains(produto))
-      view.listaProduto += produto
+    if(localizacoes.any {it.startsWith(RegistryUserInfo.abreviacaoDefault)} && !view.listaProduto.contains(produto)) view.listaProduto += produto
   }
 
   fun clearProduto() = exec {
@@ -43,33 +41,28 @@ class LabelViewModel(view: ILabelView): ViewModel<ILabelView>(view) {
   }
 
   fun pesquisaGrades(codigo: String?): List<String> {
-    return Produto.findProdutos(codigo)
-      .map {it.grade}
+    return Produto.findProdutos(codigo).map {it.grade}
   }
 
   fun impressao(): String? {
     val etiquetas = Etiqueta.findByStatus(StatusNota.PRODUTO)
     val template = etiquetas.joinToString(separator = "\n") {it.template}
 
-    return view.listaProduto
-      .joinToString(separator = "\n") {prd ->
-        val barcodeGtin = prd.barcodeGtin.distinct()
-        barcodeGtin.joinToString(separator = "\n") {bar ->
-          val print = template.replace("[Codigo]", prd.codigo.trim())
-            .replace("[Grade]", prd.grade)
-            .replace("[Descricao]", prd.descricao ?: "")
-            .replace("[Gtin]", bar)
-          HistoricoEtiqueta.save(prd, bar, print)
-          print
-        }
+    return view.listaProduto.joinToString(separator = "\n") {prd ->
+      val barcodeGtin = prd.barcodeGtin.distinct()
+      barcodeGtin.joinToString(separator = "\n") {bar ->
+        val print = template.replace("[Codigo]", prd.codigo.trim()).replace("[Grade]", prd.grade)
+          .replace("[Descricao]", prd.descricao ?: "").replace("[Gtin]", bar)
+        HistoricoEtiqueta.save(prd, bar, print)
+        print
       }
+    }
   }
 
   fun addFaixaNfe(nfe: String?) = exec {
-    val produtos = Nota.findNotaEntradaSaci(nfe)
-      .mapNotNull {
-        Produto.findProduto(it.prdno, it.grade)
-      }
+    val produtos = Nota.findNotaEntradaSaci(nfe).mapNotNull {
+      Produto.findProduto(it.prdno, it.grade)
+    }
     view.listaProduto = produtos
   }
 }

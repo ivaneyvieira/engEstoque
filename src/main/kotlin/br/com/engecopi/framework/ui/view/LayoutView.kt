@@ -1,6 +1,5 @@
 package br.com.engecopi.framework.ui.view
 
-import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.framework.viewmodel.ViewModel
 import br.com.engecopi.saci.QuerySaci
 import br.com.engecopi.utils.CupsUtils
@@ -109,8 +108,7 @@ abstract class LayoutView<V: ViewModel<*>>: VerticalLayout(), View {
     val resource = StreamResource({IOUtils.toInputStream(comentText)}, "${SystemUtils.md5(comentText)}.txt")
     resource.mimeType = "text/plain"
 
-    Page.getCurrent()
-      .open(resource, "_blank", false)
+    Page.getCurrent().open(resource, "_blank", false)
   }
 
   fun printText(impressora: String, text: String?) {
@@ -118,8 +116,7 @@ abstract class LayoutView<V: ViewModel<*>>: VerticalLayout(), View {
       when {
         QuerySaci.test -> {
           val image = ZPLPreview.createPdf(text, "4x2")
-          if(image != null)
-            showImage("Preview", image)
+          if(image != null) showImage("Preview", image)
         }
         else           -> CupsUtils.printCups(impressora, text)
       }
@@ -145,8 +142,7 @@ fun <V, T> HasItems<T>.bindItens(binder: Binder<V>, propertyList: String) {
     val oldValue = hasValue?.value
     if(itensOld != itens) {
       if(this is ComboBox<T>) setItems({itemCaption, filterText ->
-                                         itemCaption.toUpperCase()
-                                           .startsWith(filterText.toUpperCase())
+                                         itemCaption.toUpperCase().startsWith(filterText.toUpperCase())
                                        }, itens)
       else if(this is TwinColSelect<T>) setItems(itens)
       else setItems(itens)
@@ -192,8 +188,7 @@ private fun <BEAN, FIELDVALUE> bind(binder: Binder<BEAN>,
                                     property: String,
                                     blockBinder: (FIELDVALUE) -> Unit): Binding<BEAN, FIELDVALUE> {
   val field = ReadOnlyHasValue<FIELDVALUE> {itens -> blockBinder(itens)}
-  return field.bind(binder)
-    .bind(property)
+  return field.bind(binder).bind(property)
 }
 
 fun Binder<*>.reload() {
@@ -207,18 +202,15 @@ inline fun <reified BEAN: Any, FIELDVALUE> HasValue<FIELDVALUE>.reloadBinderOnCh
       val bean = binder.bean
       if(propertys.isEmpty()) {
         val bindings = BEAN::class.memberProperties.mapNotNull {prop ->
-          binder.getBinding(prop.name)
-            .orElse(null)
+          binder.getBinding(prop.name).orElse(null)
         }
-        binder.fields.toList()
-          .mapNotNull {field ->
-            bindings.find {binding ->
-              binding.field == field && binding.field != this
-            }
+        binder.fields.toList().mapNotNull {field ->
+          bindings.find {binding ->
+            binding.field == field && binding.field != this
           }
-          .forEach {binding ->
-            binding.read(bean)
-          }
+        }.forEach {binding ->
+          binding.read(bean)
+        }
       }
       else {
         reloadPropertys(binder, *propertys)
@@ -230,10 +222,9 @@ inline fun <reified BEAN: Any, FIELDVALUE> HasValue<FIELDVALUE>.reloadBinderOnCh
 fun <BEAN> reloadPropertys(binder: Binder<BEAN>, vararg propertys: KProperty1<BEAN, *>) {
   val bean = binder.bean
   propertys.forEach {prop ->
-    binder.getBinding(prop.name)
-      .ifPresent {binding ->
-        binding.read(bean)
-      }
+    binder.getBinding(prop.name).ifPresent {binding ->
+      binding.read(bean)
+    }
   }
 }
 
@@ -317,8 +308,7 @@ fun Window.showDialog() {
   //isTabStopEnabled=true
   tabIndex = -1
   addCloseShortcut(KeyCode.ESCAPE)
-  UI.getCurrent()
-    .addWindow(this)
+  UI.getCurrent().addWindow(this)
   center()
 }
 

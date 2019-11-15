@@ -7,7 +7,7 @@ import io.ebean.typequery.TQRootBean
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-abstract class CrudViewModel<MODEL: BaseModel, Q: TQRootBean<MODEL, Q>, VO: EntityVo<MODEL>, V : ICrudView>(view: V):
+abstract class CrudViewModel<MODEL: BaseModel, Q: TQRootBean<MODEL, Q>, VO: EntityVo<MODEL>, V: ICrudView>(view: V):
   ViewModel<V>(view) {
   private var queryView: QueryView? = null
   private var pagedList: PagedList<MODEL>? = null
@@ -131,11 +131,8 @@ abstract class CrudViewModel<MODEL: BaseModel, Q: TQRootBean<MODEL, Q>, VO: Enti
   fun updateQueryView(queryView: QueryView) {
     if(this.queryView != queryView) {
       this.queryView = queryView
-      pagedList = query.filterBlank(queryView.filter)
-        .makeSort(queryView.sorts)
-        .setFirstRow(queryView.offset)
-        .setMaxRows(queryView.limit)
-        .findPagedList()
+      pagedList = query.filterBlank(queryView.filter).makeSort(queryView.sorts).setFirstRow(queryView.offset)
+        .setMaxRows(queryView.limit).findPagedList()
       pagedList?.loadCount()
     }
   }
@@ -161,6 +158,6 @@ abstract class EntityVo<MODEL: BaseModel> {
 
 data class QueryView(val offset: Int, val limit: Int, val filter: String, val sorts: List<Sort>)
 
-interface ICrudView: IView{
+interface ICrudView: IView {
   fun updateView()
 }

@@ -19,7 +19,6 @@ import javax.persistence.ManyToOne
 @Entity
 @View(name = "v_nota_expedicao", dependentTables = ["notas", "itens_nota"])
 class ViewNotaExpedicao: BaseModel() {
-
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var nota: Nota? = null
   var numero: String = ""
@@ -46,25 +45,16 @@ class ViewNotaExpedicao: BaseModel() {
     fun findSaida(numero: String?, abreviacao: String?): ViewNotaExpedicao? {
       numero ?: return null
       abreviacao ?: return null
-      return where().numero.eq(numero)
-        .loja.equalTo(RegistryUserInfo.lojaDefault)
-        .abreviacao.eq(abreviacao)
-        .findList()
+      return where().numero.eq(numero).loja.equalTo(RegistryUserInfo.lojaDefault).abreviacao.eq(abreviacao).findList()
         .firstOrNull()
     }
 
     fun findExpedicao(nota: Nota): ViewNotaExpedicao? {
-      return where().numero.eq(nota.numero)
-        .loja.equalTo(nota.loja)
-        .findList()
-        .firstOrNull()
+      return where().numero.eq(nota.numero).loja.equalTo(nota.loja).findList().firstOrNull()
     }
   }
 
   fun findItens(): List<ItemNota> {
-    return ItemNota.where()
-      .nota.id.eq(nota?.id)
-      .localizacao.startsWith(abreviacao)
-      .findList()
+    return ItemNota.where().nota.id.eq(nota?.id).localizacao.startsWith(abreviacao).findList()
   }
 }

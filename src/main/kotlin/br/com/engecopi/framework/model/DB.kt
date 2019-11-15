@@ -28,11 +28,7 @@ object DB {
   }
 
   fun String.split(): List<String> {
-    return this.replace("::=", ":=")
-      .replace(":=", "::=")
-      .split(";")
-      .map {it.replace('\n', ' ')}
-      .map {it.trim()}
+    return this.replace("::=", ":=").replace(":=", "::=").split(";").map {it.replace('\n', ' ')}.map {it.trim()}
       .filter {it.isNotBlank()}
   }
 
@@ -56,16 +52,13 @@ object DB {
 
       when {
         T::class.isSubclassOf(BaseModel::class) -> {
-          val rawSql = RawSqlBuilder.parse(sql)
-            .create()
-          val query = Transaction.find(T::class.java)
-            ?.setRawSql(rawSql)
+          val rawSql = RawSqlBuilder.parse(sql).create()
+          val query = Transaction.find(T::class.java)?.setRawSql(rawSql)
           params.forEach {param ->
             query?.setParameter(param.first, param.second)
           }
 
-          query?.findList()
-            .orEmpty()
+          query?.findList().orEmpty()
         }
         else                                    -> {
           val sqlQuery = Transaction.createSqlQuery(sql)
@@ -73,15 +66,13 @@ object DB {
           params.forEach {param ->
             sqlQuery?.setParameter(param.first, param.second)
           }
-          sqlQuery?.findList()
-            ?.map {sqlRow ->
-              val arrayPar: List<Any?> = constructor.parameters.map {par ->
-                sqlRow[par.name]
-              }
-
-              constructor.call(arrayPar.toTypedArray())
+          sqlQuery?.findList()?.map {sqlRow ->
+            val arrayPar: List<Any?> = constructor.parameters.map {par ->
+              sqlRow[par.name]
             }
-            .orEmpty()
+
+            constructor.call(arrayPar.toTypedArray())
+          }.orEmpty()
         }
       }
     }
@@ -101,8 +92,7 @@ object DB {
       params.forEach {param ->
         sqlQuery?.setParameter(param.first, param.second)
       }
-      sqlQuery?.findList()
-        ?.filterIsInstance<T>()
+      sqlQuery?.findList()?.filterIsInstance<T>()
     }.orEmpty()
   }
 }

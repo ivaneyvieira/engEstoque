@@ -11,14 +11,10 @@ import com.github.mvysny.karibudsl.v8.addColumnFor
 import com.github.mvysny.karibudsl.v8.grid
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.event.ShortcutAction.KeyCode
-import com.vaadin.server.Setter
 import com.vaadin.ui.CheckBox
-import com.vaadin.ui.ComboBox
 import com.vaadin.ui.TextField
 import com.vaadin.ui.renderers.TextRenderer
 import org.vaadin.patrik.FastNavigation
-import org.vaadin.viritin.grid.MGrid
-import sun.security.util.PropertyExpander.expand
 
 @AutoView
 class AbreciacaoView: LayoutView<AbreciacaoViewModel>(), IAbreciacaoView {

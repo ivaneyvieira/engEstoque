@@ -3,25 +3,21 @@ package br.com.engecopi.estoque.viewmodel
 import br.com.engecopi.estoque.model.HistoricoEtiqueta
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.Usuario
-import br.com.engecopi.estoque.model.query.QEtiqueta
 import br.com.engecopi.estoque.model.query.QHistoricoEtiqueta
 import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.ICrudView
-import br.com.engecopi.framework.viewmodel.IView
-import br.com.engecopi.utils.lpad
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class HistoricoViewModel(view: IHistoricoView): CrudViewModel<HistoricoEtiqueta, QHistoricoEtiqueta, HistoricoVo, IHistoricoView>
-                                                (view) {
+class HistoricoViewModel(view: IHistoricoView): CrudViewModel<HistoricoEtiqueta, QHistoricoEtiqueta, HistoricoVo, IHistoricoView>(
+  view) {
   override fun update(bean: HistoricoVo) {
-    bean.findEntity()
-      ?.let {hist ->
-        hist.gtinOk = bean.gtinOk
-        hist.save()
-      }
+    bean.findEntity()?.let {hist ->
+      hist.gtinOk = bean.gtinOk
+      hist.save()
+    }
   }
 
   override fun add(bean: HistoricoVo) {
@@ -47,13 +43,10 @@ class HistoricoViewModel(view: IHistoricoView): CrudViewModel<HistoricoEtiqueta,
   }
 
   override fun QHistoricoEtiqueta.filterString(text: String): QHistoricoEtiqueta {
-    return or()
-      .produto.codigo.contains(text)
-      .produto.grade.startsWith(text)
-      .endOr()
+    return or().produto.codigo.contains(text).produto.grade.startsWith(text).endOr()
   }
 
-  override fun QHistoricoEtiqueta.filterDate(date: LocalDate) : QHistoricoEtiqueta{
+  override fun QHistoricoEtiqueta.filterDate(date: LocalDate): QHistoricoEtiqueta {
     return data.eq(date)
   }
 }
@@ -81,4 +74,4 @@ class HistoricoVo: EntityVo<HistoricoEtiqueta>() {
   var gtinOk: Boolean = false
 }
 
-interface IHistoricoView :ICrudView
+interface IHistoricoView: ICrudView

@@ -13,7 +13,6 @@ import br.com.engecopi.saci.beans.NotaSaci
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.addColumnFor
 import com.github.mvysny.karibudsl.v8.button
-import com.github.mvysny.karibudsl.v8.column
 import com.github.mvysny.karibudsl.v8.cssLayout
 import com.github.mvysny.karibudsl.v8.grid
 import com.github.mvysny.karibudsl.v8.horizontalLayout
@@ -90,10 +89,10 @@ class PainelGeralView: LayoutView<PainelGeralViewModel>(), IPainelGeralView {
     entradaCanceladaDataProvider.items.addAll(viewModel.listEntradaCancelada())
   }
 
-  private fun CssLayout.gridNotaSaci(dataProvider: ListDataProvider<NotaSaci>, tipoMov : TipoMov): Grid<NotaSaci> {
+  private fun CssLayout.gridNotaSaci(dataProvider: ListDataProvider<NotaSaci>, tipoMov: TipoMov): Grid<NotaSaci> {
     return grid(dataProvider = dataProvider) {
       setSizeFull()
-      if(tipoMov == ENTRADA){
+      if(tipoMov == ENTRADA) {
         addColumnFor(NotaSaci::invno) {
           caption = "NI"
         }

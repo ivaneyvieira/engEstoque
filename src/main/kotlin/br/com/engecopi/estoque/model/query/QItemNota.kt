@@ -20,12 +20,11 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for ItemNota.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
-class QItemNota : TQRootBean<ItemNota, QItemNota> {
-
+class QItemNota: TQRootBean<ItemNota, QItemNota> {
   companion object {
     /**
      * shared 'Alias' instance used to provide
@@ -49,24 +48,23 @@ class QItemNota : TQRootBean<ItemNota, QItemNota> {
   lateinit var saldo: PInteger<QItemNota>
   lateinit var impresso: PBoolean<QItemNota>
   lateinit var localizacao: PString<QItemNota>
-  lateinit var status: PEnum<QItemNota,StatusNota>
+  lateinit var status: PEnum<QItemNota, StatusNota>
   lateinit var codigoBarraCliente: PString<QItemNota>
   lateinit var codigoBarraConferencia: PString<QItemNota>
   lateinit var codigoBarraEntrega: PString<QItemNota>
 
-
   /**
    * Construct with a given Database.
    */
-  constructor(database: Database) : super(ItemNota::class.java, database)
+  constructor(database: Database): super(ItemNota::class.java, database)
 
   /**
    * Construct using the default Database.
    */
-  constructor() : super(ItemNota::class.java)
+  constructor(): super(ItemNota::class.java)
 
   /**
    * Construct for Alias.
    */
-  private constructor(dummy: Boolean) : super(dummy)
+  private constructor(dummy: Boolean): super(dummy)
 }

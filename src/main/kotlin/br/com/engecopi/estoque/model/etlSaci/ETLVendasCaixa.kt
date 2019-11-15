@@ -1,7 +1,5 @@
 package br.com.engecopi.estoque.model.etlSaci
 
-import br.com.engecopi.estoque.model.RegistryUserInfo
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.dtos.VendasCaixa
 import br.com.engecopi.saci.saci
 import io.ebean.DB
@@ -20,12 +18,10 @@ class ETLVendasCaixa: ETL<VendasCaixa>() {
 
   companion object: ETLThread<VendasCaixa>(ETLVendasCaixa()) {
     val sql
-      get()= "select id, storeno, nfno, nfse, prdno, grade, qtty from t_vendas_caixa"
+      get() = "select id, storeno, nfno, nfse, prdno, grade, qtty from t_vendas_caixa"
 
     override fun getSource() = saci.findVendasCaixa()
 
-    override fun getTarget() = DB
-      .findDto(VendasCaixa::class.java, sql)
-      .findList()
+    override fun getTarget() = DB.findDto(VendasCaixa::class.java, sql).findList()
   }
 }

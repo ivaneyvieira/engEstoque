@@ -32,9 +32,7 @@ class ViewProdutoLoc(@Id
     }
 
     fun produtosCache(): List<Produto> {
-      return Repositories.findByLojaAbreviacao()
-        .map {it.produto}
-        .distinct()
+      return Repositories.findByLojaAbreviacao().map {it.produto}.distinct()
     }
 
     fun findCache(produto: Produto?): List<ViewProdutoLoc> {
@@ -43,30 +41,21 @@ class ViewProdutoLoc(@Id
     }
 
     fun localizacoesAbreviacaoCache(abreviacao: String): List<String> {
-      return findByAbreviacao(abreviacao).map {it.localizacao}
-        .distinct()
+      return findByAbreviacao(abreviacao).map {it.localizacao}.distinct()
     }
 
     fun localizacoesProdutoCache(produto: Produto?): List<String> {
       produto ?: return emptyList()
-      return findByProduto(produto).map {it.localizacao}
-        .distinct()
+      return findByProduto(produto).map {it.localizacao}.distinct()
     }
 
     fun localizacoesProduto(produto: Produto?): List<String> {
       produto ?: return emptyList()
-      return where().produto.id.eq(produto.id)
-        .findList()
-        .asSequence()
-        .mapNotNull {it.localizacao}
-        .distinct()
+      return where().produto.id.eq(produto.id).findList().asSequence().mapNotNull {it.localizacao}.distinct()
         .map {localizacao ->
           val saldo = produto.saldoLoja(localizacao)
           Pair(localizacao, saldo)
-        }
-        .sortedBy {pair -> -pair.second}
-        .map {it.first}
-        .toList()
+        }.sortedBy {pair -> -pair.second}.map {it.first}.toList()
     }
 
     fun abreviacoesProduto(produto: Produto?) =
@@ -81,9 +70,7 @@ class ViewProdutoLoc(@Id
     fun findByCodigoGrade(prdno: String?, grade: String?): List<ViewProdutoLoc> {
       prdno ?: return emptyList()
       grade ?: return emptyList()
-      return where().codigo.eq(prdno.padStart(16, ' '))
-        .grade.eq(grade)
-        .findList()
+      return where().codigo.eq(prdno.padStart(16, ' ')).grade.eq(grade).findList()
     }
   }
 }

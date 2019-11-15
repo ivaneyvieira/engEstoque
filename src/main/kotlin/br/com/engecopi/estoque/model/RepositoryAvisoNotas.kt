@@ -16,12 +16,11 @@ object RepositoryAvisoNotas {
   private val devolucaoFornecedor = mutableListOf<DevolucaoFornecedor>()
   private val notaEntradaSalva = mutableListOf<Nota>()
   private val notaSaidaSalva = mutableListOf<Nota>()
-
   private val listEvents = ArrayList<(RepositoryAvisoNotas) -> Unit>()
 
-  fun addEvent(event : (RepositoryAvisoNotas) -> Unit) {
+  fun addEvent(event: (RepositoryAvisoNotas) -> Unit) {
     listEvents.clear()
-    listEvents.add (event)
+    listEvents.add(event)
   }
 
   fun refresh() {
@@ -93,11 +92,9 @@ object RepositoryAvisoNotas {
 
   fun notaEntradaPendente(): List<NotaSaci> {
     val naoCanceladas = notaSaidaTodas.filter {it.cancelado == "N"}
-    return naoCanceladas
-      .filter {nfSaida ->
-        nfSaida.entradaAceita()
-      }
-      .filter {nfEntrada ->
+    return naoCanceladas.filter {nfSaida ->
+      nfSaida.entradaAceita()
+    }.filter {nfEntrada ->
         !notaEntradaSalva.any {nota ->
           nota.numero == nfEntrada.numeroSerie
         }
@@ -109,11 +106,9 @@ object RepositoryAvisoNotas {
       //print(".")
       it.cancelado == "N"
     }
-    return naoCanceladas
-      .filter {nfSaida ->
-        nfSaida.saidaAceita()
-      }
-      .filter {nfSaida ->
+    return naoCanceladas.filter {nfSaida ->
+      nfSaida.saidaAceita()
+    }.filter {nfSaida ->
         !notaSaidaSalva.any {nota ->
           nota.numero == nfSaida.numeroSerie
         }

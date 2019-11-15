@@ -10,9 +10,12 @@ import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.query.QItemNota
 
-class EntregaClienteEditorViewModel(view: IEntregaClienteEditorView):
-  NotaViewModel<EntregaClienteVo, IEntregaClienteEditorView>(view, SAIDA,
-                                                             ENTREGUE, ENTREGUE, "") {
+class EntregaClienteEditorViewModel(view: IEntregaClienteEditorView): NotaViewModel<EntregaClienteVo, IEntregaClienteEditorView>(
+  view,
+  SAIDA,
+  ENTREGUE,
+  ENTREGUE,
+  "") {
   override fun newBean(): EntregaClienteVo {
     return EntregaClienteVo()
   }
@@ -22,21 +25,16 @@ class EntregaClienteEditorViewModel(view: IEntregaClienteEditorView):
   }
 
   override fun QItemNota.filtroStatus(): QItemNota {
-    return status.`in`(ENTREGUE, ENT_LOJA)
-      .nota.usuario.isNotNull.nota.sequencia.ne(0)
-      .let {q ->
-        if(usuarioDefault.isEstoqueExpedicao) q.localizacao.startsWith(abreviacaoDefault)
-        else q
-      }
+    return status.`in`(ENTREGUE, ENT_LOJA).nota.usuario.isNotNull.nota.sequencia.ne(0).let {q ->
+      if(usuarioDefault.isEstoqueExpedicao) q.localizacao.startsWith(abreviacaoDefault)
+      else q
+    }
   }
 
   override fun createVo() = EntregaClienteVo()
 
   fun notasConferidas(): List<EntregaClienteVo> {
-    return ItemNota.where()
-      .status.eq(CONFERIDA)
-      .findList()
-      .map {it.toVO()}
+    return ItemNota.where().status.eq(CONFERIDA).findList().map {it.toVO()}
   }
 }
 

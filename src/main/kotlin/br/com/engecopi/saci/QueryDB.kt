@@ -1,19 +1,17 @@
 package br.com.engecopi.saci
 
 import br.com.engecopi.utils.SystemUtils
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import org.sql2o.Connection
 import org.sql2o.Query
 import org.sql2o.Sql2o
-import com.zaxxer.hikari.HikariConfig
-import br.com.engecopi.saci.QueryDB
-import com.zaxxer.hikari.HikariDataSource
 
 open class QueryDB(private val driver: String, val url: String, val username: String, val password: String) {
   private val sql2o: Sql2o
 
   init {
     registerDriver(driver)
-
     val config = HikariConfig()
     config.jdbcUrl = url
     config.username = username
@@ -54,40 +52,36 @@ open class QueryDB(private val driver: String, val url: String, val username: St
                         vararg params: Pair<String, String>,
                         monitor: (String, Int, Int) -> Unit = {_, _, _ ->}) {
     var sqlScript = SystemUtils.readFile(file)
-    sql2o.beginTransaction()
-      .trywr {con ->
-        params.forEach {
-          sqlScript = sqlScript?.replace(":${it.first}", it.second)
-        }
-        val sqls = sqlScript?.split(";")
-          .orEmpty()
-        val count = sqls.size
-        sqls.filter {it.trim() != ""}
-          .forEachIndexed {index, sql ->
-            println(sql)
-            val query = con.createQuery(sql)
-            query.executeUpdate()
-            val parte = index + 1
-            val caption = "Parte $parte/$count"
-            monitor(caption, parte, count)
-          }
-        monitor("", count, count)
-        con.commit()
+    sql2o.beginTransaction().trywr {con ->
+      params.forEach {
+        sqlScript = sqlScript?.replace(":${it.first}", it.second)
       }
+      val sqls = sqlScript?.split(";").orEmpty()
+      val count = sqls.size
+      sqls.filter {it.trim() != ""}.forEachIndexed {index, sql ->
+        println(sql)
+        val query = con.createQuery(sql)
+        query.executeUpdate()
+        val parte = index + 1
+        val caption = "Parte $parte/$count"
+        monitor(caption, parte, count)
+      }
+      monitor("", count, count)
+      con.commit()
+    }
   }
 
   private fun <T> buildQuery(file: String, proc: (Connection, Query) -> T): T {
     val sql = SystemUtils.readFile(file)
-    return this.sql2o.open()
-      .use {con ->
-        val query = con.createQuery(sql)
-        val time = System.currentTimeMillis()
-        println("SQL2O ==> $sql")
-       val result = proc(con, query)
-        val difTime = System.currentTimeMillis() - time
-        println("######################## TEMPO QUERY $difTime ms ########################")
-        result
-      }
+    return this.sql2o.open().use {con ->
+      val query = con.createQuery(sql)
+      val time = System.currentTimeMillis()
+      println("SQL2O ==> $sql")
+      val result = proc(con, query)
+      val difTime = System.currentTimeMillis() - time
+      println("######################## TEMPO QUERY $difTime ms ########################")
+      result
+    }
   }
 
   protected fun <T> temporaryTable(tableName: String, lista: List<T>, fieldList: (T) -> String): String {
@@ -95,13 +89,11 @@ open class QueryDB(private val driver: String, val url: String, val username: St
     val selectList = lista.joinToString(separator = "\nUNION\n") {item ->
       "SELECT ${fieldList(item)} FROM DUAL"
     }
-    stringBuild.append(
-      """
+    stringBuild.append("""
         DROP TABLE IF EXISTS $tableName;
         CREATE TEMPORARY TABLE $tableName
         $selectList;
-      """.trimIndent()
-                      )
+      """.trimIndent())
     return stringBuild.toString()
   }
 }

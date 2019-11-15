@@ -61,8 +61,7 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), IN
     viewModel = NFExpedicaoViewModel(this)
     layoutForm {
       formLayout.apply {
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-          .px
+        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
         val nota = binder.bean
         grupo("Nota fiscal de saída") {
           verticalLayout {
@@ -132,8 +131,7 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), IN
             refreshGrid()
           }
         }
-      }
-        .id = "btnPrint"
+      }.id = "btnPrint"
       column(NFExpedicaoVo::loja) {
         caption = "Loja NF"
         setRenderer({loja ->
@@ -220,8 +218,7 @@ class DlgNotaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
   init {
     val nota = notaProdutoSaida.firstOrNull()
     verticalLayout {
-      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-        .px
+      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
 
       grupo("Nota fiscal de saída") {
         verticalLayout {
@@ -234,14 +231,12 @@ class DlgNotaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
             textField("Loja") {
               expandRatio = 2f
               isReadOnly = true
-              value = viewModel.findLoja(nota?.storeno)
-                ?.sigla
+              value = viewModel.findLoja(nota?.storeno)?.sigla
             }
             textField("Tipo") {
               expandRatio = 2f
               isReadOnly = true
-              value = TipoNota.value(nota?.tipo)
-                ?.descricao
+              value = TipoNota.value(nota?.tipo)?.descricao
             }
             dateField("Data") {
               expandRatio = 1f
@@ -263,10 +258,9 @@ class DlgNotaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
             button("Confirma") {
               addStyleName(ValoTheme.BUTTON_PRIMARY)
               addClickListener {
-                val itens = gridProdutos.dataProvider.getAll()
-                  .flatMap {loc ->
-                    loc.itensExpedicao.filter {it.selecionado}
-                  }
+                val itens = gridProdutos.dataProvider.getAll().flatMap {loc ->
+                  loc.itensExpedicao.filter {it.selecionado}
+                }
                 execConfirma(itens)
                 close()
               }
@@ -283,27 +277,17 @@ class DlgNotaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
           gridProdutos = grid(LocalizacaoNota::class) {
             val itens = notaProdutoSaida
             val abreviacaoItens = itens.groupBy {item ->
-              val abreviacao = viewModel.abreviacoes(item.prdno, item.grade)
-                .sorted()
+              val abreviacao = viewModel.abreviacoes(item.prdno, item.grade).sorted()
               abreviacao
             }
-            val abreviacoes = abreviacaoItens.keys.asSequence()
-              .flatten()
-              .distinct()
-              .map {abrev ->
-                val itensExpedicao = abreviacaoItens.filter {it.key.contains(abrev)}
-                  .map {it.value}
-                  .flatten()
-                  .distinct()
-                  .map {notaSaci ->
-                    val saldo = viewModel.saldoProduto(notaSaci, abrev)
-                    ItemExpedicao(notaSaci, saldo, abrev)
-                  }
-                LocalizacaoNota(abrev, itensExpedicao)
-              }
-              .toList()
-              .sortedBy {it.abreviacao}
-              .toList()
+            val abreviacoes = abreviacaoItens.keys.asSequence().flatten().distinct().map {abrev ->
+              val itensExpedicao =
+                abreviacaoItens.filter {it.key.contains(abrev)}.map {it.value}.flatten().distinct().map {notaSaci ->
+                  val saldo = viewModel.saldoProduto(notaSaci, abrev)
+                  ItemExpedicao(notaSaci, saldo, abrev)
+                }
+              LocalizacaoNota(abrev, itensExpedicao)
+            }.toList().sortedBy {it.abreviacao}.toList()
 
             this.dataProvider = ListDataProvider(abreviacoes)
             removeAllColumns()
@@ -335,8 +319,6 @@ class DlgNotaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
   }
 }
 
-
-
 class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
                        val viewModel: NFExpedicaoViewModel,
                        val update: () -> Unit): Window("Itens da expedição") {
@@ -344,8 +326,7 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
 
   init {
     verticalLayout {
-      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-        .px
+      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
 
       grupo("Expedição ${localizacaoNota.abreviacao}") {
         row {
@@ -358,8 +339,7 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
                 localizacaoNota.itensExpedicao.forEach {
                   it.selecionado = false
                 }
-                val itensSelecionado = gridProdutos.selectedItems.toList()
-                  .filter {!it.isSave()}
+                val itensSelecionado = gridProdutos.selectedItems.toList().filter {!it.isSave()}
 
                 itensSelecionado.forEach {
                   it.selecionado = true

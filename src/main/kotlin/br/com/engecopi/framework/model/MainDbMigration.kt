@@ -9,7 +9,6 @@ fun main() {
   val fileName = System.getenv("EBEAN_PROPS") ?: "$home/ebean.properties"
   System.setProperty("ebean.props.file", fileName)
   System.setProperty("ddl.migration.name", "support end dating")
-
   val migration = DbMigration.create()
   migration.setStrictMode(false)
   migration.setPlatform(Platform.MYSQL)

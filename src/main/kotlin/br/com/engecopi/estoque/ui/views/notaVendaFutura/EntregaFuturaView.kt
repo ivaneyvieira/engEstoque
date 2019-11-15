@@ -26,8 +26,7 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView("entrega_futura")
-class EntregaFuturaView: NotaView<EntregaFututaVo, EntregaFututaViewModel, IEntregaFututaView>(),
-                         IEntregaFututaView {
+class EntregaFuturaView: NotaView<EntregaFututaVo, EntregaFututaViewModel, IEntregaFututaView>(), IEntregaFututaView {
   var formCodBar: PnlCodigoBarras? = null
 
   override fun enter(event: ViewChangeEvent) {
@@ -43,8 +42,7 @@ class EntregaFuturaView: NotaView<EntregaFututaVo, EntregaFututaViewModel, IEntr
         binder.bean.usuario = usuario
       }
       formLayout.apply {
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-          .px
+        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
 
         grupo("Nota fiscal de saída") {
           verticalLayout {
@@ -143,13 +141,9 @@ class EntregaFuturaView: NotaView<EntregaFututaVo, EntregaFututaViewModel, IEntr
         caption = "Cliente"
         setSortProperty("nota.cliente")
       }
-      val itens = viewModel.notasConferidas()
-        .groupBy {it.numeroNF}
-        .entries.sortedBy {entry ->
-        entry.value.map {it.entityVo?.id ?: 0}
-          .max()
-      }
-        .mapNotNull {it.key}
+      val itens = viewModel.notasConferidas().groupBy {it.numeroNF}.entries.sortedBy {entry ->
+        entry.value.map {it.entityVo?.id ?: 0}.max()
+      }.mapNotNull {it.key}
 
       grid.setStyleGenerator {saida ->
         if(saida.status == CONFERIDA) {

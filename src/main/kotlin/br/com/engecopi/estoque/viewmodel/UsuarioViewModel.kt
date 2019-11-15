@@ -17,9 +17,7 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
   private val queryProduto get() = Produto.where()
 
   fun findProduto(offset: Int, limit: Int): List<Produto> {
-    return queryProduto.setFirstRow(offset)
-      .setMaxRows(limit)
-      .findList()
+    return queryProduto.setFirstRow(offset).setMaxRows(limit).findList()
   }
 
   fun countProduto(): Int {
@@ -84,8 +82,7 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
   }
 
   override fun delete(bean: UsuarioCrudVo) {
-    Usuario.findUsuario(bean.loginName ?: "")
-      ?.delete()
+    Usuario.findUsuario(bean.loginName ?: "")?.delete()
   }
 
   val lojas
@@ -105,9 +102,7 @@ class UsuarioCrudVo: EntityVo<Usuario>() {
     set(value) {
       field = value
       locaisLoja.clear()
-      val sets = value?.findAbreviacores()
-        .orEmpty()
-        .toMutableSet()
+      val sets = value?.findAbreviacores().orEmpty().toMutableSet()
       locaisLoja.addAll(sets)
     }
   val nome
@@ -138,4 +133,4 @@ class UsuarioCrudVo: EntityVo<Usuario>() {
   }
 }
 
-interface IUsuarioView : ICrudView
+interface IUsuarioView: ICrudView

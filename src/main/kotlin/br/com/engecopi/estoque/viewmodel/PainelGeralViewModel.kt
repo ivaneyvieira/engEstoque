@@ -1,6 +1,5 @@
 package br.com.engecopi.estoque.viewmodel
 
-import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RepositoryAvisoNotas
 import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.framework.viewmodel.ViewModel
@@ -12,23 +11,19 @@ class PainelGeralViewModel(view: IPainelGeralView): ViewModel<IPainelGeralView>(
   }
 
   fun listSaidaCancelada(): List<NotaSaci> {
-    return RepositoryAvisoNotas.notaSaidaCancelada()
-      .sortedBy {-it.date}
+    return RepositoryAvisoNotas.notaSaidaCancelada().sortedBy {-it.date}
   }
 
   fun listEntradaCancelada(): List<NotaSaci> {
-    return RepositoryAvisoNotas.notaEntradaCancelada()
-      .sortedBy {-it.date}
+    return RepositoryAvisoNotas.notaEntradaCancelada().sortedBy {-it.date}
   }
 
   fun listSaidaPendente(): List<NotaSaci> {
-    return RepositoryAvisoNotas.notaSaidaPendente()
-      .sortedBy {-it.date}
+    return RepositoryAvisoNotas.notaSaidaPendente().sortedBy {-it.date}
   }
 
   fun listEntradaPendente(): List<NotaSaci> {
-    return RepositoryAvisoNotas.notaEntradaPendente()
-      .sortedBy {-it.date}
+    return RepositoryAvisoNotas.notaEntradaPendente().sortedBy {-it.date}
   }
 
   fun refresh() = exec {
@@ -37,6 +32,6 @@ class PainelGeralViewModel(view: IPainelGeralView): ViewModel<IPainelGeralView>(
   }
 }
 
-interface IPainelGeralView : IView{
+interface IPainelGeralView: IView {
   fun updateView()
 }

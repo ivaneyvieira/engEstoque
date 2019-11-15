@@ -34,16 +34,12 @@ class Usuario: BaseModel() {
   var locais: List<String>
     get() = localizacaoes.split(",").asSequence().filter {it.isNotBlank()}.map {it.trim()}.toList()
     set(value) {
-      localizacaoes = value.asSequence()
-        .sorted()
-        .joinToString()
+      localizacaoes = value.asSequence().sorted().joinToString()
     }
   var series: List<NotaSerie>
     get() = notaSeries.split(",").filter {it.isNotBlank()}.mapNotNull {mapNotaSerie(it)}.toList()
     set(value) {
-      notaSeries = value.map {it.id.toString()}
-        .sorted()
-        .joinToString()
+      notaSeries = value.map {it.id.toString()}.sorted().joinToString()
     }
   val isEstoqueExpedicao
     get() = !admin && expedicao && estoque
@@ -71,18 +67,8 @@ class Usuario: BaseModel() {
   }
 
   fun localizacoesProduto(produto: Produto): List<String> {
-    return ViewProdutoLoc.where()
-      .produto.equalTo(produto)
-      .or()
-      .loja.equalTo(loja)
-      .loja.equalTo(null)
-      .endOr()
-      .or()
-      .abreviacao.isIn(locais)
-      .localizacao.isIn(locais)
-      .endOr()
-      .findList()
-      .mapNotNull {it.localizacao}
+    return ViewProdutoLoc.where().produto.equalTo(produto).or().loja.equalTo(loja).loja.equalTo(null).endOr().or()
+      .abreviacao.isIn(locais).localizacao.isIn(locais).endOr().findList().mapNotNull {it.localizacao}
   }
 
   fun isTipoCompativel(tipo: TipoNota?): Boolean {
@@ -94,13 +80,7 @@ class Usuario: BaseModel() {
   val produtoLoc: List<Produto>
     get() {
       return locais.flatMap {loc ->
-        ViewProdutoLoc.where()
-          .loja.id.eq(loja?.id)
-          .or()
-          .abreviacao.eq(loc)
-          .localizacao.eq(loc)
-          .endOr()
-          .findList()
+        ViewProdutoLoc.where().loja.id.eq(loja?.id).or().abreviacao.eq(loc).localizacao.eq(loc).endOr().findList()
           .map {it.produto}
       }
     }
@@ -108,9 +88,7 @@ class Usuario: BaseModel() {
   companion object Find: UsuarioFinder() {
     fun findUsuario(loginName: String?): Usuario? {
       if(loginName.isNullOrBlank()) return null
-      return where().loginName.eq(loginName)
-        .findList()
-        .firstOrNull()
+      return where().loginName.eq(loginName).findList().firstOrNull()
     }
 
     fun nomeSaci(value: String): String {

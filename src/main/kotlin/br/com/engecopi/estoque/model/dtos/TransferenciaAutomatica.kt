@@ -3,17 +3,15 @@ package br.com.engecopi.estoque.model.dtos
 import br.com.engecopi.estoque.model.etlSaci.EntryID
 import io.ebean.DB
 
-class TransferenciaAutomatica(
-  id: String,
-  val storeno: Int,
-  val pdvno: Int,
-  val xano: Int,
-  val data: Int,
-  val storenoFat: Int,
-  val nffat: String,
-  val storenoTransf: Int,
-  val nftransf: String
-                             ): EntryID(id) {
+class TransferenciaAutomatica(id: String,
+                              val storeno: Int,
+                              val pdvno: Int,
+                              val xano: Int,
+                              val data: Int,
+                              val storenoFat: Int,
+                              val nffat: String,
+                              val storenoTransf: Int,
+                              val nftransf: String): EntryID(id) {
   override val chave: String
     get() = "$storenoFat$nffat$storenoTransf$nftransf"
   val numeroTransf get() = "$storenoTransf$nftransf"
@@ -27,10 +25,7 @@ class TransferenciaAutomatica(
         |where storenoTransf = $lojaTransferencia
         |  AND nftransf = '$numeroSerieTransferencia'
       """.trimMargin()
-      return DB
-        .findDto(TransferenciaAutomatica::class.java, sql)
-        .findList()
-        .firstOrNull()
+      return DB.findDto(TransferenciaAutomatica::class.java, sql).findList().firstOrNull()
     }
 
     fun notaTransfencia(lojaFatura: Int?, numeroSerieFatura: String?): TransferenciaAutomatica? {
@@ -40,10 +35,7 @@ class TransferenciaAutomatica(
         |where storenoFat = $lojaFatura
         |  AND nffat = '$numeroSerieFatura'
       """.trimMargin()
-      return DB
-        .findDto(TransferenciaAutomatica::class.java, sql)
-        .findList()
-        .firstOrNull()
+      return DB.findDto(TransferenciaAutomatica::class.java, sql).findList().firstOrNull()
     }
   }
 }

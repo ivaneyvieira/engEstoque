@@ -3,7 +3,6 @@ package br.com.engecopi.estoque.viewmodel
 import br.com.engecopi.estoque.model.Abreviacao
 import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.framework.viewmodel.ViewModel
-import com.github.mvysny.karibudsl.v8.AutoView
 
 class AbreciacaoViewModel(view: IAbreciacaoView): ViewModel<IAbreciacaoView>(view) {
   fun saveAbreviacao() = exec {
@@ -23,6 +22,4 @@ class AbreciacaoViewModel(view: IAbreciacaoView): ViewModel<IAbreciacaoView>(vie
   }
 }
 
-interface IAbreciacaoView : IView{
-
-}
+interface IAbreciacaoView: IView

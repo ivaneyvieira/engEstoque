@@ -7,13 +7,10 @@ import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.NotaItens
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
-import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoNota
-import br.com.engecopi.estoque.viewmodel.EntradaVo
 import br.com.engecopi.estoque.viewmodel.ISaidaView
 import br.com.engecopi.estoque.viewmodel.ProdutoVO
 import br.com.engecopi.estoque.viewmodel.SaidaViewModel
@@ -28,9 +25,6 @@ import br.com.engecopi.framework.ui.view.row
 import br.com.engecopi.framework.ui.view.showDialog
 import br.com.engecopi.framework.ui.view.timeFormat
 import br.com.engecopi.saci.QuerySaci
-import br.com.engecopi.saci.saci
-import br.com.engecopi.utils.DB
-import br.com.engecopi.utils.IN
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.KeyShortcut
 import com.github.mvysny.karibudsl.v8.ModifierKey
@@ -39,7 +33,6 @@ import com.github.mvysny.karibudsl.v8.VaadinDsl
 import com.github.mvysny.karibudsl.v8.addColumnFor
 import com.github.mvysny.karibudsl.v8.addGlobalShortcutListener
 import com.github.mvysny.karibudsl.v8.align
-import com.github.mvysny.karibudsl.v8.alignment
 import com.github.mvysny.karibudsl.v8.bind
 import com.github.mvysny.karibudsl.v8.button
 import com.github.mvysny.karibudsl.v8.comboBox
@@ -47,18 +40,14 @@ import com.github.mvysny.karibudsl.v8.dateField
 import com.github.mvysny.karibudsl.v8.expandRatio
 import com.github.mvysny.karibudsl.v8.getAll
 import com.github.mvysny.karibudsl.v8.grid
-import com.github.mvysny.karibudsl.v8.h
 import com.github.mvysny.karibudsl.v8.horizontalLayout
 import com.github.mvysny.karibudsl.v8.isExpanded
 import com.github.mvysny.karibudsl.v8.label
-import com.github.mvysny.karibudsl.v8.perc
 import com.github.mvysny.karibudsl.v8.px
-import com.github.mvysny.karibudsl.v8.refresh
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.verticalLayout
 import com.github.mvysny.karibudsl.v8.w
 import com.vaadin.data.provider.GridSortOrder
-import com.vaadin.data.provider.GridSortOrder.desc
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.event.ShortcutAction.KeyCode
 import com.vaadin.event.ShortcutAction.KeyCode.F2
@@ -68,7 +57,6 @@ import com.vaadin.shared.data.sort.SortDirection.ASCENDING
 import com.vaadin.shared.data.sort.SortDirection.DESCENDING
 import com.vaadin.shared.ui.ValueChangeMode.LAZY
 import com.vaadin.shared.ui.window.WindowMode
-import com.vaadin.ui.Alignment.BOTTOM_RIGHT
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.Grid
@@ -84,7 +72,6 @@ import org.vaadin.grideditorcolumnfix.GridEditorColumnFix
 import org.vaadin.patrik.FastNavigation
 import org.vaadin.viritin.fields.IntegerField
 import java.time.LocalDateTime
-import javax.ws.rs.client.Entity.form
 
 @AutoView("")
 class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
@@ -103,8 +90,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
         operationButton?.isEnabled = false
       }
       formLayout.apply {
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-          .px
+        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
         grupo("Nota fiscal de saída") {
           verticalLayout {
             row {
@@ -167,8 +153,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
                          execNo = {imprimeItem(item, false)})
           }
         }
-      }
-        .id = "btnPrint"
+      }.id = "btnPrint"
 
       column(SaidaVo::lojaNF) {
         caption = "Loja NF"
@@ -259,8 +244,8 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
   }
 }
 
-class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel,
-                   val execPrint: (List<ItemNota>) -> Unit): Window("Nota de Saída") {
+class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execPrint: (List<ItemNota>) -> Unit): Window(
+  "Nota de Saída") {
   private lateinit var grupoSelecaoCol: Column<ProdutoVO, Int>
   private lateinit var dateUpdateCol: Column<ProdutoVO, LocalDateTime>
   private lateinit var gridProdutos: Grid<ProdutoVO>
@@ -329,11 +314,8 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel,
               addStyleName(ValoTheme.BUTTON_PRIMARY)
               addClickListener {
                 val allItens = gridProdutos.dataProvider.getAll()
-                val itens = gridProdutos.selectedItems.toList()
-                  .filter {it.allowSelect()}
-                val naoSelect = allItens
-                  .minus(itens)
-                  .filter {it.allowSelect()}
+                val itens = gridProdutos.selectedItems.toList().filter {it.allowSelect()}
+                val naoSelect = allItens.minus(itens).filter {it.allowSelect()}
                 val itensDeposito = itens.filter {item ->
                   item.value?.nota?.lancamentoOrigem == DEPOSITO
                 }
@@ -382,11 +364,10 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel,
             val selectionModel = setSelectionMode(MULTI)
             selectionModel.addSelectionListener {select ->
               if(select.isUserOriginated) {
-                this.dataProvider.getAll()
-                  .forEach {
-                    it.selecionado = false
-                    it.updateItem(false)
-                  }
+                this.dataProvider.getAll().forEach {
+                  it.selecionado = false
+                  it.updateItem(false)
+                }
                 select.allSelectedItems.forEach {
                   if(it.saldoFinal < 0) {
                     Notification.show("Saldo insuficiente")
@@ -468,8 +449,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel,
             }
             editor.addOpenListener {event ->
               event.bean.produto.let {produto ->
-                val locSulfixos = produto.localizacoes(RegistryUserInfo.abreviacaoDefault)
-                  .map {LocProduto(it)}
+                val locSulfixos = produto.localizacoes(RegistryUserInfo.abreviacaoDefault).map {LocProduto(it)}
                 comboLoc.setItems(locSulfixos)
                 comboLoc.setItemCaptionGenerator {it.localizacao}
                 comboLoc.value = event.bean.localizacao
@@ -512,16 +492,14 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel,
         this.updateItem(false)
       }
       else null
-    }
-      .sortedByDescending {it.dateUpdate}
+    }.sortedByDescending {it.dateUpdate}
 
     this.dataProvider = ListDataProvider(itensProvider)
   }
 
   private fun Grid<ProdutoVO>.sortDefault() {
     clearSortOrder()
-    sortOrder = listOf(GridSortOrder(grupoSelecaoCol, ASCENDING),
-                       GridSortOrder(dateUpdateCol, DESCENDING))
+    sortOrder = listOf(GridSortOrder(grupoSelecaoCol, ASCENDING), GridSortOrder(dateUpdateCol, DESCENDING))
   }
 
   private fun execBarcode(barcode: String?) {
@@ -543,25 +521,23 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel,
                 gridProdutos.select(item)
                 item.selecionado = true
                 item.updateItem(true)
-                val lancamentoOrigem  = item.value?.nota?.lancamentoOrigem
-                if(lancamentoOrigem == DEPOSITO){
+                val lancamentoOrigem = item.value?.nota?.lancamentoOrigem
+                if(lancamentoOrigem == DEPOSITO) {
                   execPrint(viewModel.confirmaProdutos(listOf(item), ENTREGUE))
                   gridProdutos.updateProdutosNota()
                 }
 
-                if(lancamentoOrigem == EXPEDICAO){
+                if(lancamentoOrigem == EXPEDICAO) {
                   execPrint(viewModel.confirmaProdutos(listOf(item), CONFERIDA))
                   gridProdutos.updateProdutosNota()
                 }
-                if(gridProdutos.dataProvider.getAll().all {!it.allowSelect()})
-                  close()
+                if(gridProdutos.dataProvider.getAll().all {!it.allowSelect()}) close()
               }
               else                -> viewModel.view.showWarning("O produto '$codigo' não é selecionavel")
             }
           }
         }
-        if(interProdutos.isEmpty())
-          viewModel.view.showWarning("Produto não encontrado no grid")
+        if(interProdutos.isEmpty()) viewModel.view.showWarning("Produto não encontrado no grid")
       }
       edtBarcode.focus()
       edtBarcode.selectAll()

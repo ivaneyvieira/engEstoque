@@ -29,18 +29,16 @@ class ProdutoViewModel(view: IProdutoView): CrudViewModel<Produto, QProduto, Pro
   }
 
   override fun update(bean: ProdutoVo) {
-    bean.toEntity()
-      ?.let {produto ->
-        produto.codigo = bean.codigoProduto.lpad(16, " ")
-        produto.codebar = bean.codebar ?: ""
-        produto.update()
-      }
+    bean.toEntity()?.let {produto ->
+      produto.codigo = bean.codigoProduto.lpad(16, " ")
+      produto.codebar = bean.codebar ?: ""
+      produto.update()
+    }
   }
 
   override fun add(bean: ProdutoVo) {
     Produto().apply {
-      val gradesSalvas = Produto.findProdutos(bean.codigoProduto)
-        .map {it.grade}
+      val gradesSalvas = Produto.findProdutos(bean.codigoProduto).map {it.grade}
       if(!ViewProdutoSaci.existe(bean.codigoProduto)) throw EViewModel("Este produto não existe")
       if(ViewProdutoSaci.temGrade(bean.codigoProduto)) {
         val gradesProduto = bean.gradesProduto.filter {it != ""}
@@ -63,20 +61,17 @@ class ProdutoViewModel(view: IProdutoView): CrudViewModel<Produto, QProduto, Pro
   }
 
   override fun delete(bean: ProdutoVo) {
-    Produto.findProdutos(bean.codigoProduto, bean.gradesProduto.toList())
-      .forEach {it.delete()}
+    Produto.findProdutos(bean.codigoProduto, bean.gradesProduto.toList()).forEach {it.delete()}
   }
 
   private fun QProduto.filtroUsuario(): QProduto {
-    return this.viewProdutoLoc.localizacao.startsWith(abreviacaoDefault)
-      .viewProdutoLoc.loja.id.eq(lojaDefault.id)
+    return this.viewProdutoLoc.localizacao.startsWith(abreviacaoDefault).viewProdutoLoc.loja.id.eq(lojaDefault.id)
   }
 
   override val query: QProduto
     get() {
       Repositories.updateViewProdutosLoc()
-      return Produto.where()
-        .filtroUsuario()
+      return Produto.where().filtroUsuario()
     }
 
   override fun Produto.toVO(): ProdutoVo {
@@ -90,18 +85,13 @@ class ProdutoViewModel(view: IProdutoView): CrudViewModel<Produto, QProduto, Pro
   }
 
   override fun QProduto.filterString(text: String): QProduto {
-    return codigo.contains(text)
-      .codebar.eq(text)
-      .vproduto.nome.contains(text)
-      .grade.contains(text)
+    return codigo.contains(text).codebar.eq(text).vproduto.nome.contains(text).grade.contains(text)
       .localizacao.contains(text)
   }
 
   fun localizacoes(bean: ProdutoVo?): List<LocProduto> {
-    return bean?.produto?.localizacoes(abreviacaoDefault)
-      .orEmpty()
-      .filter {it.startsWith(abreviacaoDefault) || userDefaultIsAdmin}
-      .map {LocProduto(it)}
+    return bean?.produto?.localizacoes(abreviacaoDefault).orEmpty()
+      .filter {it.startsWith(abreviacaoDefault) || userDefaultIsAdmin}.map {LocProduto(it)}
   }
 
   fun saveItem(item: ItemNota?) {
@@ -111,16 +101,14 @@ class ProdutoViewModel(view: IProdutoView): CrudViewModel<Produto, QProduto, Pro
 
 class ProdutoVo: EntityVo<Produto>() {
   override fun findEntity(): Produto? {
-    return Produto.findProdutos(codigoProduto)
-      .firstOrNull()
+    return Produto.findProdutos(codigoProduto).firstOrNull()
   }
 
   var lojaDefault: Loja? = null
   var codigoProduto: String? = ""
     set(value) {
       field = value
-      if(entityVo == null) gradesProduto = Produto.findGradesProduto(value)
-        .toSet()
+      if(entityVo == null) gradesProduto = Produto.findGradesProduto(value).toSet()
     }
   var gradesProduto: Set<String> = emptySet()
   val descricaoProduto: String?
@@ -158,22 +146,17 @@ class ProdutoVo: EntityVo<Produto>() {
     get() {
       produto?.recalculaSaldos()
 
-      return produto?.findItensNota()
-        .orEmpty()
-        .asSequence()
-        .filter {item ->
-          (lojaDefault?.let {lDef -> item.nota?.loja?.id == lDef.id || item.nota?.tipoNota == VENDAF} ?: true) &&
-          (filtroDI?.let {di ->
+      return produto?.findItensNota().orEmpty().asSequence().filter {item ->
+        (lojaDefault?.let {lDef -> item.nota?.loja?.id == lDef.id || item.nota?.tipoNota == VENDAF}
+         ?: true) && (filtroDI?.let {di ->
             (item.nota?.data?.isAfter(di) ?: true) || (item.nota?.data?.isEqual(di) ?: true)
           } ?: true) && (filtroDF?.let {df ->
             (item.nota?.data?.isBefore(df) ?: true) || (item.nota?.data?.isEqual(df) ?: true)
           } ?: true) && (filtroTipo?.let {t -> item.nota?.tipoNota == t}
                          ?: true) && (filtroLocalizacao?.let {loc -> item.localizacao == loc.localizacao}
                                       ?: true) && (item.quantidadeSaldo != 0)
-        }
-        .sortedWith(compareBy(ItemNota::localizacao, ItemNota::data, ItemNota::hora))
-        .toList()
+      }.sortedWith(compareBy(ItemNota::localizacao, ItemNota::data, ItemNota::hora)).toList()
     }
 }
 
-interface IProdutoView : ICrudView
+interface IProdutoView: ICrudView

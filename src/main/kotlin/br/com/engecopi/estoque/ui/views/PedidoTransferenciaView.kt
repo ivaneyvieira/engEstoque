@@ -1,19 +1,15 @@
 package br.com.engecopi.estoque.ui.views
 
 import br.com.engecopi.estoque.model.etlSaci.ETLPedidos
-import br.com.engecopi.estoque.ui.EstoqueUI
 import br.com.engecopi.estoque.viewmodel.IPedidoTransferenciaView
 import br.com.engecopi.estoque.viewmodel.PedidoTransferenciaViewModel
 import br.com.engecopi.estoque.viewmodel.PedidoTransferenciaVo
-import br.com.engecopi.estoque.viewmodel.SaidaVo
 import br.com.engecopi.framework.ui.view.LayoutView
 import br.com.engecopi.framework.ui.view.dateFormat
 import br.com.engecopi.framework.ui.view.expand
-import br.com.engecopi.framework.ui.view.intFormat
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.addColumnFor
 import com.github.mvysny.karibudsl.v8.button
-import com.github.mvysny.karibudsl.v8.column
 import com.github.mvysny.karibudsl.v8.cssLayout
 import com.github.mvysny.karibudsl.v8.grid
 import com.github.mvysny.karibudsl.v8.horizontalLayout
@@ -21,7 +17,6 @@ import com.github.mvysny.karibudsl.v8.refresh
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.Grid
-import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView("pedidosTransf")

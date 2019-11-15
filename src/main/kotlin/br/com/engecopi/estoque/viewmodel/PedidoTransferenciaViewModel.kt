@@ -18,8 +18,7 @@ class PedidoTransferenciaViewModel(view: IPedidoTransferenciaView): ViewModel<IP
   fun refresh() = exec {
     pedidosTransferencia.clear()
     val storeno = RegistryUserInfo.lojaDefault.numero
-    val notas = ETLPedidos.listDados
-      .filter {pedido -> RegistryUserInfo.abreviacaoDefault == pedido.abreviacao}
+    val notas = ETLPedidos.listDados.filter {pedido -> RegistryUserInfo.abreviacaoDefault == pedido.abreviacao}
       .map {PedidoTransferenciaVo(it)}
     pedidosTransferencia.addAll(notas)
     view.updateView()
@@ -42,6 +41,6 @@ class PedidoTransferenciaVo(val pedidoSaci: PedidoSaci) {
   val status = pedidoSaci.status
 }
 
-interface IPedidoTransferenciaView : IView{
+interface IPedidoTransferenciaView: IView {
   fun updateView()
 }

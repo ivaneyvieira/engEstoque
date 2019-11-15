@@ -70,8 +70,7 @@ class EtiquetaView: CrudLayoutView<EtiquetaVo, EtiquetaViewModel>(), IEtiquetaVi
             addClickListener {
               val zpl = template.value
               val image = ZPLPreview.createPdf(zpl, "4x2")
-              if(image != null)
-                showImage("Preview", image)
+              if(image != null) showImage("Preview", image)
             }
           }
         }

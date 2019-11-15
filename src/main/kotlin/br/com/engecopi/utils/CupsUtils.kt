@@ -18,8 +18,7 @@ object CupsUtils {
 
   @Throws(ECupsPrinter::class)
   fun CupsPrinter.printText(text: String, resultMsg: (String) -> Unit = {}) {
-    val job = PrintJob.Builder(text.toByteArray())
-      .build()
+    val job = PrintJob.Builder(text.toByteArray()).build()
     try {
       val result = print(job)
       resultMsg("Job ${result.jobId}: ${result.resultDescription} : ${result.resultMessage}")
@@ -34,8 +33,8 @@ object CupsUtils {
 
   @Throws(ECupsPrinter::class)
   fun printCups(impressora: String, text: String, resultMsg: (String) -> Unit = {}) {
-    val printer = printer(impressora) ?: throw ECupsPrinter(
-      "Impressora $impressora não está configurada no sistema operacional")
+    val printer =
+      printer(impressora) ?: throw ECupsPrinter("Impressora $impressora não está configurada no sistema operacional")
     printer.printText(text, resultMsg)
   }
 

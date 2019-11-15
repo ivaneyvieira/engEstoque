@@ -8,8 +8,7 @@ import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.ICrudView
 
-class EtiquetaViewModel(view: IEtiquetaView):
-  CrudViewModel<Etiqueta, QEtiqueta, EtiquetaVo, IEtiquetaView>(view) {
+class EtiquetaViewModel(view: IEtiquetaView): CrudViewModel<Etiqueta, QEtiqueta, EtiquetaVo, IEtiquetaView>(view) {
   override fun newBean(): EtiquetaVo {
     return EtiquetaVo()
   }

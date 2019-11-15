@@ -5,7 +5,6 @@ import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
-import br.com.engecopi.estoque.viewmodel.EntradaVo
 import br.com.engecopi.estoque.viewmodel.INotaView
 import br.com.engecopi.estoque.viewmodel.NotaViewModel
 import br.com.engecopi.estoque.viewmodel.NotaVo
@@ -44,7 +43,7 @@ import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
 import org.vaadin.patrik.FastNavigation
 
-abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V : INotaView>: CrudLayoutView<VO, MODEL>() {
+abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: CrudLayoutView<VO, MODEL>() {
   lateinit var gridProduto: Grid<ProdutoVO>
   val lojaDefault = RegistryUserInfo.lojaDefault
   val usuario = RegistryUserInfo.usuarioDefault
@@ -89,8 +88,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V : INotaView>:
       isReadOnly = operation != ADD
       setItems(viewModel.findLojas(lojaDefault))
 
-      bind(binder).asRequired("A lojaDefault deve ser informada")
-        .bind("lojaNF")
+      bind(binder).asRequired("A lojaDefault deve ser informada").bind("lojaNF")
       reloadBinderOnChange(binder)
     }
   }
@@ -133,8 +131,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V : INotaView>:
       integerField("Qtd $tipo") {
         expandRatio = 1f
         isReadOnly = (!this@NotaView.isAdmin) && (operation != ADD)
-        this.bind(binder)
-          .bind("quantProduto")
+        this.bind(binder).bind("quantProduto")
       }
     }
     row {
@@ -147,18 +144,16 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V : INotaView>:
         val selectionModel = setSelectionMode(MULTI)
         selectionModel.addSelectionListener {select ->
           if(select.isUserOriginated) {
-            this.dataProvider.getAll()
-              .forEach {
-                it.selecionado = false
-              }
+            this.dataProvider.getAll().forEach {
+              it.selecionado = false
+            }
 
             select.allSelectedItems.forEach {
               if(it.isSave) {
                 it.selecionado = false
                 selectionModel.deselect(it)
               }
-              else
-                it.selecionado = true
+              else it.selecionado = true
             }
           }
         }
@@ -202,8 +197,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V : INotaView>:
         bindItens(binder, "produtos")
         editor.addOpenListener {event ->
           event.bean.produto.let {produto ->
-            val locSulfixos = produto.localizacoes(RegistryUserInfo.abreviacaoDefault)
-              .map {LocProduto(it)}
+            val locSulfixos = produto.localizacoes(RegistryUserInfo.abreviacaoDefault).map {LocProduto(it)}
             comboLoc.setItems(locSulfixos)
             comboLoc.setItemCaptionGenerator {it.localizacao}
             comboLoc.value = event.bean.localizacao

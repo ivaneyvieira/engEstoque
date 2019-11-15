@@ -25,22 +25,17 @@ class ViewProdutoSaci {
     fun find(codigo: String?, grade: String?): ViewProdutoSaci? {
       codigo ?: return null
       val gradeN = grade ?: ""
-      return where().codigo.eq(codigo.lpad(16, " "))
-        .grade.eq(gradeN)
-        .findList()
-        .firstOrNull()
+      return where().codigo.eq(codigo.lpad(16, " ")).grade.eq(gradeN).findList().firstOrNull()
     }
 
     fun find(codigo: String?): List<ViewProdutoSaci> {
       codigo ?: return emptyList()
-      return where().codigo.eq(codigo.lpad(16, " "))
-        .findList()
+      return where().codigo.eq(codigo.lpad(16, " ")).findList()
     }
 
     fun existe(codigo: String?): Boolean {
       codigo ?: return false
-      return where().codigo.eq(codigo.lpad(16, " "))
-        .exists()
+      return where().codigo.eq(codigo.lpad(16, " ")).exists()
     }
 
     fun temGrade(codigo: String?): Boolean {

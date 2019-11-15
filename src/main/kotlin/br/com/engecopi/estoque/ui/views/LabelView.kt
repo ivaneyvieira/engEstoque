@@ -122,7 +122,6 @@ class LabelView: LayoutView<LabelViewModel>(), ILabelView {
     setFiltro(filtroCodigoGrade)
   }
 
-
   override var listaProduto
     get() = gridProduto.dataProvider.getAll()
     set(value) {
@@ -278,7 +277,7 @@ class FiltroCodigoGrade(viewModel: LabelViewModel): FiltroView(viewModel, "Códi
             val grades = viewModel.pesquisaGrades(it.value)
             edtGrade.setItems(grades)
             edtGrade.value = null
-             processaFiltro()
+            processaFiltro()
             val listaProduto = viewModel.view.listaProduto
             if(listaProduto.isNotEmpty()) edtCodigo.selectAll()
           }

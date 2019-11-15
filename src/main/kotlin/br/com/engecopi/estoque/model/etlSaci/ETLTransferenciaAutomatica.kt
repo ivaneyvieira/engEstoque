@@ -22,8 +22,6 @@ class ETLTransferenciaAutomatica: ETL<TransferenciaAutomatica>() {
 
     override fun getSource() = saci.findTransferenciaAutomatica()
 
-    override fun getTarget() = DB
-      .findDto(TransferenciaAutomatica::class.java, sql)
-      .findList()
+    override fun getTarget() = DB.findDto(TransferenciaAutomatica::class.java, sql).findList()
   }
 }

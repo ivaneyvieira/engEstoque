@@ -18,9 +18,11 @@ import br.com.engecopi.estoque.viewmodel.NotaVo
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.utils.mid
 
-class EntregaFututaViewModel(view: IEntregaFututaView):
-  NotaViewModel<EntregaFututaVo, IEntregaFututaView>(view, SAIDA, ENTREGUE,
-                                                     CONFERIDA, "") {
+class EntregaFututaViewModel(view: IEntregaFututaView): NotaViewModel<EntregaFututaVo, IEntregaFututaView>(view,
+                                                                                                           SAIDA,
+                                                                                                           ENTREGUE,
+                                                                                                           CONFERIDA,
+                                                                                                           "") {
   override fun newBean(): EntregaFututaVo {
     return EntregaFututaVo()
   }
@@ -30,12 +32,10 @@ class EntregaFututaViewModel(view: IEntregaFututaView):
   }
 
   override fun QItemNota.filtroStatus(): QItemNota {
-    return status.`in`(CONFERIDA)
-      .nota.usuario.isNotNull.nota.sequencia.ne(0)
-      .let {q ->
-        if(usuarioDefault.isEstoqueExpedicao) q.localizacao.startsWith(abreviacaoDefault)
-        else q
-      }
+    return status.`in`(CONFERIDA).nota.usuario.isNotNull.nota.sequencia.ne(0).let {q ->
+      if(usuarioDefault.isEstoqueExpedicao) q.localizacao.startsWith(abreviacaoDefault)
+      else q
+    }
   }
 
   override fun createVo() = EntregaFututaVo()
@@ -63,8 +63,7 @@ class EntregaFututaViewModel(view: IEntregaFututaView):
   }
 
   private fun findItensNotaTransferencia(key: String): List<ItemNota> {
-    val notaTransferencia = Nota.findNotaSaidaKey(key)
-      .firstOrNull()
+    val notaTransferencia = Nota.findNotaSaidaKey(key).firstOrNull()
     return if(notaTransferencia == null) {
       val storeno = key.mid(0, 1).toIntOrNull() ?: return emptyList()
       val numero = key.mid(1)
@@ -78,18 +77,14 @@ class EntregaFututaViewModel(view: IEntregaFututaView):
   }
 
   private fun findItensNotaTransferencia(storeno: Int, numero: String): List<ItemNota> {
-    val notaFutura = TransferenciaAutomatica.notaFutura(storeno, numero)
-                     ?: return emptyList()
+    val notaFutura = TransferenciaAutomatica.notaFutura(storeno, numero) ?: return emptyList()
     val lojaFaturamento = notaFutura.storenoFat
     val numeroFaturamento = notaFutura.nffat
     return ItemNota.find(lojaFaturamento, numeroFaturamento)
   }
 
   fun notasConferidas(): List<EntregaFututaVo> {
-    return ItemNota.where()
-      .status.eq(CONFERIDA)
-      .findList()
-      .map {it.toVO()}
+    return ItemNota.where().status.eq(CONFERIDA).findList().map {it.toVO()}
   }
 }
 

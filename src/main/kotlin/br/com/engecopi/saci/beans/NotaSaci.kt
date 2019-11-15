@@ -10,9 +10,7 @@ class NotaSaci(val invno: Int,
                val date: Int,
                val dtEmissao: Int,
                val tipo: String,
-               val cancelado: String,
-               val produtos: List<ProdutoSaci>
-              ) {
+               val cancelado: String, val produtos: List<ProdutoSaci>) {
   val numeroSerie
     get() = if(serie.isBlank()) numero else "$numero/$serie"
   val localDate

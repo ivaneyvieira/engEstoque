@@ -24,6 +24,7 @@ import br.com.engecopi.estoque.ui.views.ProdutoView
 import br.com.engecopi.estoque.ui.views.SaidaView
 import br.com.engecopi.estoque.ui.views.UsuarioView
 import br.com.engecopi.estoque.ui.views.notaVendaFutura.NFVendaFuturaView
+import br.com.engecopi.framework.ui.view.toViewName
 import br.com.engecopi.utils.SystemUtils
 import com.github.mvysny.karibudsl.v8.MenuButton
 import com.github.mvysny.karibudsl.v8.VaadinDsl
@@ -113,10 +114,8 @@ class EstoqueUI: UI() {
 
   private fun updateContent(contextPath: String) {
     val info = loginInfo
-    if(info == null)
-      loginScreen()
-    else
-      appScreen(info, contextPath)
+    if(info == null) loginScreen()
+    else appScreen(info, contextPath)
   }
 
   private fun appScreen(info: LoginInfo, contextPath: String) {
@@ -127,23 +126,17 @@ class EstoqueUI: UI() {
       this.appTitle = title
       sectionLogin(user, info)
 
-      if(user.rolePaineis())
-        sectionPaineis()
+      if(user.rolePaineis()) sectionPaineis()
 
-      if(user.roleExpedicao())
-        sectionExpedicao(user)
+      if(user.roleExpedicao()) sectionExpedicao(user)
 
-      if(user.roleFutura())
-        sectionFutura(user)
+      if(user.roleFutura()) sectionFutura(user)
 
-      if(user.roleMovimentacao())
-        sessionMovimentacao()
+      if(user.roleMovimentacao()) sessionMovimentacao()
 
-      if(user.roleMovimentacao())
-        sectionConfiguracao(user)
+      if(user.roleMovimentacao()) sectionConfiguracao(user)
 
-      if(user.roleEtiqueta())
-        sectionEtiqueta(user)
+      if(user.roleEtiqueta()) sectionEtiqueta(user)
     }
 
     navigator = Navigator(this, content as ViewDisplay)
@@ -152,8 +145,8 @@ class EstoqueUI: UI() {
 
     setErrorHandler {e -> errorHandler(e)}
     val contextPathDeafualt = when {
-      user.roleExpedicao() && contextPath == "" -> "nf_expedicao"
-      user.roleFutura() && contextPath == ""    -> "nf_venda_futura"
+      user.roleExpedicao() && contextPath == "" -> NFVendaFuturaView::class.java.toViewName()
+      user.roleFutura() && contextPath == ""    -> NFExpedicaoView::class.java.toViewName()
       else                                      -> contextPath
     }
 
@@ -220,8 +213,7 @@ class EstoqueUI: UI() {
   private fun @VaadinDsl ValoMenu.sectionLogin(user: Usuario, info: LoginInfo) {
     section("Login") {
       menuButton("Usuário:", badge = user.loginName)
-      if(user.estoque || user.admin)
-        menuButton("Localizacao:", badge = info.abreviacao)
+      if(user.estoque || user.admin) menuButton("Localizacao:", badge = info.abreviacao)
       menuButton("Loja:", badge = info.usuario.loja?.sigla ?: "")
       menuButton(caption = "Endereco: ", badge = RegistryUserInfo.endereco)
       menuButton("Sair", icon = OUT) {
@@ -302,17 +294,13 @@ fun setCookie(nome: String, valor: String) {
   // Make cookie expire in 2 minutes
   myCookie.maxAge = 60 * 60 * 24 * 5
   // Set the cookie path.
-  myCookie.path = VaadinService.getCurrentRequest()
-    .contextPath
+  myCookie.path = VaadinService.getCurrentRequest().contextPath
   // Save cookie
-  VaadinService.getCurrentResponse()
-    .addCookie(myCookie)
+  VaadinService.getCurrentResponse().addCookie(myCookie)
 }
 
 fun getCokies(name: String): String? {
-  val cookie = VaadinService.getCurrentRequest()
-    .cookies.toList()
-    .firstOrNull {it.name == name}
+  val cookie = VaadinService.getCurrentRequest().cookies.toList().firstOrNull {it.name == name}
   cookie?.let {
     setCookie(it.name, it.value)
   }
@@ -320,3 +308,4 @@ fun getCokies(name: String): String? {
 }
 
 val log: Logger? = LoggerFactory.getLogger(EstoqueUI::class.java)
+

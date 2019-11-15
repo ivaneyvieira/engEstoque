@@ -25,8 +25,7 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView("nf_venda_futura")
-class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>(),
-                         INFVendaFuturaView {
+class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>(), INFVendaFuturaView {
   var formCodBar: PnlCodigoBarras? = null
   private val isAdmin
     get() = RegistryUserInfo.userDefaultIsAdmin
@@ -40,8 +39,7 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
     viewModel = NFVendaFuturaViewModel(this)
     layoutForm {
       formLayout.apply {
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-          .px
+        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
         val nota = binder.bean
         grupo("Nota fiscal de saída") {
           verticalLayout {
@@ -111,8 +109,7 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
             refreshGrid()
           }
         }
-      }
-        .id = "btnPrint"
+      }.id = "btnPrint"
       column(NFVendaFuturaVo::loja) {
         caption = "Loja NF"
         setRenderer({loja ->

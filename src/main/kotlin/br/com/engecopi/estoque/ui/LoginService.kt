@@ -1,8 +1,6 @@
 package br.com.engecopi.estoque.ui
 
 import br.com.engecopi.estoque.model.LoginInfo
-import br.com.engecopi.estoque.model.RegistryUserInfo
-import br.com.engecopi.estoque.model.RepositoryAvisoNotas
 import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.framework.ui.Session
 import br.com.engecopi.saci.saci
@@ -22,7 +20,6 @@ import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.verticalLayout
 import com.github.mvysny.karibudsl.v8.w
 import com.vaadin.icons.VaadinIcons
-import com.vaadin.server.VaadinSession
 import com.vaadin.shared.ui.ContentMode.HTML
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.ComboBox
@@ -30,7 +27,6 @@ import com.vaadin.ui.Notification
 import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
-import javax.servlet.http.HttpSession
 
 object LoginService {
   fun login(loginInfo: LoginInfo) {
@@ -126,8 +122,7 @@ class LoginForm(private val appTitle: String): VerticalLayout() {
   }
 
   private fun abreviacaoes(username: String?): List<String> {
-    return Usuario.abreviacaoes(username)
-      .sorted()
+    return Usuario.abreviacaoes(username).sorted()
   }
 
   private fun login() {

@@ -12,7 +12,6 @@ import com.vaadin.data.BeanValidationBinder
 import com.vaadin.shared.Registration
 import com.vaadin.ui.Button
 import com.vaadin.ui.Component
-import com.vaadin.ui.CssLayout
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.UI
@@ -42,8 +41,7 @@ open class DialogPopup<BEAN: Any>(caption: String, classBean: KClass<BEAN>): Win
     center()
     content = VerticalLayout(form, toolBar)
     addStyleName(ValoTheme.PANEL_WELL)
-    UI.getCurrent()
-      .addWindow(this)
+    UI.getCurrent().addWindow(this)
   }
 
   fun initForm(configForm: (VerticalLayout) -> Unit) {
@@ -83,8 +81,7 @@ open class DialogPopup<BEAN: Any>(caption: String, classBean: KClass<BEAN>): Win
 
 fun VerticalLayout.grupo(caption: String? = null, expand: Boolean = false, block: VerticalLayout.() -> Unit) {
   val cssLayout = cssLayout(caption) {
-    if(expand)
-      h = 100.perc
+    if(expand) h = 100.perc
     w = 100.perc
     addStyleName(ValoTheme.LAYOUT_CARD)
     verticalLayout {
@@ -92,8 +89,7 @@ fun VerticalLayout.grupo(caption: String? = null, expand: Boolean = false, block
       this.block()
     }
   }
-  if(expand)
-    setExpandRatio(cssLayout, 1f)
+  if(expand) setExpandRatio(cssLayout, 1f)
 }
 
 fun VerticalLayout.row(expand: Boolean = false, block: HorizontalLayout.() -> Unit) {
@@ -103,8 +99,7 @@ fun VerticalLayout.row(expand: Boolean = false, block: HorizontalLayout.() -> Un
       if(it.expandRatio > 0f) it.w = 100.perc
     }
     isExpanded = expand
-    if(expand)
-      (this.parent as? VerticalLayout)?.addComponentsAndExpand(this)
+    if(expand) (this.parent as? VerticalLayout)?.addComponentsAndExpand(this)
     w = 100.perc
   }
 }

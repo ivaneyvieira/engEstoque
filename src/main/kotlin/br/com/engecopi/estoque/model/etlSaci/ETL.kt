@@ -11,7 +11,7 @@ typealias ListenerEventInsert<T> = (source: T) -> Unit
 typealias ListenerEventDelete<T> = (source: T) -> Unit
 typealias  ListenerEvent<T> = (sources: List<T>) -> Unit
 
-abstract class ETL<T: EntryID>() {
+abstract class ETL<T: EntryID> {
   protected abstract val sqlDelete: String
   protected abstract val sqlInsert: String
   protected abstract val sqlUpdate: String
@@ -21,23 +21,19 @@ abstract class ETL<T: EntryID>() {
   private val listener = mutableMapOf<String, ListenerEvent<T>>()
 
   fun addListenerInsert(name: String, listener: ListenerEventInsert<T>) {
-    if(!listenerInsert.keys.contains(name))
-      this.listenerInsert[name] = listener
+    if(!listenerInsert.keys.contains(name)) this.listenerInsert[name] = listener
   }
 
   fun addListenerDelete(name: String, listener: ListenerEventDelete<T>) {
-    if(!listenerDelete.keys.contains(name))
-      this.listenerDelete[name] = listener
+    if(!listenerDelete.keys.contains(name)) this.listenerDelete[name] = listener
   }
 
   fun addListenerUpdate(name: String, listener: ListenerEventUpdate<T>) {
-    if(!listenerUpdate.keys.contains(name))
-      this.listenerUpdate[name] = listener
+    if(!listenerUpdate.keys.contains(name)) this.listenerUpdate[name] = listener
   }
 
   fun addListener(name: String, listener: ListenerEvent<T>) {
-    if(!this.listener.keys.contains(name))
-      this.listener[name] = listener
+    if(!this.listener.keys.contains(name)) this.listener[name] = listener
   }
 
   fun execute(source: List<T>, target: List<T>) {
@@ -46,11 +42,10 @@ abstract class ETL<T: EntryID>() {
     val idsInsert = idsSource.minus(idsTarget)
     val idsDelete = idsTarget.minus(idsSource)
     val listUpdate = target.mapNotNull {targetBean ->
-      source.firstOrNull {sourceBean -> sourceBean.id == targetBean.id}
-        ?.let {sourceBean ->
-          if(sourceBean.chave == targetBean.chave) null
-          else sourceBean
-        }
+      source.firstOrNull {sourceBean -> sourceBean.id == targetBean.id}?.let {sourceBean ->
+        if(sourceBean.chave == targetBean.chave) null
+        else sourceBean
+      }
     }
     val listDelete = target.filter {it.id in idsDelete}
     val listInsert = source.filter {it.id in idsInsert}
@@ -64,10 +59,9 @@ abstract class ETL<T: EntryID>() {
     listUpdate.forEach {bean ->
       updateTarget(bean)
       val targetBean = target.firstOrNull {it.id == bean.id}
-      if(targetBean != null)
-        listenerUpdate.values.forEach {exec ->
-          exec(bean, targetBean)
-        }
+      if(targetBean != null) listenerUpdate.values.forEach {exec ->
+        exec(bean, targetBean)
+      }
     }
     listInsert.forEach {bean ->
       insertTarget(bean)
@@ -76,10 +70,9 @@ abstract class ETL<T: EntryID>() {
       }
     }
     val list = (listInsert + listDelete + listUpdate).distinct()
-    if(list.isNotEmpty())
-      listener.values.forEach {exec ->
-        exec(list)
-      }
+    if(list.isNotEmpty()) listener.values.forEach {exec ->
+      exec(list)
+    }
   }
 
   private fun deleteTarget(bean: T) {
@@ -95,9 +88,7 @@ abstract class ETL<T: EntryID>() {
   }
 
   private fun execUpdate(sql: String, bean: T) {
-    DB.sqlUpdate(sql)
-      .setParameter(bean)
-      .execute()
+    DB.sqlUpdate(sql).setParameter(bean).execute()
   }
 }
 
