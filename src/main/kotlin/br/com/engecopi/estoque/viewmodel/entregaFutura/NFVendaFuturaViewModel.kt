@@ -54,14 +54,21 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView): CrudViewModel<ViewNotaFu
     val nota = bean.findEntity() ?: return
     val saida = Nota.findSaida(nota.numero) ?: return
 
-    ItemNota.where().nota.equalTo(saida).localizacao.startsWith(bean.abreviacao).delete()
+    ItemNota.where()
+      .nota.equalTo(saida)
+      .localizacao.startsWith(bean.abreviacao)
+      .delete()
   }
 
   override val query: QViewNotaFutura
     get() = ViewNotaFutura.where().let {query ->
-      query.or().loja.id.eq(lojaDefault.id).nota.tipoNota.eq(VENDAF).endOr().let {q ->
-        if(usuarioDefault.isEstoqueVendaFutura) q.abreviacao.eq(abreviacaoDefault).filtroNotaSerie()
-        else q
+      query.or()
+        //.loja.id.eq(lojaDefault.id)
+        .nota.tipoNota.eq(VENDAF)
+        .endOr()
+        .let {q ->
+          if(usuarioDefault.isEstoqueVendaFutura) q.abreviacao.eq(abreviacaoDefault).filtroNotaSerie()
+          else q
         }
     }
 
@@ -75,7 +82,9 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView): CrudViewModel<ViewNotaFu
   }
 
   override fun QViewNotaFutura.orderQuery(): QViewNotaFutura {
-    return this.order().lancamento.desc().id.desc()
+    return this.order()
+      .lancamento.desc()
+      .id.desc()
   }
 
   override fun ViewNotaFutura.toVO(): NFVendaFuturaVo {
@@ -109,19 +118,21 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView): CrudViewModel<ViewNotaFu
 
   private fun processaNota(itensVendaFutura: List<ItemVendaFutura>): Nota? {
     val loja = lojaDefault.numero
-    val notaDoSaci = itensVendaFutura.firstOrNull()?.notaProdutoSaci
+    val notaDoSaci = itensVendaFutura.firstOrNull()
+      ?.notaProdutoSaci
     val lojaSaci = notaDoSaci?.storeno ?: throw EViewModel("Nota não encontrada")
     //if(loja != lojaSaci) throw EViewModel("Esta nota pertence a loja $lojaSaci")
-    val nota: Nota? = Nota.createNota(notaDoSaci)?.let {
-      if(it.existe()) Nota.findSaida(it.numero)
-      else {
-        it.sequencia = Nota.maxSequencia() + 1
-        it.usuario = usuarioDefault
-        it.lancamentoOrigem = EXPEDICAO
-        it.save()
-        it
+    val nota: Nota? = Nota.createNota(notaDoSaci)
+      ?.let {
+        if(it.existe()) Nota.findSaida(it.numero)
+        else {
+          it.sequencia = Nota.maxSequencia() + 1
+          it.usuario = usuarioDefault
+          it.lancamentoOrigem = EXPEDICAO
+          it.save()
+          it
+        }
       }
-    }
     nota ?: throw EViewModel("Nota não encontrada")
     val itens = itensVendaFutura.mapNotNull {itemVendaFutura ->
       val notaSaci = itemVendaFutura.notaProdutoSaci
@@ -140,7 +151,8 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView): CrudViewModel<ViewNotaFu
 
     if(itens.isEmpty()) throw EViewModel("Essa nota não possui itens com localização")
 
-    crudBean = ViewNotaFutura.findNotaFutura(nota)?.toVO()
+    crudBean = ViewNotaFutura.findNotaFutura(nota)
+      ?.toVO()
 
     return nota
   }
@@ -189,29 +201,38 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView): CrudViewModel<ViewNotaFu
   private fun imprimeItens(status: StatusNota, itens: List<ItemNota>): String {
     val etiquetas = Etiqueta.findByStatus(status)
     return etiquetas.joinToString(separator = "\n") {etiqueta ->
-      itens.map {imprimir(it, etiqueta)}.distinct().joinToString(separator = "\n")
+      itens.map {imprimir(it, etiqueta)}
+        .distinct()
+        .joinToString(separator = "\n")
     }
   }
 
   fun imprimeTudo() = execString {
     val etiquetas = Etiqueta.findByStatus(INCLUIDA)
-    val itens = ItemNota.where().impresso.eq(false).status.eq(INCLUIDA).findList()
+    val itens = ItemNota.where()
+      .impresso.eq(false)
+      .status.eq(INCLUIDA)
+      .findList()
     val ret = etiquetas.joinToString(separator = "\n") {etiqueta ->
-      itens.map {item -> imprimir(item, etiqueta)}.distinct().joinToString(separator = "\n")
+      itens.map {item -> imprimir(item, etiqueta)}
+        .distinct()
+        .joinToString(separator = "\n")
     }
     view.updateView()
     ret
   }
 
   fun findNotaSaidaKey(key: String) = execList {
-    val storeno = key.mid(0, 1).toIntOrNull()
+    val storeno = key.mid(0, 1)
+      .toIntOrNull()
     val nfno = key.mid(1)
-    val notaSaci = Nota.findNotaSaidaSaci(storeno, nfno).filter {ns ->
-      when {
-        usuarioDefault.isEstoqueVendaFutura -> ViewProdutoLoc.filtraLoc(ns.prdno, ns.grade)
-        else                                -> true
+    val notaSaci = Nota.findNotaSaidaSaci(storeno, nfno)
+      .filter {ns ->
+        when {
+          usuarioDefault.isEstoqueVendaFutura -> ViewProdutoLoc.filtraLoc(ns.prdno, ns.grade)
+          else                                -> true
+        }
       }
-    }
     val numero = notaSaci.firstOrNull()?.numero ?: ""
     val ret = when {
       notaSaci.isEmpty()                           -> throw EChaveNaoEncontrada()
@@ -222,7 +243,8 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView): CrudViewModel<ViewNotaFu
         val tipo = notaSerie.tipoNota
         when {
           usuarioDefault.isTipoCompativel(tipo) -> notaSaci
-          else                                  -> throw EViewModel("O usuário não está habilitado para lançar esse tipo de nota (${notaSerie.descricao})")
+          else                                  -> throw EViewModel(
+            "O usuário não está habilitado para lançar esse tipo de nota (${notaSerie.descricao})")
         }
       }
       else notaSaci
