@@ -8,6 +8,8 @@ object CupsUtils {
   private val cupsClient = CupsClient("192.168.1.14", 631, "root")
   private val printers
     get() = cupsClient.printers.toList()
+  val printersInfo
+    get() = printers.filter {it.location != ""}.map {PrinterInfo(it)}
 
   fun printerExists(printerName: String): Boolean {
     val impressoras = printers
@@ -18,7 +20,8 @@ object CupsUtils {
 
   @Throws(ECupsPrinter::class)
   fun CupsPrinter.printText(text: String, resultMsg: (String) -> Unit = {}) {
-    val job = PrintJob.Builder(text.toByteArray()).build()
+    val job = PrintJob.Builder(text.toByteArray())
+      .build()
     try {
       val result = print(job)
       resultMsg("Job ${result.jobId}: ${result.resultDescription} : ${result.resultMessage}")
@@ -54,3 +57,9 @@ object CupsUtils {
 }
 
 class ECupsPrinter(msg: String): Exception(msg)
+
+class PrinterInfo(private val printer: CupsPrinter) {
+  val name get() = printer.name
+  val location get() = printer.location
+  val description get() = printer.description
+}

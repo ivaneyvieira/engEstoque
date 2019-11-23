@@ -78,12 +78,12 @@ dependencies {
   compile("org.slf4j:jul-to-slf4j:1.7.25")
   
   testImplementation("com.github.mvysny.dynatest:dynatest:0.8")
-
-  compile("io.ebean:ebean:11.41.1")
-  // compile "io.ebean:querybean-generator:11.37.1"
-  compile("io.ebean:ebean-querybean:11.40.1")
-  implementation("io.ebean:ebean-agent:11.41.1")
-  
+  //  compile("io.ebean:ebean:11.41.1")
+  //  compile("io.ebean:ebean-querybean:11.40.1")
+  //  implementation("io.ebean:ebean-agent:11.41.1")
+  compile("io.ebean:ebean:12.1.3")
+  compile("io.ebean:ebean-querybean:12.1.3")
+  implementation("io.ebean:ebean-agent:12.1.3")
 
   //compile "io.ebean:ebean-anebean-agent notation:4.7"
   compile("io.ebean.tools:finder-generator:11.34.1")

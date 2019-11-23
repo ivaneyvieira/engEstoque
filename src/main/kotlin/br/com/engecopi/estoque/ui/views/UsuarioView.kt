@@ -12,6 +12,8 @@ import br.com.engecopi.framework.ui.view.bindItensSet
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.reloadBinderOnChange
 import br.com.engecopi.framework.ui.view.row
+import br.com.engecopi.utils.CupsUtils
+import br.com.engecopi.utils.PrinterInfo
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.alignment
 import com.github.mvysny.karibudsl.v8.bind
@@ -68,9 +70,19 @@ class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>(), IUsuarioVi
               reloadBinderOnChange(binder)
             }
 
-            textField("Impressora") {
-              expandRatio = 1f
-              bind(binder).bind(UsuarioCrudVo::impressora)
+            comboBox<PrinterInfo>("Impressora") {
+              expandRatio = 2f
+              val itens = CupsUtils.printersInfo
+              setItems(itens)
+              setItemCaptionGenerator {it.description}
+
+              isTextInputAllowed = false
+              bind(binder).withConverter({printerInfo ->
+                                           printerInfo?.name ?: ""
+                                         }, {name ->
+                                           itens.find {it.name == name}
+                                         })
+                .bind(UsuarioCrudVo::impressora)
             }
 
             checkBox("Administrador") {
@@ -78,21 +90,25 @@ class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>(), IUsuarioVi
               bind(binder).bind(UsuarioCrudVo::admin)
               alignment = Alignment.BOTTOM_RIGHT
             }
+
             checkBox("Expedição") {
               expandRatio = 1f
               bind(binder).bind(UsuarioCrudVo::expedicao)
               alignment = Alignment.BOTTOM_RIGHT
             }
+
             checkBox("Estoque") {
               expandRatio = 1f
               bind(binder).bind(UsuarioCrudVo::estoque)
               alignment = Alignment.BOTTOM_RIGHT
             }
+
             checkBox("Etiquetas") {
               expandRatio = 1f
               bind(binder).bind(UsuarioCrudVo::etiqueta)
               alignment = Alignment.BOTTOM_RIGHT
             }
+
             checkBox("Entrega Futura") {
               expandRatio = 1f
               bind(binder).bind(UsuarioCrudVo::entregaFutura)

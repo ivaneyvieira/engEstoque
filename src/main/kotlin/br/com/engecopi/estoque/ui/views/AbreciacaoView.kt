@@ -6,13 +6,14 @@ import br.com.engecopi.estoque.viewmodel.IAbreciacaoView
 import br.com.engecopi.framework.ui.view.LayoutView
 import br.com.engecopi.framework.ui.view.expand
 import br.com.engecopi.framework.ui.view.title
+import br.com.engecopi.utils.CupsUtils
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.addColumnFor
 import com.github.mvysny.karibudsl.v8.grid
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.event.ShortcutAction.KeyCode
 import com.vaadin.ui.CheckBox
-import com.vaadin.ui.TextField
+import com.vaadin.ui.ComboBox
 import com.vaadin.ui.renderers.TextRenderer
 import org.vaadin.patrik.FastNavigation
 
@@ -26,7 +27,14 @@ class AbreciacaoView: LayoutView<AbreciacaoViewModel>(), IAbreciacaoView {
 
     grid(Abreviacao::class) {
       val edtLoc = CheckBox()
-      val edtImpressora = TextField()
+      val edtImpressora = ComboBox<String>().apply {
+        val itens = CupsUtils.printersInfo
+        setItems(itens.map {it.name})
+        setItemCaptionGenerator {
+          itens.find {item -> item.name == it}?.description ?: ""
+        }
+        isTextInputAllowed = false
+      }
 
       expand()
       dataProvider = ListDataProvider(viewModel.abreviacaoes)
@@ -44,7 +52,6 @@ class AbreciacaoView: LayoutView<AbreciacaoViewModel>(), IAbreciacaoView {
 
       addColumnFor(Abreviacao::impressora) {
         caption = "Impressora"
-
         setEditorComponent(edtImpressora)
       }
 
