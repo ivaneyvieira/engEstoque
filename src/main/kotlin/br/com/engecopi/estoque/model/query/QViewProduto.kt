@@ -24,7 +24,7 @@ class QViewProduto: TQRootBean<ViewProduto, QViewProduto> {
      */
     val _alias = QViewProduto(true)
   }
-
+  
   lateinit var id: PLong<QViewProduto>
   lateinit var codigo: PString<QViewProduto>
   lateinit var nome: PString<QViewProduto>
@@ -38,17 +38,17 @@ class QViewProduto: TQRootBean<ViewProduto, QViewProduto> {
   lateinit var alt: PInteger<QViewProduto>
   lateinit var cubagem: PDouble<QViewProduto>
   lateinit var produto: QAssocProduto<QViewProduto>
-
+  
   /**
    * Construct with a given Database.
    */
   constructor(database: Database): super(ViewProduto::class.java, database)
-
+  
   /**
    * Construct using the default Database.
    */
   constructor(): super(ViewProduto::class.java)
-
+  
   /**
    * Construct for Alias.
    */

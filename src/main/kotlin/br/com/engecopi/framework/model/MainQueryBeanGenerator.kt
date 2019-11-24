@@ -10,13 +10,13 @@ fun main() {
   //config.classesDirectory = "./build/classes/kotlin/main/"
   config.destDirectory = "./src/main/kotlin"
   config.destResourceDirectory = "./src/main/resources"
-
+  
   config.entityBeanPackage = "br.com.engecopi.estoque.model"
   config.destPackage = "br.com.engecopi.estoque.model.query"
-
+  
   config.isAddFinderTextMethod = false
   config.isAddFinderWherePublic = false
-
+  
   config.isOverwriteExistingFinders = true
   val generator = Generator(config)
   generator.generateQueryBeans()

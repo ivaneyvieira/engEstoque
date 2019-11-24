@@ -30,24 +30,25 @@ open class DialogPopup<BEAN: Any>(caption: String, classBean: KClass<BEAN>): Win
   }
   private val btnCancel = Button("Cancela")
   private val toolBar = buildToolBar()
-
+  
   init {
     isClosable = false
     isResizable = false
     isModal = true
   }
-
+  
   fun show() {
     center()
     content = VerticalLayout(form, toolBar)
     addStyleName(ValoTheme.PANEL_WELL)
-    UI.getCurrent().addWindow(this)
+    UI.getCurrent()
+      .addWindow(this)
   }
-
+  
   fun initForm(configForm: (VerticalLayout) -> Unit) {
     configForm(form)
   }
-
+  
   private fun buildToolBar(): Component {
     val espaco = Label()
     val tool = HorizontalLayout()
@@ -60,26 +61,28 @@ open class DialogPopup<BEAN: Any>(caption: String, classBean: KClass<BEAN>): Win
     btnCancel.addClickListener {this.btnCancelClick()}
     return tool
   }
-
+  
   fun addClickListenerOk(listener: (Button.ClickEvent) -> Unit): Registration {
     return btnOk.addClickListener(listener)
   }
-
+  
   fun addClickListenerCancel(listener: (Button.ClickEvent) -> Unit): Registration {
     return btnCancel.addClickListener(listener)
   }
-
+  
   private fun btnCancelClick() {
     close()
   }
-
+  
   private fun btnOkClick() {
     val status = binder.validate()
     if(!status.hasErrors()) close()
   }
 }
 
-fun VerticalLayout.grupo(caption: String? = null, expand: Boolean = false, block: VerticalLayout.() -> Unit) {
+fun VerticalLayout.grupo(
+  caption: String? = null, expand: Boolean = false, block: VerticalLayout.() -> Unit
+                        ) {
   val cssLayout = cssLayout(caption) {
     if(expand) h = 100.perc
     w = 100.perc

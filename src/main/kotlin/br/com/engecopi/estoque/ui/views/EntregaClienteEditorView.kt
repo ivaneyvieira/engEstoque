@@ -36,8 +36,9 @@ class EntregaClienteEditorView: NotaView<EntregaClienteVo, EntregaClienteEditorV
         binder.bean.usuario = usuario
       }
       formLayout.apply {
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
-
+        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+          .px
+        
         grupo("Nota fiscal de saída") {
           verticalLayout {
             row {
@@ -69,7 +70,7 @@ class EntregaClienteEditorView: NotaView<EntregaClienteVo, EntregaClienteEditorV
             }
           }
         }
-
+        
         grupo("Produto") {
           produtoField(operation, binder, "Saída")
         }
@@ -142,10 +143,14 @@ class EntregaClienteEditorView: NotaView<EntregaClienteVo, EntregaClienteEditorV
         caption = "Cliente"
         setSortProperty("nota.cliente")
       }
-      val itens = viewModel.notasConferidas().groupBy {it.numeroNF}.entries.sortedBy {entry ->
-        entry.value.map {it.entityVo?.id ?: 0}.max()
-      }.mapNotNull {it.key}
-
+      val itens = viewModel.notasConferidas()
+        .groupBy {it.numeroNF}
+        .entries.sortedBy {entry ->
+        entry.value.map {it.entityVo?.id ?: 0}
+          .max()
+      }
+        .mapNotNull {it.key}
+      
       grid.setStyleGenerator {saida ->
         if(saida.status == CONFERIDA) {
           val numero = saida.numeroNF

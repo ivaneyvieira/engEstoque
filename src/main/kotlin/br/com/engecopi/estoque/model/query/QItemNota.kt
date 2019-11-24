@@ -32,7 +32,7 @@ class QItemNota: TQRootBean<ItemNota, QItemNota> {
      */
     val _alias = QItemNota(true)
   }
-
+  
   lateinit var id: PLong<QItemNota>
   lateinit var createdAt: PLocalDateTime<QItemNota>
   lateinit var updatedAt: PLocalDateTime<QItemNota>
@@ -52,17 +52,17 @@ class QItemNota: TQRootBean<ItemNota, QItemNota> {
   lateinit var codigoBarraCliente: PString<QItemNota>
   lateinit var codigoBarraConferencia: PString<QItemNota>
   lateinit var codigoBarraEntrega: PString<QItemNota>
-
+  
   /**
    * Construct with a given Database.
    */
   constructor(database: Database): super(ItemNota::class.java, database)
-
+  
   /**
    * Construct using the default Database.
    */
   constructor(): super(ItemNota::class.java)
-
+  
   /**
    * Construct for Alias.
    */

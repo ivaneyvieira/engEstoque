@@ -33,21 +33,21 @@ class QAssocUsuario<R>(name: String, root: R): TQAssocBean<Usuario, R>(name, roo
   lateinit var expedicao: PBoolean<R>
   lateinit var entregaFutura: PBoolean<R>
   lateinit var etiqueta: PBoolean<R>
-
+  
   /**
    * Eagerly fetch this association loading the specified properties.
    */
   fun fetch(vararg properties: TQProperty<QUsuario>): R {
     return fetchProperties(*properties)
   }
-
+  
   /**
    * Eagerly fetch this association using a 'query join' loading the specified properties.
    */
   fun fetchQuery(vararg properties: TQProperty<QUsuario>): R {
     return fetchQueryProperties(*properties)
   }
-
+  
   /**
    * Use lazy loading for this association loading the specified properties.
    */

@@ -8,7 +8,6 @@ import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.NotaSerie
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
@@ -36,30 +35,30 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class NFVendaFuturaViewModel(view: INFVendaFuturaView): CrudViewModel<ViewNotaFutura, QViewNotaFutura, NFVendaFuturaVo, INFVendaFuturaView>(
-  view) {
+class NFVendaFuturaViewModel(view: INFVendaFuturaView):
+  CrudViewModel<ViewNotaFutura, QViewNotaFutura, NFVendaFuturaVo, INFVendaFuturaView>(view) {
   override fun newBean(): NFVendaFuturaVo {
     return NFVendaFuturaVo()
   }
-
+  
   override fun update(bean: NFVendaFuturaVo) {
     log?.error("Atualização não permitida")
   }
-
+  
   override fun add(bean: NFVendaFuturaVo) {
     log?.error("Inserssão não permitida")
   }
-
+  
   override fun delete(bean: NFVendaFuturaVo) {
     val nota = bean.findEntity() ?: return
     val saida = Nota.findSaida(nota.numero) ?: return
-
+    
     ItemNota.where()
       .nota.equalTo(saida)
       .localizacao.startsWith(bean.abreviacao)
       .delete()
   }
-
+  
   override val query: QViewNotaFutura
     get() = ViewNotaFutura.where().let {query ->
       query.or()
@@ -71,7 +70,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView): CrudViewModel<ViewNotaFu
           else q
         }
     }
-
+  
   private fun QViewNotaFutura.filtroNotaSerie(): QViewNotaFutura {
     val tipos = usuarioDefault.series.map {it.tipoNota}
     val queryOr = or()
@@ -80,13 +79,13 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView): CrudViewModel<ViewNotaFu
     }
     return querySeries.endOr()
   }
-
+  
   override fun QViewNotaFutura.orderQuery(): QViewNotaFutura {
     return this.order()
       .lancamento.desc()
       .id.desc()
   }
-
+  
   override fun ViewNotaFutura.toVO(): NFVendaFuturaVo {
     val bean = this
     return NFVendaFuturaVo().apply {
@@ -107,7 +106,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView): CrudViewModel<ViewNotaFu
       abreviacao = bean.abreviacao
     }
   }
-
+  
   fun processaKey(notasSaci: List<ItemVendaFutura>) = execValue {
     if(notasSaci.all {it.isSave()}) throw EViewModel("Todos os itens dessa nota já estão lançados")
     val ret = if(notasSaci.isNotEmpty()) processaNota(notasSaci)
@@ -115,13 +114,12 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView): CrudViewModel<ViewNotaFu
     view.updateView()
     ret
   }
-
+  
   private fun processaNota(itensVendaFutura: List<ItemVendaFutura>): Nota? {
-    val loja = lojaDefault.numero
+    // val loja = lojaDefault.numero
     val notaDoSaci = itensVendaFutura.firstOrNull()
       ?.notaProdutoSaci
-    val lojaSaci = notaDoSaci?.storeno ?: throw EViewModel("Nota não encontrada")
-    //if(loja != lojaSaci) throw EViewModel("Esta nota pertence a loja $lojaSaci")
+    notaDoSaci?.storeno ?: throw EViewModel("Nota não encontrada")
     val nota: Nota? = Nota.createNota(notaDoSaci)
       ?.let {
         if(it.existe()) Nota.findSaida(it.numero)
@@ -137,7 +135,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView): CrudViewModel<ViewNotaFu
     val itens = itensVendaFutura.mapNotNull {itemVendaFutura ->
       val notaSaci = itemVendaFutura.notaProdutoSaci
       val item = ItemNota.find(notaSaci) ?: ItemNota.createItemNota(notaSaci, nota, itemVendaFutura.abrevicao)
-
+      
       return@mapNotNull item?.apply {
         this.status = if(abreviacao?.expedicao == true) CONFERIDA else INCLUIDA
         this.impresso = false
@@ -148,20 +146,20 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView): CrudViewModel<ViewNotaFu
         if(this.status == CONFERIDA) this.recalculaSaldos()
       }
     }
-
+    
     if(itens.isEmpty()) throw EViewModel("Essa nota não possui itens com localização")
-
+    
     crudBean = ViewNotaFutura.findNotaFutura(nota)
       ?.toVO()
-
+    
     return nota
   }
-
+  
   private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {
     if(usuarioDefault.isEstoqueVendaFutura) return ""
     itemNota ?: return ""
-    val tipoNota = itemNota.tipoNota ?: return ""
-    if(!etiqueta.imprimivel(tipoNota)) return ""
+    // val tipoNota = itemNota.tipoNota ?: return ""
+    if(!etiqueta.imprimivel()) return ""
     val print = itemNota.printEtiqueta()
     itemNota.let {
       it.refresh()
@@ -170,7 +168,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView): CrudViewModel<ViewNotaFu
     }
     return print.print(etiqueta.template)
   }
-
+  
   fun imprimir(nota: Nota?) = execList<PacoteImpressao> {
     val impressoraName = if(usuarioDefault.impressora == "") "Localizacao ${usuarioDefault.impressora}"
     else usuarioDefault.impressora
@@ -184,20 +182,20 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView): CrudViewModel<ViewNotaFu
         val abreviacao = entry.key ?: return@flatMap emptyList<PacoteImpressao>()
         if(abreviacao.expedicao) {
           val text = imprimeItens(CONFERIDA, entry.value)
-
+          
           listOf(PacoteImpressao(impressoraName, text))
         }
         else emptyList<PacoteImpressao>()
       }
       val text = imprimeItens(INCLUIDA, listaItens)
       val impressaoEXP = listOf(PacoteImpressao(impressoraName, text))
-
+      
       impressaoCD + impressaoEXP
     }
     view.updateView()
     ret
   }
-
+  
   private fun imprimeItens(status: StatusNota, itens: List<ItemNota>): String {
     val etiquetas = Etiqueta.findByStatus(status)
     return etiquetas.joinToString(separator = "\n") {etiqueta ->
@@ -206,7 +204,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView): CrudViewModel<ViewNotaFu
         .joinToString(separator = "\n")
     }
   }
-
+  
   fun imprimeTudo() = execString {
     val etiquetas = Etiqueta.findByStatus(INCLUIDA)
     val itens = ItemNota.where()
@@ -221,7 +219,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView): CrudViewModel<ViewNotaFu
     view.updateView()
     ret
   }
-
+  
   fun findNotaSaidaKey(key: String) = execList {
     val storeno = key.mid(0, 1)
       .toIntOrNull()
@@ -243,8 +241,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView): CrudViewModel<ViewNotaFu
         val tipo = notaSerie.tipoNota
         when {
           usuarioDefault.isTipoCompativel(tipo) -> notaSaci
-          else                                  -> throw EViewModel(
-            "O usuário não está habilitado para lançar esse tipo de nota (${notaSerie.descricao})")
+          else                                  -> throw EViewModel("O usuário não está habilitado para lançar esse tipo de nota (${notaSerie.descricao})")
         }
       }
       else notaSaci
@@ -252,32 +249,32 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView): CrudViewModel<ViewNotaFu
     view.updateView()
     ret
   }
-
+  
   fun NotaProdutoSaci.notaSerie(): NotaSerie? {
     val tipo = TipoNota.value(tipo)
     return NotaSerie.findByTipo(tipo)
   }
-
+  
   fun findLoja(storeno: Int?): Loja? = Loja.findLoja(storeno)
-
+  
   fun abreviacoes(prdno: String?, grade: String?): List<String> {
     val produto = Produto.findProduto(prdno, grade) ?: return emptyList()
     return ViewProdutoLoc.abreviacoesProduto(produto)
   }
-
+  
   override fun QViewNotaFutura.filterString(text: String): QViewNotaFutura {
     return nota.numero.startsWith(text)
   }
-
+  
   override fun QViewNotaFutura.filterDate(date: LocalDate): QViewNotaFutura {
     return data.eq(date)
   }
-
+  
   fun saldoProduto(notaProdutoSaci: NotaProdutoSaci, abreviacao: String): Int {
     val produto = Produto.findProduto(notaProdutoSaci.codigo(), notaProdutoSaci.grade)
     return produto?.saldoAbreviacao(abreviacao) ?: 0
   }
-
+  
   fun processaVendas(venda: VendasCaixa) {
     val produto = Produto.findProduto(venda.prdno, venda.grade) ?: return
     val locacalizacoes = produto.viewProdutoLoc ?: return
@@ -289,7 +286,7 @@ class NFVendaFuturaVo: EntityVo<ViewNotaFutura>() {
   override fun findEntity(): ViewNotaFutura? {
     return ViewNotaFutura.findSaida(numero, abreviacao)
   }
-
+  
   var numero: String = ""
   var tipoMov: TipoMov = ENTRADA
   var tipoNota: TipoNota? = null
@@ -310,14 +307,15 @@ class NFVendaFuturaVo: EntityVo<ViewNotaFutura>() {
     get() = LocalDateTime.of(data, hora)
 }
 
-data class ItemVendaFutura(val notaProdutoSaci: NotaProdutoSaci, val saldo: Int, val abrevicao: String,
-                           var selecionado: Boolean = false) {
+data class ItemVendaFutura(
+  val notaProdutoSaci: NotaProdutoSaci, val saldo: Int, val abrevicao: String, var selecionado: Boolean = false
+                          ) {
   val prdno = notaProdutoSaci.prdno
   val grade = notaProdutoSaci.grade
   val nome = notaProdutoSaci.nome
   val quant = notaProdutoSaci.quant ?: 0
   val saldoFinal = saldo - quant
-
+  
   fun isSave() = notaProdutoSaci.isSave()
 }
 

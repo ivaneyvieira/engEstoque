@@ -30,7 +30,7 @@ import com.vaadin.ui.renderers.TextRenderer
 @AutoView
 class EtiquetaView: CrudLayoutView<EtiquetaVo, EtiquetaViewModel>(), IEtiquetaView {
   private lateinit var template: TextArea
-
+  
   init {
     viewModel = EtiquetaViewModel(this)
     layoutForm {
@@ -98,7 +98,7 @@ class EtiquetaView: CrudLayoutView<EtiquetaVo, EtiquetaViewModel>(), IEtiquetaVi
       }
       column(EtiquetaVo::etiquetaDefault) {
         caption = "Padrão"
-
+        
         setRenderer({
                       when {
                         it == null -> ""

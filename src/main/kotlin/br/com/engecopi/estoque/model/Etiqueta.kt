@@ -27,18 +27,21 @@ class Etiqueta: BaseModel() {
   var etiquetaDefault: Boolean = false
   val isCliente
     get() = titulo.contains("CLiente")
-
+  
   companion object Find: EtiquetaFinder() {
     fun find(titulo: String?, statusNota: StatusNota?): Etiqueta? {
       titulo ?: return null
       statusNota ?: return null
-      return where().titulo.eq(titulo).statusNota.eq(statusNota).findList().firstOrNull()
+      return where().titulo.eq(titulo)
+        .statusNota.eq(statusNota)
+        .findList()
+        .firstOrNull()
     }
-
+    
     fun findByStatus(statusNota: StatusNota?): List<Etiqueta> =
       where().statusNota.eq(statusNota).etiquetaDefault.eq(true).orderBy().titulo.asc().findList()
   }
-
+  
   fun updateOutros() {
     //db().update(Etiqueta::class.java)
     //   .set("etiqueta_default", false)
@@ -47,8 +50,8 @@ class Etiqueta: BaseModel() {
     //   .ne("id", id)
     //  .update()
   }
-
-  fun imprimivel(tipoNota: TipoNota): Boolean {
+  
+  fun imprimivel(): Boolean {
     return true
   }
 }

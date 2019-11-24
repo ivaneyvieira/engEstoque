@@ -45,21 +45,21 @@ class QAssocNota<R>(name: String, root: R): TQAssocBean<Nota, R>(name, root) {
   lateinit var usuario: QAssocUsuario<R>
   lateinit var maxSequencia: PInteger<R>
   lateinit var lancamentoOrigem: PEnum<R, LancamentoOrigem>
-
+  
   /**
    * Eagerly fetch this association loading the specified properties.
    */
   fun fetch(vararg properties: TQProperty<QNota>): R {
     return fetchProperties(*properties)
   }
-
+  
   /**
    * Eagerly fetch this association using a 'query join' loading the specified properties.
    */
   fun fetchQuery(vararg properties: TQProperty<QNota>): R {
     return fetchQueryProperties(*properties)
   }
-
+  
   /**
    * Use lazy loading for this association loading the specified properties.
    */

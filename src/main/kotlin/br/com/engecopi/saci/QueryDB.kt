@@ -7,9 +7,11 @@ import org.sql2o.Connection
 import org.sql2o.Query
 import org.sql2o.Sql2o
 
-open class QueryDB(private val driver: String, val url: String, val username: String, val password: String) {
+open class QueryDB(
+  private val driver: String, val url: String, val username: String, val password: String
+                  ) {
   private val sql2o: Sql2o
-
+  
   init {
     registerDriver(driver)
     val config = HikariConfig()
@@ -21,11 +23,11 @@ open class QueryDB(private val driver: String, val url: String, val username: St
     config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048")
     val ds = HikariDataSource(config)
     ds.maximumPoolSize = 5
-
+    
     this.sql2o = Sql2o(ds)
     //this.sql2o = Sql2o(url, username, password)
   }
-
+  
   private fun registerDriver(driver: String) {
     try {
       Class.forName(driver)
@@ -33,7 +35,7 @@ open class QueryDB(private val driver: String, val url: String, val username: St
       throw RuntimeException(e)
     }
   }
-
+  
   protected fun <T> query(file: String, lambda: (Query) -> T): T {
     return buildQuery(file) {con, query ->
       val ret = lambda(query)
@@ -41,50 +43,56 @@ open class QueryDB(private val driver: String, val url: String, val username: St
       ret
     }
   }
-
+  
   private inline fun <C: AutoCloseable, R> C.trywr(block: (C) -> R): R {
     this.use {
       return block(this)
     }
   }
-
-  protected fun execute(file: String,
-                        vararg params: Pair<String, String>,
-                        monitor: (String, Int, Int) -> Unit = {_, _, _ ->}) {
+  
+  protected fun execute(
+    file: String, vararg params: Pair<String, String>, monitor: (String, Int, Int) -> Unit = {_, _, _ ->}
+                       ) {
     var sqlScript = SystemUtils.readFile(file)
-    sql2o.beginTransaction().trywr {con ->
-      params.forEach {
-        sqlScript = sqlScript?.replace(":${it.first}", it.second)
+    sql2o.beginTransaction()
+      .trywr {con ->
+        params.forEach {
+          sqlScript = sqlScript?.replace(":${it.first}", it.second)
+        }
+        val sqls = sqlScript?.split(";")
+          .orEmpty()
+        val count = sqls.size
+        sqls.filter {it.trim() != ""}
+          .forEachIndexed {index, sql ->
+            println(sql)
+            val query = con.createQuery(sql)
+            query.executeUpdate()
+            val parte = index + 1
+            val caption = "Parte $parte/$count"
+            monitor(caption, parte, count)
+          }
+        monitor("", count, count)
+        con.commit()
       }
-      val sqls = sqlScript?.split(";").orEmpty()
-      val count = sqls.size
-      sqls.filter {it.trim() != ""}.forEachIndexed {index, sql ->
-        println(sql)
-        val query = con.createQuery(sql)
-        query.executeUpdate()
-        val parte = index + 1
-        val caption = "Parte $parte/$count"
-        monitor(caption, parte, count)
-      }
-      monitor("", count, count)
-      con.commit()
-    }
   }
-
+  
   private fun <T> buildQuery(file: String, proc: (Connection, Query) -> T): T {
     val sql = SystemUtils.readFile(file)
-    return this.sql2o.open().use {con ->
-      val query = con.createQuery(sql)
-      val time = System.currentTimeMillis()
-      println("SQL2O ==> $sql")
-      val result = proc(con, query)
-      val difTime = System.currentTimeMillis() - time
-      println("######################## TEMPO QUERY $difTime ms ########################")
-      result
-    }
+    return this.sql2o.open()
+      .use {con ->
+        val query = con.createQuery(sql)
+        val time = System.currentTimeMillis()
+        println("SQL2O ==> $sql")
+        val result = proc(con, query)
+        val difTime = System.currentTimeMillis() - time
+        println("######################## TEMPO QUERY $difTime ms ########################")
+        result
+      }
   }
-
-  protected fun <T> temporaryTable(tableName: String, lista: List<T>, fieldList: (T) -> String): String {
+  
+  protected fun <T> temporaryTable(
+    tableName: String, lista: List<T>, fieldList: (T) -> String
+                                  ): String {
     val stringBuild = StringBuilder()
     val selectList = lista.joinToString(separator = "\nUNION\n") {item ->
       "SELECT ${fieldList(item)} FROM DUAL"

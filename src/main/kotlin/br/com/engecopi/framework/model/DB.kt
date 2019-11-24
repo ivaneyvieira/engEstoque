@@ -14,7 +14,7 @@ object DB {
       throw DevException(e, "Erro desconhecido")
     }
   }
-
+  
   @Throws(PersistenceException::class)
   fun executeSqls(sqls: List<String>, vararg params: Pair<String, Any?>) {
     sqls.forEach {sql ->
@@ -26,12 +26,16 @@ object DB {
       update?.execute()
     }
   }
-
+  
   fun String.split(): List<String> {
-    return this.replace("::=", ":=").replace(":=", "::=").split(";").map {it.replace('\n', ' ')}.map {it.trim()}
+    return this.replace("::=", ":=")
+      .replace(":=", "::=")
+      .split(";")
+      .map {it.replace('\n', ' ')}
+      .map {it.trim()}
       .filter {it.isNotBlank()}
   }
-
+  
   @Throws(PersistenceException::class)
   fun sciptSql(sqlScript: String, vararg params: Pair<String, Any>) {
     xa {
@@ -39,26 +43,29 @@ object DB {
       executeSqls(sqls, * params)
     }
   }
-
+  
   @Throws(PersistenceException::class)
   inline fun <reified T> sqlEntity(sqlScript: String, vararg params: Pair<String, Any?>): List<T> {
     return xa {
       val sqls = sqlScript.split()
       val sqlsScript = sqls.dropLast(1)
-
+      
       executeSqls(sqlsScript, * params)
       val sql = sqls.last()
       println(sql)
-
+      
       when {
         T::class.isSubclassOf(BaseModel::class) -> {
-          val rawSql = RawSqlBuilder.parse(sql).create()
-          val query = Transaction.find(T::class.java)?.setRawSql(rawSql)
+          val rawSql = RawSqlBuilder.parse(sql)
+            .create()
+          val query = Transaction.find(T::class.java)
+            ?.setRawSql(rawSql)
           params.forEach {param ->
             query?.setParameter(param.first, param.second)
           }
-
-          query?.findList().orEmpty()
+          
+          query?.findList()
+            .orEmpty()
         }
         else                                    -> {
           val sqlQuery = Transaction.createSqlQuery(sql)
@@ -66,33 +73,36 @@ object DB {
           params.forEach {param ->
             sqlQuery?.setParameter(param.first, param.second)
           }
-          sqlQuery?.findList()?.map {sqlRow ->
-            val arrayPar: List<Any?> = constructor.parameters.map {par ->
-              sqlRow[par.name]
+          sqlQuery?.findList()
+            ?.map {sqlRow ->
+              val arrayPar: List<Any?> = constructor.parameters.map {par ->
+                sqlRow[par.name]
+              }
+              
+              constructor.call(arrayPar.toTypedArray())
             }
-
-            constructor.call(arrayPar.toTypedArray())
-          }.orEmpty()
+            .orEmpty()
         }
       }
     }
   }
-
+  
   @Throws(PersistenceException::class)
   inline fun <reified T> sqlScalar(sqlScript: String, vararg params: Pair<String, Any>): List<T> {
     return xa {
       val sqls = sqlScript.split()
       val sqlsScript = sqls.dropLast(1)
-
+      
       executeSqls(sqlsScript, * params)
       val sql = sqls.last()
       println(sql)
       val sqlQuery = Transaction.createSqlQuery(sql)
-
+      
       params.forEach {param ->
         sqlQuery?.setParameter(param.first, param.second)
       }
-      sqlQuery?.findList()?.filterIsInstance<T>()
+      sqlQuery?.findList()
+        ?.filterIsInstance<T>()
     }.orEmpty()
   }
 }

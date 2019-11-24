@@ -51,17 +51,18 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), IN
   var formCodBar: PnlCodigoBarras? = null
   private val isAdmin
     get() = RegistryUserInfo.userDefaultIsAdmin
-
+  
   override fun enter(event: ViewChangeEvent) {
     super.enter(event)
     formCodBar?.focusEdit()
   }
-
+  
   init {
     viewModel = NFExpedicaoViewModel(this)
     layoutForm {
       formLayout.apply {
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
+        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+          .px
         val nota = binder.bean
         grupo("Nota fiscal de saída") {
           verticalLayout {
@@ -131,7 +132,8 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), IN
             refreshGrid()
           }
         }
-      }.id = "btnPrint"
+      }
+        .id = "btnPrint"
       column(NFExpedicaoVo::loja) {
         caption = "Loja NF"
         setRenderer({loja ->
@@ -155,7 +157,7 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), IN
         timeFormat()
         setSortProperty("data", "hora")
       }
-
+      
       column(NFExpedicaoVo::dataEmissao) {
         caption = "Emissao"
         dateFormat()
@@ -181,7 +183,7 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), IN
       }
     }
   }
-
+  
   private fun formCodbar(): PnlCodigoBarras {
     return PnlCodigoBarras("Chave da Nota Fiscal") {key ->
       val notaSaida = viewModel.findNotaSaidaKey(key)
@@ -197,7 +199,7 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), IN
       }
     }
   }
-
+  
   private fun btnImprimeTudo(): Button {
     return Button("Imprime Etiquetas").apply {
       icon = PRINT
@@ -210,16 +212,19 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), IN
   }
 }
 
-class DlgNotaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
-                 val viewModel: NFExpedicaoViewModel,
-                 val execConfirma: (itens: List<ItemExpedicao>) -> Unit): Window("Nota de Saída") {
+class DlgNotaLoc(
+  val notaProdutoSaida: List<NotaProdutoSaci>,
+  val viewModel: NFExpedicaoViewModel,
+  val execConfirma: (itens: List<ItemExpedicao>) -> Unit
+                ): Window("Nota de Saída") {
   private lateinit var gridProdutos: Grid<LocalizacaoNota>
-
+  
   init {
     val nota = notaProdutoSaida.firstOrNull()
     verticalLayout {
-      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
-
+      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+        .px
+      
       grupo("Nota fiscal de saída") {
         verticalLayout {
           row {
@@ -231,12 +236,14 @@ class DlgNotaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
             textField("Loja") {
               expandRatio = 2f
               isReadOnly = true
-              value = viewModel.findLoja(nota?.storeno)?.sigla
+              value = viewModel.findLoja(nota?.storeno)
+                ?.sigla
             }
             textField("Tipo") {
               expandRatio = 2f
               isReadOnly = true
-              value = TipoNota.value(nota?.tipo)?.descricao
+              value = TipoNota.value(nota?.tipo)
+                ?.descricao
             }
             dateField("Data") {
               expandRatio = 1f
@@ -251,16 +258,17 @@ class DlgNotaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
           }
         }
       }
-
+      
       grupo("Localizações") {
         row {
           horizontalLayout {
             button("Confirma") {
               addStyleName(ValoTheme.BUTTON_PRIMARY)
               addClickListener {
-                val itens = gridProdutos.dataProvider.getAll().flatMap {loc ->
-                  loc.itensExpedicao.filter {it.selecionado}
-                }
+                val itens = gridProdutos.dataProvider.getAll()
+                  .flatMap {loc ->
+                    loc.itensExpedicao.filter {it.selecionado}
+                  }
                 execConfirma(itens)
                 close()
               }
@@ -277,21 +285,31 @@ class DlgNotaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
           gridProdutos = grid(LocalizacaoNota::class) {
             val itens = notaProdutoSaida
             val abreviacaoItens = itens.groupBy {item ->
-              val abreviacao = viewModel.abreviacoes(item.prdno, item.grade).sorted()
+              val abreviacao = viewModel.abreviacoes(item.prdno, item.grade)
+                .sorted()
               abreviacao
             }
-            val abreviacoes = abreviacaoItens.keys.asSequence().flatten().distinct().map {abrev ->
-              val itensExpedicao =
-                abreviacaoItens.filter {it.key.contains(abrev)}.map {it.value}.flatten().distinct().map {notaSaci ->
-                  val saldo = viewModel.saldoProduto(notaSaci, abrev)
-                  ItemExpedicao(notaSaci, saldo, abrev)
-                }
-              LocalizacaoNota(abrev, itensExpedicao)
-            }.toList().sortedBy {it.abreviacao}.toList()
-
+            val abreviacoes = abreviacaoItens.keys.asSequence()
+              .flatten()
+              .distinct()
+              .map {abrev ->
+                val itensExpedicao = abreviacaoItens.filter {it.key.contains(abrev)}
+                  .map {it.value}
+                  .flatten()
+                  .distinct()
+                  .map {notaSaci ->
+                    val saldo = viewModel.saldoProduto(notaSaci, abrev)
+                    ItemExpedicao(notaSaci, saldo, abrev)
+                  }
+                LocalizacaoNota(abrev, itensExpedicao)
+              }
+              .toList()
+              .sortedBy {it.abreviacao}
+              .toList()
+            
             this.dataProvider = ListDataProvider(abreviacoes)
             removeAllColumns()
-
+            
             setSizeFull()
             addComponentColumn {item ->
               Button().apply {
@@ -319,15 +337,16 @@ class DlgNotaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
   }
 }
 
-class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
-                       val viewModel: NFExpedicaoViewModel,
-                       val update: () -> Unit): Window("Itens da expedição") {
+class DlgNotaExpedicao(
+  val localizacaoNota: LocalizacaoNota, val viewModel: NFExpedicaoViewModel, val update: () -> Unit
+                      ): Window("Itens da expedição") {
   private lateinit var gridProdutos: Grid<ItemExpedicao>
-
+  
   init {
     verticalLayout {
-      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
-
+      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+        .px
+      
       grupo("Expedição ${localizacaoNota.abreviacao}") {
         row {
           horizontalLayout {
@@ -339,8 +358,9 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
                 localizacaoNota.itensExpedicao.forEach {
                   it.selecionado = false
                 }
-                val itensSelecionado = gridProdutos.selectedItems.toList().filter {!it.isSave()}
-
+                val itensSelecionado = gridProdutos.selectedItems.toList()
+                  .filter {!it.isSave()}
+                
                 itensSelecionado.forEach {
                   it.selecionado = true
                 }
@@ -359,7 +379,7 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
         row {
           gridProdutos = grid(ItemExpedicao::class) {
             val itens = localizacaoNota.itensExpedicao
-
+            
             this.dataProvider = ListDataProvider(itens)
             removeAllColumns()
             val selectionModel = setSelectionMode(MULTI)
@@ -377,9 +397,9 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
                 }
               }
             }
-
+            
             setSizeFull()
-
+            
             addColumnFor(ItemExpedicao::prdno) {
               expandRatio = 1
               caption = "Código"
@@ -407,7 +427,7 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
               caption = "Saldo Final"
               align = VAlign.Right
             }
-
+            
             this.setStyleGenerator {
               when {
                 it.isSave()       -> "ok"

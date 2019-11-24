@@ -4,13 +4,13 @@ import br.com.engecopi.framework.model.Transaction
 
 abstract class ViewModel<V: IView>(val view: V) {
   private var inTransaction = false
-
+  
   private fun updateView(exception: EViewModel) {
     exception.message?.let {message ->
       view.showError(message)
     }
   }
-
+  
   @Throws(EViewModel::class)
   fun exec(block: () -> Unit) {
     try {
@@ -26,7 +26,7 @@ abstract class ViewModel<V: IView>(val view: V) {
       inTransaction = false
     }
   }
-
+  
   @Throws(EViewModel::class)
   fun <T> execValue(block: () -> T): T? {
     var ret: T? = null
@@ -45,22 +45,22 @@ abstract class ViewModel<V: IView>(val view: V) {
     }
     return ret
   }
-
+  
   @Throws(EViewModel::class)
   fun execString(block: () -> String): String {
     return execValue(block) ?: ""
   }
-
+  
   @Throws(EViewModel::class)
   fun execInt(block: () -> Int): Int {
     return execValue(block) ?: 0
   }
-
+  
   @Throws(EViewModel::class)
   fun <T> execList(block: () -> List<T>): List<T> {
     return execValue(block).orEmpty()
   }
-
+  
   private fun <T> transaction(block: () -> T) {
     try {
       Transaction.execTransacao {block()}
@@ -68,7 +68,7 @@ abstract class ViewModel<V: IView>(val view: V) {
       //Não faz nada
     }
   }
-
+  
   protected fun showWarning(msg: String) {
     view.showWarning(msg)
   }

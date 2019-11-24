@@ -17,19 +17,23 @@ private val DATETIME_FORMATTER = DateTimeFormatter.ofPattern(DATETIME_PATTERN)
 
 fun LocalDateTime?.toDate(): Date? {
   if(this == null) return null
-  val instant = this.atZone(ZoneId.systemDefault())?.toInstant()
+  val instant = this.atZone(ZoneId.systemDefault())
+    ?.toInstant()
   return Date.from(instant)
 }
 
 fun LocalDateTime?.toTimeStamp(): Timestamp? {
   if(this == null) return null
-  val instant = this.atZone(ZoneId.systemDefault())?.toInstant()
+  val instant = this.atZone(ZoneId.systemDefault())
+    ?.toInstant()
   return Timestamp.from(instant)
 }
 
 fun LocalDate?.toDate(): Date? {
   if(this == null) return null
-  val instant = this.atStartOfDay()?.atZone(ZoneId.systemDefault())?.toInstant()
+  val instant = this.atStartOfDay()
+    ?.atZone(ZoneId.systemDefault())
+    ?.toInstant()
   return Date.from(instant)
 }
 
@@ -39,7 +43,9 @@ fun LocalTime?.toDate(): Date? {
   val year = date.year
   val month = date.month
   val dayOfMonth = date.dayOfMonth
-  val instant = this.atDate(LocalDate.of(year, month, dayOfMonth))?.atZone(ZoneId.systemDefault())?.toInstant()
+  val instant = this.atDate(LocalDate.of(year, month, dayOfMonth))
+    ?.atZone(ZoneId.systemDefault())
+    ?.toInstant()
   return Date.from(instant)
 }
 

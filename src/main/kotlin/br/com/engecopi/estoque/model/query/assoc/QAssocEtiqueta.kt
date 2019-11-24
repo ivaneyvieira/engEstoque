@@ -29,21 +29,21 @@ class QAssocEtiqueta<R>(name: String, root: R): TQAssocBean<Etiqueta, R>(name, r
   lateinit var template: PString<R>
   lateinit var itensNota: QAssocItemNota<R>
   lateinit var etiquetaDefault: PBoolean<R>
-
+  
   /**
    * Eagerly fetch this association loading the specified properties.
    */
   fun fetch(vararg properties: TQProperty<QEtiqueta>): R {
     return fetchProperties(*properties)
   }
-
+  
   /**
    * Eagerly fetch this association using a 'query join' loading the specified properties.
    */
   fun fetchQuery(vararg properties: TQProperty<QEtiqueta>): R {
     return fetchQueryProperties(*properties)
   }
-
+  
   /**
    * Use lazy loading for this association loading the specified properties.
    */

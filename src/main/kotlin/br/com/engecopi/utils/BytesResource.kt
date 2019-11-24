@@ -14,7 +14,7 @@ fun ByteArray.makeResource(): StreamResource {
   streamResource.cacheTime = 1000
   streamResource.mimeType = "application/pdf"
   streamResource.stream.setParameter("Content-Disposition", "attachment; filename=$nome.pdf")
-
+  
   return streamResource
 }
 

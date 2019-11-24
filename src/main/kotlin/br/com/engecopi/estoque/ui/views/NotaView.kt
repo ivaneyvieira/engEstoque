@@ -48,9 +48,10 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: 
   val lojaDefault = RegistryUserInfo.lojaDefault
   val usuario = RegistryUserInfo.usuarioDefault
   val isAdmin = usuario.admin
-
-  inline fun <reified V: NotaVo> (@VaadinDsl HasComponents).notaFiscalField(operation: CrudOperation?,
-                                                                            binder: Binder<V>): TextField {
+  
+  inline fun <reified V: NotaVo> (@VaadinDsl HasComponents).notaFiscalField(
+    operation: CrudOperation?, binder: Binder<V>
+                                                                           ): TextField {
     return textField("Nota Fiscal") {
       expandRatio = 2f
       isReadOnly = operation != ADD
@@ -58,7 +59,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: 
       reloadBinderOnChange(binder)
     }
   }
-
+  
   fun btnImprimeTudo(): Button {
     return Button("Imprime Etiquetas").apply {
       icon = PRINT
@@ -68,7 +69,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: 
       }
     }
   }
-
+  
   fun btnDesfazer(): Button {
     return Button("Cancelar").apply {
       this.isVisible = usuario.admin
@@ -80,22 +81,25 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: 
       }
     }
   }
-
-  inline fun <reified V: NotaVo> (@VaadinDsl HasComponents).lojaField(operation: CrudOperation?, binder: Binder<V>) {
+  
+  inline fun <reified V: NotaVo> (@VaadinDsl HasComponents).lojaField(
+    operation: CrudOperation?, binder: Binder<V>
+                                                                     ) {
     comboBox<Loja>("Loja") {
       expandRatio = 2f
       default {it.sigla}
       isReadOnly = operation != ADD
       setItems(viewModel.findLojas(lojaDefault))
-
-      bind(binder).asRequired("A lojaDefault deve ser informada").bind("lojaNF")
+      
+      bind(binder).asRequired("A lojaDefault deve ser informada")
+        .bind("lojaNF")
       reloadBinderOnChange(binder)
     }
   }
-
-  inline fun <reified V: NotaVo> VerticalLayout.produtoField(operation: CrudOperation?,
-                                                             binder: Binder<V>,
-                                                             tipo: String) {
+  
+  inline fun <reified V: NotaVo> VerticalLayout.produtoField(
+    operation: CrudOperation?, binder: Binder<V>, tipo: String
+                                                            ) {
     row {
       this.bindVisible(binder, NotaVo::naoTemGrid.name)
       comboBox<Produto>("Código") {
@@ -119,7 +123,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: 
           localizacao.localizacao
         }
         isTextInputAllowed = true
-
+        
         bindItens(binder, NotaVo::localizacaoProduto.name)
         bind(binder).bind(NotaVo::localizacao.name)
       }
@@ -131,7 +135,8 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: 
       integerField("Qtd $tipo") {
         expandRatio = 1f
         isReadOnly = (!this@NotaView.isAdmin) && (operation != ADD)
-        this.bind(binder).bind("quantProduto")
+        this.bind(binder)
+          .bind("quantProduto")
       }
     }
     row {
@@ -144,10 +149,11 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: 
         val selectionModel = setSelectionMode(MULTI)
         selectionModel.addSelectionListener {select ->
           if(select.isUserOriginated) {
-            this.dataProvider.getAll().forEach {
-              it.selecionado = false
-            }
-
+            this.dataProvider.getAll()
+              .forEach {
+                it.selecionado = false
+              }
+            
             select.allSelectedItems.forEach {
               if(it.isSave) {
                 it.selecionado = false
@@ -161,7 +167,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: 
           isEmptySelectionAllowed = false
           isTextInputAllowed = false
         }
-
+        
         addColumnFor(ProdutoVO::codigo) {
           expandRatio = 1
           caption = "Código"
@@ -197,7 +203,8 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: 
         bindItens(binder, "produtos")
         editor.addOpenListener {event ->
           event.bean.produto.let {produto ->
-            val locSulfixos = produto.localizacoes(RegistryUserInfo.abreviacaoDefault).map {LocProduto(it)}
+            val locSulfixos = produto.localizacoes(RegistryUserInfo.abreviacaoDefault)
+              .map {LocProduto(it)}
             comboLoc.setItems(locSulfixos)
             comboLoc.setItemCaptionGenerator {it.localizacao}
             comboLoc.value = event.bean.localizacao

@@ -22,7 +22,7 @@ import com.vaadin.ui.renderers.TextRenderer
 @AutoView("pedidosTransf")
 class PedidoTransferenciaView: LayoutView<PedidoTransferenciaViewModel>(), IPedidoTransferenciaView {
   private var gridPedido: Grid<PedidoTransferenciaVo>? = null
-
+  
   init {
     viewModel = PedidoTransferenciaViewModel(this)
     setSizeFull()
@@ -39,7 +39,7 @@ class PedidoTransferenciaView: LayoutView<PedidoTransferenciaViewModel>(), IPedi
     }
     gridPedido = grid(dataProvider = ListDataProvider(mutableListOf())) {
       expand()
-
+      
       addColumnFor(PedidoTransferenciaVo::numero) {
         caption = "Pedido"
       }
@@ -71,7 +71,7 @@ class PedidoTransferenciaView: LayoutView<PedidoTransferenciaViewModel>(), IPedi
       }
     }
   }
-
+  
   override fun updateView() {
     val dataProvider = gridPedido?.dataProvider as? ListDataProvider
     dataProvider?.items?.clear()

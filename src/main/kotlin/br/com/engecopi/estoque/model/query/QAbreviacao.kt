@@ -25,7 +25,7 @@ class QAbreviacao: TQRootBean<Abreviacao, QAbreviacao> {
      */
     val _alias = QAbreviacao(true)
   }
-
+  
   lateinit var id: PLong<QAbreviacao>
   lateinit var createdAt: PLocalDateTime<QAbreviacao>
   lateinit var updatedAt: PLocalDateTime<QAbreviacao>
@@ -34,17 +34,17 @@ class QAbreviacao: TQRootBean<Abreviacao, QAbreviacao> {
   lateinit var loja: QAssocLoja<QAbreviacao>
   lateinit var expedicao: PBoolean<QAbreviacao>
   lateinit var impressora: PString<QAbreviacao>
-
+  
   /**
    * Construct with a given Database.
    */
   constructor(database: Database): super(Abreviacao::class.java, database)
-
+  
   /**
    * Construct using the default Database.
    */
   constructor(): super(Abreviacao::class.java)
-
+  
   /**
    * Construct for Alias.
    */

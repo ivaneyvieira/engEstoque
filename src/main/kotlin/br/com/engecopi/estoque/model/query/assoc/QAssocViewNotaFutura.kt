@@ -42,21 +42,21 @@ class QAssocViewNotaFutura<R>(name: String, root: R): TQAssocBean<ViewNotaFutura
   lateinit var sequencia: PInteger<R>
   lateinit var usuario: QAssocUsuario<R>
   lateinit var abreviacao: PString<R>
-
+  
   /**
    * Eagerly fetch this association loading the specified properties.
    */
   fun fetch(vararg properties: TQProperty<QViewNotaFutura>): R {
     return fetchProperties(*properties)
   }
-
+  
   /**
    * Eagerly fetch this association using a 'query join' loading the specified properties.
    */
   fun fetchQuery(vararg properties: TQProperty<QViewNotaFutura>): R {
     return fetchQueryProperties(*properties)
   }
-
+  
   /**
    * Use lazy loading for this association loading the specified properties.
    */

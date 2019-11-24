@@ -17,12 +17,12 @@ object RepositoryAvisoNotas {
   private val notaEntradaSalva = mutableListOf<Nota>()
   private val notaSaidaSalva = mutableListOf<Nota>()
   private val listEvents = ArrayList<(RepositoryAvisoNotas) -> Unit>()
-
+  
   fun addEvent(event: (RepositoryAvisoNotas) -> Unit) {
     listEvents.clear()
     listEvents.add(event)
   }
-
+  
   fun refresh() {
     try {
       synchronized(this) {
@@ -38,32 +38,32 @@ object RepositoryAvisoNotas {
       e.printStackTrace()
     }
   }
-
+  
   private fun refreshNotaSaidaApp() {
     notaSaidaSalva.clear()
     notaSaidaSalva.addAll(Nota.notasSaidaSalva())
   }
-
+  
   private fun refreshNotaEntradaApp() {
     notaEntradaSalva.clear()
     notaEntradaSalva.addAll(Nota.notasEntradaSalva())
   }
-
+  
   private fun refreshDevolucaoFornecedor() {
     devolucaoFornecedor.clear()
     //   devolucaoFornecedor.addAll(saci.findDevolucaoFornecedor(storeno, abreviacao))
   }
-
+  
   private fun refreshNotaEntradaTodas() {
     notaEntradaTodas.clear()
     notaEntradaTodas.addAll(saci.findNotaEntradaSaci(storeno, abreviacao))
   }
-
+  
   private fun refreshNotaSaidaTodas() {
     notaSaidaTodas.clear()
     notaSaidaTodas.addAll(saci.findNotaSaidaSaci(storeno, abreviacao))
   }
-
+  
   fun notaEntradaDevolvida(): List<NotaSaci> {
     return notaEntradaTodas.filter {nfEntrada ->
       devolucaoFornecedor.any {dev ->
@@ -71,7 +71,7 @@ object RepositoryAvisoNotas {
       }
     }
   }
-
+  
   fun notaEntradaCancelada(): List<NotaSaci> {
     val canceladas = notaSaidaTodas.filter {it.cancelado == "S"}
     return canceladas.filter {nfEntrada ->
@@ -80,7 +80,7 @@ object RepositoryAvisoNotas {
       }
     }
   }
-
+  
   fun notaSaidaCancelada(): List<NotaSaci> {
     val canceladas = notaSaidaTodas.filter {it.cancelado == "S"}
     return canceladas.filter {nfSaida ->
@@ -89,18 +89,19 @@ object RepositoryAvisoNotas {
       }
     }
   }
-
+  
   fun notaEntradaPendente(): List<NotaSaci> {
     val naoCanceladas = notaSaidaTodas.filter {it.cancelado == "N"}
     return naoCanceladas.filter {nfSaida ->
       nfSaida.entradaAceita()
-    }.filter {nfEntrada ->
+    }
+      .filter {nfEntrada ->
         !notaEntradaSalva.any {nota ->
           nota.numero == nfEntrada.numeroSerie
         }
       }
   }
-
+  
   fun notaSaidaPendente(): List<NotaSaci> {
     val naoCanceladas = notaSaidaTodas.filter {
       //print(".")
@@ -108,21 +109,22 @@ object RepositoryAvisoNotas {
     }
     return naoCanceladas.filter {nfSaida ->
       nfSaida.saidaAceita()
-    }.filter {nfSaida ->
+    }
+      .filter {nfSaida ->
         !notaSaidaSalva.any {nota ->
           nota.numero == nfSaida.numeroSerie
         }
       }
   }
-
+  
   fun hasWarning(): Boolean {
     return qtWarning() > 0
   }
-
+  
   fun qtWarning(): Int {
     return notaSaidaCancelada().size + notaSaidaPendente().size + notaEntradaCancelada().size + notaEntradaPendente().size
   }
-
+  
   private fun NotaSaci.entradaAceita() = tipoNota == DEV_CLI || tipoNota == COMPRA
   private fun NotaSaci.saidaAceita(): Boolean = tipoNota == DEV_FOR
 }

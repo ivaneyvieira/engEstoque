@@ -12,15 +12,15 @@ buildscript {
 
   dependencies {
     classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-    classpath("io.ebean:ebean-gradle-plugin:11.37.1")
+   // classpath("io.ebean:ebean-gradle-plugin:11.40.1")
   }
 }
 
-
 plugins {
-  id("org.jetbrains.kotlin.jvm") version "1.3.40"
+  id("org.jetbrains.kotlin.jvm") version "1.3.50"
   id("org.gretty") version "2.3.1"
   id("com.devsoap.plugin.vaadin") version "1.4.1"
+  id("io.ebean") version "12.1.5"
 }
 
 repositories {
@@ -82,6 +82,7 @@ dependencies {
   //  compile("io.ebean:ebean-querybean:11.40.1")
   //  implementation("io.ebean:ebean-agent:11.41.1")
   compile("io.ebean:ebean:12.1.3")
+  compile("io.ebean:kotlin-querybean-generator:12.1.3")
   compile("io.ebean:ebean-querybean:12.1.3")
   implementation("io.ebean:ebean-agent:12.1.3")
 

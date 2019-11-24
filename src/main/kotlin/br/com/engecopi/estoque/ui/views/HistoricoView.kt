@@ -21,7 +21,7 @@ class HistoricoView: CrudLayoutView<HistoricoVo, HistoricoViewModel>(), IHistori
       deleteOperationVisible = false
       updateOperationVisible = false
       addOperationVisible = false
-
+      
       column(HistoricoVo::data) {
         expandRatio = 1
         caption = "Data"

@@ -1,6 +1,5 @@
 package br.com.engecopi.estoque.model.etlSaci
 
-import br.com.engecopi.estoque.model.Abreviacao
 import br.com.engecopi.estoque.model.dtos.PedidoSaci
 import br.com.engecopi.saci.saci
 import br.com.engecopi.utils.ECupsPrinter
@@ -20,23 +19,23 @@ class ETLPedidos: ETL<PedidoSaci>() {
            status=:status
       WHERE id = :id
     """.trimIndent()
-
+  
   companion object: ETLThread<PedidoSaci>(ETLPedidos()) {
     val sql
       get() = """select id, rota, storeno, numero, date, clienteName, abreviacao, nfno, nfse, status 
       |from t_pedido
       |""".trimMargin()
-
+    
     override fun getSource() = saci.findPedidoTransferencia()
-
+    
     override fun getTarget() = DB.findDto(PedidoSaci::class.java, sql).findList()
-
+    
     init {
       addListenerInsert("ImprimeInsert") {pedido ->
         if(pedido.status == 2) {
           try {
-            val etiqueta = etiquetaPedido(pedido)
-            val impressora = Abreviacao.findByAbreviacao(pedido.abreviacao)?.impressora ?: ""
+            // val etiqueta = etiquetaPedido(pedido)
+            // val impressora = Abreviacao.findByAbreviacao(pedido.abreviacao)?.impressora ?: ""
             //CupsUtils.printCups(impressora, etiqueta)
           } catch(e: ECupsPrinter) {
             //Vazio
@@ -48,7 +47,8 @@ class ETLPedidos: ETL<PedidoSaci>() {
 }
 
 fun etiquetaPedido(pedido: PedidoSaci): String {
-  val data = pedido.date?.localDate().format()
+  val data = pedido.date?.localDate()
+    .format()
   return """^XA
   ^FT50,060^A0N,40,40^FH^FDPedido de transferencia^FS
   ^FT50,130^A0N,40,40^FH^FDNumero: ${pedido.numero}^FS

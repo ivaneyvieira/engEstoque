@@ -30,7 +30,7 @@ class PainelGeralView: LayoutView<PainelGeralViewModel>(), IPainelGeralView {
   val entradaPendenteDataProvider = ListDataProvider<NotaSaci>(mutableListOf())
   val saidaCanceladaDataProvider = ListDataProvider<NotaSaci>(mutableListOf())
   val entradaCanceladaDataProvider = ListDataProvider<NotaSaci>(mutableListOf())
-
+  
   init {
     viewModel = PainelGeralViewModel(this)
     setSizeFull()
@@ -74,22 +74,24 @@ class PainelGeralView: LayoutView<PainelGeralViewModel>(), IPainelGeralView {
     }
     updateView()
   }
-
+  
   override fun updateView() {
     saidaPendenteDataProvider.items.clear()
     saidaPendenteDataProvider.items.addAll(viewModel.listSaidaPendente())
-
+    
     entradaPendenteDataProvider.items.clear()
     entradaPendenteDataProvider.items.addAll(viewModel.listEntradaPendente())
-
+    
     saidaCanceladaDataProvider.items.clear()
     saidaCanceladaDataProvider.items.addAll(viewModel.listSaidaCancelada())
-
+    
     entradaCanceladaDataProvider.items.clear()
     entradaCanceladaDataProvider.items.addAll(viewModel.listEntradaCancelada())
   }
-
-  private fun CssLayout.gridNotaSaci(dataProvider: ListDataProvider<NotaSaci>, tipoMov: TipoMov): Grid<NotaSaci> {
+  
+  private fun CssLayout.gridNotaSaci(
+    dataProvider: ListDataProvider<NotaSaci>, tipoMov: TipoMov
+                                    ): Grid<NotaSaci> {
     return grid(dataProvider = dataProvider) {
       setSizeFull()
       if(tipoMov == ENTRADA) {

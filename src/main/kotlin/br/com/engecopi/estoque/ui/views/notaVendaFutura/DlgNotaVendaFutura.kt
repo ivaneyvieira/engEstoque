@@ -24,15 +24,16 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.Window
 import com.vaadin.ui.themes.ValoTheme
 
-class DlgNotaVendaFutura(val localizacaoNota: LocalizacaoVendaFutura,
-                         val viewModel: NFVendaFuturaViewModel,
-                         val update: () -> Unit): Window("Itens da expedição") {
+class DlgNotaVendaFutura(
+  val localizacaoNota: LocalizacaoVendaFutura, val viewModel: NFVendaFuturaViewModel, val update: () -> Unit
+                        ): Window("Itens da expedição") {
   private lateinit var gridProdutos: Grid<ItemVendaFutura>
-
+  
   init {
     verticalLayout {
-      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
-
+      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+        .px
+      
       grupo("Expedição ${localizacaoNota.abreviacao}") {
         row {
           horizontalLayout {
@@ -44,8 +45,9 @@ class DlgNotaVendaFutura(val localizacaoNota: LocalizacaoVendaFutura,
                 localizacaoNota.itensVendaFutura.forEach {
                   it.selecionado = false
                 }
-                val itensSelecionado = gridProdutos.selectedItems.toList().filter {!it.isSave()}
-
+                val itensSelecionado = gridProdutos.selectedItems.toList()
+                  .filter {!it.isSave()}
+                
                 itensSelecionado.forEach {
                   it.selecionado = true
                 }
@@ -64,7 +66,7 @@ class DlgNotaVendaFutura(val localizacaoNota: LocalizacaoVendaFutura,
         row {
           gridProdutos = grid(ItemVendaFutura::class) {
             val itens = localizacaoNota.itensVendaFutura
-
+            
             this.dataProvider = ListDataProvider(itens)
             removeAllColumns()
             val selectionModel = setSelectionMode(MULTI)
@@ -82,9 +84,9 @@ class DlgNotaVendaFutura(val localizacaoNota: LocalizacaoVendaFutura,
                 }
               }
             }
-
+            
             setSizeFull()
-
+            
             addColumnFor(ItemVendaFutura::prdno) {
               expandRatio = 1
               caption = "Código"
@@ -112,7 +114,7 @@ class DlgNotaVendaFutura(val localizacaoNota: LocalizacaoVendaFutura,
               caption = "Saldo Final"
               align = Right
             }
-
+            
             this.setStyleGenerator {
               when {
                 it.isSave()       -> "ok"

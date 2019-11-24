@@ -19,12 +19,12 @@ import org.vaadin.patrik.FastNavigation
 
 @AutoView
 class AbreciacaoView: LayoutView<AbreciacaoViewModel>(), IAbreciacaoView {
-
+  
   init {
     viewModel = AbreciacaoViewModel(this)
-
+    
     title("Localizações")
-
+    
     grid(Abreviacao::class) {
       val edtLoc = CheckBox()
       val edtImpressora = ComboBox<String>().apply {
@@ -35,26 +35,26 @@ class AbreciacaoView: LayoutView<AbreciacaoViewModel>(), IAbreciacaoView {
         }
         isTextInputAllowed = false
       }
-
+      
       expand()
       dataProvider = ListDataProvider(viewModel.abreviacaoes)
       removeAllColumns()
       addColumnFor(Abreviacao::abreviacao) {
         caption = "Localização"
       }
-
+      
       addColumnFor(Abreviacao::expedicao) {
         caption = "Expedição"
         setRenderer({value -> if(value) "Sim" else "Não"}, TextRenderer())
         setEditorComponent(edtLoc)
       }
-
-
+      
+      
       addColumnFor(Abreviacao::impressora) {
         caption = "Impressora"
         setEditorComponent(edtImpressora)
       }
-
+      
       editor.isEnabled = true
       val nav = FastNavigation(this, false, true)
       nav.changeColumnAfterLastRow = true

@@ -31,7 +31,7 @@ class QViewNotaFutura: TQRootBean<ViewNotaFutura, QViewNotaFutura> {
      */
     val _alias = QViewNotaFutura(true)
   }
-
+  
   lateinit var id: PLong<QViewNotaFutura>
   lateinit var createdAt: PLocalDateTime<QViewNotaFutura>
   lateinit var updatedAt: PLocalDateTime<QViewNotaFutura>
@@ -52,17 +52,17 @@ class QViewNotaFutura: TQRootBean<ViewNotaFutura, QViewNotaFutura> {
   lateinit var sequencia: PInteger<QViewNotaFutura>
   lateinit var usuario: QAssocUsuario<QViewNotaFutura>
   lateinit var abreviacao: PString<QViewNotaFutura>
-
+  
   /**
    * Construct with a given Database.
    */
   constructor(database: Database): super(ViewNotaFutura::class.java, database)
-
+  
   /**
    * Construct using the default Database.
    */
   constructor(): super(ViewNotaFutura::class.java)
-
+  
   /**
    * Construct for Alias.
    */

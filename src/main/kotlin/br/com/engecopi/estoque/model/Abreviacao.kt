@@ -21,24 +21,31 @@ class Abreviacao(
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var loja: Loja, var expedicao: Boolean,
   @Length(15)
-  var impressora: String): BaseModel() {
+  var impressora: String
+                ): BaseModel() {
   companion object Find: AbreviacaoFinder() {
     fun findByAbreviacao(abreviacao: String?): Abreviacao? {
       abreviacao ?: return null
-      return where().abreviacao.eq(abreviacao).loja.equalTo(lojaDefault).findList().firstOrNull()
+      return where().abreviacao.eq(abreviacao)
+        .loja.equalTo(lojaDefault)
+        .findList()
+        .firstOrNull()
     }
-
+    
     fun addAbreviacao(abreviacao: String) {
       if(findByAbreviacao(abreviacao) == null) {
         Abreviacao(abreviacao, lojaDefault, false, "").save()
       }
     }
-
+    
     fun updateAbreviacao() {
-      val abreviacaoes = Repositories.findByLoja(lojaDefault).map {it.abreviacao}.distinct().sorted()
+      val abreviacaoes = Repositories.findByLoja(lojaDefault)
+        .map {it.abreviacao}
+        .distinct()
+        .sorted()
       abreviacaoes.forEach {addAbreviacao(it)}
     }
-
+    
     fun findAll(): List<Abreviacao> = all().sortedBy {it.abreviacao}
   }
 }

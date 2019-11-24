@@ -33,10 +33,10 @@ object LoginService {
     EstoqueUI.current?.loginInfo = loginInfo
     Session[LoginInfo::class] = loginInfo
   }
-
+  
   val currentUser: LoginInfo?
     get() = EstoqueUI.current?.loginInfo
-
+  
   fun logout() {
     EstoqueUI.current?.loginInfo = null
   }
@@ -46,7 +46,7 @@ class LoginForm(private val appTitle: String): VerticalLayout() {
   private lateinit var username: TextField
   private lateinit var password: TextField
   private lateinit var abreviacao: ComboBox<String>
-
+  
   init {
     setSizeFull()
     isResponsive = true
@@ -110,21 +110,22 @@ class LoginForm(private val appTitle: String): VerticalLayout() {
       }
     }
   }
-
+  
   private fun changeUserName(loginName: String?) {
     if(::abreviacao.isInitialized) {
       val abreviacoes = abreviacaoes(loginName)
-
+      
       abreviacao.setItems(abreviacoes)
       abreviacao.value = abreviacoes.firstOrNull()
       abreviacao.isVisible = abreviacoes.isNotEmpty()
     }
   }
-
+  
   private fun abreviacaoes(username: String?): List<String> {
-    return Usuario.abreviacaoes(username).sorted()
+    return Usuario.abreviacaoes(username)
+      .sorted()
   }
-
+  
   private fun login() {
     val user = saci.findUser(username.value)
     val pass = password.value

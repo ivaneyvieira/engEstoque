@@ -11,14 +11,14 @@ class DB(banco: String) {
   val username = prop?.getProperty("datasource.$banco.username") ?: ""
   val password = prop?.getProperty("datasource.$banco.password") ?: ""
   val test = prop?.getProperty("test") == "true"
-
+  
   companion object {
     private val propertieFile = System.getProperty("ebean.props.file")
-
+    
     private fun properties(): Properties? {
       val properties = Properties()
       val file = File(propertieFile)
-
+      
       properties.load(FileReader(file))
       return properties
     }

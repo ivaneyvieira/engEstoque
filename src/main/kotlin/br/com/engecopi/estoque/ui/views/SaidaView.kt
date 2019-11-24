@@ -80,7 +80,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
     super.enter(event)
     formCodBar?.focusEdit()
   }
-
+  
   init {
     viewModel = SaidaViewModel(this)
     layoutForm {
@@ -90,7 +90,8 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
         operationButton?.isEnabled = false
       }
       formLayout.apply {
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
+        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+          .px
         grupo("Nota fiscal de saída") {
           verticalLayout {
             row {
@@ -122,7 +123,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
             }
           }
         }
-
+        
         grupo("Produto") {
           produtoField(operation, binder, "Saída")
         }
@@ -142,7 +143,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
       }
       grid.addComponentColumn {item ->
         Button().apply {
-          val impresso = item?.entityVo?.impresso ?: true
+          //val impresso = item?.entityVo?.impresso ?: true
           isEnabled = isAdmin
           icon = VaadinIcons.PRINT
           addClickListener {
@@ -153,8 +154,9 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
                          execNo = {imprimeItem(item, false)})
           }
         }
-      }.id = "btnPrint"
-
+      }
+        .id = "btnPrint"
+      
       column(SaidaVo::lojaNF) {
         caption = "Loja NF"
         setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
@@ -217,7 +219,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
       }
     }
   }
-
+  
   private fun formCodbar(): PnlCodigoBarras {
     return PnlCodigoBarras("Código de barras") {key ->
       val nota = viewModel.processaKey(key)
@@ -236,7 +238,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
       }
     }
   }
-
+  
   protected fun imprimeItem(item: SaidaVo, notaComleta: Boolean) {
     val text = viewModel.imprimir(item.itemNota, notaComleta, false)
     printText(impressora, text)
@@ -244,20 +246,21 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
   }
 }
 
-class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execPrint: (List<ItemNota>) -> Unit): Window(
-  "Nota de Saída") {
+class DlgNotaSaida(
+  val nota: NotaItens, val viewModel: SaidaViewModel, val execPrint: (List<ItemNota>) -> Unit
+                  ): Window("Nota de Saída") {
   private lateinit var grupoSelecaoCol: Column<ProdutoVO, Int>
   private lateinit var dateUpdateCol: Column<ProdutoVO, LocalDateTime>
   private lateinit var gridProdutos: Grid<ProdutoVO>
   private val edtBarcode = TextField()
-
+  
   fun focusEditor() {
     edtBarcode.focus()
   }
-
+  
   init {
     windowMode = WindowMode.MAXIMIZED
-
+    
     addBlurListener {
       edtBarcode.focus()
     }
@@ -314,8 +317,10 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
               addStyleName(ValoTheme.BUTTON_PRIMARY)
               addClickListener {
                 val allItens = gridProdutos.dataProvider.getAll()
-                val itens = gridProdutos.selectedItems.toList().filter {it.allowSelect()}
-                val naoSelect = allItens.minus(itens).filter {it.allowSelect()}
+                val itens = gridProdutos.selectedItems.toList()
+                  .filter {it.allowSelect()}
+                val naoSelect = allItens.minus(itens)
+                  .filter {it.allowSelect()}
                 val itensDeposito = itens.filter {item ->
                   item.value?.nota?.lancamentoOrigem == DEPOSITO
                 }
@@ -344,7 +349,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
             this.addGlobalShortcutListener(F2) {
               focusEditor()
             }
-
+            
             if(!QuerySaci.test) {
               this.valueChangeMode = LAZY
               valueChangeTimeout = 200
@@ -364,10 +369,11 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
             val selectionModel = setSelectionMode(MULTI)
             selectionModel.addSelectionListener {select ->
               if(select.isUserOriginated) {
-                this.dataProvider.getAll().forEach {
-                  it.selecionado = false
-                  it.updateItem(false)
-                }
+                this.dataProvider.getAll()
+                  .forEach {
+                    it.selecionado = false
+                    it.updateItem(false)
+                  }
                 select.allSelectedItems.forEach {
                   if(it.saldoFinal < 0) {
                     Notification.show("Saldo insuficiente")
@@ -449,7 +455,8 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
             }
             editor.addOpenListener {event ->
               event.bean.produto.let {produto ->
-                val locSulfixos = produto.localizacoes(RegistryUserInfo.abreviacaoDefault).map {LocProduto(it)}
+                val locSulfixos = produto.localizacoes(RegistryUserInfo.abreviacaoDefault)
+                  .map {LocProduto(it)}
                 comboLoc.setItems(locSulfixos)
                 comboLoc.setItemCaptionGenerator {it.localizacao}
                 comboLoc.value = event.bean.localizacao
@@ -477,7 +484,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
       }
     }
   }
-
+  
   private fun @VaadinDsl Grid<ProdutoVO>.updateProdutosNota() {
     val abreviacao = RegistryUserInfo.abreviacaoDefault
     //nota.refresh()
@@ -492,16 +499,17 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
         this.updateItem(false)
       }
       else null
-    }.sortedByDescending {it.dateUpdate}
-
+    }
+      .sortedByDescending {it.dateUpdate}
+    
     this.dataProvider = ListDataProvider(itensProvider)
   }
-
+  
   private fun Grid<ProdutoVO>.sortDefault() {
     clearSortOrder()
     sortOrder = listOf(GridSortOrder(grupoSelecaoCol, ASCENDING), GridSortOrder(dateUpdateCol, DESCENDING))
   }
-
+  
   private fun execBarcode(barcode: String?) {
     if(!barcode.isNullOrBlank()) {
       val listProduto = viewModel.processaBarcodeProduto(barcode)
@@ -526,7 +534,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
                   execPrint(viewModel.confirmaProdutos(listOf(item), ENTREGUE))
                   gridProdutos.updateProdutosNota()
                 }
-
+                
                 if(lancamentoOrigem == EXPEDICAO) {
                   execPrint(viewModel.confirmaProdutos(listOf(item), CONFERIDA))
                   gridProdutos.updateProdutosNota()

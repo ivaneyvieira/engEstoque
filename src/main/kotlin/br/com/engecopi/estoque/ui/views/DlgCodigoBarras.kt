@@ -17,11 +17,11 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.Window
 import com.vaadin.ui.themes.ValoTheme
 
-class DlgCodigoBarras(textField: TextField,
-                      private val confirmaClose: Boolean,
-                      processaleitura: (Nota?, String) -> ItemNota?): Window(titulo) {
+class DlgCodigoBarras(
+  textField: TextField, private val confirmaClose: Boolean, processaleitura: (Nota?, String) -> ItemNota?
+                     ): Window(titulo) {
   private var nota: Nota? = null
-
+  
   init {
     center()
     isClosable = false
@@ -60,12 +60,12 @@ class DlgCodigoBarras(textField: TextField,
         }
       }
     }
-
+    
     addFocusListener {
       textField.focus()
     }
   }
-
+  
   companion object {
     const val titulo = "Leitura"
   }
@@ -77,7 +77,8 @@ fun readString(msg: String, confirmaClose: Boolean, processaleitura: (Nota?, Str
       this.w = 400.px
     }
     val dlg = DlgCodigoBarras(textField, confirmaClose, processaleitura)
-    UI.getCurrent().addWindow(dlg)
+    UI.getCurrent()
+      .addWindow(dlg)
     textField.focus()
   }
 }
