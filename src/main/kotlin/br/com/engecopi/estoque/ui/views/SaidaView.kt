@@ -246,9 +246,8 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
   }
 }
 
-class DlgNotaSaida(
-  val nota: NotaItens, val viewModel: SaidaViewModel, val execPrint: (List<ItemNota>) -> Unit
-                  ): Window("Nota de Saída") {
+class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execPrint: (List<ItemNota>) -> Unit):
+  Window("Nota de Saída") {
   private lateinit var grupoSelecaoCol: Column<ProdutoVO, Int>
   private lateinit var dateUpdateCol: Column<ProdutoVO, LocalDateTime>
   private lateinit var gridProdutos: Grid<ProdutoVO>

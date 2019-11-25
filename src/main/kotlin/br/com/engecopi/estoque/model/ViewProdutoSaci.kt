@@ -1,7 +1,7 @@
 package br.com.engecopi.estoque.model
 
+import br.com.astrosoft.utils.lpad
 import br.com.engecopi.estoque.model.finder.ViewProdutoSaciFinder
-import br.com.engecopi.utils.lpad
 import io.ebean.annotation.Cache
 import io.ebean.annotation.View
 import javax.persistence.Entity

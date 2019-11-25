@@ -1,8 +1,8 @@
 package br.com.engecopi.estoque.model.etlSaci
 
+import br.com.astrosoft.utils.parameterNames
+import br.com.astrosoft.utils.readInstanceProperty
 import br.com.engecopi.estoque.model.RegistryUserInfo.isLogged
-import br.com.engecopi.utils.parameterNames
-import br.com.engecopi.utils.readInstanceProperty
 import io.ebean.DB
 import io.ebean.SqlUpdate
 

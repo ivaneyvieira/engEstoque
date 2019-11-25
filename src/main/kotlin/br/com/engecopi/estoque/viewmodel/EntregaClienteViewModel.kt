@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.viewmodel
 
+import br.com.astrosoft.utils.mid
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RegistryUserInfo
@@ -15,7 +16,6 @@ import br.com.engecopi.estoque.model.ViewCodBarCliente
 import br.com.engecopi.estoque.model.ViewCodBarConferencia
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.framework.viewmodel.EViewModel
-import br.com.engecopi.utils.mid
 
 class EntregaClienteViewModel(view: IEntregaClienteView):
   NotaViewModel<EntregaClienteVo, IEntregaClienteView>(view, SAIDA, ENTREGUE, CONFERIDA, "") {

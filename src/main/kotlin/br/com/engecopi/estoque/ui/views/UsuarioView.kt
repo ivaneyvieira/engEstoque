@@ -1,5 +1,7 @@
 package br.com.engecopi.estoque.ui.views
 
+import br.com.astrosoft.utils.CupsUtils
+import br.com.astrosoft.utils.PrinterInfo
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.NotaSerie
 import br.com.engecopi.estoque.model.RegistryUserInfo
@@ -12,8 +14,6 @@ import br.com.engecopi.framework.ui.view.bindItensSet
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.reloadBinderOnChange
 import br.com.engecopi.framework.ui.view.row
-import br.com.engecopi.utils.CupsUtils
-import br.com.engecopi.utils.PrinterInfo
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.alignment
 import com.github.mvysny.karibudsl.v8.bind

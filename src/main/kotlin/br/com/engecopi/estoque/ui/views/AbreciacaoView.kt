@@ -1,12 +1,12 @@
 package br.com.engecopi.estoque.ui.views
 
+import br.com.astrosoft.utils.CupsUtils
 import br.com.engecopi.estoque.model.Abreviacao
 import br.com.engecopi.estoque.viewmodel.AbreciacaoViewModel
 import br.com.engecopi.estoque.viewmodel.IAbreciacaoView
 import br.com.engecopi.framework.ui.view.LayoutView
 import br.com.engecopi.framework.ui.view.expand
 import br.com.engecopi.framework.ui.view.title
-import br.com.engecopi.utils.CupsUtils
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.addColumnFor
 import com.github.mvysny.karibudsl.v8.grid

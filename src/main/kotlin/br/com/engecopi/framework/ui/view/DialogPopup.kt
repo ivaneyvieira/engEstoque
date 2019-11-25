@@ -80,9 +80,7 @@ open class DialogPopup<BEAN: Any>(caption: String, classBean: KClass<BEAN>): Win
   }
 }
 
-fun VerticalLayout.grupo(
-  caption: String? = null, expand: Boolean = false, block: VerticalLayout.() -> Unit
-                        ) {
+fun VerticalLayout.grupo(caption: String? = null, expand: Boolean = false, block: VerticalLayout.() -> Unit) {
   val cssLayout = cssLayout(caption) {
     if(expand) h = 100.perc
     w = 100.perc

@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.ui
 
+import br.com.astrosoft.utils.SystemUtils
 import br.com.engecopi.estoque.model.LoginInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RepositoryAvisoNotas
@@ -25,7 +26,6 @@ import br.com.engecopi.estoque.ui.views.SaidaView
 import br.com.engecopi.estoque.ui.views.UsuarioView
 import br.com.engecopi.estoque.ui.views.notaVendaFutura.NFVendaFuturaView
 import br.com.engecopi.framework.ui.view.toViewName
-import br.com.engecopi.utils.SystemUtils
 import com.github.mvysny.karibudsl.v8.MenuButton
 import com.github.mvysny.karibudsl.v8.VaadinDsl
 import com.github.mvysny.karibudsl.v8.ValoMenu

@@ -20,8 +20,7 @@ class HistoricoEtiqueta(
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var produto: Produto, var data: LocalDate = LocalDate.now(), var hora: LocalTime = LocalTime.now(),
   @Lob
-  var print: String, var gtin: String, var gtinOk: Boolean = true
-                       ): BaseModel() {
+  var print: String, var gtin: String, var gtinOk: Boolean = true): BaseModel() {
   companion object Find: HistoricoEtiquetaFinder() {
     fun save(produto: Produto, gtin: String, print: String) {
       val hist = HistoricoEtiqueta(usuario = RegistryUserInfo.usuarioDefault,

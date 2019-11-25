@@ -1,9 +1,9 @@
 package br.com.engecopi.estoque.model
 
+import br.com.astrosoft.utils.lpad
 import br.com.engecopi.estoque.model.finder.ProdutoFinder
 import br.com.engecopi.framework.model.BaseModel
 import br.com.engecopi.saci.saci
-import br.com.engecopi.utils.lpad
 import io.ebean.annotation.Cache
 import io.ebean.annotation.CacheQueryTuning
 import io.ebean.annotation.Formula

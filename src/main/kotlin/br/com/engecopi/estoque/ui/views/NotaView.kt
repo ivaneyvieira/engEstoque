@@ -49,9 +49,8 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: 
   val usuario = RegistryUserInfo.usuarioDefault
   val isAdmin = usuario.admin
   
-  inline fun <reified V: NotaVo> (@VaadinDsl HasComponents).notaFiscalField(
-    operation: CrudOperation?, binder: Binder<V>
-                                                                           ): TextField {
+  inline fun <reified V: NotaVo> (@VaadinDsl HasComponents).notaFiscalField(operation: CrudOperation?,
+                                                                            binder: Binder<V>): TextField {
     return textField("Nota Fiscal") {
       expandRatio = 2f
       isReadOnly = operation != ADD
@@ -82,9 +81,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: 
     }
   }
   
-  inline fun <reified V: NotaVo> (@VaadinDsl HasComponents).lojaField(
-    operation: CrudOperation?, binder: Binder<V>
-                                                                     ) {
+  inline fun <reified V: NotaVo> (@VaadinDsl HasComponents).lojaField(operation: CrudOperation?, binder: Binder<V>) {
     comboBox<Loja>("Loja") {
       expandRatio = 2f
       default {it.sigla}
@@ -97,9 +94,9 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: 
     }
   }
   
-  inline fun <reified V: NotaVo> VerticalLayout.produtoField(
-    operation: CrudOperation?, binder: Binder<V>, tipo: String
-                                                            ) {
+  inline fun <reified V: NotaVo> VerticalLayout.produtoField(operation: CrudOperation?,
+                                                             binder: Binder<V>,
+                                                             tipo: String) {
     row {
       this.bindVisible(binder, NotaVo::naoTemGrid.name)
       comboBox<Produto>("Código") {

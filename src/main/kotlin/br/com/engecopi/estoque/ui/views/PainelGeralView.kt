@@ -89,9 +89,7 @@ class PainelGeralView: LayoutView<PainelGeralViewModel>(), IPainelGeralView {
     entradaCanceladaDataProvider.items.addAll(viewModel.listEntradaCancelada())
   }
   
-  private fun CssLayout.gridNotaSaci(
-    dataProvider: ListDataProvider<NotaSaci>, tipoMov: TipoMov
-                                    ): Grid<NotaSaci> {
+  private fun CssLayout.gridNotaSaci(dataProvider: ListDataProvider<NotaSaci>, tipoMov: TipoMov): Grid<NotaSaci> {
     return grid(dataProvider = dataProvider) {
       setSizeFull()
       if(tipoMov == ENTRADA) {

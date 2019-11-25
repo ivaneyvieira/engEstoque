@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.viewmodel.entregaFutura
 
+import br.com.astrosoft.utils.mid
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
@@ -30,7 +31,6 @@ import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.ICrudView
 import br.com.engecopi.saci.beans.NotaProdutoSaci
-import br.com.engecopi.utils.mid
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -307,9 +307,10 @@ class NFVendaFuturaVo: EntityVo<ViewNotaFutura>() {
     get() = LocalDateTime.of(data, hora)
 }
 
-data class ItemVendaFutura(
-  val notaProdutoSaci: NotaProdutoSaci, val saldo: Int, val abrevicao: String, var selecionado: Boolean = false
-                          ) {
+data class ItemVendaFutura(val notaProdutoSaci: NotaProdutoSaci,
+                           val saldo: Int,
+                           val abrevicao: String,
+                           var selecionado: Boolean = false) {
   val prdno = notaProdutoSaci.prdno
   val grade = notaProdutoSaci.grade
   val nome = notaProdutoSaci.nome

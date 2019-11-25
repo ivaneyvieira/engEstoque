@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.model
 
+import br.com.astrosoft.utils.format
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
@@ -9,7 +10,6 @@ import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.finder.ItemNotaFinder
 import br.com.engecopi.framework.model.BaseModel
 import br.com.engecopi.saci.beans.NotaProdutoSaci
-import br.com.engecopi.utils.format
 import io.ebean.annotation.Cache
 import io.ebean.annotation.CacheQueryTuning
 import io.ebean.annotation.Index
@@ -126,10 +126,8 @@ class ItemNota: BaseModel() {
         .findList()
         .firstOrNull()
     }
-    
-    fun createItemNota(
-      notaProdutoSaci: NotaProdutoSaci, notaPrd: Nota?, abreviacao: String
-                      ): ItemNota? {
+  
+    fun createItemNota(notaProdutoSaci: NotaProdutoSaci, notaPrd: Nota?, abreviacao: String): ItemNota? {
       notaPrd ?: return null
       val produtoSaci = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return null
       val locProduto = ViewProdutoLoc.localizacoesProduto(produtoSaci).firstOrNull {

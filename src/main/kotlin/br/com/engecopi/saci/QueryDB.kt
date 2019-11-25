@@ -1,15 +1,13 @@
 package br.com.engecopi.saci
 
-import br.com.engecopi.utils.SystemUtils
+import br.com.astrosoft.utils.SystemUtils
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.sql2o.Connection
 import org.sql2o.Query
 import org.sql2o.Sql2o
 
-open class QueryDB(
-  private val driver: String, val url: String, val username: String, val password: String
-                  ) {
+open class QueryDB(private val driver: String, val url: String, val username: String, val password: String) {
   private val sql2o: Sql2o
   
   init {
@@ -50,9 +48,9 @@ open class QueryDB(
     }
   }
   
-  protected fun execute(
-    file: String, vararg params: Pair<String, String>, monitor: (String, Int, Int) -> Unit = {_, _, _ ->}
-                       ) {
+  protected fun execute(file: String,
+                        vararg params: Pair<String, String>,
+                        monitor: (String, Int, Int) -> Unit = {_, _, _ ->}) {
     var sqlScript = SystemUtils.readFile(file)
     sql2o.beginTransaction()
       .trywr {con ->
@@ -90,9 +88,7 @@ open class QueryDB(
       }
   }
   
-  protected fun <T> temporaryTable(
-    tableName: String, lista: List<T>, fieldList: (T) -> String
-                                  ): String {
+  protected fun <T> temporaryTable(tableName: String, lista: List<T>, fieldList: (T) -> String): String {
     val stringBuild = StringBuilder()
     val selectList = lista.joinToString(separator = "\nUNION\n") {item ->
       "SELECT ${fieldList(item)} FROM DUAL"

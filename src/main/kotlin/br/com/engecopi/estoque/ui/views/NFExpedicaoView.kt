@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.ui.views
 
+import br.com.astrosoft.utils.localDate
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
 import br.com.engecopi.estoque.model.TipoNota
@@ -15,7 +16,6 @@ import br.com.engecopi.framework.ui.view.row
 import br.com.engecopi.framework.ui.view.showDialog
 import br.com.engecopi.framework.ui.view.timeFormat
 import br.com.engecopi.saci.beans.NotaProdutoSaci
-import br.com.engecopi.utils.localDate
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.VAlign
 import com.github.mvysny.karibudsl.v8.addColumnFor
@@ -212,11 +212,9 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), IN
   }
 }
 
-class DlgNotaLoc(
-  val notaProdutoSaida: List<NotaProdutoSaci>,
-  val viewModel: NFExpedicaoViewModel,
-  val execConfirma: (itens: List<ItemExpedicao>) -> Unit
-                ): Window("Nota de Saída") {
+class DlgNotaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
+                 val viewModel: NFExpedicaoViewModel,
+                 val execConfirma: (itens: List<ItemExpedicao>) -> Unit): Window("Nota de Saída") {
   private lateinit var gridProdutos: Grid<LocalizacaoNota>
   
   init {
@@ -337,9 +335,9 @@ class DlgNotaLoc(
   }
 }
 
-class DlgNotaExpedicao(
-  val localizacaoNota: LocalizacaoNota, val viewModel: NFExpedicaoViewModel, val update: () -> Unit
-                      ): Window("Itens da expedição") {
+class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
+                       val viewModel: NFExpedicaoViewModel,
+                       val update: () -> Unit): Window("Itens da expedição") {
   private lateinit var gridProdutos: Grid<ItemExpedicao>
   
   init {

@@ -40,9 +40,7 @@ object MessageDialog {
       true).open()
   }
   
-  fun question(
-    caption: String = "Questão", message: String, execYes: () -> Unit = {}, execNo: () -> Unit = {}
-              ) {
+  fun question(caption: String = "Questão", message: String, execYes: () -> Unit = {}, execNo: () -> Unit = {}) {
     MessageBox.createQuestion()
       .withCaption(caption)
       .withHtmlMessage(message)
@@ -52,9 +50,10 @@ object MessageDialog {
       .open()
   }
   
-  fun question(
-    caption: String = "Questão", message: Component, execYes: (Component) -> Unit = {}, execNo: (Component) -> Unit = {}
-              ) {
+  fun question(caption: String = "Questão",
+               message: Component,
+               execYes: (Component) -> Unit = {},
+               execNo: (Component) -> Unit = {}) {
     MessageBox.createQuestion()
       .withCaption(caption)
       .withMessage(message)

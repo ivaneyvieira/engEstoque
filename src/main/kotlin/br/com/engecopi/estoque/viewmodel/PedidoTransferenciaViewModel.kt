@@ -1,12 +1,12 @@
 package br.com.engecopi.estoque.viewmodel
 
+import br.com.astrosoft.utils.localDate
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.dtos.PedidoSaci
 import br.com.engecopi.estoque.model.etlSaci.ETLPedidos
 import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.framework.viewmodel.ViewModel
-import br.com.engecopi.utils.localDate
 
 class PedidoTransferenciaViewModel(view: IPedidoTransferenciaView): ViewModel<IPedidoTransferenciaView>(view) {
   val pedidosTransferencia = mutableListOf<PedidoTransferenciaVo>()

@@ -26,8 +26,7 @@ class ViewProdutoLoc(
   val produto: Produto,
   @OneToOne(cascade = [])
   @JoinColumn(name = "loja_id")
-  val loja: Loja
-                    ) {
+  val loja: Loja) {
   companion object Find: ViewProdutoLocFinder() {
     fun existsCache(produto: Produto?): Boolean {
       return findByProduto(produto).count() > 0

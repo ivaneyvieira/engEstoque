@@ -24,9 +24,9 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.Window
 import com.vaadin.ui.themes.ValoTheme
 
-class DlgNotaVendaFutura(
-  val localizacaoNota: LocalizacaoVendaFutura, val viewModel: NFVendaFuturaViewModel, val update: () -> Unit
-                        ): Window("Itens da expedição") {
+class DlgNotaVendaFutura(val localizacaoNota: LocalizacaoVendaFutura,
+                         val viewModel: NFVendaFuturaViewModel,
+                         val update: () -> Unit): Window("Itens da expedição") {
   private lateinit var gridProdutos: Grid<ItemVendaFutura>
   
   init {

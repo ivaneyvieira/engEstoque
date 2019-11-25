@@ -1,5 +1,7 @@
 package br.com.engecopi.estoque.ui.views
 
+import br.com.astrosoft.utils.SystemUtils
+import br.com.astrosoft.utils.ZPLPreview
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.viewmodel.EtiquetaViewModel
@@ -8,8 +10,6 @@ import br.com.engecopi.estoque.viewmodel.IEtiquetaView
 import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.default
 import br.com.engecopi.framework.ui.view.row
-import br.com.engecopi.utils.SystemUtils
-import br.com.engecopi.utils.ZPLPreview
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.alignment
 import com.github.mvysny.karibudsl.v8.bind

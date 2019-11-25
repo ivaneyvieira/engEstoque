@@ -17,9 +17,9 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.Window
 import com.vaadin.ui.themes.ValoTheme
 
-class DlgCodigoBarras(
-  textField: TextField, private val confirmaClose: Boolean, processaleitura: (Nota?, String) -> ItemNota?
-                     ): Window(titulo) {
+class DlgCodigoBarras(textField: TextField,
+                      private val confirmaClose: Boolean,
+                      processaleitura: (Nota?, String) -> ItemNota?): Window(titulo) {
   private var nota: Nota? = null
   
   init {

@@ -1,5 +1,9 @@
 package br.com.engecopi.saci
 
+import br.com.astrosoft.utils.DB
+import br.com.astrosoft.utils.localDate
+import br.com.astrosoft.utils.lpad
+import br.com.astrosoft.utils.toSaciDate
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.dtos.EntregaFutura
 import br.com.engecopi.estoque.model.dtos.PedidoSaci
@@ -15,16 +19,10 @@ import br.com.engecopi.saci.beans.NotaSaci
 import br.com.engecopi.saci.beans.ProdutoSaci
 import br.com.engecopi.saci.beans.UserSaci
 import br.com.engecopi.saci.beans.findChave
-import br.com.engecopi.utils.DB
-import br.com.engecopi.utils.localDate
-import br.com.engecopi.utils.lpad
-import br.com.engecopi.utils.toSaciDate
 import java.time.LocalDate
 
 class QuerySaci: QueryDB(driver, url, username, password) {
-  fun findNotaEntrada(
-    storeno: Int, nfname: String, invse: String, liberaNotasAntigas: Boolean
-                     ): List<NotaProdutoSaci> {
+  fun findNotaEntrada(storeno: Int, nfname: String, invse: String, liberaNotasAntigas: Boolean): List<NotaProdutoSaci> {
     val sql = "/sqlSaci/findNotaEntrada.sql"
     return if(nfname == "") emptyList()
     else query(sql) {q ->
@@ -35,9 +33,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }.filter {liberaNotasAntigas || filtroDataRecente(it)}
   }
   
-  fun findNotaSaida(
-    storeno: Int, nfno: String, nfse: String, liberaNotasAntigas: Boolean
-                   ): List<NotaProdutoSaci> {
+  fun findNotaSaida(storeno: Int, nfno: String, nfse: String, liberaNotasAntigas: Boolean): List<NotaProdutoSaci> {
     return if(nfno == "") emptyList()
     else if(nfse == "") findNotaSaidaOrd(storeno, nfno)
     else {

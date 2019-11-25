@@ -28,6 +28,7 @@ repositories {
   maven {
     url = uri("https://maven.vaadin.com/vaadin-addons")
   }
+  // maven { url = uri("https://jitpack.io") }
 }
 
 defaultTasks("clean", "build")
@@ -124,7 +125,9 @@ dependencies {
   // heroku app runner
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
   testRuntime("org.junit.jupiter:junit-jupiter-engine:5.4.2")
+  //Libs
+  //implementation("com.github.ivaneyvieira:kotlin-utils:master-SNAPSHOT")
+  implementation("br.com.astrosoft:kotlin-utils:1.0")
 }
-
 
 

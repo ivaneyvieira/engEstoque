@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.model
 
+import br.com.astrosoft.utils.localDate
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
@@ -23,7 +24,6 @@ import br.com.engecopi.estoque.model.query.QNota
 import br.com.engecopi.framework.model.BaseModel
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.saci.saci
-import br.com.engecopi.utils.localDate
 import io.ebean.DB
 import io.ebean.annotation.Aggregation
 import io.ebean.annotation.Cache
@@ -251,9 +251,7 @@ enum class TipoMov(val descricao: String) {
   SAIDA("Saida")
 }
 
-enum class TipoNota(
-  val tipoMov: TipoMov, val descricao: String, val descricao2: String, val isFree: Boolean = false
-                   ) {
+enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2: String, val isFree: Boolean = false) {
   //Entrada
   COMPRA(ENTRADA, "Compra", "Compra"),
   TRANSFERENCIA_E(ENTRADA, "Transferencia", "Transferencia Entrada"),

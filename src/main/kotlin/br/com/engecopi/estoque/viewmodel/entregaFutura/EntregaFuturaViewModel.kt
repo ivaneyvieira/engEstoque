@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.viewmodel.entregaFutura
 
+import br.com.astrosoft.utils.mid
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
@@ -16,7 +17,6 @@ import br.com.engecopi.estoque.viewmodel.INotaView
 import br.com.engecopi.estoque.viewmodel.NotaViewModel
 import br.com.engecopi.estoque.viewmodel.NotaVo
 import br.com.engecopi.framework.viewmodel.EViewModel
-import br.com.engecopi.utils.mid
 
 class EntregaFututaViewModel(view: IEntregaFututaView):
   NotaViewModel<EntregaFututaVo, IEntregaFututaView>(view, SAIDA, ENTREGUE, CONFERIDA, "") {

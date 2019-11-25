@@ -1,5 +1,7 @@
 package br.com.engecopi.estoque.viewmodel
 
+import br.com.astrosoft.utils.localDate
+import br.com.astrosoft.utils.mid
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.DEPOSITO
@@ -40,19 +42,16 @@ import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.ICrudView
 import br.com.engecopi.saci.beans.NotaProdutoSaci
-import br.com.engecopi.utils.localDate
-import br.com.engecopi.utils.mid
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-abstract class NotaViewModel<VO: NotaVo, V: INotaView>(
-  view: V,
-  val tipo: TipoMov,
-  private val statusDefault: StatusNota,
-  private val statusImpressao: StatusNota,
-  private val abreviacaoNota: String
-                                                      ): CrudViewModel<ItemNota, QItemNota, VO, V>(view) {
+abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
+                                                       val tipo: TipoMov,
+                                                       private val statusDefault: StatusNota,
+                                                       private val statusImpressao: StatusNota,
+                                                       private val abreviacaoNota: String):
+  CrudViewModel<ItemNota, QItemNota, VO, V>(view) {
   override fun update(bean: VO) {
     if(bean.localizacao?.localizacao.isNullOrBlank()) throw EViewModel("Não foi especificado a localização do item")
     val nota = updateNota(bean)
@@ -113,9 +112,12 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(
     }
   }
   
-  private fun insertItemNota(
-    nota: Nota, produto: Produto?, quantProduto: Int, usuario: Usuario, local: String?, addTime: LocalTime
-                            ): ItemNota? {
+  private fun insertItemNota(nota: Nota,
+                             produto: Produto?,
+                             quantProduto: Int,
+                             usuario: Usuario,
+                             local: String?,
+                             addTime: LocalTime): ItemNota? {
     if(local.isNullOrBlank()) throw EViewModel("Não foi especificado a localização do item")
     val saldoLocal = produto?.saldoLoja(local) ?: 0
     return if(quantProduto != 0) {
@@ -512,9 +514,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   var status: StatusNota? = null
 }
 
-class ProdutoVO(
-  val produto: Produto, val statusNota: StatusNota, var localizacao: LocProduto?, var isSave: Boolean
-               ) {
+class ProdutoVO(val produto: Produto, val statusNota: StatusNota, var localizacao: LocProduto?, var isSave: Boolean) {
   val codigo: String = produto.codigo
   val grade: String = produto.grade
   var quantidade: Int = 0

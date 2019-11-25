@@ -21,8 +21,7 @@ class Abreviacao(
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var loja: Loja, var expedicao: Boolean,
   @Length(15)
-  var impressora: String
-                ): BaseModel() {
+  var impressora: String): BaseModel() {
   companion object Find: AbreviacaoFinder() {
     fun findByAbreviacao(abreviacao: String?): Abreviacao? {
       abreviacao ?: return null

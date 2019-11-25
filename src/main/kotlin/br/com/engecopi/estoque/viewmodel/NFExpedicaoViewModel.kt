@@ -301,9 +301,10 @@ class NFExpedicaoVo: EntityVo<ViewNotaExpedicao>() {
     get() = LocalDateTime.of(data, hora)
 }
 
-data class ItemExpedicao(
-  val notaProdutoSaci: NotaProdutoSaci, val saldo: Int, val abrevicao: String, var selecionado: Boolean = false
-                        ) {
+data class ItemExpedicao(val notaProdutoSaci: NotaProdutoSaci,
+                         val saldo: Int,
+                         val abrevicao: String,
+                         var selecionado: Boolean = false) {
   val prdno = notaProdutoSaci.prdno
   val grade = notaProdutoSaci.grade
   val nome = notaProdutoSaci.nome

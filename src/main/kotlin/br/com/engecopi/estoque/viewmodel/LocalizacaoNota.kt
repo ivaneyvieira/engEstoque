@@ -7,9 +7,7 @@ data class LocalizacaoNota(val abreviacao: String, val itensExpedicao: List<Item
     get() = itensExpedicao.filter {it.selecionado || it.isSave()}.size
 }
 
-data class LocalizacaoVendaFutura(
-  val abreviacao: String, val itensVendaFutura: List<ItemVendaFutura>
-                                 ) {
+data class LocalizacaoVendaFutura(val abreviacao: String, val itensVendaFutura: List<ItemVendaFutura>) {
   val countSelecionado
     get() = itensVendaFutura.filter {it.selecionado || it.isSave()}.size
 }

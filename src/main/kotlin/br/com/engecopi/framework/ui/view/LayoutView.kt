@@ -1,10 +1,10 @@
 package br.com.engecopi.framework.ui.view
 
+import br.com.astrosoft.utils.CupsUtils
+import br.com.astrosoft.utils.SystemUtils
+import br.com.astrosoft.utils.ZPLPreview
 import br.com.engecopi.framework.viewmodel.ViewModel
 import br.com.engecopi.saci.QuerySaci
-import br.com.engecopi.utils.CupsUtils
-import br.com.engecopi.utils.SystemUtils
-import br.com.engecopi.utils.ZPLPreview
 import com.fo0.advancedtokenfield.main.AdvancedTokenField
 import com.github.mvysny.karibudsl.v8.VAlign
 import com.github.mvysny.karibudsl.v8.VaadinDsl
@@ -126,9 +126,7 @@ abstract class LayoutView<V: ViewModel<*>>: VerticalLayout(), View {
   }
 }
 
-fun <T> ComboBox<T>.default(
-  valueEmpty: T? = null, captionGenerator: (T) -> String = {it.toString()}
-                           ) {
+fun <T> ComboBox<T>.default(valueEmpty: T? = null, captionGenerator: (T) -> String = {it.toString()}) {
   isEmptySelectionAllowed = false
   isTextInputAllowed = false
   valueEmpty?.let {
@@ -168,36 +166,30 @@ fun <V, T> TwinColSelect<T>.bindItensSet(binder: Binder<V>, propertyList: String
   }
 }
 
-fun <BEAN> HasValue<*>.bindReadOnly(
-  binder: Binder<BEAN>, property: String, block: (Boolean) -> Unit = {}
-                                   ) {
+fun <BEAN> HasValue<*>.bindReadOnly(binder: Binder<BEAN>, property: String, block: (Boolean) -> Unit = {}) {
   bind<BEAN, Boolean>(binder, property) {readOnly ->
     isReadOnly = readOnly
     block(readOnly)
   }
 }
 
-fun <BEAN> Component.bindVisible(
-  binder: Binder<BEAN>, property: String, block: (Boolean) -> Unit = {}
-                                ) {
+fun <BEAN> Component.bindVisible(binder: Binder<BEAN>, property: String, block: (Boolean) -> Unit = {}) {
   bind<BEAN, Boolean>(binder, property) {visible ->
     isVisible = visible
     block(visible)
   }
 }
 
-fun <BEAN> Component.bindCaption(
-  binder: Binder<BEAN>, property: String, block: (String) -> Unit = {}
-                                ) {
+fun <BEAN> Component.bindCaption(binder: Binder<BEAN>, property: String, block: (String) -> Unit = {}) {
   bind<BEAN, String>(binder, property) {
     caption = it
     block(it)
   }
 }
 
-private fun <BEAN, FIELDVALUE> bind(
-  binder: Binder<BEAN>, property: String, blockBinder: (FIELDVALUE) -> Unit
-                                   ): Binding<BEAN, FIELDVALUE> {
+private fun <BEAN, FIELDVALUE> bind(binder: Binder<BEAN>,
+                                    property: String,
+                                    blockBinder: (FIELDVALUE) -> Unit): Binding<BEAN, FIELDVALUE> {
   val field = ReadOnlyHasValue<FIELDVALUE> {itens -> blockBinder(itens)}
   return field.bind(binder)
     .bind(property)
@@ -207,9 +199,8 @@ fun Binder<*>.reload() {
   this.bean = bean
 }
 
-inline fun <reified BEAN: Any, FIELDVALUE> HasValue<FIELDVALUE>.reloadBinderOnChange(
-  binder: Binder<BEAN>, vararg propertys: KProperty1<BEAN, *>
-                                                                                    ) {
+inline fun <reified BEAN: Any, FIELDVALUE> HasValue<FIELDVALUE>.reloadBinderOnChange(binder: Binder<BEAN>,
+                                                                                     vararg propertys: KProperty1<BEAN, *>) {
   addValueChangeListener {event ->
     if(event.isUserOriginated && (event.oldValue != event.value)) {
       val bean = binder.bean
@@ -268,18 +259,16 @@ fun HasComponents.doubleField(caption: String = "", block: DoubleField.() -> Uni
 
 fun HasComponents.emailField(caption: String = "", block: EmailField.() -> Unit = {}) = init(EmailField(caption), block)
 
-fun HasComponents.clearableTextField(
-  caption: String = "", block: ClearableTextField.() -> Unit = {}
-                                    ) = init(ClearableTextField(caption), block)
+fun HasComponents.clearableTextField(caption: String = "", block: ClearableTextField.() -> Unit = {}) =
+  init(ClearableTextField(caption), block)
 
 fun <T> HasComponents.headerField(caption: String = "", block: HeaderField<T>.() -> Unit = {}) =
   init(HeaderField(caption), block)
 
-fun HasComponents.integerSliderField(
-  captionPar: String = "", block: IntegerSliderField.() -> Unit = {}
-                                    ) = init(IntegerSliderField(), block).apply {
-  this.caption = captionPar
-}
+fun HasComponents.integerSliderField(captionPar: String = "", block: IntegerSliderField.() -> Unit = {}) =
+  init(IntegerSliderField(), block).apply {
+    this.caption = captionPar
+  }
 
 fun HasComponents.mCheckBox(captionPar: String = "", block: MCheckBox.() -> Unit = {}) =
   init(MCheckBox(), block).apply {
@@ -299,9 +288,9 @@ fun HasComponents.tokenField(captionPar: String = "", block: AdvancedTokenField.
 fun <T> HasComponents.labelField(caption: String = "", block: LabelField<T>.() -> Unit = {}) =
   init(LabelField(caption), block)
 
-inline fun <reified T: Enum<*>> HasComponents.enumSelect(
-  caption: String = "", noinline block: EnumSelect<T>.() -> Unit = {}
-                                                        ) = init(EnumSelect<T>(caption, T::class.java), block)
+inline fun <reified T: Enum<*>> HasComponents.enumSelect(caption: String = "",
+                                                         noinline block: EnumSelect<T>.() -> Unit = {}) =
+  init(EnumSelect<T>(caption, T::class.java), block)
 
 fun HasComponents.title(title: String) = label(title) {
   w = fillParent
@@ -309,12 +298,10 @@ fun HasComponents.title(title: String) = label(title) {
 }
 
 //FilterGrid
-fun <T: Any> (@VaadinDsl HasComponents).filterGrid(
-  itemClass: KClass<T>? = null,
-  caption: String? = null,
-  dataProvider: DataProvider<T, *>? = null,
-  block: (@VaadinDsl FilterGrid<T>).() -> Unit = {}
-                                                  ) =
+fun <T: Any> (@VaadinDsl HasComponents).filterGrid(itemClass: KClass<T>? = null,
+                                                   caption: String? = null,
+                                                   dataProvider: DataProvider<T, *>? = null,
+                                                   block: (@VaadinDsl FilterGrid<T>).() -> Unit = {}) =
   init(if(itemClass == null) FilterGrid() else FilterGrid<T>(itemClass.java)) {
     this.caption = caption
     if(dataProvider != null) this.dataProvider = dataProvider

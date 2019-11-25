@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.ui.views.notaVendaFutura
 
+import br.com.astrosoft.utils.localDate
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.viewmodel.LocalizacaoVendaFutura
 import br.com.engecopi.estoque.viewmodel.entregaFutura.ItemVendaFutura
@@ -8,7 +9,6 @@ import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.row
 import br.com.engecopi.framework.ui.view.showDialog
 import br.com.engecopi.saci.beans.NotaProdutoSaci
-import br.com.engecopi.utils.localDate
 import com.github.mvysny.karibudsl.v8.VAlign.Right
 import com.github.mvysny.karibudsl.v8.addColumnFor
 import com.github.mvysny.karibudsl.v8.align
@@ -33,11 +33,9 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.Window
 import com.vaadin.ui.themes.ValoTheme
 
-class DlgNotaFuturaLoc(
-  val notaProdutoSaida: List<NotaProdutoSaci>,
-  val viewModel: NFVendaFuturaViewModel,
-  val execConfirma: (itens: List<ItemVendaFutura>) -> Unit
-                      ): Window("Nota de Saída") {
+class DlgNotaFuturaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
+                       val viewModel: NFVendaFuturaViewModel,
+                       val execConfirma: (itens: List<ItemVendaFutura>) -> Unit): Window("Nota de Saída") {
   private lateinit var gridProdutos: Grid<LocalizacaoVendaFutura>
   
   init {

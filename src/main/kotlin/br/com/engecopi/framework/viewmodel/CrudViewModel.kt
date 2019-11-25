@@ -1,15 +1,13 @@
 package br.com.engecopi.framework.viewmodel
 
+import br.com.astrosoft.utils.parserDate
 import br.com.engecopi.framework.model.BaseModel
-import br.com.engecopi.utils.parserDate
 import io.ebean.PagedList
 import io.ebean.typequery.TQRootBean
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-abstract class CrudViewModel<MODEL: BaseModel, Q: TQRootBean<MODEL, Q>, VO: EntityVo<MODEL>, V: ICrudView>(
-  view: V
-                                                                                                          ):
+abstract class CrudViewModel<MODEL: BaseModel, Q: TQRootBean<MODEL, Q>, VO: EntityVo<MODEL>, V: ICrudView>(view: V):
   ViewModel<V>(view) {
   private var queryView: QueryView? = null
   private var pagedList: PagedList<MODEL>? = null

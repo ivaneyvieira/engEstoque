@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.viewmodel
 
+import br.com.astrosoft.utils.mid
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.DEPOSITO
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
@@ -17,7 +18,6 @@ import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.ViewCodBarConferencia
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.framework.viewmodel.EViewModel
-import br.com.engecopi.utils.mid
 import java.time.LocalDate
 import java.time.LocalTime
 

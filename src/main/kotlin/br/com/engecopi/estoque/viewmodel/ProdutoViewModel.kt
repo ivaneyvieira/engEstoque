@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.viewmodel
 
+import br.com.astrosoft.utils.lpad
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.Loja
@@ -17,7 +18,6 @@ import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.ICrudView
-import br.com.engecopi.utils.lpad
 import java.time.LocalDate
 
 class ProdutoViewModel(view: IProdutoView): CrudViewModel<Produto, QProduto, ProdutoVo, IProdutoView>(view) {

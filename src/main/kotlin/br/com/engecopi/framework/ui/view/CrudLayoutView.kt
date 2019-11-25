@@ -225,13 +225,11 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
     this.layoutForm = crudForm
   }
   
-  fun buildNewForm(
-    operation: CrudOperation,
-    domainObject: C,
-    readOnly: Boolean,
-    cancelButtonClickListener: () -> Unit,
-    operationButtonClickListener: (CrudForm<C>) -> Unit
-                  ): CrudForm<C> {
+  fun buildNewForm(operation: CrudOperation,
+                   domainObject: C,
+                   readOnly: Boolean,
+                   cancelButtonClickListener: () -> Unit,
+                   operationButtonClickListener: (CrudForm<C>) -> Unit): CrudForm<C> {
     return CrudForm(operation,
                     domainObject,
                     readOnly,
@@ -296,13 +294,11 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
     //vazio
   }
   
-  fun showForm(
-    operation: CrudOperation,
-    domainObject: C,
-    readOnly: Boolean,
-    successMessage: String,
-    buttonClickListener: () -> Unit
-              ) {
+  fun showForm(operation: CrudOperation,
+               domainObject: C,
+               readOnly: Boolean,
+               successMessage: String,
+               buttonClickListener: () -> Unit) {
     fun operation(form: CrudForm<C>) {
       buttonClickListener()
       if(operation != ADD || isAddClose) {
@@ -406,9 +402,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
     }
   }
   
-  fun <T> Grid<C>.column(
-    property: KProperty1<C, T>, block: Column<C, T?>.() -> Unit = {}
-                        ): Column<C, T?> {
+  fun <T> Grid<C>.column(property: KProperty1<C, T>, block: Column<C, T?>.() -> Unit = {}): Column<C, T?> {
     val column: Column<C, T?> = addColumn(property)
     column.isMinimumWidthFromContent = true
     column.block()
@@ -434,14 +428,12 @@ fun <T> Query<T, String>.viewQuery(): QueryView {
   return QueryView(this.offset, this.limit, this.filter.orElse(""), sorts)
 }
 
-class CrudForm<C: EntityVo<*>>(
-  val operation: CrudOperation,
-  val domainObject: C,
-  val readOnly: Boolean,
-  cancelButtonClickListener: () -> Unit,
-  operationButtonClickListener: (CrudForm<C>) -> Unit,
-  layoutForm: (CrudForm<C>) -> Unit
-                              ): VerticalLayout() {
+class CrudForm<C: EntityVo<*>>(val operation: CrudOperation,
+                               val domainObject: C,
+                               val readOnly: Boolean,
+                               cancelButtonClickListener: () -> Unit,
+                               operationButtonClickListener: (CrudForm<C>) -> Unit,
+                               layoutForm: (CrudForm<C>) -> Unit): VerticalLayout() {
   private val domainClass = domainObject.javaClass
   val binder: Binder<C> = BeanValidationBinder<C>(domainClass).apply {
     bean = domainObject
@@ -487,9 +479,9 @@ class CrudForm<C: EntityVo<*>>(
     buttonStyleNames[DELETE] = ValoTheme.BUTTON_DANGER
   }
   
-  private fun buildFooter(
-    operation: CrudOperation, cancelButtonClickListener: () -> Unit, operationButtonClickListener: (CrudForm<C>) -> Unit
-                         ): Layout {
+  private fun buildFooter(operation: CrudOperation,
+                          cancelButtonClickListener: () -> Unit,
+                          operationButtonClickListener: (CrudForm<C>) -> Unit): Layout {
     operationButton = buildOperationButton(operation, operationButtonClickListener)
     val cancelButton = buildCancelButton(cancelButtonClickListener)
     val footerLayout = HorizontalLayout()
@@ -503,9 +495,7 @@ class CrudForm<C: EntityVo<*>>(
     return footerLayout
   }
   
-  private fun buildOperationButton(
-    operation: CrudOperation, clickListener: (CrudForm<C>) -> Unit
-                                  ): Button {
+  private fun buildOperationButton(operation: CrudOperation, clickListener: (CrudForm<C>) -> Unit): Button {
     val caption = buttonCaptions[operation]
     val button = Button(caption, buttonIcons[operation])
     button.setClickShortcut(KeyCode.ENTER)
