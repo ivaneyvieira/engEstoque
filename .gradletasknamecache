@@ -73,6 +73,7 @@ dependentComponents
 help
 kotlinDslAccessorsReport
 model
+outgoingVariants
 projects
 properties
 tasks
@@ -131,6 +132,7 @@ compileTestKotlin
 inspectClassesForKotlinIC
 kotlinSourcesJar
 mainClasses
+prepareKotlinBuildScriptModel
 processResources
 processTestResources
 Pattern:
@@ -211,6 +213,7 @@ dependentComponents
 help
 kotlinDslAccessorsReport
 model
+outgoingVariants
 projects
 properties
 tasks
@@ -269,5 +272,6 @@ compileTestKotlin
 inspectClassesForKotlinIC
 kotlinSourcesJar
 mainClasses
+prepareKotlinBuildScriptModel
 processResources
 processTestResources

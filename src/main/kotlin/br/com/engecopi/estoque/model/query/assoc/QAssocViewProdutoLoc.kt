@@ -10,11 +10,12 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Association query bean for AssocViewProdutoLoc.
- *
+ * 
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QAssocViewProdutoLoc<R>(name: String, root: R): TQAssocBean<ViewProdutoLoc, R>(name, root) {
+
   lateinit var id: PString<R>
   lateinit var storeno: PInteger<R>
   lateinit var codigo: PString<R>
@@ -23,14 +24,14 @@ class QAssocViewProdutoLoc<R>(name: String, root: R): TQAssocBean<ViewProdutoLoc
   lateinit var abreviacao: PString<R>
   lateinit var produto: QAssocProduto<R>
   lateinit var loja: QAssocLoja<R>
-  
+
   /**
    * Eagerly fetch this association loading the specified properties.
    */
   fun fetch(vararg properties: TQProperty<QViewProdutoLoc>): R {
     return fetchProperties(*properties)
   }
-  
+
   /**
    * Eagerly fetch this association using a 'query join' loading the specified properties.
    */

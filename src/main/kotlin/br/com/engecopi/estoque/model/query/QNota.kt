@@ -20,11 +20,12 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for Nota.
- *
+ * 
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QNota: TQRootBean<Nota, QNota> {
+
   companion object {
     /**
      * shared 'Alias' instance used to provide
@@ -32,7 +33,7 @@ class QNota: TQRootBean<Nota, QNota> {
      */
     val _alias = QNota(true)
   }
-  
+
   lateinit var id: PLong<QNota>
   lateinit var createdAt: PLocalDateTime<QNota>
   lateinit var updatedAt: PLocalDateTime<QNota>
@@ -55,17 +56,18 @@ class QNota: TQRootBean<Nota, QNota> {
   lateinit var usuario: QAssocUsuario<QNota>
   lateinit var maxSequencia: PInteger<QNota>
   lateinit var lancamentoOrigem: PEnum<QNota, LancamentoOrigem>
-  
+
+
   /**
    * Construct with a given Database.
    */
   constructor(database: Database): super(Nota::class.java, database)
-  
+
   /**
    * Construct using the default Database.
    */
   constructor(): super(Nota::class.java)
-  
+
   /**
    * Construct for Alias.
    */

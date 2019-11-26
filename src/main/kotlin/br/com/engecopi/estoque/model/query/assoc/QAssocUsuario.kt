@@ -13,11 +13,12 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Association query bean for AssocUsuario.
- *
+ * 
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QAssocUsuario<R>(name: String, root: R): TQAssocBean<Usuario, R>(name, root) {
+
   lateinit var id: PLong<R>
   lateinit var createdAt: PLocalDateTime<R>
   lateinit var updatedAt: PLocalDateTime<R>
@@ -33,14 +34,14 @@ class QAssocUsuario<R>(name: String, root: R): TQAssocBean<Usuario, R>(name, roo
   lateinit var expedicao: PBoolean<R>
   lateinit var entregaFutura: PBoolean<R>
   lateinit var etiqueta: PBoolean<R>
-  
+
   /**
    * Eagerly fetch this association loading the specified properties.
    */
   fun fetch(vararg properties: TQProperty<QUsuario>): R {
     return fetchProperties(*properties)
   }
-  
+
   /**
    * Eagerly fetch this association using a 'query join' loading the specified properties.
    */

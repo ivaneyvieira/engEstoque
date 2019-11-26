@@ -1,6 +1,6 @@
 package br.com.engecopi.estoque.ui.views
 
-import br.com.astrosoft.utils.SystemUtils
+import br.com.astrosoft.utils.FileText
 import br.com.astrosoft.utils.ZPLPreview
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.StatusNota
@@ -60,7 +60,7 @@ class EtiquetaView: CrudLayoutView<EtiquetaVo, EtiquetaViewModel>(), IEtiquetaVi
             expandRatio = 1f
             icon = VaadinIcons.BOOK
             addClickListener {
-              showInfo(SystemUtils.readFile("/html/variaveis.html") ?: "")
+              showInfo(FileText("/html/variaveis.html").toString())
             }
           }
           button("Preview") {
@@ -70,7 +70,7 @@ class EtiquetaView: CrudLayoutView<EtiquetaVo, EtiquetaViewModel>(), IEtiquetaVi
             addClickListener {
               val zpl = template.value
               val image = ZPLPreview.createPdf(zpl, "4x2")
-              if(image != null) showImage("Preview", image)
+              showImage("Preview", image)
             }
           }
         }

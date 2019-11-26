@@ -1,6 +1,6 @@
 package br.com.engecopi.estoque.ui
 
-import br.com.astrosoft.utils.SystemUtils
+import br.com.astrosoft.utils.FileText
 import br.com.engecopi.estoque.model.LoginInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RepositoryAvisoNotas
@@ -84,7 +84,7 @@ import javax.servlet.http.Cookie
 class EstoqueUI: UI() {
   private lateinit var menuVisaoGeral: MenuButton
   val title = "<h3>Estoque <strong>Engecopi</strong></h3>"
-  private val versao = SystemUtils.readFile("/versao.txt")
+  private val versao = FileText("/versao.txt")
   var loginInfo: LoginInfo? = null
     set(value) {
       field = value

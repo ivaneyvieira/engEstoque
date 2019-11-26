@@ -17,11 +17,12 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Association query bean for AssocItemNota.
- *
+ * 
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QAssocItemNota<R>(name: String, root: R): TQAssocBean<ItemNota, R>(name, root) {
+
   lateinit var id: PLong<R>
   lateinit var createdAt: PLocalDateTime<R>
   lateinit var updatedAt: PLocalDateTime<R>
@@ -41,14 +42,14 @@ class QAssocItemNota<R>(name: String, root: R): TQAssocBean<ItemNota, R>(name, r
   lateinit var codigoBarraCliente: PString<R>
   lateinit var codigoBarraConferencia: PString<R>
   lateinit var codigoBarraEntrega: PString<R>
-  
+
   /**
    * Eagerly fetch this association loading the specified properties.
    */
   fun fetch(vararg properties: TQProperty<QItemNota>): R {
     return fetchProperties(*properties)
   }
-  
+
   /**
    * Eagerly fetch this association using a 'query join' loading the specified properties.
    */

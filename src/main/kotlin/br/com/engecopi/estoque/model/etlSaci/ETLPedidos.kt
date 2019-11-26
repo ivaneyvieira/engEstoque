@@ -47,8 +47,7 @@ class ETLPedidos: ETL<PedidoSaci>() {
 }
 
 fun etiquetaPedido(pedido: PedidoSaci): String {
-  val data = pedido.date?.localDate()
-    .format()
+  val data = pedido.date?.localDate()?.format() ?: ""
   return """^XA
   ^FT50,060^A0N,40,40^FH^FDPedido de transferencia^FS
   ^FT50,130^A0N,40,40^FH^FDNumero: ${pedido.numero}^FS

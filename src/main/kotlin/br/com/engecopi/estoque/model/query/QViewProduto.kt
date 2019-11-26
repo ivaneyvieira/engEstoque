@@ -12,11 +12,12 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for ViewProduto.
- *
+ * 
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QViewProduto: TQRootBean<ViewProduto, QViewProduto> {
+
   companion object {
     /**
      * shared 'Alias' instance used to provide
@@ -24,7 +25,7 @@ class QViewProduto: TQRootBean<ViewProduto, QViewProduto> {
      */
     val _alias = QViewProduto(true)
   }
-  
+
   lateinit var id: PLong<QViewProduto>
   lateinit var codigo: PString<QViewProduto>
   lateinit var nome: PString<QViewProduto>
@@ -43,12 +44,12 @@ class QViewProduto: TQRootBean<ViewProduto, QViewProduto> {
    * Construct with a given Database.
    */
   constructor(database: Database): super(ViewProduto::class.java, database)
-  
+
   /**
    * Construct using the default Database.
    */
   constructor(): super(ViewProduto::class.java)
-  
+
   /**
    * Construct for Alias.
    */

@@ -1,6 +1,6 @@
 package br.com.engecopi.saci
 
-import br.com.astrosoft.utils.SystemUtils
+import br.com.astrosoft.utils.FileText
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.sql2o.Connection
@@ -51,13 +51,13 @@ open class QueryDB(private val driver: String, val url: String, val username: St
   protected fun execute(file: String,
                         vararg params: Pair<String, String>,
                         monitor: (String, Int, Int) -> Unit = {_, _, _ ->}) {
-    var sqlScript = SystemUtils.readFile(file)
+    var sqlScript = FileText(file).toString()
     sql2o.beginTransaction()
       .trywr {con ->
         params.forEach {
-          sqlScript = sqlScript?.replace(":${it.first}", it.second)
+          sqlScript = sqlScript.replace(":${it.first}", it.second)
         }
-        val sqls = sqlScript?.split(";")
+        val sqls = sqlScript.split(";")
           .orEmpty()
         val count = sqls.size
         sqls.filter {it.trim() != ""}
@@ -75,7 +75,7 @@ open class QueryDB(private val driver: String, val url: String, val username: St
   }
   
   private fun <T> buildQuery(file: String, proc: (Connection, Query) -> T): T {
-    val sql = SystemUtils.readFile(file)
+    val sql = FileText(file).toString()
     return this.sql2o.open()
       .use {con ->
         val query = con.createQuery(sql)

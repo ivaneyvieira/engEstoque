@@ -12,11 +12,12 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Association query bean for AssocLoja.
- *
+ * 
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QAssocLoja<R>(name: String, root: R): TQAssocBean<Loja, R>(name, root) {
+
   lateinit var id: PLong<R>
   lateinit var createdAt: PLocalDateTime<R>
   lateinit var updatedAt: PLocalDateTime<R>
@@ -26,14 +27,14 @@ class QAssocLoja<R>(name: String, root: R): TQAssocBean<Loja, R>(name, root) {
   lateinit var notas: QAssocNota<R>
   lateinit var usuarios: QAssocUsuario<R>
   lateinit var viewProdutoLoc: QAssocViewProdutoLoc<R>
-  
+
   /**
    * Eagerly fetch this association loading the specified properties.
    */
   fun fetch(vararg properties: TQProperty<QLoja>): R {
     return fetchProperties(*properties)
   }
-  
+
   /**
    * Eagerly fetch this association using a 'query join' loading the specified properties.
    */

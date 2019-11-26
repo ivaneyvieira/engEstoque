@@ -19,11 +19,12 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for ViewNotaFutura.
- *
+ * 
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QViewNotaFutura: TQRootBean<ViewNotaFutura, QViewNotaFutura> {
+
   companion object {
     /**
      * shared 'Alias' instance used to provide
@@ -31,7 +32,7 @@ class QViewNotaFutura: TQRootBean<ViewNotaFutura, QViewNotaFutura> {
      */
     val _alias = QViewNotaFutura(true)
   }
-  
+
   lateinit var id: PLong<QViewNotaFutura>
   lateinit var createdAt: PLocalDateTime<QViewNotaFutura>
   lateinit var updatedAt: PLocalDateTime<QViewNotaFutura>
@@ -57,12 +58,12 @@ class QViewNotaFutura: TQRootBean<ViewNotaFutura, QViewNotaFutura> {
    * Construct with a given Database.
    */
   constructor(database: Database): super(ViewNotaFutura::class.java, database)
-  
+
   /**
    * Construct using the default Database.
    */
   constructor(): super(ViewNotaFutura::class.java)
-  
+
   /**
    * Construct for Alias.
    */

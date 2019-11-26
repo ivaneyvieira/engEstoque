@@ -103,9 +103,8 @@ abstract class EntryID(val id: String) {
 }
 
 fun <T: Any> SqlUpdate.setParameter(bean: T): SqlUpdate {
-  val parameterNames = parameterNames(sql)
-  parameterNames.forEach {param ->
-    val value = readInstanceProperty(bean, param)
+  parameterNames(sql).forEach {param ->
+    val value: Any? = readInstanceProperty(bean, param)
     setParameter(param, value)
   }
   return this

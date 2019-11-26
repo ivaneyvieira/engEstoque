@@ -13,11 +13,12 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Association query bean for AssocAbreviacao.
- *
+ * 
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QAssocAbreviacao<R>(name: String, root: R): TQAssocBean<Abreviacao, R>(name, root) {
+
   lateinit var id: PLong<R>
   lateinit var createdAt: PLocalDateTime<R>
   lateinit var updatedAt: PLocalDateTime<R>
@@ -26,14 +27,14 @@ class QAssocAbreviacao<R>(name: String, root: R): TQAssocBean<Abreviacao, R>(nam
   lateinit var loja: QAssocLoja<R>
   lateinit var expedicao: PBoolean<R>
   lateinit var impressora: PString<R>
-  
+
   /**
    * Eagerly fetch this association loading the specified properties.
    */
   fun fetch(vararg properties: TQProperty<QAbreviacao>): R {
     return fetchProperties(*properties)
   }
-  
+
   /**
    * Eagerly fetch this association using a 'query join' loading the specified properties.
    */

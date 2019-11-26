@@ -16,11 +16,12 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for HistoricoEtiqueta.
- *
+ * 
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QHistoricoEtiqueta: TQRootBean<HistoricoEtiqueta, QHistoricoEtiqueta> {
+
   companion object {
     /**
      * shared 'Alias' instance used to provide
@@ -28,7 +29,7 @@ class QHistoricoEtiqueta: TQRootBean<HistoricoEtiqueta, QHistoricoEtiqueta> {
      */
     val _alias = QHistoricoEtiqueta(true)
   }
-  
+
   lateinit var id: PLong<QHistoricoEtiqueta>
   lateinit var createdAt: PLocalDateTime<QHistoricoEtiqueta>
   lateinit var updatedAt: PLocalDateTime<QHistoricoEtiqueta>
@@ -45,12 +46,12 @@ class QHistoricoEtiqueta: TQRootBean<HistoricoEtiqueta, QHistoricoEtiqueta> {
    * Construct with a given Database.
    */
   constructor(database: Database): super(HistoricoEtiqueta::class.java, database)
-  
+
   /**
    * Construct using the default Database.
    */
   constructor(): super(HistoricoEtiqueta::class.java)
-  
+
   /**
    * Construct for Alias.
    */

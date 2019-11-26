@@ -118,7 +118,7 @@ abstract class LayoutView<V: ViewModel<*>>: VerticalLayout(), View {
       when {
         QuerySaci.test -> {
           val image = ZPLPreview.createPdf(text, "4x2")
-          if(image != null) showImage("Preview", image)
+          showImage("Preview", image)
         }
         else           -> CupsUtils.printCups(impressora, text)
       }
