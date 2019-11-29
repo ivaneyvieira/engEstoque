@@ -209,7 +209,7 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
         .filtroTipoNota()
         .filtroStatus()
         .or()
-        .nota.loja.id.eq(lojaDefault.id)
+        .nota.loja.id.eq(lojaDefault?.id)
         .nota.tipoNota.eq(VENDAF)
         .endOr()
         .let {query ->
@@ -245,7 +245,7 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
   }
   
   override fun QItemNota.filterString(text: String): QItemNota {
-    val idLoja = RegistryUserInfo.lojaDefault.id
+    val idLoja = RegistryUserInfo.lojaDefault?.id ?: 0
     return nota.numero.startsWith(text)
       .codigoBarraCliente.startsWith(text)
       .and()

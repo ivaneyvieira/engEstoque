@@ -40,7 +40,7 @@ class Loja: BaseModel() {
     }
     
     fun lojaSaldo(): List<Loja> {
-      val loja = RegistryUserInfo.lojaDefault
+      val loja = RegistryUserInfo.lojaDefault ?: return emptyList()
       return where().notas.id.gt(0)
         .findList()
         .filter {it.id == loja.id}

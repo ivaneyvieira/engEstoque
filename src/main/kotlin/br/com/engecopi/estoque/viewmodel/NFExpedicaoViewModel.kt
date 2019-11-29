@@ -58,7 +58,7 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
   
   override val query: QViewNotaExpedicao
     get() = ViewNotaExpedicao.where().let {query ->
-      query.loja.id.eq(lojaDefault.id)
+      query.loja.id.eq(lojaDefault?.id)
         .let {q ->
           if(usuarioDefault.isEstoqueExpedicao) q.abreviacao.eq(abreviacaoDefault).filtroNotaSerie()
           else q
@@ -111,7 +111,7 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
   }
   
   private fun processaNota(itensExpedicao: List<ItemExpedicao>): Nota? {
-    val loja = lojaDefault.numero
+    val loja = lojaDefault?.numero ?: return null
     val notaDoSaci = itensExpedicao.firstOrNull()
       ?.notaProdutoSaci
     val lojaSaci = notaDoSaci?.storeno ?: throw EViewModel("Nota não encontrada")

@@ -73,7 +73,7 @@ class Produto: BaseModel() {
   
   @Transactional
   fun recalculaSaldos(localizacao: String): Int {
-    val loja = RegistryUserInfo.lojaDefault
+    val loja = RegistryUserInfo.lojaDefault ?: return 0
     var saldo = 0
     val itensNotNull = ItemNota.where()
       .produto.id.eq(id)
@@ -186,7 +186,7 @@ class Produto: BaseModel() {
   fun saldoLoja(localizacao: String?): Int {
     localizacao ?: return 0
     if(localizacao == "") return 0
-    val loja = RegistryUserInfo.lojaDefault
+    val loja = RegistryUserInfo.lojaDefault ?: return 0
     return findItensNota().asSequence()
       .filter {it.nota?.loja?.id == loja.id && it.localizacao == localizacao}
       .sumBy {it.quantidadeSaldo}

@@ -9,7 +9,7 @@ import br.com.engecopi.saci.beans.NotaSaci
 import br.com.engecopi.saci.saci
 
 object RepositoryAvisoNotas {
-  private val storeno = RegistryUserInfo.lojaDefault.numero
+  private val storeno = RegistryUserInfo.lojaDefault?.numero ?: 0
   private val abreviacao = RegistryUserInfo.abreviacaoDefault
   private val notaSaidaTodas = mutableListOf<NotaSaci>()
   private val notaEntradaTodas = mutableListOf<NotaSaci>()

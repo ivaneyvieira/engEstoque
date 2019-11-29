@@ -65,8 +65,9 @@ WHERE T.produto_id <> P.id;
   
   fun findByProduto(produto: Produto?): List<ViewProdutoLoc> {
     produto ?: return emptyList()
+    val numero = lojaDefault?.numero ?: return emptyList()
     return viewProdutosLocProdutoKey[ProdutoKey(produtoId = produto.id,
-                                                storeno = lojaDefault.numero,
+                                                storeno = numero,
                                                 abreviacao = abreviacaoDefault)].orEmpty()
   }
   
@@ -79,7 +80,7 @@ WHERE T.produto_id <> P.id;
     return viewProdutosLocAbreviacaoKey[abreviacao].orEmpty()
   }
   
-  fun findByLojaAbreviacao(storeno: Int = RegistryUserInfo.lojaDefault.numero,
+  fun findByLojaAbreviacao(storeno: Int = RegistryUserInfo.lojaDefault?.numero ?: 0,
                            abreviacao: String = abreviacaoDefault): List<ViewProdutoLoc> {
     return viewProdutosLocLojaAbreviacaoKey[LojaAbreviacaoKey(storeno = storeno, abreviacao = abreviacao)].orEmpty()
   }

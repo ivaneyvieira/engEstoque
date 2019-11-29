@@ -69,7 +69,7 @@ class EntregaClienteViewModel(view: IEntregaClienteView):
   private fun processaKeyBarcodeCliente(key: String): List<ItemNota> {
     val loja = if(key.isNotEmpty()) key.mid(0, 1).toIntOrNull() ?: return emptyList() else return emptyList()
     val numero = if(key.length > 1) key.mid(1) else return emptyList()
-    if(loja != RegistryUserInfo.lojaDefault.numero) return emptyList()
+    if(loja != RegistryUserInfo.lojaDefault?.numero) return emptyList()
     return Nota.findSaida(numero)
       ?.itensNota()
       .orEmpty()

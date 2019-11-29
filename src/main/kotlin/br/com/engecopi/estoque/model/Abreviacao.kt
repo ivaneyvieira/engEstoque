@@ -32,8 +32,10 @@ class Abreviacao(
     }
     
     fun addAbreviacao(abreviacao: String) {
-      if(findByAbreviacao(abreviacao) == null) {
-        Abreviacao(abreviacao, lojaDefault, false, "").save()
+      lojaDefault?.let {loja ->
+        if(findByAbreviacao(abreviacao) == null) {
+          Abreviacao(abreviacao, loja, false, "").save()
+        }
       }
     }
     

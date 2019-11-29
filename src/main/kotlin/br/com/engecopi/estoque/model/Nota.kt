@@ -129,7 +129,7 @@ class Nota: BaseModel() {
     }
     
     fun findEntrada(numero: String?): Nota? {
-      val loja = RegistryUserInfo.lojaDefault
+      val loja = RegistryUserInfo.lojaDefault ?: return null
       return if(numero.isNullOrBlank()) null
       else Nota.where().tipoMov.eq(ENTRADA).numero.eq(numero).loja.id.eq(loja.id).findList().firstOrNull()
     }
@@ -150,7 +150,7 @@ class Nota: BaseModel() {
     }
     
     fun findSaida(numero: String?): Nota? {
-      val storeno = lojaDefault.numero
+      val storeno = lojaDefault?.numero ?: return null
       return findSaida(storeno, numero)
     }
     
@@ -170,14 +170,14 @@ class Nota: BaseModel() {
     
     fun findNotaEntradaSaci(numeroNF: String?): List<NotaProdutoSaci> {
       numeroNF ?: return emptyList()
-      val loja = RegistryUserInfo.lojaDefault
+      val loja = RegistryUserInfo.lojaDefault ?: return emptyList()
       val numero = numeroNF.split("/").getOrNull(0) ?: return emptyList()
       val serie = numeroNF.split("/").getOrNull(1) ?: ""
       return saci.findNotaEntrada(loja.numero, numero, serie, usuarioDefault.admin)
     }
     
     fun findNotaSaidaSaci(numeroNF: String?): List<NotaProdutoSaci> {
-      val loja = RegistryUserInfo.lojaDefault
+      val loja = RegistryUserInfo.lojaDefault ?: return emptyList()
       return findNotaSaidaSaci(loja.numero, numeroNF)
     }
     

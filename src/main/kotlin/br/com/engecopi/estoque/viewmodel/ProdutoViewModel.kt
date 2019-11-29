@@ -69,7 +69,7 @@ class ProdutoViewModel(view: IProdutoView): CrudViewModel<Produto, QProduto, Pro
   
   private fun QProduto.filtroUsuario(): QProduto {
     return this.viewProdutoLoc.localizacao.startsWith(abreviacaoDefault)
-      .viewProdutoLoc.loja.id.eq(lojaDefault.id)
+      .viewProdutoLoc.loja.id.eq(lojaDefault?.id)
   }
   
   override val query: QProduto

@@ -27,7 +27,7 @@ object RegistryUserInfo {
   val abreviacaoDefault
     get() = info?.abreviacao ?: throw EUsuarioNaoInicializado()
   val lojaDefault
-    get() = usuarioDefault.loja!!
+    get() = usuarioDefault.loja
   val userDefaultIsAdmin
     get() = usuarioDefault.admin
   val endereco

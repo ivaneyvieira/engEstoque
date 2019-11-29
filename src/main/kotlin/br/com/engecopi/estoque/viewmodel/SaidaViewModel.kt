@@ -78,7 +78,7 @@ class SaidaViewModel(view: ISaidaView):
   private fun processaKeyNumeroNota(key: String): NotaItens {
     val loja = if(key.isNotEmpty()) key.mid(0, 1).toIntOrNull() ?: return NotaItens.VAZIO
     else return NotaItens.VAZIO
-    if(loja != lojaDefault.numero) return NotaItens.VAZIO
+    if(loja != lojaDefault?.numero) return NotaItens.VAZIO
     val numero = if(key.length > 1) key.mid(1) else return NotaItens.VAZIO
     val notaItem = processaKeyNumero(numero)
     return if(notaItem.nota?.tipoNota == VENDAF) NotaItens.VAZIO
