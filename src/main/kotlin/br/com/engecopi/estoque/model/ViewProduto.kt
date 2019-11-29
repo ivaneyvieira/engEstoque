@@ -32,6 +32,6 @@ class ViewProduto {
   @OneToOne(cascade = [])
   @JoinColumn(name = "produto_id")
   var produto: Produto? = null
-  
+
   companion object Find: ViewProdutoFinder()
 }

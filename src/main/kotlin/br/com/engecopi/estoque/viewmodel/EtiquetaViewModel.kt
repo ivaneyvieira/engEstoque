@@ -12,7 +12,7 @@ class EtiquetaViewModel(view: IEtiquetaView): CrudViewModel<Etiqueta, QEtiqueta,
   override fun newBean(): EtiquetaVo {
     return EtiquetaVo()
   }
-  
+
   override fun update(bean: EtiquetaVo) {
     bean.entityVo?.apply {
       this.titulo = bean.titulo ?: throw EViewModel("A etiqueta está sem título")
@@ -23,7 +23,7 @@ class EtiquetaViewModel(view: IEtiquetaView): CrudViewModel<Etiqueta, QEtiqueta,
       update()
     }
   }
-  
+
   override fun add(bean: EtiquetaVo) {
     Etiqueta().apply {
       this.titulo = bean.titulo ?: throw EViewModel("A etiqueta está sem título")
@@ -34,14 +34,14 @@ class EtiquetaViewModel(view: IEtiquetaView): CrudViewModel<Etiqueta, QEtiqueta,
       insert()
     }
   }
-  
+
   override fun delete(bean: EtiquetaVo) {
     bean.entityVo?.delete()
   }
-  
+
   override val query: QEtiqueta
     get() = Etiqueta.where()
-  
+
   override fun Etiqueta.toVO(): EtiquetaVo {
     val etiqueta = this
     return EtiquetaVo().apply {
@@ -52,7 +52,7 @@ class EtiquetaViewModel(view: IEtiquetaView): CrudViewModel<Etiqueta, QEtiqueta,
       this.etiquetaDefault = etiqueta.etiquetaDefault
     }
   }
-  
+
   override fun QEtiqueta.filterString(text: String): QEtiqueta {
     return titulo.contains(text)
   }
@@ -62,7 +62,7 @@ class EtiquetaVo: EntityVo<Etiqueta>() {
   override fun findEntity(): Etiqueta? {
     return Etiqueta.find(titulo, statusNota)
   }
-  
+
   var titulo: String? = ""
   var template: String? = ""
   var statusNota: StatusNota? = null

@@ -1,4 +1,4 @@
-package br.com.astrosoft.utils
+package br.com.engecopi.utils
 
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
@@ -17,23 +17,19 @@ private val DATETIME_FORMATTER = DateTimeFormatter.ofPattern(DATETIME_PATTERN)
 
 fun LocalDateTime?.toDate(): Date? {
   if(this == null) return null
-  val instant = this.atZone(ZoneId.systemDefault())
-    ?.toInstant()
+  val instant = this.atZone(ZoneId.systemDefault())?.toInstant()
   return Date.from(instant)
 }
 
 fun LocalDateTime?.toTimeStamp(): Timestamp? {
   if(this == null) return null
-  val instant = this.atZone(ZoneId.systemDefault())
-    ?.toInstant()
+  val instant = this.atZone(ZoneId.systemDefault())?.toInstant()
   return Timestamp.from(instant)
 }
 
 fun LocalDate?.toDate(): Date? {
   if(this == null) return null
-  val instant = this.atStartOfDay()
-    ?.atZone(ZoneId.systemDefault())
-    ?.toInstant()
+  val instant = this.atStartOfDay()?.atZone(ZoneId.systemDefault())?.toInstant()
   return Date.from(instant)
 }
 
@@ -43,9 +39,7 @@ fun LocalTime?.toDate(): Date? {
   val year = date.year
   val month = date.month
   val dayOfMonth = date.dayOfMonth
-  val instant = this.atDate(LocalDate.of(year, month, dayOfMonth))
-    ?.atZone(ZoneId.systemDefault())
-    ?.toInstant()
+  val instant = this.atDate(LocalDate.of(year, month, dayOfMonth))?.atZone(ZoneId.systemDefault())?.toInstant()
   return Date.from(instant)
 }
 
@@ -63,17 +57,19 @@ fun Date?.toLocalDate(): LocalDate? {
   return zdt.toLocalDate()
 }
 
-fun LocalDateTime.format(): String {
+fun LocalDateTime?.format(): String {
+  if(this == null) return ""
   return DATETIME_FORMATTER.format(this)
 }
 
-fun Date.format(): String {
+fun Date?.format(): String? {
+  if(this == null) return null
   val sdf = SimpleDateFormat(DATE_PATTERN)
   return sdf.format(this)
 }
 
-fun LocalDate.format(): String {
-  return this.format(DATE_FORMATTER)
+fun LocalDate?.format(): String {
+  return this?.format(DATE_FORMATTER) ?: ""
 }
 
 fun Int.localDate(): LocalDate? {

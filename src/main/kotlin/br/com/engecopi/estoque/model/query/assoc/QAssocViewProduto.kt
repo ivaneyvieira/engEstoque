@@ -12,12 +12,11 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Association query bean for AssocViewProduto.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QAssocViewProduto<R>(name: String, root: R): TQAssocBean<ViewProduto, R>(name, root) {
-
   lateinit var id: PLong<R>
   lateinit var codigo: PString<R>
   lateinit var nome: PString<R>
@@ -45,7 +44,7 @@ class QAssocViewProduto<R>(name: String, root: R): TQAssocBean<ViewProduto, R>(n
   fun fetchQuery(vararg properties: TQProperty<QViewProduto>): R {
     return fetchQueryProperties(*properties)
   }
-  
+
   /**
    * Use lazy loading for this association loading the specified properties.
    */

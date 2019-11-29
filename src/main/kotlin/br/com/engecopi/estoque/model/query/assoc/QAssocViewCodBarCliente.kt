@@ -11,12 +11,11 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Association query bean for AssocViewCodBarCliente.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QAssocViewCodBarCliente<R>(name: String, root: R): TQAssocBean<ViewCodBarCliente, R>(name, root) {
-
   lateinit var id: PLong<R>
   lateinit var codbar: PString<R>
   lateinit var codbarLimpo: PString<R>
@@ -38,7 +37,7 @@ class QAssocViewCodBarCliente<R>(name: String, root: R): TQAssocBean<ViewCodBarC
   fun fetchQuery(vararg properties: TQProperty<QViewCodBarCliente>): R {
     return fetchQueryProperties(*properties)
   }
-  
+
   /**
    * Use lazy loading for this association loading the specified properties.
    */

@@ -25,28 +25,21 @@ class Abreviacao(
   companion object Find: AbreviacaoFinder() {
     fun findByAbreviacao(abreviacao: String?): Abreviacao? {
       abreviacao ?: return null
-      return where().abreviacao.eq(abreviacao)
-        .loja.equalTo(lojaDefault)
-        .findList()
-        .firstOrNull()
+      return where().abreviacao.eq(abreviacao).loja.equalTo(lojaDefault).findList().firstOrNull()
     }
-    
+
     fun addAbreviacao(abreviacao: String) {
-      lojaDefault?.let {loja ->
-        if(findByAbreviacao(abreviacao) == null) {
-          Abreviacao(abreviacao, loja, false, "").save()
-        }
+      val loja = lojaDefault ?: return
+      if(findByAbreviacao(abreviacao) == null) {
+        Abreviacao(abreviacao, loja, false, "").save()
       }
     }
-    
+
     fun updateAbreviacao() {
-      val abreviacaoes = Repositories.findByLoja(lojaDefault)
-        .map {it.abreviacao}
-        .distinct()
-        .sorted()
+      val abreviacaoes = Repositories.findByLoja(lojaDefault).map {it.abreviacao}.distinct().sorted()
       abreviacaoes.forEach {addAbreviacao(it)}
     }
-    
+
     fun findAll(): List<Abreviacao> = all().sortedBy {it.abreviacao}
   }
 }

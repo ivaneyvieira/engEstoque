@@ -8,5 +8,4 @@ class NotaProduto(val invno: Int,
                   val dtEmissao: Int,
                   val tipo: String,
                   val cancelado: String,
-                  val prdno: String,
-                  val grade: String)
+                  val prdno: String, val grade: String)

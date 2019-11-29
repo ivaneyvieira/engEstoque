@@ -29,12 +29,12 @@ import com.vaadin.ui.renderers.TextRenderer
 class EntregaClienteView: NotaView<EntregaClienteVo, EntregaClienteViewModel, IEntregaClienteView>(),
                           IEntregaClienteView {
   var formCodBar: PnlCodigoBarras? = null
-  
+
   override fun enter(event: ViewChangeEvent) {
     super.enter(event)
     formCodBar?.focusEdit()
   }
-  
+
   init {
     viewModel = EntregaClienteViewModel(this)
     layoutForm {
@@ -43,9 +43,8 @@ class EntregaClienteView: NotaView<EntregaClienteVo, EntregaClienteViewModel, IE
         binder.bean.usuario = usuario
       }
       formLayout.apply {
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-          .px
-        
+        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
+
         grupo("Nota fiscal de saída") {
           verticalLayout {
             row {
@@ -77,7 +76,7 @@ class EntregaClienteView: NotaView<EntregaClienteVo, EntregaClienteViewModel, IE
             }
           }
         }
-        
+
         grupo("Produto") {
           produtoField(operation, binder, "Saída")
         }
@@ -143,14 +142,10 @@ class EntregaClienteView: NotaView<EntregaClienteVo, EntregaClienteViewModel, IE
         caption = "Cliente"
         setSortProperty("nota.cliente")
       }
-      val itens = viewModel.notasConferidas()
-        .groupBy {it.numeroNF}
-        .entries.sortedBy {entry ->
-        entry.value.map {it.entityVo?.id ?: 0}
-          .max()
-      }
-        .mapNotNull {it.key}
-      
+      val itens = viewModel.notasConferidas().groupBy {it.numeroNF}.entries.sortedBy {entry ->
+        entry.value.map {it.entityVo?.id ?: 0}.max()
+      }.mapNotNull {it.key}
+
       grid.setStyleGenerator {saida ->
         if(saida.status == CONFERIDA) {
           val numero = saida.numeroNF
@@ -162,7 +157,7 @@ class EntregaClienteView: NotaView<EntregaClienteVo, EntregaClienteViewModel, IE
       }
     }
   }
-  
+
   private fun formCodbar(): PnlCodigoBarras {
     return PnlCodigoBarras("Código de barras") {key ->
       viewModel.processaKey(key)

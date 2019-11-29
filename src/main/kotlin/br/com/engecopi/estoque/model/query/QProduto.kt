@@ -15,12 +15,11 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for Produto.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QProduto: TQRootBean<Produto, QProduto> {
-
   companion object {
     /**
      * shared 'Alias' instance used to provide
@@ -42,7 +41,7 @@ class QProduto: TQRootBean<Produto, QProduto> {
   lateinit var viewProdutoLoc: QAssocViewProdutoLoc<QProduto>
   lateinit var localizacao: PString<QProduto>
   lateinit var saldo_total: PInteger<QProduto>
-  
+
   /**
    * Construct with a given Database.
    */

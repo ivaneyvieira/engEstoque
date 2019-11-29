@@ -8,14 +8,14 @@ class AbreciacaoViewModel(view: IAbreciacaoView): ViewModel<IAbreciacaoView>(vie
   fun saveAbreviacao() = exec {
     abreviacaoes.forEach {it.save()}
   }
-  
+
   val abreviacaoes = mutableListOf<Abreviacao>()
-  
+
   init {
     Abreviacao.updateAbreviacao()
     updateAbreviacao()
   }
-  
+
   fun updateAbreviacao() {
     abreviacaoes.clear()
     abreviacaoes.addAll(Abreviacao.findAll())

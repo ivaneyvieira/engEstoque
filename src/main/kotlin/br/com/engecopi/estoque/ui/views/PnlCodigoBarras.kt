@@ -17,11 +17,11 @@ class PnlCodigoBarras(caption: String, processaleitura: (String) -> Unit): Horiz
     w = 400.px
     focus()
   }
-  
+
   init {
     isMargin = false
     isSpacing = true
-    
+
     button("Confirma") {
       addStyleName(ValoTheme.BUTTON_PRIMARY)
       setClickShortcut(KeyCode.ENTER)
@@ -33,7 +33,7 @@ class PnlCodigoBarras(caption: String, processaleitura: (String) -> Unit): Horiz
       }
     }
   }
-  
+
   fun focusEdit() {
     textField.value = ""
     textField.focus()

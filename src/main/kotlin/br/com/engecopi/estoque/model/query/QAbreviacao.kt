@@ -13,12 +13,11 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for Abreviacao.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QAbreviacao: TQRootBean<Abreviacao, QAbreviacao> {
-
   companion object {
     /**
      * shared 'Alias' instance used to provide
@@ -35,7 +34,7 @@ class QAbreviacao: TQRootBean<Abreviacao, QAbreviacao> {
   lateinit var loja: QAssocLoja<QAbreviacao>
   lateinit var expedicao: PBoolean<QAbreviacao>
   lateinit var impressora: PString<QAbreviacao>
-  
+
   /**
    * Construct with a given Database.
    */

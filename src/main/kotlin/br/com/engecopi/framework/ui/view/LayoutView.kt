@@ -1,10 +1,10 @@
 package br.com.engecopi.framework.ui.view
 
-import br.com.astrosoft.utils.CupsUtils
-import br.com.astrosoft.utils.SystemUtils
-import br.com.astrosoft.utils.ZPLPreview
 import br.com.engecopi.framework.viewmodel.ViewModel
 import br.com.engecopi.saci.QuerySaci
+import br.com.engecopi.utils.CupsUtils
+import br.com.engecopi.utils.SystemUtils
+import br.com.engecopi.utils.ZPLPreview
 import com.fo0.advancedtokenfield.main.AdvancedTokenField
 import com.github.mvysny.karibudsl.v8.VAlign
 import com.github.mvysny.karibudsl.v8.VaadinDsl
@@ -64,61 +64,59 @@ import kotlin.streams.toList
 
 abstract class LayoutView<V: ViewModel<*>>: VerticalLayout(), View {
   lateinit var viewModel: V
-  
+
   init {
     this.setSizeFull()
   }
-  
+
   open fun form(titleForm: String, block: (@VaadinDsl VerticalLayout).() -> Unit = {}) {
     isMargin = true
     this.title(titleForm)
     this.block()
   }
-  
+
   override fun enter(event: ViewChangeEvent) {
     //if(::viewModel.isInitialized) updateView()
   }
-  
+
   fun <T> Grid<T>.actionSelected(msgErro: String = "Selecione um item", action: (T) -> Unit) {
     this.selectedItems.firstOrNull()?.let {item -> action(item)} ?: showWarning(msgErro)
   }
-  
+
   fun showWarning(msg: String) {
     if(msg.isNotBlank()) MessageDialog.warning(message = msg)
   }
-  
+
   fun showError(msg: String) {
     if(msg.isNotBlank()) MessageDialog.error(message = msg)
   }
-  
+
   fun showInfo(msg: String) {
     if(msg.isNotBlank()) MessageDialog.info(message = msg)
   }
-  
+
   fun showImage(title: String, image: ByteArray) {
     MessageDialog.image(title, image)
   }
-  
+
   fun showQuestion(msg: String, execYes: () -> Unit, execNo: () -> Unit) {
     if(msg.isNotBlank()) MessageDialog.question(message = msg, execYes = execYes, execNo = execNo)
   }
-  
-  @Suppress("DEPRECATION")
+
   private fun openText(impressora: String, text: String) {
     val comentText = "### Impressora: $impressora\n$text"
     val resource = StreamResource({IOUtils.toInputStream(comentText)}, "${SystemUtils.md5(comentText)}.txt")
     resource.mimeType = "text/plain"
-    
-    Page.getCurrent()
-      .open(resource, "_blank", false)
+
+    Page.getCurrent().open(resource, "_blank", false)
   }
-  
+
   fun printText(impressora: String, text: String?) {
     if(!text.isNullOrBlank()) {
       when {
         QuerySaci.test -> {
           val image = ZPLPreview.createPdf(text, "4x2")
-          showImage("Preview", image)
+          if(image != null) showImage("Preview", image)
         }
         else           -> CupsUtils.printCups(impressora, text)
       }
@@ -139,13 +137,12 @@ fun <T> ComboBox<T>.default(valueEmpty: T? = null, captionGenerator: (T) -> Stri
 fun <V, T> HasItems<T>.bindItens(binder: Binder<V>, propertyList: String) {
   val hasValue = (this as? HasValue<*>)
   val itensOld: List<T>? = (this.dataProvider as? ListDataProvider<T>)?.items?.toList()
-  
+
   bind<V, Collection<T>>(binder, propertyList) {itens ->
     val oldValue = hasValue?.value
     if(itensOld != itens) {
       if(this is ComboBox<T>) setItems({itemCaption, filterText ->
-                                         itemCaption.toUpperCase()
-                                           .startsWith(filterText.toUpperCase())
+                                         itemCaption.toUpperCase().startsWith(filterText.toUpperCase())
                                        }, itens)
       else if(this is TwinColSelect<T>) setItems(itens)
       else setItems(itens)
@@ -191,8 +188,7 @@ private fun <BEAN, FIELDVALUE> bind(binder: Binder<BEAN>,
                                     property: String,
                                     blockBinder: (FIELDVALUE) -> Unit): Binding<BEAN, FIELDVALUE> {
   val field = ReadOnlyHasValue<FIELDVALUE> {itens -> blockBinder(itens)}
-  return field.bind(binder)
-    .bind(property)
+  return field.bind(binder).bind(property)
 }
 
 fun Binder<*>.reload() {
@@ -206,18 +202,15 @@ inline fun <reified BEAN: Any, FIELDVALUE> HasValue<FIELDVALUE>.reloadBinderOnCh
       val bean = binder.bean
       if(propertys.isEmpty()) {
         val bindings = BEAN::class.memberProperties.mapNotNull {prop ->
-          binder.getBinding(prop.name)
-            .orElse(null)
+          binder.getBinding(prop.name).orElse(null)
         }
-        binder.fields.toList()
-          .mapNotNull {field ->
-            bindings.find {binding ->
-              binding.field == field && binding.field != this
-            }
+        binder.fields.toList().mapNotNull {field ->
+          bindings.find {binding ->
+            binding.field == field && binding.field != this
           }
-          .forEach {binding ->
-            binding.read(bean)
-          }
+        }.forEach {binding ->
+          binding.read(bean)
+        }
       }
       else {
         reloadPropertys(binder, *propertys)
@@ -229,10 +222,9 @@ inline fun <reified BEAN: Any, FIELDVALUE> HasValue<FIELDVALUE>.reloadBinderOnCh
 fun <BEAN> reloadPropertys(binder: Binder<BEAN>, vararg propertys: KProperty1<BEAN, *>) {
   val bean = binder.bean
   propertys.forEach {prop ->
-    binder.getBinding(prop.name)
-      .ifPresent {binding ->
-        binding.read(bean)
-      }
+    binder.getBinding(prop.name).ifPresent {binding ->
+      binding.read(bean)
+    }
   }
 }
 
@@ -316,8 +308,7 @@ fun Window.showDialog() {
   //isTabStopEnabled=true
   tabIndex = -1
   addCloseShortcut(KeyCode.ESCAPE)
-  UI.getCurrent()
-    .addWindow(this)
+  UI.getCurrent().addWindow(this)
   center()
 }
 

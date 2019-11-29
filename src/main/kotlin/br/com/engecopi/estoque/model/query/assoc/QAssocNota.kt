@@ -18,12 +18,11 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Association query bean for AssocNota.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QAssocNota<R>(name: String, root: R): TQAssocBean<Nota, R>(name, root) {
-
   lateinit var id: PLong<R>
   lateinit var createdAt: PLocalDateTime<R>
   lateinit var updatedAt: PLocalDateTime<R>
@@ -60,7 +59,7 @@ class QAssocNota<R>(name: String, root: R): TQAssocBean<Nota, R>(name, root) {
   fun fetchQuery(vararg properties: TQProperty<QNota>): R {
     return fetchQueryProperties(*properties)
   }
-  
+
   /**
    * Use lazy loading for this association loading the specified properties.
    */

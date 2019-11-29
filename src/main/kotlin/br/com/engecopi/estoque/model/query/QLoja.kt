@@ -14,12 +14,11 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for Loja.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QLoja: TQRootBean<Loja, QLoja> {
-
   companion object {
     /**
      * shared 'Alias' instance used to provide
@@ -37,7 +36,7 @@ class QLoja: TQRootBean<Loja, QLoja> {
   lateinit var notas: QAssocNota<QLoja>
   lateinit var usuarios: QAssocUsuario<QLoja>
   lateinit var viewProdutoLoc: QAssocViewProdutoLoc<QLoja>
-  
+
   /**
    * Construct with a given Database.
    */

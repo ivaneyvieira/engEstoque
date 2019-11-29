@@ -16,12 +16,11 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for HistoricoEtiqueta.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QHistoricoEtiqueta: TQRootBean<HistoricoEtiqueta, QHistoricoEtiqueta> {
-
   companion object {
     /**
      * shared 'Alias' instance used to provide
@@ -41,7 +40,7 @@ class QHistoricoEtiqueta: TQRootBean<HistoricoEtiqueta, QHistoricoEtiqueta> {
   lateinit var print: PString<QHistoricoEtiqueta>
   lateinit var gtin: PString<QHistoricoEtiqueta>
   lateinit var gtinOk: PBoolean<QHistoricoEtiqueta>
-  
+
   /**
    * Construct with a given Database.
    */

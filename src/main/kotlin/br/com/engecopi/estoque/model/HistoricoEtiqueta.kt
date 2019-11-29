@@ -23,10 +23,8 @@ class HistoricoEtiqueta(
   var print: String, var gtin: String, var gtinOk: Boolean = true): BaseModel() {
   companion object Find: HistoricoEtiquetaFinder() {
     fun save(produto: Produto, gtin: String, print: String) {
-      val hist = HistoricoEtiqueta(usuario = RegistryUserInfo.usuarioDefault,
-                                   produto = produto,
-                                   print = print,
-                                   gtin = gtin)
+      val hist =
+        HistoricoEtiqueta(usuario = RegistryUserInfo.usuarioDefault, produto = produto, print = print, gtin = gtin)
       hist.save()
     }
   }

@@ -1,6 +1,5 @@
 package br.com.engecopi.estoque.ui.views.notaVendaFutura
 
-import br.com.astrosoft.utils.localDate
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.viewmodel.LocalizacaoVendaFutura
 import br.com.engecopi.estoque.viewmodel.entregaFutura.ItemVendaFutura
@@ -9,6 +8,7 @@ import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.row
 import br.com.engecopi.framework.ui.view.showDialog
 import br.com.engecopi.saci.beans.NotaProdutoSaci
+import br.com.engecopi.utils.localDate
 import com.github.mvysny.karibudsl.v8.VAlign.Right
 import com.github.mvysny.karibudsl.v8.addColumnFor
 import com.github.mvysny.karibudsl.v8.align
@@ -37,13 +37,12 @@ class DlgNotaFuturaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
                        val viewModel: NFVendaFuturaViewModel,
                        val execConfirma: (itens: List<ItemVendaFutura>) -> Unit): Window("Nota de Saída") {
   private lateinit var gridProdutos: Grid<LocalizacaoVendaFutura>
-  
+
   init {
     val nota = notaProdutoSaida.firstOrNull()
     verticalLayout {
-      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-        .px
-      
+      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
+
       grupo("Nota fiscal de saída") {
         verticalLayout {
           row {
@@ -55,14 +54,12 @@ class DlgNotaFuturaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
             textField("Loja") {
               expandRatio = 2f
               isReadOnly = true
-              value = viewModel.findLoja(nota?.storeno)
-                ?.sigla
+              value = viewModel.findLoja(nota?.storeno)?.sigla
             }
             textField("Tipo") {
               expandRatio = 2f
               isReadOnly = true
-              value = TipoNota.value(nota?.tipo)
-                ?.descricao
+              value = TipoNota.value(nota?.tipo)?.descricao
             }
             dateField("Data") {
               expandRatio = 1f
@@ -77,17 +74,16 @@ class DlgNotaFuturaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
           }
         }
       }
-      
+
       grupo("Localizações") {
         row {
           horizontalLayout {
             button("Confirma") {
               addStyleName(ValoTheme.BUTTON_PRIMARY)
               addClickListener {
-                val itens = gridProdutos.dataProvider.getAll()
-                  .flatMap {loc ->
-                    loc.itensVendaFutura.filter {it.selecionado}
-                  }
+                val itens = gridProdutos.dataProvider.getAll().flatMap {loc ->
+                  loc.itensVendaFutura.filter {it.selecionado}
+                }
                 execConfirma(itens)
                 close()
               }
@@ -104,31 +100,21 @@ class DlgNotaFuturaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
           gridProdutos = grid(LocalizacaoVendaFutura::class) {
             val itens = notaProdutoSaida
             val abreviacaoItens = itens.groupBy {item ->
-              val abreviacao = viewModel.abreviacoes(item.prdno, item.grade)
-                .sorted()
+              val abreviacao = viewModel.abreviacoes(item.prdno, item.grade).sorted()
               abreviacao
             }
-            val abreviacoes = abreviacaoItens.keys.asSequence()
-              .flatten()
-              .distinct()
-              .map {abrev ->
-                val itensVendaFutura = abreviacaoItens.filter {it.key.contains(abrev)}
-                  .map {it.value}
-                  .flatten()
-                  .distinct()
-                  .map {notaSaci ->
-                    val saldo = viewModel.saldoProduto(notaSaci, abrev)
-                    ItemVendaFutura(notaSaci, saldo, abrev)
-                  }
-                LocalizacaoVendaFutura(abrev, itensVendaFutura)
-              }
-              .toList()
-              .sortedBy {it.abreviacao}
-              .toList()
-            
+            val abreviacoes = abreviacaoItens.keys.asSequence().flatten().distinct().map {abrev ->
+              val itensVendaFutura =
+                abreviacaoItens.filter {it.key.contains(abrev)}.map {it.value}.flatten().distinct().map {notaSaci ->
+                  val saldo = viewModel.saldoProduto(notaSaci, abrev)
+                  ItemVendaFutura(notaSaci, saldo, abrev)
+                }
+              LocalizacaoVendaFutura(abrev, itensVendaFutura)
+            }.toList().sortedBy {it.abreviacao}.toList()
+
             this.dataProvider = ListDataProvider(abreviacoes)
             removeAllColumns()
-            
+
             setSizeFull()
             addComponentColumn {item ->
               Button().apply {

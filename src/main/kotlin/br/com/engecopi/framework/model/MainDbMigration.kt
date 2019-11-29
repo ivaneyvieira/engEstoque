@@ -14,7 +14,7 @@ fun main() {
   migration.setPlatform(Platform.MYSQL)
   System.setProperty("disableTestProperties", "true")
   migration.generateMigration()
-  
+
   println("done")
 }
 

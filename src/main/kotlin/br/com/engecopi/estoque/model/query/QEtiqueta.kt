@@ -15,12 +15,11 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for Etiqueta.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QEtiqueta: TQRootBean<Etiqueta, QEtiqueta> {
-
   companion object {
     /**
      * shared 'Alias' instance used to provide
@@ -38,7 +37,7 @@ class QEtiqueta: TQRootBean<Etiqueta, QEtiqueta> {
   lateinit var template: PString<QEtiqueta>
   lateinit var itensNota: QAssocItemNota<QEtiqueta>
   lateinit var etiquetaDefault: PBoolean<QEtiqueta>
-  
+
   /**
    * Construct with a given Database.
    */

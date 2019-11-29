@@ -32,55 +32,49 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class NFExpedicaoViewModel(view: INFExpedicaoView):
-  CrudViewModel<ViewNotaExpedicao, QViewNotaExpedicao, NFExpedicaoVo, INFExpedicaoView>(view) {
+class NFExpedicaoViewModel(view: INFExpedicaoView): CrudViewModel<ViewNotaExpedicao, QViewNotaExpedicao, NFExpedicaoVo, INFExpedicaoView>(
+  view) {
   override fun newBean(): NFExpedicaoVo {
     return NFExpedicaoVo()
   }
-  
+
   override fun update(bean: NFExpedicaoVo) {
     log?.error("Atualização não permitida")
   }
-  
+
   override fun add(bean: NFExpedicaoVo) {
     log?.error("Inserssão não permitida")
   }
-  
+
   override fun delete(bean: NFExpedicaoVo) {
     val nota = bean.findEntity() ?: return
     val saida = Nota.findSaida(nota.numero) ?: return
-    
-    ItemNota.where()
-      .nota.equalTo(saida)
-      .localizacao.startsWith(bean.abreviacao)
-      .delete()
+
+    ItemNota.where().nota.equalTo(saida).localizacao.startsWith(bean.abreviacao).delete()
   }
-  
+
   override val query: QViewNotaExpedicao
     get() = ViewNotaExpedicao.where().let {query ->
-      query.loja.id.eq(lojaDefault?.id)
-        .let {q ->
-          if(usuarioDefault.isEstoqueExpedicao) q.abreviacao.eq(abreviacaoDefault).filtroNotaSerie()
-          else q
-        }
+      query.loja.id.eq(lojaDefault?.id).let {q ->
+        if(usuarioDefault.isEstoqueExpedicao) q.abreviacao.eq(abreviacaoDefault).filtroNotaSerie()
+        else q
+      }
     }
-  
+
   private fun QViewNotaExpedicao.filtroNotaSerie(): QViewNotaExpedicao {
     val tipos = usuarioDefault.series.map {it.tipoNota}
     val queryOr = or()
     val querySeries = tipos.fold(queryOr) {q, tipo ->
       q.nota.tipoNota.eq(tipo)
     }
-    
+
     return querySeries.endOr()
   }
-  
+
   override fun QViewNotaExpedicao.orderQuery(): QViewNotaExpedicao {
-    return this.order()
-      .lancamento.desc()
-      .id.desc()
+    return this.order().lancamento.desc().id.desc()
   }
-  
+
   override fun ViewNotaExpedicao.toVO(): NFExpedicaoVo {
     val bean = this
     return NFExpedicaoVo().apply {
@@ -101,7 +95,7 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
       abreviacao = bean.abreviacao
     }
   }
-  
+
   fun processaKey(notasSaci: List<ItemExpedicao>) = execValue {
     if(notasSaci.all {it.isSave()}) throw EViewModel("Todos os itens dessa nota já estão lançados")
     val ret = if(notasSaci.isNotEmpty()) processaNota(notasSaci)
@@ -109,29 +103,27 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
     view.updateView()
     ret
   }
-  
+
   private fun processaNota(itensExpedicao: List<ItemExpedicao>): Nota? {
-    val loja = lojaDefault?.numero ?: return null
-    val notaDoSaci = itensExpedicao.firstOrNull()
-      ?.notaProdutoSaci
+    val loja = lojaDefault?.numero
+    val notaDoSaci = itensExpedicao.firstOrNull()?.notaProdutoSaci
     val lojaSaci = notaDoSaci?.storeno ?: throw EViewModel("Nota não encontrada")
     if(loja != lojaSaci) throw EViewModel("Esta nota pertence a loja $lojaSaci")
-    val nota: Nota? = Nota.createNota(notaDoSaci)
-      ?.let {
-        if(it.existe()) Nota.findSaida(it.numero)
-        else {
-          it.sequencia = Nota.maxSequencia() + 1
-          it.usuario = usuarioDefault
-          it.lancamentoOrigem = EXPEDICAO
-          it.save()
-          it
-        }
+    val nota: Nota? = Nota.createNota(notaDoSaci)?.let {
+      if(it.existe()) Nota.findSaida(it.numero)
+      else {
+        it.sequencia = Nota.maxSequencia() + 1
+        it.usuario = usuarioDefault
+        it.lancamentoOrigem = EXPEDICAO
+        it.save()
+        it
       }
+    }
     nota ?: throw EViewModel("Nota não encontrada")
     val itens = itensExpedicao.mapNotNull {itemExpedicao ->
       val notaSaci = itemExpedicao.notaProdutoSaci
       val item = ItemNota.find(notaSaci) ?: ItemNota.createItemNota(notaSaci, nota, itemExpedicao.abrevicao)
-      
+
       return@mapNotNull item?.apply {
         this.status = if(abreviacao?.expedicao == true) CONFERIDA else INCLUIDA
         this.impresso = false
@@ -142,20 +134,19 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
         if(this.status == CONFERIDA) this.recalculaSaldos()
       }
     }
-    
+
     if(itens.isEmpty()) throw EViewModel("Essa nota não possui itens com localização")
-    
-    crudBean = ViewNotaExpedicao.findExpedicao(nota)
-      ?.toVO()
-    
+
+    crudBean = ViewNotaExpedicao.findExpedicao(nota)?.toVO()
+
     return nota
   }
-  
+
   private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {
     if(usuarioDefault.isEstoqueExpedicao) return ""
     itemNota ?: return ""
-    //val tipoNota = itemNota.tipoNota ?: return ""
-    if(!etiqueta.imprimivel()) return ""
+    val tipoNota = itemNota.tipoNota ?: return ""
+    if(!etiqueta.imprimivel(tipoNota)) return ""
     val print = itemNota.printEtiqueta()
     itemNota.let {
       it.refresh()
@@ -164,7 +155,7 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
     }
     return print.print(etiqueta.template)
   }
-  
+
   fun imprimir(nota: Nota?) = execList<PacoteImpressao> {
     val ret = if(nota == null) emptyList()
     else {
@@ -184,37 +175,30 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
       }
       val text = imprimeItens(INCLUIDA, listaItens)
       val impressaoEXP = listOf(PacoteImpressao("EXP4", text))
-      
+
       impressaoCD + impressaoEXP
     }
     view.updateView()
     ret
   }
-  
+
   private fun imprimeItens(status: StatusNota, itens: List<ItemNota>): String {
     val etiquetas = Etiqueta.findByStatus(status)
     return etiquetas.joinToString(separator = "\n") {etiqueta ->
-      itens.map {imprimir(it, etiqueta)}
-        .distinct()
-        .joinToString(separator = "\n")
+      itens.map {imprimir(it, etiqueta)}.distinct().joinToString(separator = "\n")
     }
   }
-  
+
   fun imprimeTudo() = execString {
     val etiquetas = Etiqueta.findByStatus(INCLUIDA)
-    val itens = ItemNota.where()
-      .impresso.eq(false)
-      .status.eq(INCLUIDA)
-      .findList()
+    val itens = ItemNota.where().impresso.eq(false).status.eq(INCLUIDA).findList()
     val ret = etiquetas.joinToString(separator = "\n") {etiqueta ->
-      itens.map {item -> imprimir(item, etiqueta)}
-        .distinct()
-        .joinToString(separator = "\n")
+      itens.map {item -> imprimir(item, etiqueta)}.distinct().joinToString(separator = "\n")
     }
     view.updateView()
     ret
   }
-  
+
   fun findNotaSaidaKey(key: String) = execList {
     val notaSaci = when {
       key.length == 44 -> Nota.findNotaSaidaKey(key)
@@ -243,32 +227,32 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
     view.updateView()
     ret
   }
-  
+
   fun NotaProdutoSaci.notaSerie(): NotaSerie? {
     val tipo = TipoNota.value(tipo)
     return NotaSerie.findByTipo(tipo)
   }
-  
+
   fun findLoja(storeno: Int?): Loja? = Loja.findLoja(storeno)
-  
+
   fun abreviacoes(prdno: String?, grade: String?): List<String> {
     val produto = Produto.findProduto(prdno, grade) ?: return emptyList()
     return ViewProdutoLoc.abreviacoesProduto(produto)
   }
-  
+
   override fun QViewNotaExpedicao.filterString(text: String): QViewNotaExpedicao {
     return nota.numero.startsWith(text)
   }
-  
+
   override fun QViewNotaExpedicao.filterDate(date: LocalDate): QViewNotaExpedicao {
     return data.eq(date)
   }
-  
+
   fun saldoProduto(notaProdutoSaci: NotaProdutoSaci, abreviacao: String): Int {
     val produto = Produto.findProduto(notaProdutoSaci.codigo(), notaProdutoSaci.grade)
     return produto?.saldoAbreviacao(abreviacao) ?: 0
   }
-  
+
   fun processaVendas(venda: VendasCaixa) {
     val produto = Produto.findProduto(venda.prdno, venda.grade) ?: return
     val locacalizacoes = produto.viewProdutoLoc ?: return
@@ -280,7 +264,7 @@ class NFExpedicaoVo: EntityVo<ViewNotaExpedicao>() {
   override fun findEntity(): ViewNotaExpedicao? {
     return ViewNotaExpedicao.findSaida(numero, abreviacao)
   }
-  
+
   var numero: String = ""
   var tipoMov: TipoMov = ENTRADA
   var tipoNota: TipoNota? = null
@@ -301,16 +285,14 @@ class NFExpedicaoVo: EntityVo<ViewNotaExpedicao>() {
     get() = LocalDateTime.of(data, hora)
 }
 
-data class ItemExpedicao(val notaProdutoSaci: NotaProdutoSaci,
-                         val saldo: Int,
-                         val abrevicao: String,
+data class ItemExpedicao(val notaProdutoSaci: NotaProdutoSaci, val saldo: Int, val abrevicao: String,
                          var selecionado: Boolean = false) {
   val prdno = notaProdutoSaci.prdno
   val grade = notaProdutoSaci.grade
   val nome = notaProdutoSaci.nome
   val quant = notaProdutoSaci.quant ?: 0
   val saldoFinal = saldo - quant
-  
+
   fun isSave() = notaProdutoSaci.isSave()
 }
 

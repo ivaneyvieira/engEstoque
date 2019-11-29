@@ -1,4 +1,4 @@
-package br.com.astrosoft.utils
+package br.com.engecopi.utils
 
 import org.cups4j.CupsClient
 import org.cups4j.CupsPrinter
@@ -10,14 +10,14 @@ object CupsUtils {
     get() = cupsClient.printers.toList()
   val printersInfo
     get() = printers.filter {it.location != ""}.map {PrinterInfo(it)}
-  
+
   fun printerExists(printerName: String): Boolean {
     val impressoras = printers
     return impressoras.any {it.name == printerName}
   }
-  
+
   fun printer(printerName: String) = printers.firstOrNull {it.name == printerName}
-  
+
   @Throws(ECupsPrinter::class)
   fun CupsPrinter.printText(text: String, resultMsg: (String) -> Unit = {}) {
     val job = PrintJob.Builder(text.toByteArray())
@@ -29,18 +29,18 @@ object CupsUtils {
       throw ECupsPrinter("Erro de impressão")
     }
   }
-  
+
   fun CupsPrinter.printerTeste() {
     printText(etiqueta)
   }
-  
+
   @Throws(ECupsPrinter::class)
   fun printCups(impressora: String, text: String, resultMsg: (String) -> Unit = {}) {
-    val printer = printer(impressora)
-                  ?: throw ECupsPrinter("Impressora $impressora não está configurada no sistema operacional")
+    val printer =
+      printer(impressora) ?: throw ECupsPrinter("Impressora $impressora não está configurada no sistema operacional")
     printer.printText(text, resultMsg)
   }
-  
+
   private val etiqueta = """
     |^XA
     |^FT20,070^A0N,70,50^FH^FDNF ENTRADA:1212^FS

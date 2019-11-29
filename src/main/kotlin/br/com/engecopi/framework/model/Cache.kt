@@ -6,7 +6,7 @@ val mapCache = mutableMapOf<String, Any?>()
 
 open class Cache<T>(val initializer: () -> T?) {
   private var millisecond = System.currentTimeMillis()
-  
+
   protected fun composeKey(thisRef: Any?, property: KProperty<*>): String {
     val classe = thisRef?.javaClass?.simpleName
     return if(thisRef is BaseModel) {
@@ -17,18 +17,17 @@ open class Cache<T>(val initializer: () -> T?) {
       "$classe:${property.name}"
     }
   }
-  
+
   private fun calculeDelay(): Long {
     val currentTimeMillis = System.currentTimeMillis()
     val delay = currentTimeMillis - millisecond
     millisecond = System.currentTimeMillis()
     return delay
   }
-  
-  @Suppress("UNCHECKED_CAST")
+
   protected fun getValue(key: String): T? {
     val delay = calculeDelay()
-    
+
     return if(delay < 30000 && mapCache.containsKey(key)) {
       @Suppress("UNCHECKED_CAST") mapCache[key] as? T
     }

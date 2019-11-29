@@ -15,12 +15,11 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Association query bean for AssocHistoricoEtiqueta.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QAssocHistoricoEtiqueta<R>(name: String, root: R): TQAssocBean<HistoricoEtiqueta, R>(name, root) {
-
   lateinit var id: PLong<R>
   lateinit var createdAt: PLocalDateTime<R>
   lateinit var updatedAt: PLocalDateTime<R>
@@ -46,7 +45,7 @@ class QAssocHistoricoEtiqueta<R>(name: String, root: R): TQAssocBean<HistoricoEt
   fun fetchQuery(vararg properties: TQProperty<QHistoricoEtiqueta>): R {
     return fetchQueryProperties(*properties)
   }
-  
+
   /**
    * Use lazy loading for this association loading the specified properties.
    */

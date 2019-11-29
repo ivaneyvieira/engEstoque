@@ -1,7 +1,5 @@
 package br.com.engecopi.estoque.ui.views
 
-import br.com.astrosoft.utils.FileText
-import br.com.astrosoft.utils.ZPLPreview
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.viewmodel.EtiquetaViewModel
@@ -10,6 +8,8 @@ import br.com.engecopi.estoque.viewmodel.IEtiquetaView
 import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.default
 import br.com.engecopi.framework.ui.view.row
+import br.com.engecopi.utils.SystemUtils
+import br.com.engecopi.utils.ZPLPreview
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.alignment
 import com.github.mvysny.karibudsl.v8.bind
@@ -30,7 +30,7 @@ import com.vaadin.ui.renderers.TextRenderer
 @AutoView
 class EtiquetaView: CrudLayoutView<EtiquetaVo, EtiquetaViewModel>(), IEtiquetaView {
   private lateinit var template: TextArea
-  
+
   init {
     viewModel = EtiquetaViewModel(this)
     layoutForm {
@@ -60,7 +60,7 @@ class EtiquetaView: CrudLayoutView<EtiquetaVo, EtiquetaViewModel>(), IEtiquetaVi
             expandRatio = 1f
             icon = VaadinIcons.BOOK
             addClickListener {
-              showInfo(FileText("/html/variaveis.html").toString())
+              showInfo(SystemUtils.readFile("/html/variaveis.html") ?: "")
             }
           }
           button("Preview") {
@@ -70,7 +70,7 @@ class EtiquetaView: CrudLayoutView<EtiquetaVo, EtiquetaViewModel>(), IEtiquetaVi
             addClickListener {
               val zpl = template.value
               val image = ZPLPreview.createPdf(zpl, "4x2")
-              showImage("Preview", image)
+              if(image != null) showImage("Preview", image)
             }
           }
         }
@@ -98,7 +98,7 @@ class EtiquetaView: CrudLayoutView<EtiquetaVo, EtiquetaViewModel>(), IEtiquetaVi
       }
       column(EtiquetaVo::etiquetaDefault) {
         caption = "Padrão"
-        
+
         setRenderer({
                       when {
                         it == null -> ""

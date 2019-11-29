@@ -29,18 +29,17 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
   var formCodBar: PnlCodigoBarras? = null
   private val isAdmin
     get() = RegistryUserInfo.userDefaultIsAdmin
-  
+
   override fun enter(event: ViewChangeEvent) {
     super.enter(event)
     formCodBar?.focusEdit()
   }
-  
+
   init {
     viewModel = NFVendaFuturaViewModel(this)
     layoutForm {
       formLayout.apply {
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-          .px
+        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
         val nota = binder.bean
         grupo("Nota fiscal de saída") {
           verticalLayout {
@@ -110,8 +109,7 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
             refreshGrid()
           }
         }
-      }
-        .id = "btnPrint"
+      }.id = "btnPrint"
       column(NFVendaFuturaVo::loja) {
         caption = "Loja NF"
         setRenderer({loja ->
@@ -135,7 +133,7 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
         timeFormat()
         setSortProperty("data", "hora")
       }
-      
+
       column(NFVendaFuturaVo::dataEmissao) {
         caption = "Emissao"
         dateFormat()
@@ -161,7 +159,7 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
       }
     }
   }
-  
+
   private fun formCodbar(): PnlCodigoBarras {
     return PnlCodigoBarras("Chave da Nota Fiscal") {key ->
       val notaSaida = viewModel.findNotaSaidaKey(key)
@@ -177,7 +175,7 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
       }
     }
   }
-  
+
   private fun btnImprimeTudo(): Button {
     return Button("Imprime Etiquetas").apply {
       icon = PRINT

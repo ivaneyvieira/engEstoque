@@ -12,32 +12,31 @@ import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.viewmodel.INotaView
 import br.com.engecopi.estoque.viewmodel.NotaViewModel
 
-class EntregaFututaEditorViewModel(view: IEntregaFututaEditorView):
-  NotaViewModel<EntregaFututaVo, IEntregaFututaEditorView>(view, SAIDA, ENTREGUE, ENTREGUE, "") {
+class EntregaFututaEditorViewModel(view: IEntregaFututaEditorView): NotaViewModel<EntregaFututaVo, IEntregaFututaEditorView>(
+  view,
+  SAIDA,
+  ENTREGUE,
+  ENTREGUE,
+  "") {
   override fun newBean(): EntregaFututaVo {
     return EntregaFututaVo()
   }
-  
+
   override fun QItemNota.filtroTipoNota(): QItemNota {
     return this.nota.tipoNota.eq(VENDAF)
   }
-  
+
   override fun QItemNota.filtroStatus(): QItemNota {
-    return status.`in`(ENTREGUE, ENT_LOJA)
-      .nota.usuario.isNotNull.nota.sequencia.ne(0)
-      .let {q ->
-        if(usuarioDefault.isEstoqueExpedicao) q.localizacao.startsWith(abreviacaoDefault)
-        else q
-      }
+    return status.`in`(ENTREGUE, ENT_LOJA).nota.usuario.isNotNull.nota.sequencia.ne(0).let {q ->
+      if(usuarioDefault.isEstoqueExpedicao) q.localizacao.startsWith(abreviacaoDefault)
+      else q
+    }
   }
-  
+
   override fun createVo() = EntregaFututaVo()
-  
+
   fun notasConferidas(): List<EntregaFututaVo> {
-    return ItemNota.where()
-      .status.eq(CONFERIDA)
-      .findList()
-      .map {it.toVO()}
+    return ItemNota.where().status.eq(CONFERIDA).findList().map {it.toVO()}
   }
 }
 

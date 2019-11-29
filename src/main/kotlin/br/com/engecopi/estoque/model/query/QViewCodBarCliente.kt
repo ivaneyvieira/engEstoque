@@ -10,12 +10,11 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for ViewCodBarCliente.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QViewCodBarCliente: TQRootBean<ViewCodBarCliente, QViewCodBarCliente> {
-
   companion object {
     /**
      * shared 'Alias' instance used to provide
@@ -31,7 +30,7 @@ class QViewCodBarCliente: TQRootBean<ViewCodBarCliente, QViewCodBarCliente> {
   lateinit var storeno: PInteger<QViewCodBarCliente>
   lateinit var numero: PString<QViewCodBarCliente>
   lateinit var sequencia: PInteger<QViewCodBarCliente>
-  
+
   /**
    * Construct with a given Database.
    */

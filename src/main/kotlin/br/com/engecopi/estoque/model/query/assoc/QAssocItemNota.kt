@@ -17,12 +17,11 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Association query bean for AssocItemNota.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QAssocItemNota<R>(name: String, root: R): TQAssocBean<ItemNota, R>(name, root) {
-
   lateinit var id: PLong<R>
   lateinit var createdAt: PLocalDateTime<R>
   lateinit var updatedAt: PLocalDateTime<R>
@@ -56,7 +55,7 @@ class QAssocItemNota<R>(name: String, root: R): TQAssocBean<ItemNota, R>(name, r
   fun fetchQuery(vararg properties: TQProperty<QItemNota>): R {
     return fetchQueryProperties(*properties)
   }
-  
+
   /**
    * Use lazy loading for this association loading the specified properties.
    */

@@ -19,12 +19,11 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for ViewNotaExpedicao.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QViewNotaExpedicao: TQRootBean<ViewNotaExpedicao, QViewNotaExpedicao> {
-
   companion object {
     /**
      * shared 'Alias' instance used to provide
@@ -53,7 +52,7 @@ class QViewNotaExpedicao: TQRootBean<ViewNotaExpedicao, QViewNotaExpedicao> {
   lateinit var sequencia: PInteger<QViewNotaExpedicao>
   lateinit var usuario: QAssocUsuario<QViewNotaExpedicao>
   lateinit var abreviacao: PString<QViewNotaExpedicao>
-  
+
   /**
    * Construct with a given Database.
    */

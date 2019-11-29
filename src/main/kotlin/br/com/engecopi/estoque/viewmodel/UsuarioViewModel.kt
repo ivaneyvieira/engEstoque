@@ -13,19 +13,17 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
   override fun newBean(): UsuarioCrudVo {
     return UsuarioCrudVo()
   }
-  
+
   private val queryProduto get() = Produto.where()
-  
+
   fun findProduto(offset: Int, limit: Int): List<Produto> {
-    return queryProduto.setFirstRow(offset)
-      .setMaxRows(limit)
-      .findList()
+    return queryProduto.setFirstRow(offset).setMaxRows(limit).findList()
   }
-  
+
   fun countProduto(): Int {
     return queryProduto.findCount()
   }
-  
+
   override fun update(bean: UsuarioCrudVo) {
     bean.entityVo?.let {usuario ->
       val loginName = bean.loginName ?: ""
@@ -42,7 +40,7 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
       usuario.update()
     }
   }
-  
+
   override fun add(bean: UsuarioCrudVo) {
     val usuario = Usuario().apply {
       this.loginName = bean.loginName ?: ""
@@ -58,10 +56,10 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
     }
     usuario.insert()
   }
-  
+
   override val query: QUsuario
     get() = Usuario.where().loginName.`in`(Usuario.findLoginUser())
-  
+
   override fun Usuario.toVO(): UsuarioCrudVo {
     val usuario = this
     return UsuarioCrudVo().apply {
@@ -78,16 +76,15 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
       this.etiqueta = usuario.etiqueta
     }
   }
-  
+
   override fun QUsuario.filterString(text: String): QUsuario {
     return loginName.contains(text)
   }
-  
+
   override fun delete(bean: UsuarioCrudVo) {
-    Usuario.findUsuario(bean.loginName ?: "")
-      ?.delete()
+    Usuario.findUsuario(bean.loginName ?: "")?.delete()
   }
-  
+
   val lojas
     get() = Loja.all()
   val produtos: List<Produto>
@@ -98,16 +95,14 @@ class UsuarioCrudVo: EntityVo<Usuario>() {
   override fun findEntity(): Usuario? {
     return Usuario.findUsuario(loginName)
   }
-  
+
   var loginName: String? = ""
   var impressora: String? = ""
   var loja: Loja? = null
     set(value) {
       field = value
       locaisLoja.clear()
-      val sets = value?.findAbreviacores()
-        .orEmpty()
-        .toMutableSet()
+      val sets = value?.findAbreviacores().orEmpty().toMutableSet()
       locaisLoja.addAll(sets)
     }
   val nome
@@ -124,7 +119,7 @@ class UsuarioCrudVo: EntityVo<Usuario>() {
   var etiqueta = false
   val tipoUsuarioStr
     get() = tiposUsuario().joinToString(separator = "/")
-  
+
   private fun tiposUsuario(): List<String> {
     val tipos = mutableListOf<String>()
     if(admin == true) tipos.add("Administrado")
@@ -133,7 +128,7 @@ class UsuarioCrudVo: EntityVo<Usuario>() {
       if(expedicao) tipos.add("Expedicao")
       if(entregaFutura) tipos.add("Entrega Futura")
     }
-    
+
     return tipos
   }
 }

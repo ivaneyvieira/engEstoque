@@ -24,9 +24,9 @@ import kotlin.reflect.KProperty
  */
 class SessionScoped<out R>(private val clazz: Class<R>): ReadOnlyProperty<Any?, R> {
   override fun getValue(thisRef: Any?, property: KProperty<*>): R = getOrCreate()
-  
+
   private fun getOrCreate(): R = checkUIThread().session.getOrCreate()
-  
+
   private fun VaadinSession.getOrCreate(): R {
     var result: R? = getAttribute(clazz)
     if(result == null) {
@@ -54,23 +54,22 @@ object Session {
   /**
    * Returns the current [VaadinSession]; fails if there is no session, most probably since we are not in the UI thread.
    */
-  val current: VaadinSession
-    get() = VaadinSession.getCurrent() ?: throw IllegalStateException("Not in UI thread")
-  
+  val current: VaadinSession get() = VaadinSession.getCurrent() ?: throw IllegalStateException("Not in UI thread")
+
   /**
    * Returns the attribute stored in this session under given key.
    * @param key the key
    * @return the attribute value, may be null
    */
   operator fun get(key: String): Any? = current.getAttribute(key)
-  
+
   /**
    * Returns the attribute stored in this session under given key.
    * @param key the key
    * @return the attribute value, may be null
    */
   operator fun <T: Any> get(key: KClass<T>): T? = current.getAttribute(key.java)
-  
+
   /**
    * Stores given value under given key in a session. Removes the mapping if value is null
    * @param key the key
@@ -84,7 +83,7 @@ object Session {
       current.unlock()
     }
   }
-  
+
   /**
    * Stores given value under given key in a session. Removes the mapping if value is null
    * @param key the key
@@ -116,7 +115,7 @@ object Cookies {
    * @return cookie or null if there is no such cookie.
    */
   operator fun get(name: String): Cookie? = currentRequest.cookies?.firstOrNull {it.name == name}
-  
+
   /**
    * Overwrites given cookie, or deletes it.
    * @param name cookie name

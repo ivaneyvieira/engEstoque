@@ -16,12 +16,12 @@ class ETLTransferenciaAutomatica: ETL<TransferenciaAutomatica>() {
     |    storenoTransf=:storenoTransf, 
     |    nftransf=:nftransf 
     |WHERE id = :id""".trimMargin()
-  
+
   companion object: ETLThread<TransferenciaAutomatica>(ETLTransferenciaAutomatica()) {
     val sql = "SELECT * FROM t_transferencia_automatica"
-    
+
     override fun getSource() = saci.findTransferenciaAutomatica()
-    
+
     override fun getTarget() = DB.findDto(TransferenciaAutomatica::class.java, sql).findList()
   }
 }

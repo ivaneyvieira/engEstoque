@@ -20,12 +20,11 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for ItemNota.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QItemNota: TQRootBean<ItemNota, QItemNota> {
-
   companion object {
     /**
      * shared 'Alias' instance used to provide
@@ -53,7 +52,7 @@ class QItemNota: TQRootBean<ItemNota, QItemNota> {
   lateinit var codigoBarraCliente: PString<QItemNota>
   lateinit var codigoBarraConferencia: PString<QItemNota>
   lateinit var codigoBarraEntrega: PString<QItemNota>
-  
+
   /**
    * Construct with a given Database.
    */

@@ -17,12 +17,11 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Association query bean for AssocViewNotaExpedicao.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QAssocViewNotaExpedicao<R>(name: String, root: R): TQAssocBean<ViewNotaExpedicao, R>(name, root) {
-
   lateinit var id: PLong<R>
   lateinit var createdAt: PLocalDateTime<R>
   lateinit var updatedAt: PLocalDateTime<R>
@@ -57,7 +56,7 @@ class QAssocViewNotaExpedicao<R>(name: String, root: R): TQAssocBean<ViewNotaExp
   fun fetchQuery(vararg properties: TQProperty<QViewNotaExpedicao>): R {
     return fetchQueryProperties(*properties)
   }
-  
+
   /**
    * Use lazy loading for this association loading the specified properties.
    */

@@ -22,7 +22,7 @@ class ViewCodBarEntrega {
   val codigo: String = ""
   val grade: String = ""
   val quantidade: Int = 0
-  
+
   companion object Find: ViewCodBarEntregaFinder() {
     fun findNota(key: String): ItemNota? {
       val id = where().codbar.eq(key).findList().firstOrNull()?.id ?: return null

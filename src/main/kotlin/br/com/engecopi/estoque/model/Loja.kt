@@ -25,7 +25,7 @@ class Loja: BaseModel() {
   val usuarios: List<Usuario>? = null
   @OneToMany(mappedBy = "loja", cascade = [REFRESH])
   var viewProdutoLoc: List<ViewProdutoLoc>? = null
-  
+
   companion object Find: LojaFinder() {
     fun findLoja(storeno: Int?): Loja? {
       return if(storeno == 0 || storeno == null) null
@@ -38,35 +38,27 @@ class Loja: BaseModel() {
              loja
            }
     }
-    
+
     fun lojaSaldo(): List<Loja> {
       val loja = RegistryUserInfo.lojaDefault ?: return emptyList()
-      return where().notas.id.gt(0)
-        .findList()
-        .filter {it.id == loja.id}
+      return where().notas.id.gt(0).findList().filter {it.id == loja?.id}
     }
-    
+
     fun carregasLojas() {
-      saci.findLojas(0)
-        .forEach {lojaSaci ->
-          lojaSaci.storeno?.let {storeno ->
-            val loja = Loja.findLoja(storeno)
-            if(loja == null) {
-              Loja().apply {
-                numero = storeno
-              }
-                .insert()
-            }
+      saci.findLojas(0).forEach {lojaSaci ->
+        lojaSaci.storeno?.let {storeno ->
+          val loja = Loja.findLoja(storeno)
+          if(loja == null) {
+            Loja().apply {
+              numero = storeno
+            }.insert()
           }
         }
+      }
     }
   }
-  
+
   fun findAbreviacores(): List<String> {
-    return Repositories.findByLoja(this)
-      .asSequence()
-      .map {it.abreviacao}
-      .distinct()
-      .toList()
+    return Repositories.findByLoja(this).asSequence().map {it.abreviacao}.distinct().toList()
   }
 }

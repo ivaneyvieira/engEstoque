@@ -14,12 +14,11 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for Usuario.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QUsuario: TQRootBean<Usuario, QUsuario> {
-
   companion object {
     /**
      * shared 'Alias' instance used to provide
@@ -43,7 +42,7 @@ class QUsuario: TQRootBean<Usuario, QUsuario> {
   lateinit var expedicao: PBoolean<QUsuario>
   lateinit var entregaFutura: PBoolean<QUsuario>
   lateinit var etiqueta: PBoolean<QUsuario>
-  
+
   /**
    * Construct with a given Database.
    */

@@ -15,14 +15,14 @@ class ConnectionFilter: Filter {
   override fun init(arg0: FilterConfig) {
     //Vazio
   }
-  
+
   @Throws(IOException::class, ServletException::class)
   override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
     Transaction.execTransacao {
       chain.doFilter(request, response)
     }
   }
-  
+
   override fun destroy() {
     //Vazio
   }

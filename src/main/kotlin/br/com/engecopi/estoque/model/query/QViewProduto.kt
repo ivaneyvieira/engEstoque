@@ -12,12 +12,11 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for ViewProduto.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
 class QViewProduto: TQRootBean<ViewProduto, QViewProduto> {
-
   companion object {
     /**
      * shared 'Alias' instance used to provide
@@ -39,7 +38,7 @@ class QViewProduto: TQRootBean<ViewProduto, QViewProduto> {
   lateinit var alt: PInteger<QViewProduto>
   lateinit var cubagem: PDouble<QViewProduto>
   lateinit var produto: QAssocProduto<QViewProduto>
-  
+
   /**
    * Construct with a given Database.
    */
