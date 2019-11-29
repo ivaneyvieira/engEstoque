@@ -116,7 +116,12 @@ dependencies {
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.4.2")
   //Libs
   //implementation("com.github.ivaneyvieira:kotlin-utils:master-SNAPSHOT")
-  implementation("br.com.astrosoft:kotlin-utils:1.0")
+  //implementation("br.com.astrosoft:kotlin-utils:1.0")
+  
+  //Biblioteca para o utilitário
+  implementation("org.cups4j:cups4j:0.7.6")
+  implementation("org.imgscalr:imgscalr-lib:4.2")
+  implementation("khttp:khttp:1.0.0")
 }
 
 
