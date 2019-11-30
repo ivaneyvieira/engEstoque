@@ -163,6 +163,7 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
   private fun formCodbar(): PnlCodigoBarras {
     return PnlCodigoBarras("Chave da Nota Fiscal") {key ->
       val notaSaida = viewModel.findNotaSaidaKey(key)
+  
       if(notaSaida.isNotEmpty()) {
         val dialog = DlgNotaFuturaLoc(notaSaida, viewModel) {itens ->
           val nota = viewModel.processaKey(itens)

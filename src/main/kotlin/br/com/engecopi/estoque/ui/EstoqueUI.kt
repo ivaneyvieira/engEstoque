@@ -145,8 +145,8 @@ class EstoqueUI: UI() {
 
     setErrorHandler {e -> errorHandler(e)}
     val contextPathDeafualt = when {
-      user.roleExpedicao() && contextPath == "" -> NFVendaFuturaView::class.java.toViewName()
-      user.roleFutura() && contextPath == ""    -> NFExpedicaoView::class.java.toViewName()
+      user.roleExpedicao() && contextPath == "" -> NFExpedicaoView::class.java.toViewName()
+      user.roleFutura() && contextPath == ""    -> NFVendaFuturaView::class.java.toViewName()
       else                                      -> contextPath
     }
 
