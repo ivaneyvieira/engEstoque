@@ -5,6 +5,9 @@ import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
+import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.viewmodel.INotaView
 import br.com.engecopi.estoque.viewmodel.NotaViewModel
 import br.com.engecopi.estoque.viewmodel.NotaVo
@@ -45,10 +48,10 @@ import org.vaadin.patrik.FastNavigation
 
 abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: CrudLayoutView<VO, MODEL>() {
   lateinit var gridProduto: Grid<ProdutoVO>
-  val lojaDefault = RegistryUserInfo.lojaDefault
-  val usuario = RegistryUserInfo.usuarioDefault
+  val lojaDefault = lojaUsuario ?: lojaDeposito
+  val usuario = usuarioDefault
   val isAdmin = usuario.admin
-
+  
   inline fun <reified V: NotaVo> (@VaadinDsl HasComponents).notaFiscalField(operation: CrudOperation?,
                                                                             binder: Binder<V>): TextField {
     return textField("Nota Fiscal") {

@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.viewmodel
 
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
 import br.com.engecopi.estoque.model.dtos.PedidoSaci
 import br.com.engecopi.estoque.model.etlSaci.ETLPedidos
 import br.com.engecopi.framework.viewmodel.IView
@@ -10,15 +11,17 @@ import br.com.engecopi.utils.localDate
 
 class PedidoTransferenciaViewModel(view: IPedidoTransferenciaView): ViewModel<IPedidoTransferenciaView>(view) {
   val pedidosTransferencia = mutableListOf<PedidoTransferenciaVo>()
-
+  
   init {
     refresh()
   }
-
+  
   fun refresh() = exec {
     pedidosTransferencia.clear()
-    val storeno = RegistryUserInfo.lojaDefault?.numero
-    val notas = ETLPedidos.listDados.filter {pedido -> RegistryUserInfo.abreviacaoDefault == pedido.abreviacao}
+    val storeno = lojaUsuario?.numero
+    val notas = ETLPedidos.listDados.filter {pedido ->
+      RegistryUserInfo.abreviacaoDefault == pedido.abreviacao
+    }
       .map {PedidoTransferenciaVo(it)}
     pedidosTransferencia.addAll(notas)
     view.updateView()

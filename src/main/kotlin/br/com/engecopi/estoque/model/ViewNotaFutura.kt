@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.model
 
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.finder.ViewNotaFuturaFinder
 import br.com.engecopi.framework.model.BaseModel
@@ -40,21 +41,31 @@ class ViewNotaFutura: BaseModel() {
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var usuario: Usuario? = null
   var abreviacao: String? = ""
-
+  
   companion object Find: ViewNotaFuturaFinder() {
     fun findSaida(numero: String?, abreviacao: String?): ViewNotaFutura? {
       numero ?: return null
       abreviacao ?: return null
-      return where().numero.eq(numero).loja.equalTo(RegistryUserInfo.lojaDefault).abreviacao.eq(abreviacao).findList()
+      val loja = lojaUsuario ?: RegistryUserInfo.lojaDeposito ?: return null
+      return where().numero.eq(numero)
+        .loja.equalTo(loja)
+        .abreviacao.eq(abreviacao)
+        .findList()
         .firstOrNull()
     }
-
+    
     fun findNotaFutura(nota: Nota): ViewNotaFutura? {
-      return where().numero.eq(nota.numero).loja.equalTo(nota.loja).findList().firstOrNull()
+      return where().numero.eq(nota.numero)
+        .loja.equalTo(nota.loja)
+        .findList()
+        .firstOrNull()
     }
   }
-
+  
   fun findItens(): List<ItemNota> {
-    return ItemNota.where().nota.id.eq(nota?.id).localizacao.startsWith(abreviacao).findList()
+    return ItemNota.where()
+      .nota.id.eq(nota?.id)
+      .localizacao.startsWith(abreviacao)
+      .findList()
   }
 }

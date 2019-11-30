@@ -7,7 +7,7 @@ import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.NotaItens
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
@@ -21,29 +21,26 @@ import br.com.engecopi.utils.mid
 import java.time.LocalDate
 import java.time.LocalTime
 
-class SaidaViewModel(view: ISaidaView): NotaViewModel<SaidaVo, ISaidaView>(view,
-                                                                           SAIDA,
-                                                                           ENTREGUE,
-                                                                           CONFERIDA,
-                                                                           abreviacaoDefault) {
+class SaidaViewModel(view: ISaidaView):
+  NotaViewModel<SaidaVo, ISaidaView>(view, SAIDA, ENTREGUE, CONFERIDA, abreviacaoDefault) {
   override fun newBean(): SaidaVo {
     return SaidaVo()
   }
-
+  
   override fun QItemNota.filtroTipoNota(): QItemNota {
     return this
   }
-
+  
   override fun QItemNota.filtroStatus(): QItemNota {
     return status.`in`(ENTREGUE, CONFERIDA)
   }
-
+  
   override fun add(bean: SaidaVo) {
     //Não faze nada
   }
-
+  
   override fun createVo() = SaidaVo()
-
+  
   fun processaKey(key: String) = execValue {
     val notaItens = processaKeyNumeroNota(key)
     val ret = if(notaItens.vazio) processaKeyBarcodeConferencia(key)
@@ -51,18 +48,20 @@ class SaidaViewModel(view: ISaidaView): NotaViewModel<SaidaVo, ISaidaView>(view,
     view.updateView()
     ret
   }
-
+  
   private fun processaKeyNumero(numeroNota: String): NotaItens {
-    val notasSaci = Nota.findNotaSaidaSaci(numeroNota).filter {loc ->
-      loc.localizacaoes().any {it.abreviacao == abreviacaoDefault}
-    }
+    val notasSaci = Nota.findNotaSaidaSaci(numeroNota)
+      .filter {loc ->
+        loc.localizacaoes()
+          .any {it.abreviacao == abreviacaoDefault}
+      }
     val notaSaci = notasSaci.firstOrNull() ?: return NotaItens.VAZIO
     return if(usuarioDefault.isTipoCompativel(notaSaci.tipoNota())) Nota.createNotaItens(notasSaci).apply {
       this.nota?.lancamentoOrigem = DEPOSITO
     }
     else NotaItens.VAZIO
   }
-
+  
   private fun processaKeyBarcodeConferencia(key: String): NotaItens {
     val item = ViewCodBarConferencia.findNota(key) ?: return NotaItens.VAZIO
     if(item.abreviacao != abreviacaoDefault) throw EViewModel("Esta nota não pertence ao cd $abreviacaoDefault")
@@ -70,24 +69,25 @@ class SaidaViewModel(view: ISaidaView): NotaViewModel<SaidaVo, ISaidaView>(view,
     if(nota.lancamentoOrigem != EXPEDICAO) throw EViewModel("Essa nota não foi lançada pela a expedição")
     return NotaItens(nota, nota.itensNota())
   }
-
+  
   private fun processaKeyNumeroNota(key: String): NotaItens {
     val loja = if(key.isNotEmpty()) key.mid(0, 1).toIntOrNull() ?: return NotaItens.VAZIO
     else return NotaItens.VAZIO
-    if(loja != lojaDefault?.numero) return NotaItens.VAZIO
+    if(loja != lojaUsuario?.numero) return NotaItens.VAZIO
     val numero = if(key.length > 1) key.mid(1) else return NotaItens.VAZIO
     val notaItem = processaKeyNumero(numero)
     return if(notaItem.nota?.tipoNota == VENDAF) NotaItens.VAZIO
     else notaItem
   }
-
+  
   fun confirmaProdutos(itens: List<ProdutoVO>, situacao: StatusNota) = execList<ItemNota> {
-    itens.firstOrNull()?.value?.nota?.save()
+    itens.firstOrNull()
+      ?.value?.nota?.save()
     val listMultable = mutableListOf<ItemNota>()
     itens.forEach {produtoVO ->
       produtoVO.value?.run {
         if(this.id != 0L) refresh()
-
+        
         this.status = situacao
         this.impresso = false
         this.usuario = usuarioDefault
@@ -107,7 +107,7 @@ class SaidaViewModel(view: ISaidaView): NotaViewModel<SaidaVo, ISaidaView>(view,
     view.updateView()
     listMultable
   }
-
+  
   fun processaBarcodeProduto(barcode: String?): List<Produto> {
     return if(barcode.isNullOrBlank()) emptyList()
     else Produto.findBarcode(barcode)

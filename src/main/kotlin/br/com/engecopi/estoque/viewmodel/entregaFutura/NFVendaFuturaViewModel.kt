@@ -7,8 +7,6 @@ import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.NotaSerie
 import br.com.engecopi.estoque.model.Produto
-import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
@@ -62,14 +60,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
   
   override val query: QViewNotaFutura
     get() = ViewNotaFutura.where().let {query ->
-      query.or()
-        //.loja.id.eq(lojaDefault.id)
-        .nota.tipoNota.eq(VENDAF)
-        .endOr()
-        .let {q ->
-          if(usuarioDefault.isEstoqueVendaFutura) q.abreviacao.eq(abreviacaoDefault).filtroNotaSerie()
-          else q
-        }
+      query.nota.tipoNota.eq(VENDAF)
     }
   
   private fun QViewNotaFutura.filtroNotaSerie(): QViewNotaFutura {
@@ -117,7 +108,6 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
   }
   
   private fun processaNota(itensVendaFutura: List<ItemVendaFutura>): Nota? {
-    val loja = lojaDefault?.numero ?: return null
     val notaDoSaci = itensVendaFutura.firstOrNull()
       ?.notaProdutoSaci
     val lojaSaci = notaDoSaci?.storeno ?: throw EViewModel("Nota não encontrada")

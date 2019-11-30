@@ -90,7 +90,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
   var queryOnly: Boolean = false
     set(value) {
       field = value
-
+  
       findAllButton.isVisible = true
       addButton.isVisible = !value
       updateButton.isVisible = !value
@@ -100,7 +100,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
   var addOnly: Boolean = false
     set(value) {
       field = value
-
+  
       findAllButton.isVisible = true
       addButton.isVisible = true
       updateButton.isVisible = !value
@@ -110,7 +110,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
   var reloadOnly: Boolean = false
     set(value) {
       field = value
-
+  
       findAllButton.isVisible = true
       addButton.isVisible = !value
       updateButton.isVisible = !value
@@ -125,7 +125,8 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
   val count = CallbackDataProvider.CountCallback<C, String> {query ->
     countQuery(query)
   }
-  private val dataLazyFilterProvider = DataProvider.fromFilteringCallbacks(find, count).withConfigurableFilter()
+  val dataLazyFilterProvider = DataProvider.fromFilteringCallbacks(find, count)
+    .withConfigurableFilter()
   private val filtroEdt = TextField("Pesquisa") {
     val value = if(it.value.isNullOrBlank()) null else it.value
     dataLazyFilterProvider.setFilter(value)
@@ -135,34 +136,34 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
     GridEditorColumnFix(this)
     setSizeFull()
     addSelectionListener {gridSelectionChanged()}
-
+    
     this.addGlobalShortcutListener(ENTER) {
       if(this.selectedItems.isNotEmpty()) if(updateButton.isVisible) updateButtonClicked()
       else readButtonClicked()
     }
-
+    
     this.addItemClickListener {e ->
       when {
         e.mouseEventDetails.isDoubleClick && !this.asSingleSelect().isEmpty -> if(updateButton.isVisible) updateButtonClicked()
         else readButtonClicked()
       }
     }
-
+    
     this.dataProvider = dataLazyFilterProvider
   }
-
+  
   override fun form(titleForm: String, block: (@VaadinDsl VerticalLayout).() -> Unit) {
     form(titleForm)
   }
-
+  
   fun form(titleForm: String) {
     super.form(titleForm) {
       headerLayout.isSpacing = true
       headerLayout.defaultComponentAlignment = BOTTOM_LEFT
-
+  
       toolbarLayout.addStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP)
       headerLayout.addComponent(toolbarLayout)
-
+  
       filterLayout.isSpacing = true
       headerLayout.addComponent(filterLayout)
       addFilterComponent(filtroEdt)
@@ -171,24 +172,24 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
       this.addComponentsAndExpand(grid)
     }
   }
-
+  
   init {
     this.setSizeFull()
     this.setMargin(false)
     this.isSpacing = true
-
+    
     windowCaptions[ADD] = "Adicionar"
     windowCaptions[UPDATE] = "Atualisar"
     windowCaptions[DELETE] = "Apagar"
-
+    
     updateButtons()
   }
-
+  
   override fun attach() {
     super.attach()
     refreshGrid()
   }
-
+  
   var addOperationVisible
     get() = addButton.isVisible
     set(value) {
@@ -209,21 +210,26 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
     set(value) {
       findAllButton.isVisible = value
     }
-
+  
   fun refreshGrid() {
-    grid.dataProvider?.refreshAll()
+    grid.dataProvider = dataLazyFilterProvider
+    val value = if(filtroEdt?.value.isNullOrBlank()) null else filtroEdt?.value
+    dataLazyFilterProvider.setFilter("$value 1")
+    dataLazyFilterProvider.refreshAll()
+    dataLazyFilterProvider.setFilter(value)
+    dataLazyFilterProvider.refreshAll()
   }
-
+  
   private fun updateButtons() {
     val rowSelected = !(grid.asSingleSelect()?.isEmpty ?: true)
     updateButton.isEnabled = rowSelected
     deleteButton.isEnabled = rowSelected
   }
-
+  
   fun layoutForm(crudForm: CrudForm<C>.() -> Unit) {
     this.layoutForm = crudForm
   }
-
+  
   fun buildNewForm(operation: CrudOperation,
                    domainObject: C,
                    readOnly: Boolean,
@@ -236,20 +242,21 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
                     operationButtonClickListener,
                     layoutForm)
   }
-
+  
   private fun gridSelectionChanged() {
     updateButtons()
   }
-
+  
   protected fun findAllButtonClicked() {
-    grid.asSingleSelect()?.clear()
+    grid.asSingleSelect()
+      ?.clear()
     refreshGrid()
   }
-
+  
   fun itemContains(item: C?): Boolean {
     return false
   }
-
+  
   private fun readButtonClicked() {
     val domainObject = grid.asSingleSelect()?.value ?: return
     showForm(READ, domainObject, true, savedMessage) {
@@ -257,11 +264,11 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
       viewModel.read()
     }
   }
-
+  
   open fun processAdd(domainObject: C) {
     // vazio
   }
-
+  
   private fun addButtonClicked() {
     viewModel.cleanBean()
     val domainObject = viewModel.crudBean ?: return
@@ -271,7 +278,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
       processAdd(domainObject)
     }
   }
-
+  
   fun updateButtonClicked() {
     val domainObject = grid.asSingleSelect()?.value ?: return
     showForm(UPDATE, domainObject, false, savedMessage) {
@@ -279,7 +286,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
       viewModel.update()
     }
   }
-
+  
   fun deleteButtonClicked() {
     val domainObject = grid.asSingleSelect()?.value ?: return
     showForm(DELETE, domainObject, true, deletedMessage) {
@@ -287,11 +294,11 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
       viewModel.delete()
     }
   }
-
+  
   open fun stillShow() {
     //vazio
   }
-
+  
   fun showForm(operation: CrudOperation,
                domainObject: C,
                readOnly: Boolean,
@@ -313,40 +320,43 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
       }
       if(viewModel.resultadoOK) Notification.show(successMessage)
     }
-
+    
     fun cancel(form: CrudForm<C>) {
-      val selected = grid.asSingleSelect()?.value
+      val selected = grid.asSingleSelect()
+        ?.value
       hideForm()
-      grid.asSingleSelect()?.clear()
-      grid.asSingleSelect()?.value = selected
+      grid.asSingleSelect()
+        ?.clear()
+      grid.asSingleSelect()
+        ?.value = selected
     }
-
+    
     val form = buildNewForm(operation, domainObject, readOnly, ::cancel, ::operation)
-
+    
     showForm(operation, form)
   }
-
+  
   fun addCustomToolBarComponent(customToolBarComponent: Component) {
     addToolbarComponent(customToolBarComponent)
   }
-
+  
   fun addCustomFormComponent(customFormComponent: Component?) {
     customFormComponent ?: return
     addFormComponent(customFormComponent)
   }
-
+  
   fun addFilterComponent(component: Component) {
     filterLayout.addComponent(component)
   }
-
+  
   fun addToolbarComponent(component: Component) {
     toolbarLayout.addComponent(component)
   }
-
+  
   fun addFormComponent(component: Component) {
     headerLayout.addComponentsAndExpand(component)
   }
-
+  
   fun showWindow(caption: String?, form: Component) {
     val windowLayout = VerticalLayout(form)
     //windowLayout.setWidth("100%")
@@ -362,30 +372,32 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
       this.isModal = true
       this.center()
     }
-
-    UI.getCurrent().addWindow(formWindow)
+    
+    UI.getCurrent()
+      .addWindow(formWindow)
   }
-
+  
   fun showForm(operation: CrudOperation, form: Component) {
     //if(operation != READ) {
     showWindow(windowCaptions[operation], form)
     //}
   }
-
+  
   fun hideForm() {
     formWindow?.close()
   }
-
+  
   private fun findQuery(query: Query<C, String>): Stream<C> {
     viewModel.updateQueryView(query.viewQuery())
-    return viewModel.findQuery().stream()
+    return viewModel.findQuery()
+      .stream()
   }
-
+  
   private fun countQuery(query: Query<C, String>): Int {
     viewModel.updateQueryView(query.viewQuery())
     return viewModel.countQuery()
   }
-
+  
   fun HasComponents.gridCrud(block: Grid<C>.() -> Unit = {}): Grid<C> {
     setSizeFull()
     grid.removeAllColumns()
@@ -394,20 +406,20 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
       block()
     }
   }
-
+  
   fun <T> Grid<C>.column(property: KProperty1<C, T>, block: Column<C, T?>.() -> Unit = {}): Column<C, T?> {
     val column: Column<C, T?> = addColumn(property)
     column.isMinimumWidthFromContent = true
     column.block()
     return column
   }
-
+  
   override fun updateView() {
-    dataLazyFilterProvider.refreshAll()
     refreshGrid()
     val bean = viewModel.crudBean
     if(itemContains(bean)) {
-      grid.asSingleSelect()?.value = bean
+      grid.asSingleSelect()
+        ?.value = bean
       // falta fazer o scrool para a linha
     }
   }
@@ -435,42 +447,42 @@ class CrudForm<C: EntityVo<*>>(val operation: CrudOperation,
   val buttonStyleNames = HashMap<CrudOperation, String?>()
   val formLayout = VerticalLayout()
   var operationButton: Button? = null
-
+  
   init {
     updateButtons()
     val footerLayout = buildFooter(operation, cancelButtonClickListener, operationButtonClickListener)
-
+    
     layoutForm(this)
     formLayout.setSizeFull()
     addComponentsAndExpand(formLayout)
-
+    
     addComponent(footerLayout)
     setComponentAlignment(footerLayout, BOTTOM_RIGHT)
     setMargin(true)
   }
-
+  
   fun focusFirst() {
     val field = binder.fields.toList().firstOrNull {it is Component.Focusable} as? Component.Focusable
     field?.focus()
   }
-
+  
   fun updateButtons() {
     buttonCaptions[READ] = "Confirma"
     buttonCaptions[ADD] = "Adiciona"
     buttonCaptions[UPDATE] = "Atualiza"
     buttonCaptions[DELETE] = "Apaga"
-
+    
     buttonIcons[READ] = null
     buttonIcons[ADD] = VaadinIcons.CHECK
     buttonIcons[UPDATE] = VaadinIcons.CHECK
     buttonIcons[DELETE] = VaadinIcons.TRASH
-
+    
     buttonStyleNames[READ] = null
     buttonStyleNames[ADD] = ValoTheme.BUTTON_PRIMARY
     buttonStyleNames[UPDATE] = ValoTheme.BUTTON_PRIMARY
     buttonStyleNames[DELETE] = ValoTheme.BUTTON_DANGER
   }
-
+  
   private fun buildFooter(operation: CrudOperation,
                           cancelButtonClickListener: (CrudForm<C>) -> Unit,
                           operationButtonClickListener: (CrudForm<C>) -> Unit): Layout {
@@ -479,14 +491,14 @@ class CrudForm<C: EntityVo<*>>(val operation: CrudOperation,
     val footerLayout = HorizontalLayout()
     footerLayout.setSizeUndefined()
     footerLayout.isSpacing = true
-
+    
     footerLayout.addComponent(cancelButton)
-
+    
     footerLayout.addComponent(operationButton)
-
+    
     return footerLayout
   }
-
+  
   private fun buildOperationButton(operation: CrudOperation, clickListener: (CrudForm<C>) -> Unit): Button {
     val caption = buttonCaptions[operation]
     val button = Button(caption, buttonIcons[operation])
@@ -499,7 +511,7 @@ class CrudForm<C: EntityVo<*>>(val operation: CrudOperation,
     }
     return button
   }
-
+  
   private fun buildCancelButton(clickListener: (CrudForm<C>) -> Unit): Button {
     val button = Button("Cancela")
     button.addClickListener {clickListener(this)}

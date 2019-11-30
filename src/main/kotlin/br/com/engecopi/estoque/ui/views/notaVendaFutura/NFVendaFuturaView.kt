@@ -34,7 +34,7 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
     super.enter(event)
     formCodBar?.focusEdit()
   }
-
+  
   init {
     viewModel = NFVendaFuturaViewModel(this)
     layoutForm {
@@ -171,6 +171,7 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
           pacotes.forEach {
             printText(it.impressora, it.text)
           }
+          updateView()
         }
         dialog.showDialog()
       }

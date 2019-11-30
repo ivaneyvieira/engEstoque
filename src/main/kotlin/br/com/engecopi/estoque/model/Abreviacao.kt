@@ -1,6 +1,6 @@
 package br.com.engecopi.estoque.model
 
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
 import br.com.engecopi.estoque.model.finder.AbreviacaoFinder
 import br.com.engecopi.framework.model.BaseModel
 import io.ebean.annotation.Index
@@ -24,19 +24,26 @@ class Abreviacao(
   var impressora: String): BaseModel() {
   companion object Find: AbreviacaoFinder() {
     fun findByAbreviacao(abreviacao: String?): Abreviacao? {
+      val loja = lojaUsuario ?: return null
       abreviacao ?: return null
-      return where().abreviacao.eq(abreviacao).loja.equalTo(lojaDefault).findList().firstOrNull()
+      return where().abreviacao.eq(abreviacao)
+        .loja.equalTo(loja)
+        .findList()
+        .firstOrNull()
     }
 
     fun addAbreviacao(abreviacao: String) {
-      val loja = lojaDefault ?: return
+      val loja = lojaUsuario ?: return
       if(findByAbreviacao(abreviacao) == null) {
         Abreviacao(abreviacao, loja, false, "").save()
       }
     }
 
     fun updateAbreviacao() {
-      val abreviacaoes = Repositories.findByLoja(lojaDefault).map {it.abreviacao}.distinct().sorted()
+      val abreviacaoes = Repositories.findByLoja(lojaUsuario)
+        .map {it.abreviacao}
+        .distinct()
+        .sorted()
       abreviacaoes.forEach {addAbreviacao(it)}
     }
 

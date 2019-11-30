@@ -1,5 +1,7 @@
 package br.com.engecopi.estoque.model
 
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
 import br.com.engecopi.estoque.model.finder.LojaFinder
 import br.com.engecopi.framework.model.BaseModel
 import br.com.engecopi.saci.saci
@@ -40,7 +42,7 @@ class Loja: BaseModel() {
     }
 
     fun lojaSaldo(): List<Loja> {
-      val loja = RegistryUserInfo.lojaDefault ?: return emptyList()
+      val loja = lojaUsuario ?: lojaDeposito ?: return emptyList()
       return where().notas.id.gt(0).findList().filter {it.id == loja?.id}
     }
 

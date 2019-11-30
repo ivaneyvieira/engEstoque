@@ -5,7 +5,7 @@ import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
 import br.com.engecopi.estoque.model.RegistryUserInfo.userDefaultIsAdmin
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.Repositories
@@ -69,7 +69,7 @@ class ProdutoViewModel(view: IProdutoView): CrudViewModel<Produto, QProduto, Pro
   
   private fun QProduto.filtroUsuario(): QProduto {
     return this.viewProdutoLoc.localizacao.startsWith(abreviacaoDefault)
-      .viewProdutoLoc.loja.id.eq(lojaDefault?.id)
+      .viewProdutoLoc.loja.id.eq(lojaUsuario?.id)
   }
   
   override val query: QProduto

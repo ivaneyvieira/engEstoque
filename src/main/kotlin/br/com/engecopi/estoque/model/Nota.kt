@@ -1,7 +1,8 @@
 package br.com.engecopi.estoque.model
 
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDefault
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
@@ -21,6 +22,7 @@ import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
 import br.com.engecopi.estoque.model.finder.NotaFinder
 import br.com.engecopi.estoque.model.query.QNota
 import br.com.engecopi.framework.model.BaseModel
+import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.saci.saci
 import br.com.engecopi.utils.localDate
@@ -86,13 +88,13 @@ class Nota: BaseModel() {
   var lancamentoOrigem: LancamentoOrigem = LancamentoOrigem.EXPEDICAO
   val multipicadorCancelado
     get() = if(tipoNota == CANCELADA_E || tipoNota == CANCELADA_S) 0 else 1
-
+  
   companion object Find: NotaFinder() {
     fun createNota(notasaci: NotaProdutoSaci?): Nota? {
       notasaci ?: return null
       val tn = TipoNota.value(notasaci.tipo) ?: return null
       val numero = notasaci.numeroSerie()
-
+  
       return findNota(numero, tn.tipoMov) ?: Nota().apply {
         this.numero = notasaci.numeroSerie()
         this.tipoNota = tn
@@ -105,7 +107,7 @@ class Nota: BaseModel() {
         this.loja = Loja.findLoja(notasaci.storeno)
       }
     }
-
+    
     fun createNotaItens(notasaci: List<NotaProdutoSaci>): NotaItens {
       val notaSimples = notasaci.firstOrNull() ?: return NotaItens.VAZIO
       val numero = notaSimples.numeroSerie()
@@ -123,61 +125,64 @@ class Nota: BaseModel() {
       }
       return NotaItens(nota, itens)
     }
-
+    
     fun maxSequencia(): Int {
       return where().select(QNota._alias.maxSequencia).findList().firstOrNull()?.maxSequencia ?: 0
     }
-
+    
     fun findEntrada(numero: String?): Nota? {
-      val loja = RegistryUserInfo.lojaDefault?: return null
+      val loja = lojaUsuario ?: lojaDeposito ?: return null
       return if(numero.isNullOrBlank()) null
       else Nota.where().tipoMov.eq(ENTRADA).numero.eq(numero).loja.id.eq(loja.id).findList().firstOrNull()
     }
-
+    
     fun findNotaFutura(key: String): String? {
       val sql = "select * from t_entrega_futura where nfekey_entrega = ? AND nfekey_entrega <> ''"
-      return DB.findDto(EntregaFutura::class.java, sql).setParameter(1, key).findList().map {it.numero_venda}
+      return DB.findDto(EntregaFutura::class.java, sql)
+        .setParameter(1, key)
+        .findList()
+        .map {it.numero_venda}
         .firstOrNull()
     }
-
+    
     fun findSaida(storeno: Int?, numero: String?): Nota? {
       storeno ?: return null
       return if(numero.isNullOrBlank()) null
       else Nota.where().tipoMov.eq(SAIDA).numero.eq(numero).loja.numero.eq(storeno).findList().firstOrNull()
     }
-
+    
     fun findSaida(numero: String?): Nota? {
-      val storeno = lojaDefault?.numero ?: return null
+      val storeno = lojaUsuario?.numero ?: lojaDeposito?.numero ?: return null
       return findSaida(storeno, numero)
     }
-
+    
     fun findNota(numero: String?, tipoMov: TipoMov): Nota? {
       return when(tipoMov) {
         ENTRADA -> findEntrada(numero)
         SAIDA   -> findSaida(numero)
       }
     }
-
+    
     fun novoNumero(): Int {
       val regex = "[0-9]+".toRegex()
       val max = where().findList().asSequence().map {it.numero}.filter {regex.matches(it)}.max() ?: "0"
       val numMax = max.toIntOrNull() ?: 0
       return numMax + 1
     }
-
+    
     fun findNotaEntradaSaci(numeroNF: String?): List<NotaProdutoSaci> {
       numeroNF ?: return emptyList()
-      val loja = RegistryUserInfo.lojaDefault ?: return emptyList()
+      val loja = RegistryUserInfo.lojaUsuario ?: throw EViewModel("Usuário sem loja")
       val numero = numeroNF.split("/").getOrNull(0) ?: return emptyList()
       val serie = numeroNF.split("/").getOrNull(1) ?: ""
       return saci.findNotaEntrada(loja.numero, numero, serie, usuarioDefault.admin)
     }
-
+    
     fun findNotaSaidaSaci(numeroNF: String?): List<NotaProdutoSaci> {
-      val loja = RegistryUserInfo.lojaDefault ?: return emptyList()
+      val loja = RegistryUserInfo.lojaUsuario ?: throw EViewModel("Usuário sem loja")
       return findNotaSaidaSaci(loja.numero, numeroNF)
     }
-
+    
     fun findNotaSaidaSaci(storeno: Int?, numeroNF: String?): List<NotaProdutoSaci> {
       numeroNF ?: return emptyList()
       storeno ?: return emptyList()
@@ -185,7 +190,7 @@ class Nota: BaseModel() {
       val serie = numeroNF.split("/").getOrNull(1) ?: ""
       return saci.findNotaSaida(storeno, numero, serie, usuarioDefault.admin)
     }
-
+    
     fun itemDuplicado(nota: Nota?, produto: Produto?): Boolean {
       val lojaId = nota?.loja?.id ?: return false
       val numero = nota.numero
@@ -194,41 +199,53 @@ class Nota: BaseModel() {
       return ItemNota.where().nota.loja.id.eq(lojaId).nota.numero.eq(numero).nota.tipoMov.eq(tipoMov).produto.id.eq(
         produtoId).findCount() > 0
     }
-
+    
     fun findNotaSaidaKey(nfeKey: String): List<NotaProdutoSaci> {
       return saci.findNotaSaidaKey(nfeKey, usuarioDefault.admin)
     }
-
+    
     fun listSaidaCancel(): List<Nota> {
-      val data = LocalDate.now().minusDays(10)
-      val lista = Nota.where().tipoMov.eq(SAIDA).data.ge(data).tipoNota.notEqualTo(PEDIDO_S).findList()
+      val data = LocalDate.now()
+        .minusDays(10)
+      val lista = Nota.where()
+        .tipoMov.eq(SAIDA)
+        .data.ge(data)
+        .tipoNota.notEqualTo(PEDIDO_S)
+        .findList()
       return saci.findNotasSaidaCancelada(lista)
     }
-
+    
     fun notasSaidaSalva(): List<Nota> {
       return notasSalva(SAIDA)
     }
-
+    
     fun notasEntradaSalva(): List<Nota> {
       return notasSalva(ENTRADA)
     }
-
-    private fun notasSalva(tipoNota: TipoMov): MutableList<Nota> {
-      val dtInicial = LocalDate.now().minusDays(180)
-      return where().tipoMov.eq(tipoNota).loja.equalTo(lojaDefault).itensNota.localizacao.startsWith(abreviacaoDefault)
-        .data.after(dtInicial).findList()
+    
+    private fun notasSalva(tipoNota: TipoMov): List<Nota> {
+      val dtInicial = LocalDate.now()
+        .minusDays(180)
+      val loja = lojaUsuario ?: return emptyList()
+      return where().tipoMov.eq(tipoNota)
+        .loja.equalTo(lojaUsuario)
+        .itensNota.localizacao.startsWith(abreviacaoDefault)
+        .data.after(dtInicial)
+        .findList()
     }
   }
-
+  
   fun numeroEntrega(): String = TransferenciaAutomatica.notaTransfencia(loja?.numero, numero)?.numeroTransf
                                 ?: EntregaFutura.entrega(numero)?.numeroEntrega ?: ""
-
+  
   fun existe(): Boolean {
     return where().loja.equalTo(loja).tipoMov.eq(tipoMov).numero.eq(numero).findCount() > 0
   }
-
+  
   fun itensNota(): List<ItemNota> {
-    return ItemNota.where().nota.equalTo(this).findList()
+    return ItemNota.where()
+      .nota.equalTo(this)
+      .findList()
   }
 }
 
@@ -259,12 +276,12 @@ enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2:
   SP_REME(SAIDA, "Simples Remessa", "Simples Remessa", true),
   CANCELADA_E(ENTRADA, "Nota Cancelada", "NF Entrada Cancelada"),
   CANCELADA_S(SAIDA, "Nota Cancelada", "NF Saída Cancelada");
-
+  
   companion object {
     fun valuesEntrada(): List<TipoNota> = values().filter {it.tipoMov == ENTRADA}
-
+    
     fun valuesSaida(): List<TipoNota> = values().filter {it.tipoMov == SAIDA}
-
+    
     fun value(valueStr: String?) = valueStr?.let {v ->
       values().find {it.toString() == v}
     }
@@ -273,13 +290,13 @@ enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2:
 
 data class NotaSerie(val id: Long, val tipoNota: TipoNota) {
   val descricao = tipoNota.descricao
-
+  
   companion object {
     fun findByTipo(tipo: TipoNota?): NotaSerie? {
       tipo ?: return null
       return values.find {it.tipoNota == tipo}
     }
-
+    
     val values = listOf(NotaSerie(1, VENDA),
                         NotaSerie(2, ENT_RET),
                         NotaSerie(3, TRANSFERENCIA_S),
@@ -293,7 +310,7 @@ data class NotaSerie(val id: Long, val tipoNota: TipoNota) {
 
 data class NotaItens(val nota: Nota?, val itens: List<ItemNota>) {
   val vazio get() = nota == null || itens.isEmpty()
-
+  
   companion object {
     val VAZIO = NotaItens(null, emptyList())
   }

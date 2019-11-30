@@ -1,5 +1,7 @@
 package br.com.engecopi.estoque.model
 
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
@@ -95,28 +97,39 @@ class ItemNota: BaseModel() {
     @Transient get() = localizacao.split('.').getOrNull(0) ?: ""
   val abreviacao: Abreviacao?
     @Transient get() = Abreviacao.findByAbreviacao(abrev)
-
+  
   companion object Find: ItemNotaFinder() {
     fun find(loja: Int?, numero: String?): List<ItemNota> {
       loja ?: return emptyList()
       numero ?: return emptyList()
-      return where().nota.loja.numero.eq(loja).nota.numero.eq(numero).findList()
+      return where().nota.loja.numero.eq(loja)
+        .nota.numero.eq(numero)
+        .findList()
     }
-
+    
     fun find(nota: Nota?, produto: Produto?): ItemNota? {
       //TODO Depois pensar na possibilidade de mais de um
       nota ?: return null
       produto ?: return null
-      return where().nota.fetchQuery().nota.id.eq(nota.id).produto.id.eq(produto.id).findList().firstOrNull()
+      return where().nota.fetchQuery()
+        .nota.id.eq(nota.id)
+        .produto.id.eq(produto.id)
+        .findList()
+        .firstOrNull()
     }
-
+    
     fun find(notaProdutoSaci: NotaProdutoSaci?): ItemNota? {
       notaProdutoSaci ?: return null
+      val loja = lojaUsuario ?: lojaDeposito ?: return null
       val produtoSaci = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return null
-      return where().nota.fetchQuery().nota.numero.eq("${notaProdutoSaci.numero}/${notaProdutoSaci.serie}")
-        .nota.loja.equalTo(RegistryUserInfo.lojaDefault).produto.equalTo(produtoSaci).findList().firstOrNull()
+      return where().nota.fetchQuery()
+        .nota.numero.eq("${notaProdutoSaci.numero}/${notaProdutoSaci.serie}")
+        .nota.loja.equalTo(loja)
+        .produto.equalTo(produtoSaci)
+        .findList()
+        .firstOrNull()
     }
-
+    
     fun createItemNota(notaProdutoSaci: NotaProdutoSaci, notaPrd: Nota?, abreviacao: String): ItemNota? {
       notaPrd ?: return null
       val produtoSaci = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return null
@@ -124,7 +137,7 @@ class ItemNota: BaseModel() {
         it.startsWith(abreviacao)
       } ?: ""
       val item = find(notaPrd, produtoSaci)
-
+      
       return item ?: ItemNota().apply {
         quantidade = notaProdutoSaci.quant ?: 0
         quantidadeSaci = quantidade
@@ -134,7 +147,7 @@ class ItemNota: BaseModel() {
         localizacao = locProduto
       }
     }
-
+    
     fun isSave(notaProdutoSaci: NotaProdutoSaci): Boolean {
       val numeroSerie = notaProdutoSaci.numeroSerie()
       println("####################################################################")
@@ -143,17 +156,19 @@ class ItemNota: BaseModel() {
       val tipoMov = notaProdutoSaci.tipoNota()?.tipoMov ?: return false
       val nota = Nota.findNota(numeroSerie, tipoMov) ?: return false
       val produto = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return false
-      return where().produto.eq(produto).nota.eq(nota).exists()
+      return where().produto.eq(produto)
+        .nota.eq(nota)
+        .exists()
     }
   }
-
+  
   fun printEtiqueta() = NotaPrint(this)
-
+  
   fun recalculaSaldos() {
     produto?.recalculaSaldos(localizacao = localizacao)
     this.refresh()
   }
-
+  
   override fun save() {
     super.save()
     if(codigoBarraCliente.isNullOrEmpty()) codigoBarraCliente = viewCodigoBarraCliente?.codbar ?: ""
@@ -161,14 +176,14 @@ class ItemNota: BaseModel() {
     if(codigoBarraEntrega.isNullOrEmpty()) codigoBarraEntrega = viewCodigoBarraEntrega?.codbar ?: ""
     super.save()
   }
-
+  
   override fun insert() {
     super.insert()
     if(codigoBarraConferencia.isNullOrEmpty()) codigoBarraConferencia = viewCodigoBarraConferencia?.codbar ?: ""
     if(codigoBarraEntrega.isNullOrEmpty()) codigoBarraEntrega = viewCodigoBarraEntrega?.codbar ?: ""
     super.save()
   }
-
+  
   fun desfazerOperacao() {
     if(status == ENT_LOJA || status == ENTREGUE || status == CONFERIDA) {
       status = INCLUIDA
@@ -214,7 +229,7 @@ class NotaPrint(val item: ItemNota) {
   val nomeFilial
     get() = "ENGECOPI ${item.nota?.loja?.sigla}"
   val numeroLoja = notaSaci?.loja?.numero ?: 0
-
+  
   fun print(template: String): String {
     return NotaPrint::class.memberProperties.fold(template) {reduce, prop ->
       reduce.replace("[${prop.name}]", "${prop.get(this)}")
