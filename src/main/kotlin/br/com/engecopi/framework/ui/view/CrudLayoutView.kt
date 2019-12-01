@@ -213,10 +213,6 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
   
   fun refreshGrid() {
     grid.dataProvider = dataLazyFilterProvider
-    val value = if(filtroEdt?.value.isNullOrBlank()) null else filtroEdt?.value
-    dataLazyFilterProvider.setFilter("$value 1")
-    dataLazyFilterProvider.refreshAll()
-    dataLazyFilterProvider.setFilter(value)
     dataLazyFilterProvider.refreshAll()
   }
   

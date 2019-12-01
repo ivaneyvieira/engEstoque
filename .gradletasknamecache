@@ -73,7 +73,6 @@ dependentComponents
 help
 kotlinDslAccessorsReport
 model
-outgoingVariants
 projects
 properties
 tasks
@@ -213,7 +212,6 @@ dependentComponents
 help
 kotlinDslAccessorsReport
 model
-outgoingVariants
 projects
 properties
 tasks
