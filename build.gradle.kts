@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val kotlinVersion = properties["kotlinVersion"] as String
 val karibuVersion = properties["karibuVersion"] as String
 val vaadin8Version = properties["vaadin8Version"] as String
+/*
 buildscript {
   val kotlinVersion: String by project
   repositories {
@@ -12,14 +13,14 @@ buildscript {
 
   dependencies {
     classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-    classpath("io.ebean:ebean-gradle-plugin:11.39.1")
   }
 }
-
+*/
 plugins {
   id("org.jetbrains.kotlin.jvm") version "1.3.40"
   id("org.gretty") version "2.3.1"
-  id("com.devsoap.plugin.vaadin") version "1.4.1"
+  id("com.devsoap.plugin.vaadin") version "2.0.0.beta2"
+  id("io.ebean") version "12.1.5"
 }
 
 repositories {
