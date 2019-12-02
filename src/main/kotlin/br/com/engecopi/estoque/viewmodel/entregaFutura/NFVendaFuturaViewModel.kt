@@ -24,7 +24,6 @@ import br.com.engecopi.estoque.model.query.QViewNotaFutura
 import br.com.engecopi.estoque.ui.log
 import br.com.engecopi.estoque.viewmodel.EChaveNaoEncontrada
 import br.com.engecopi.estoque.viewmodel.ENotaNaoEntregaFutura
-import br.com.engecopi.estoque.viewmodel.PacoteImpressao
 import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
@@ -109,26 +108,28 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
   }
   
   private fun processaNota(itensVendaFutura: List<ItemVendaFutura>): Nota? {
-    val notaDoSaci = itensVendaFutura.firstOrNull()
-      ?.notaProdutoSaci
+    val notaDoSaci =
+      itensVendaFutura.firstOrNull()
+        ?.notaProdutoSaci
     val lojaSaci = notaDoSaci?.storeno ?: throw EViewModel("Nota não encontrada")
     //if(loja != lojaSaci) throw EViewModel("Esta nota pertence a loja $lojaSaci")
-    val nota: Nota? = Nota.createNota(notaDoSaci)
-      ?.let {
-        if(it.existe()) Nota.findSaida(it.loja, it.numero)
-        else {
-          it.sequencia = Nota.maxSequencia() + 1
-          it.usuario = usuarioDefault
-          it.lancamentoOrigem = EXPEDICAO
-          it.save()
-          it
+    val nota: Nota? =
+      Nota.createNota(notaDoSaci)
+        ?.let {
+          if(it.existe()) Nota.findSaida(it.loja, it.numero)
+          else {
+            it.sequencia = Nota.maxSequencia() + 1
+            it.usuario = usuarioDefault
+            it.lancamentoOrigem = EXPEDICAO
+            it.save()
+            it
+          }
         }
-      }
     nota ?: throw EViewModel("Nota não encontrada")
     val itens = itensVendaFutura.mapNotNull {itemVendaFutura ->
       val notaSaci = itemVendaFutura.notaProdutoSaci
       val item = ItemNota.find(notaSaci) ?: ItemNota.createItemNota(notaSaci, nota, itemVendaFutura.abrevicao)
-  
+    
       return@mapNotNull item?.apply {
         this.status = if(abreviacao?.expedicao == true) CONFERIDA else INCLUIDA
         this.impresso = false
@@ -139,12 +140,13 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
         if(this.status == CONFERIDA) this.recalculaSaldos()
       }
     }
-    
+  
     if(itens.isEmpty()) throw EViewModel("Essa nota não possui itens com localização")
-    
-    crudBean = ViewNotaFutura.findNotaFutura(nota)
-      ?.toVO()
-    
+  
+    crudBean =
+      ViewNotaFutura.findNotaFutura(nota)
+        ?.toVO()
+  
     return nota
   }
   
@@ -162,29 +164,19 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
     return print.print(etiqueta.template)
   }
   
-  fun imprimir(nota: Nota?) = execList<PacoteImpressao> {
-    val impressoraName = if(usuarioDefault.impressora == "") "Localizacao ${usuarioDefault.impressora}"
-    else usuarioDefault.impressora
-    val ret = if(nota == null) emptyList()
+  fun imprimir(nota: Nota?) = execValue<String> {
+    val ret = if(nota == null) ""
     else {
       val id = nota.id
-      val notaRef = Nota.byId(id) ?: return@execList emptyList()
+      val notaRef = Nota.byId(id) ?: return@execValue ""
       val listaItens = notaRef.itensNota()
       val itensAbreviacao = listaItens.groupBy {it.abreviacao}
-      val impressaoCD: List<PacoteImpressao> = itensAbreviacao.flatMap {entry ->
-        val abreviacao = entry.key ?: return@flatMap emptyList<PacoteImpressao>()
-        if(abreviacao.expedicao) {
-          val text = imprimeItens(CONFERIDA, entry.value)
-  
-          listOf(PacoteImpressao(impressoraName, text))
-        }
-        else emptyList<PacoteImpressao>()
+      val impressaoCD = itensAbreviacao.map {entry ->
+        imprimeItens(CONFERIDA, entry.value)
       }
-      val text = imprimeItens(INCLUIDA, listaItens)
-      val impressaoEXP = listOf(PacoteImpressao(impressoraName, text))
-  
-      impressaoCD + impressaoEXP
+      impressaoCD.joinToString(separator = "\n")
     }
+    
     view.updateView()
     ret
   }
@@ -200,10 +192,11 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
   
   fun imprimeTudo() = execString {
     val etiquetas = Etiqueta.findByStatus(INCLUIDA)
-    val itens = ItemNota.where()
-      .impresso.eq(false)
-      .status.eq(INCLUIDA)
-      .findList()
+    val itens =
+      ItemNota.where()
+        .impresso.eq(false)
+        .status.eq(INCLUIDA)
+        .findList()
     val ret = etiquetas.joinToString(separator = "\n") {etiqueta ->
       itens.map {item -> imprimir(item, etiqueta)}
         .distinct()
@@ -214,16 +207,18 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
   }
   
   fun findNotaSaidaKey(key: String) = execList {
-    val storeno = key.mid(0, 1)
-      .toIntOrNull()
+    val storeno =
+      key.mid(0, 1)
+        .toIntOrNull()
     val nfno = key.mid(1)
-    val notaSaci = Nota.findNotaSaidaSaci(storeno, nfno)
-      .filter {ns ->
-        when {
-          usuarioDefault.isEstoqueVendaFutura -> ViewProdutoLoc.filtraLoc(ns.prdno, ns.grade)
-          else                                -> true
+    val notaSaci =
+      Nota.findNotaSaidaSaci(storeno, nfno)
+        .filter {ns ->
+          when {
+            usuarioDefault.isEstoqueVendaFutura -> ViewProdutoLoc.filtraLoc(ns.prdno, ns.grade)
+            else                                -> true
+          }
         }
-      }
     val numero = notaSaci.firstOrNull()?.numero ?: ""
     val ret = when {
       notaSaci.isEmpty()                           -> throw EChaveNaoEncontrada()

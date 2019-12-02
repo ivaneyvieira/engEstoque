@@ -1,6 +1,7 @@
 package br.com.engecopi.estoque.ui.views.notaVendaFutura
 
 import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
 import br.com.engecopi.estoque.viewmodel.entregaFutura.INFVendaFuturaView
 import br.com.engecopi.estoque.viewmodel.entregaFutura.NFVendaFuturaViewModel
@@ -29,7 +30,7 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
   var formCodBar: PnlCodigoBarras? = null
   private val isAdmin
     get() = RegistryUserInfo.userDefaultIsAdmin
-
+  
   override fun enter(event: ViewChangeEvent) {
     super.enter(event)
     formCodBar?.focusEdit()
@@ -39,7 +40,9 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
     viewModel = NFVendaFuturaViewModel(this)
     layoutForm {
       formLayout.apply {
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
+        w =
+          (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+            .px
         val nota = binder.bean
         grupo("Nota fiscal de saída") {
           verticalLayout {
@@ -100,16 +103,15 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
           this.isEnabled = impresso == false || isAdmin
           this.icon = PRINT
           this.addClickListener {click ->
-            val pacotes = viewModel.imprimir(item?.entityVo?.nota)
-            pacotes.forEach {
-              printText(it.impressora, it.text)
-            }
+            val text = viewModel.imprimir(item?.entityVo?.nota)
+            printText(usuarioDefault.impressora, text)
             val print = item?.impresso ?: true
             click.button.isEnabled = print == false || isAdmin
             refreshGrid()
           }
         }
-      }.id = "btnPrint"
+      }
+        .id = "btnPrint"
       column(NFVendaFuturaVo::loja) {
         caption = "Loja NF"
         setRenderer({loja ->
@@ -133,7 +135,7 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
         timeFormat()
         setSortProperty("data", "hora")
       }
-
+  
       column(NFVendaFuturaVo::dataEmissao) {
         caption = "Emissao"
         dateFormat()
@@ -159,7 +161,7 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
       }
     }
   }
-
+  
   private fun formCodbar(): PnlCodigoBarras {
     return PnlCodigoBarras("Chave da Nota Fiscal") {key ->
       val notaSaida = viewModel.findNotaSaidaKey(key)
@@ -167,23 +169,22 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
       if(notaSaida.isNotEmpty()) {
         val dialog = DlgNotaFuturaLoc(notaSaida, viewModel) {itens ->
           val nota = viewModel.processaKey(itens)
-          val pacotes = viewModel.imprimir(nota)
-          pacotes.forEach {
-            printText(it.impressora, it.text)
-          }
+          val text = viewModel.imprimir(nota)
+          val impressora = usuarioDefault.impressora
+          printText(impressora, text)
           updateView()
         }
         dialog.showDialog()
       }
     }
   }
-
+  
   private fun btnImprimeTudo(): Button {
     return Button("Imprime Etiquetas").apply {
       icon = PRINT
       addClickListener {
         val text = viewModel.imprimeTudo()
-        val impressora = RegistryUserInfo.usuarioDefault.impressora
+        val impressora = usuarioDefault.impressora
         printText(impressora, text)
         //grid.refreshGrid()
       }
