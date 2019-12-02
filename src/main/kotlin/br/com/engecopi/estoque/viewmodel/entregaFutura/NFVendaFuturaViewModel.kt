@@ -182,7 +182,11 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
   }
   
   private fun imprimeItens(status: StatusNota, itens: List<ItemNota>): String {
-    val etiquetas = Etiqueta.findByStatus(status)
+    val etiquetas =
+      Etiqueta.findByStatus(status)
+        .filter {etiqueta ->
+          etiqueta.titulo.contains("ETDEP")
+        }
     return etiquetas.joinToString(separator = "\n") {etiqueta ->
       itens.map {imprimir(it, etiqueta)}
         .distinct()
@@ -191,7 +195,11 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
   }
   
   fun imprimeTudo() = execString {
-    val etiquetas = Etiqueta.findByStatus(INCLUIDA)
+    val etiquetas =
+      Etiqueta.findByStatus(INCLUIDA)
+        .filter {etiqueta ->
+          etiqueta.titulo.contains("ETDEP")
+        }
     val itens =
       ItemNota.where()
         .impresso.eq(false)
