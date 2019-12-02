@@ -118,7 +118,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
         ?.let {
           if(it.existe()) Nota.findSaida(it.loja, it.numero)
           else {
-            it.sequencia = Nota.maxSequencia() + 1
+            it.sequencia = Nota.maxSequencia(it.tipoNota) + 1
             it.usuario = usuarioDefault
             it.lancamentoOrigem = EXPEDICAO
             it.save()
