@@ -1,8 +1,6 @@
 package br.com.engecopi.estoque.model
 
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
@@ -22,7 +20,6 @@ import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
 import br.com.engecopi.estoque.model.finder.NotaFinder
 import br.com.engecopi.estoque.model.query.QNota
 import br.com.engecopi.framework.model.BaseModel
-import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.saci.saci
 import br.com.engecopi.utils.localDate
@@ -94,8 +91,9 @@ class Nota: BaseModel() {
       notasaci ?: return null
       val tn = TipoNota.value(notasaci.tipo) ?: return null
       val numero = notasaci.numeroSerie()
+      val loja = notasaci.loja() ?: return null
   
-      return findNota(numero, tn.tipoMov) ?: Nota().apply {
+      return findNota(loja, numero, tn.tipoMov) ?: Nota().apply {
         this.numero = notasaci.numeroSerie()
         this.tipoNota = tn
         this.tipoMov = tn.tipoMov
@@ -112,7 +110,8 @@ class Nota: BaseModel() {
       val notaSimples = notasaci.firstOrNull() ?: return NotaItens.VAZIO
       val numero = notaSimples.numeroSerie()
       val tipoNota = notaSimples.tipoNota() ?: return NotaItens.VAZIO
-      val nota = findNota(numero, tipoNota.tipoMov) ?: createNota(notaSimples) ?: return NotaItens.VAZIO
+      val loja = notaSimples.loja() ?: return NotaItens.VAZIO
+      val nota = findNota(loja, numero, tipoNota.tipoMov) ?: createNota(notaSimples) ?: return NotaItens.VAZIO
       nota.sequencia = maxSequencia() + 1
       nota.usuario = usuarioDefault
       val itens = notasaci.mapNotNull {item ->
@@ -129,9 +128,8 @@ class Nota: BaseModel() {
     fun maxSequencia(): Int {
       return where().select(QNota._alias.maxSequencia).findList().firstOrNull()?.maxSequencia ?: 0
     }
-    
-    fun findEntrada(numero: String?): Nota? {
-      val loja = lojaUsuario ?: lojaDeposito ?: return null
+  
+    fun findEntrada(loja: Loja, numero: String?): Nota? {
       return if(numero.isNullOrBlank()) null
       else Nota.where().tipoMov.eq(ENTRADA).numero.eq(numero).loja.id.eq(loja.id).findList().firstOrNull()
     }
@@ -144,22 +142,22 @@ class Nota: BaseModel() {
         .map {it.numero_venda}
         .firstOrNull()
     }
-    
+  
     fun findSaida(storeno: Int?, numero: String?): Nota? {
       storeno ?: return null
       return if(numero.isNullOrBlank()) null
       else Nota.where().tipoMov.eq(SAIDA).numero.eq(numero).loja.numero.eq(storeno).findList().firstOrNull()
     }
-    
-    fun findSaida(numero: String?): Nota? {
-      val storeno = lojaUsuario?.numero ?: lojaDeposito?.numero ?: return null
+  
+    fun findSaida(loja: Loja?, numero: String?): Nota? {
+      val storeno = loja?.numero ?: return null
       return findSaida(storeno, numero)
     }
-    
-    fun findNota(numero: String?, tipoMov: TipoMov): Nota? {
+  
+    fun findNota(loja: Loja, numero: String?, tipoMov: TipoMov): Nota? {
       return when(tipoMov) {
-        ENTRADA -> findEntrada(numero)
-        SAIDA   -> findSaida(numero)
+        ENTRADA -> findEntrada(loja, numero)
+        SAIDA   -> findSaida(loja, numero)
       }
     }
     
@@ -169,17 +167,15 @@ class Nota: BaseModel() {
       val numMax = max.toIntOrNull() ?: 0
       return numMax + 1
     }
-    
-    fun findNotaEntradaSaci(numeroNF: String?): List<NotaProdutoSaci> {
+  
+    fun findNotaEntradaSaci(loja: Loja, numeroNF: String?): List<NotaProdutoSaci> {
       numeroNF ?: return emptyList()
-      val loja = RegistryUserInfo.lojaUsuario ?: throw EViewModel("Usuário sem loja")
       val numero = numeroNF.split("/").getOrNull(0) ?: return emptyList()
       val serie = numeroNF.split("/").getOrNull(1) ?: ""
       return saci.findNotaEntrada(loja.numero, numero, serie, usuarioDefault.admin)
     }
-    
-    fun findNotaSaidaSaci(numeroNF: String?): List<NotaProdutoSaci> {
-      val loja = RegistryUserInfo.lojaUsuario ?: throw EViewModel("Usuário sem loja")
+  
+    fun findNotaSaidaSaci(loja: Loja, numeroNF: String?): List<NotaProdutoSaci> {
       return findNotaSaidaSaci(loja.numero, numeroNF)
     }
     
@@ -205,30 +201,32 @@ class Nota: BaseModel() {
     }
     
     fun listSaidaCancel(): List<Nota> {
-      val data = LocalDate.now()
-        .minusDays(10)
-      val lista = Nota.where()
-        .tipoMov.eq(SAIDA)
-        .data.ge(data)
-        .tipoNota.notEqualTo(PEDIDO_S)
-        .findList()
+      val data =
+        LocalDate.now()
+          .minusDays(10)
+      val lista =
+        Nota.where()
+          .tipoMov.eq(SAIDA)
+          .data.ge(data)
+          .tipoNota.notEqualTo(PEDIDO_S)
+          .findList()
       return saci.findNotasSaidaCancelada(lista)
     }
-    
-    fun notasSaidaSalva(): List<Nota> {
-      return notasSalva(SAIDA)
+  
+    fun notasSaidaSalva(loja: Loja): List<Nota> {
+      return notasSalva(loja, SAIDA)
     }
-    
-    fun notasEntradaSalva(): List<Nota> {
-      return notasSalva(ENTRADA)
+  
+    fun notasEntradaSalva(loja: Loja): List<Nota> {
+      return notasSalva(loja, ENTRADA)
     }
-    
-    private fun notasSalva(tipoNota: TipoMov): List<Nota> {
-      val dtInicial = LocalDate.now()
-        .minusDays(180)
-      val loja = lojaUsuario ?: return emptyList()
+  
+    private fun notasSalva(loja: Loja, tipoNota: TipoMov): List<Nota> {
+      val dtInicial =
+        LocalDate.now()
+          .minusDays(180)
       return where().tipoMov.eq(tipoNota)
-        .loja.equalTo(lojaUsuario)
+        .loja.equalTo(loja)
         .itensNota.localizacao.startsWith(abreviacaoDefault)
         .data.after(dtInicial)
         .findList()

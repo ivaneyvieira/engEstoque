@@ -1,7 +1,5 @@
 package br.com.engecopi.estoque.model
 
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
@@ -95,6 +93,8 @@ class ItemNota: BaseModel() {
     @Transient get() = Etiqueta.findByStatus(status)
   private val abrev: String
     @Transient get() = localizacao.split('.').getOrNull(0) ?: ""
+  val loja: Loja?
+    @Transient get() = nota?.loja
   val abreviacao: Abreviacao?
     @Transient get() = Abreviacao.findByAbreviacao(abrev)
   
@@ -120,11 +120,11 @@ class ItemNota: BaseModel() {
     
     fun find(notaProdutoSaci: NotaProdutoSaci?): ItemNota? {
       notaProdutoSaci ?: return null
-      val loja = lojaUsuario ?: lojaDeposito ?: return null
+      val storeno = notaProdutoSaci.storeno ?: return null
       val produtoSaci = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return null
       return where().nota.fetchQuery()
         .nota.numero.eq("${notaProdutoSaci.numero}/${notaProdutoSaci.serie}")
-        .nota.loja.equalTo(loja)
+        .nota.loja.numero.eq(storeno)
         .produto.equalTo(produtoSaci)
         .findList()
         .firstOrNull()
@@ -150,11 +150,9 @@ class ItemNota: BaseModel() {
     
     fun isSave(notaProdutoSaci: NotaProdutoSaci): Boolean {
       val numeroSerie = notaProdutoSaci.numeroSerie()
-      println("####################################################################")
-      println("Nota e produto $numeroSerie")
-      println("####################################################################")
       val tipoMov = notaProdutoSaci.tipoNota()?.tipoMov ?: return false
-      val nota = Nota.findNota(numeroSerie, tipoMov) ?: return false
+      val loja = Loja.findLoja(notaProdutoSaci.storeno) ?: return false
+      val nota = Nota.findNota(loja, numeroSerie, tipoMov) ?: return false
       val produto = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return false
       return where().produto.eq(produto)
         .nota.eq(nota)

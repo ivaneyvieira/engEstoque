@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.ui.views
 
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.viewmodel.EntregaClienteEditorViewModel
@@ -32,7 +33,7 @@ class EntregaClienteEditorView: NotaView<EntregaClienteVo, EntregaClienteEditorV
     viewModel = EntregaClienteEditorViewModel(this)
     layoutForm {
       if(operation == ADD) {
-        binder.bean.lojaNF = lojaDefault
+        binder.bean.lojaNF = lojaDeposito
         binder.bean.usuario = usuario
       }
       formLayout.apply {

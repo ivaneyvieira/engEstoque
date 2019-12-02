@@ -17,7 +17,7 @@ object RegistryUserInfo {
         Transaction.variable(ABREV_FIELD, "NULL")
       }
       else {
-        Transaction.variable(LOJA_FIELD, "${loginInfo?.usuario?.loja?.numero}")
+        Transaction.variable(LOJA_FIELD, "${lojaDeposito.numero}")
         Transaction.variable(USER_FIELD, "${loginInfo?.usuario?.id}")
         Transaction.variable(ABREV_FIELD, "'${loginInfo?.abreviacao}'")
       }
@@ -27,8 +27,6 @@ object RegistryUserInfo {
     get() = info?.usuario ?: throw EUsuarioNaoInicializado()
   val abreviacaoDefault
     get() = info?.abreviacao ?: throw EUsuarioNaoInicializado()
-  val lojaUsuario
-    get() = usuarioDefault.loja
   val lojaDeposito
     get() = Loja.findLoja(4) ?: throw EViewModel("Loja depósito não cadastrada")
   val userDefaultIsAdmin

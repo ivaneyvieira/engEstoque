@@ -1,6 +1,6 @@
 package br.com.engecopi.estoque.model
 
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.finder.AbreviacaoFinder
 import br.com.engecopi.framework.model.BaseModel
 import io.ebean.annotation.Index
@@ -24,29 +24,29 @@ class Abreviacao(
   var impressora: String): BaseModel() {
   companion object Find: AbreviacaoFinder() {
     fun findByAbreviacao(abreviacao: String?): Abreviacao? {
-      val loja = lojaUsuario ?: return null
       abreviacao ?: return null
+      val loja = lojaDeposito ?: return null
       return where().abreviacao.eq(abreviacao)
         .loja.equalTo(loja)
         .findList()
         .firstOrNull()
     }
-
+  
     fun addAbreviacao(abreviacao: String) {
-      val loja = lojaUsuario ?: return
       if(findByAbreviacao(abreviacao) == null) {
-        Abreviacao(abreviacao, loja, false, "").save()
+        Abreviacao(abreviacao, lojaDeposito, false, "").save()
       }
     }
-
-    fun updateAbreviacao() {
-      val abreviacaoes = Repositories.findByLoja(lojaUsuario)
-        .map {it.abreviacao}
-        .distinct()
-        .sorted()
+  
+    fun updateAbreviacao(loja: Loja) {
+      val abreviacaoes =
+        Repositories.findByLoja(loja)
+          .map {it.abreviacao}
+          .distinct()
+          .sorted()
       abreviacaoes.forEach {addAbreviacao(it)}
     }
-
+  
     fun findAll(): List<Abreviacao> = all().sortedBy {it.abreviacao}
   }
 }

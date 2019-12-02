@@ -1,6 +1,7 @@
 package br.com.engecopi.estoque.ui.views
 
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.viewmodel.EntradaViewModel
 import br.com.engecopi.estoque.viewmodel.EntradaVo
@@ -39,7 +40,7 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel, IEntradaView>(), IEntra
     viewModel = EntradaViewModel(this)
     layoutForm {
       if(operation == ADD) {
-        binder.bean.lojaNF = lojaDefault
+        binder.bean.lojaNF = lojaDeposito
         binder.bean.usuario = usuario
       }
       formLayout.apply {

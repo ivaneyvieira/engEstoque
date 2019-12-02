@@ -1,7 +1,6 @@
 package br.com.engecopi.estoque.model.dtos
 
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
 import br.com.engecopi.estoque.model.etlSaci.EntryID
 import io.ebean.DB
 
@@ -22,7 +21,7 @@ class EntregaFutura(id: String,
   companion object {
     fun entrega(numeroVenda: String?): EntregaFutura? {
       numeroVenda ?: return null
-      val loja = lojaUsuario?.numero ?: lojaDeposito?.numero ?: 0
+      val loja = lojaDeposito?.numero
       val sql = """select * from t_entrega_futura
         |where storeno = $loja
         |  AND numero_venda = '$numeroVenda'

@@ -18,35 +18,42 @@ import br.com.engecopi.estoque.viewmodel.NotaVo
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.utils.mid
 
-class EntregaFututaViewModel(view: IEntregaFututaView): NotaViewModel<EntregaFututaVo, IEntregaFututaView>(view,
-                                                                                                           SAIDA,
-                                                                                                           ENTREGUE,
-                                                                                                           CONFERIDA,
-                                                                                                           "") {
+class EntregaFututaViewModel(view: IEntregaFututaView):
+  NotaViewModel<EntregaFututaVo, IEntregaFututaView>(view, SAIDA, ENTREGUE, CONFERIDA, "") {
   override fun newBean(): EntregaFututaVo {
     return EntregaFututaVo()
   }
-
+  
   override fun QItemNota.filtroTipoNota(): QItemNota {
     return this.nota.tipoNota.eq(VENDAF)
   }
-
+  
   override fun QItemNota.filtroStatus(): QItemNota {
-    return status.`in`(CONFERIDA).nota.usuario.isNotNull.nota.sequencia.ne(0).let {q ->
-      if(usuarioDefault.isEstoqueExpedicao) q.localizacao.startsWith(abreviacaoDefault)
-      else q
-    }
+    return status.`in`(CONFERIDA)
+      .nota.usuario.isNotNull.nota.sequencia.ne(0)
+      .let {q ->
+        if(usuarioDefault.isEstoqueExpedicao) {
+          q.localizacao.startsWith(abreviacaoDefault)
+        }
+        else q
+      }
   }
-
+  
   override fun createVo() = EntregaFututaVo()
-
+  
   fun processaKey(key: String) = execList {
     val itens = findItensNotaTransferencia(key)
-    if(itens.isEmpty()) throw EViewModel("Produto não encontrado")
+    if(itens.isEmpty()) {
+      throw EViewModel("Produto não encontrado")
+    }
     itens.forEach {item ->
       val codigoProduto = item.produto?.codigo?.trim() ?: ""
-      if(item.status == ENTREGUE || item.status == ENT_LOJA) showWarning("Produto $codigoProduto já foi entregue")
-      else if(item.status == INCLUIDA) showWarning("Produto $codigoProduto ainda não foi conferido")
+      if(item.status == ENTREGUE || item.status == ENT_LOJA) {
+        showWarning("Produto $codigoProduto já foi entregue")
+      }
+      else if(item.status == INCLUIDA) {
+        showWarning("Produto $codigoProduto ainda não foi conferido")
+      }
       else if(item.status == CONFERIDA) {
         item.status = ENTREGUE
         item.save()
@@ -61,9 +68,11 @@ class EntregaFututaViewModel(view: IEntregaFututaView): NotaViewModel<EntregaFut
     view.updateView()
     itens
   }
-
+  
   private fun findItensNotaTransferencia(key: String): List<ItemNota> {
-    val notaTransferencia = Nota.findNotaSaidaKey(key).firstOrNull()
+    val notaTransferencia =
+      Nota.findNotaSaidaKey(key)
+        .firstOrNull()
     return if(notaTransferencia == null) {
       val storeno = key.mid(0, 1).toIntOrNull() ?: return emptyList()
       val numero = key.mid(1)
@@ -75,16 +84,19 @@ class EntregaFututaViewModel(view: IEntregaFututaView): NotaViewModel<EntregaFut
       findItensNotaTransferencia(lojaTransferencia, numeroSerieTransferencia)
     }
   }
-
+  
   private fun findItensNotaTransferencia(storeno: Int, numero: String): List<ItemNota> {
     val notaFutura = TransferenciaAutomatica.notaFutura(storeno, numero) ?: return emptyList()
     val lojaFaturamento = notaFutura.storenoFat
     val numeroFaturamento = notaFutura.nffat
     return ItemNota.find(lojaFaturamento, numeroFaturamento)
   }
-
+  
   fun notasConferidas(): List<EntregaFututaVo> {
-    return ItemNota.where().status.eq(CONFERIDA).findList().map {it.toVO()}
+    return ItemNota.where()
+      .status.eq(CONFERIDA)
+      .findList()
+      .map {it.toVO()}
   }
 }
 

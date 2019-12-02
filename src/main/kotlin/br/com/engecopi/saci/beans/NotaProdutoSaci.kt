@@ -1,6 +1,7 @@
 package br.com.engecopi.saci.beans
 
 import br.com.engecopi.estoque.model.ItemNota
+import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.model.ViewProdutoLoc
@@ -32,13 +33,15 @@ class NotaProdutoSaci(val rota: String?,
     return if(serie.isNullOrBlank()) numero
     else "$numero/$serie"
   }
-
+  
   fun localizacaoes(): List<ViewProdutoLoc> {
     return ViewProdutoLoc.findByCodigoGrade(prdno, grade)
   }
-
+  
   fun tipoNota(): TipoNota? = TipoNota.value(tipo)
-
+  
+  fun loja(): Loja? = Loja.findLoja(storeno)
+  
   val nome
     get() = Produto.findProduto(prdno, grade)?.descricao ?: ""
 }

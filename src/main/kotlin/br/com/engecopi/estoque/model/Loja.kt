@@ -1,7 +1,5 @@
 package br.com.engecopi.estoque.model
 
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
 import br.com.engecopi.estoque.model.finder.LojaFinder
 import br.com.engecopi.framework.model.BaseModel
 import br.com.engecopi.saci.saci
@@ -27,7 +25,7 @@ class Loja: BaseModel() {
   val usuarios: List<Usuario>? = null
   @OneToMany(mappedBy = "loja", cascade = [REFRESH])
   var viewProdutoLoc: List<ViewProdutoLoc>? = null
-
+  
   companion object Find: LojaFinder() {
     fun findLoja(storeno: Int?): Loja? {
       return if(storeno == 0 || storeno == null) null
@@ -40,27 +38,34 @@ class Loja: BaseModel() {
              loja
            }
     }
-
-    fun lojaSaldo(): List<Loja> {
-      val loja = lojaUsuario ?: lojaDeposito ?: return emptyList()
-      return where().notas.id.gt(0).findList().filter {it.id == loja?.id}
+    
+    fun lojaSaldo(loja: Loja): List<Loja> {
+      return where().notas.id.gt(0)
+        .findList()
+        .filter {it.id == loja?.id}
     }
-
+    
     fun carregasLojas() {
-      saci.findLojas(0).forEach {lojaSaci ->
-        lojaSaci.storeno?.let {storeno ->
-          val loja = Loja.findLoja(storeno)
-          if(loja == null) {
-            Loja().apply {
-              numero = storeno
-            }.insert()
+      saci.findLojas(0)
+        .forEach {lojaSaci ->
+          lojaSaci.storeno?.let {storeno ->
+            val loja = Loja.findLoja(storeno)
+            if(loja == null) {
+              Loja().apply {
+                numero = storeno
+              }
+                .insert()
+            }
           }
         }
-      }
     }
   }
-
+  
   fun findAbreviacores(): List<String> {
-    return Repositories.findByLoja(this).asSequence().map {it.abreviacao}.distinct().toList()
+    return Repositories.findByLoja(this)
+      .asSequence()
+      .map {it.abreviacao}
+      .distinct()
+      .toList()
   }
 }

@@ -3,11 +3,12 @@ package br.com.engecopi.estoque.viewmodel
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.DEPOSITO
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
+import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.NotaItens
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
@@ -49,12 +50,13 @@ class SaidaViewModel(view: ISaidaView):
     ret
   }
   
-  private fun processaKeyNumero(numeroNota: String): NotaItens {
-    val notasSaci = Nota.findNotaSaidaSaci(numeroNota)
-      .filter {loc ->
-        loc.localizacaoes()
-          .any {it.abreviacao == abreviacaoDefault}
-      }
+  private fun processaKeyNumero(loja: Loja, numeroNota: String): NotaItens {
+    val notasSaci =
+      Nota.findNotaSaidaSaci(loja, numeroNota)
+        .filter {loc ->
+          loc.localizacaoes()
+            .any {it.abreviacao == abreviacaoDefault}
+        }
     val notaSaci = notasSaci.firstOrNull() ?: return NotaItens.VAZIO
     return if(usuarioDefault.isTipoCompativel(notaSaci.tipoNota())) Nota.createNotaItens(notasSaci).apply {
       this.nota?.lancamentoOrigem = DEPOSITO
@@ -73,9 +75,9 @@ class SaidaViewModel(view: ISaidaView):
   private fun processaKeyNumeroNota(key: String): NotaItens {
     val loja = if(key.isNotEmpty()) key.mid(0, 1).toIntOrNull() ?: return NotaItens.VAZIO
     else return NotaItens.VAZIO
-    if(loja != lojaUsuario?.numero) return NotaItens.VAZIO
+    if(loja != lojaDeposito?.numero) return NotaItens.VAZIO
     val numero = if(key.length > 1) key.mid(1) else return NotaItens.VAZIO
-    val notaItem = processaKeyNumero(numero)
+    val notaItem = processaKeyNumero(lojaDeposito, numero)
     return if(notaItem.nota?.tipoNota == VENDAF) NotaItens.VAZIO
     else notaItem
   }

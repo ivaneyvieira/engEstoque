@@ -8,7 +8,7 @@ import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.Repositories
 import br.com.engecopi.estoque.model.StatusNota
@@ -118,7 +118,7 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
                              local: String?,
                              addTime: LocalTime): ItemNota? {
     if(local.isNullOrBlank()) throw EViewModel("Não foi especificado a localização do item")
-    val saldoLocal = produto?.saldoLoja(local) ?: 0
+    val saldoLocal = produto?.saldoLoja(lojaDeposito, local) ?: 0
     return if(quantProduto != 0) {
       when {
         (saldoLocal + (statusDefault.multiplicador * quantProduto)) < 0 -> {
@@ -208,7 +208,7 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
         .filtroTipoNota()
         .filtroStatus()
         .or()
-        .nota.loja.id.eq(lojaUsuario?.id)
+        .nota.loja.eq(lojaDeposito)
         .nota.tipoNota.eq(VENDAF)
         .endOr()
         .let {query ->
@@ -244,12 +244,11 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
   }
   
   override fun QItemNota.filterString(text: String): QItemNota {
-    val idLoja = lojaUsuario?.id ?: 0
     return nota.numero.startsWith(text)
       .codigoBarraCliente.startsWith(text)
       .and()
       .produto.viewProdutoLoc.localizacao.contains(text)
-      .produto.viewProdutoLoc.loja.id.eq(idLoja)
+      .produto.viewProdutoLoc.loja.eq(lojaDeposito)
       .endAnd()
       .produto.vproduto.codigo.contains(" $text")
       .produto.vproduto.nome.contains(text)
@@ -380,17 +379,17 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   private val notaProdutoProdutoSaci: List<NotaProdutoSaci>
     get() = if(entityVo == null) mapNotaSaci.getOrPut(numeroNF) {
       when(tipo) {
-        SAIDA   -> Nota.findNotaSaidaSaci(numeroNF).filter {
+        SAIDA   -> Nota.findNotaSaidaSaci(lojaDeposito, numeroNF).filter {
           usuario.admin || (it.tipo != "PEDIDO_E")
         }
-        ENTRADA -> Nota.findNotaEntradaSaci(numeroNF)
+        ENTRADA -> Nota.findNotaEntradaSaci(lojaDeposito, numeroNF)
       }
     }
     else emptyList()
   val notaSaci
     get() = notaProdutoProdutoSaci.firstOrNull()
   val nota: Nota?
-    get() = entityVo?.nota ?: Nota.findNota(numeroNF, tipo)
+    get() = entityVo?.nota ?: Nota.findNota(lojaDeposito, numeroNF, tipo)
   
   fun atualizaNota() {
     if(!readOnly && entityVo == null) {
@@ -506,7 +505,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
     get() = produto?.grade ?: ""
   var quantProduto: Int? = 0
   val saldo: Int
-    get() = produto?.saldoLoja(localizacao?.localizacao) ?: 0
+    get() = produto?.saldoLoja(lojaDeposito, localizacao?.localizacao) ?: 0
   var localizacao: LocProduto? = null
   val localizacaoProduto
     get() = produto?.localizacoes(abreviacaoNota)?.map {LocProduto(it)}.orEmpty()
@@ -519,7 +518,7 @@ class ProdutoVO(val produto: Produto, val statusNota: StatusNota, var localizaca
   var quantidade: Int = 0
   var selecionado: Boolean = false
   val saldo: Int
-    get() = produto.saldoLoja(localizacao?.localizacao) - if(isSave) quantidade * multipicador else 0
+    get() = produto.saldoLoja(lojaDeposito, localizacao?.localizacao) - if(isSave) quantidade * multipicador else 0
   val tipoMov
     get() = statusNota.tipoMov
   val multipicador

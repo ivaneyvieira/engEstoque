@@ -5,6 +5,7 @@ import br.com.engecopi.estoque.model.HistoricoEtiqueta
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.framework.viewmodel.ViewModel
@@ -60,9 +61,11 @@ class LabelViewModel(view: ILabelView): ViewModel<ILabelView>(view) {
   }
 
   fun addFaixaNfe(nfe: String?) = exec {
-    val produtos = Nota.findNotaEntradaSaci(nfe).mapNotNull {
-      Produto.findProduto(it.prdno, it.grade)
-    }
+    val produtos =
+      Nota.findNotaEntradaSaci(lojaDeposito, nfe)
+        .mapNotNull {
+          Produto.findProduto(it.prdno, it.grade)
+        }
     view.listaProduto = produtos
   }
 }

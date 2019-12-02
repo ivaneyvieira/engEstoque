@@ -4,7 +4,6 @@ import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.viewmodel.IProdutoView
@@ -48,7 +47,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
     viewModel = ProdutoViewModel(this)
     isAddClose = false
     layoutForm {
-      binder.bean.lojaDefault = lojaUsuario ?: lojaDeposito
+      binder.bean.lojaDefault = lojaDeposito
       formLayout.apply {
         w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
         h = 300.px

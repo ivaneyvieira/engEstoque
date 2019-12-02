@@ -1,7 +1,5 @@
 package br.com.engecopi.estoque.model
 
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.finder.ViewNotaExpedicaoFinder
 import br.com.engecopi.framework.model.BaseModel
@@ -44,8 +42,7 @@ class ViewNotaExpedicao: BaseModel() {
   var abreviacao: String? = ""
   
   companion object Find: ViewNotaExpedicaoFinder() {
-    fun findSaida(numero: String?, abreviacao: String?): ViewNotaExpedicao? {
-      val loja = lojaUsuario ?: lojaDeposito
+    fun findSaida(loja: Loja, numero: String?, abreviacao: String?): ViewNotaExpedicao? {
       numero ?: return null
       abreviacao ?: return null
       return where().numero.eq(numero)

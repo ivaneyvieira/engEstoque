@@ -5,9 +5,8 @@ import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.userDefaultIsAdmin
-import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.Repositories
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
@@ -39,8 +38,9 @@ class ProdutoViewModel(view: IProdutoView): CrudViewModel<Produto, QProduto, Pro
   
   override fun add(bean: ProdutoVo) {
     Produto().apply {
-      val gradesSalvas = Produto.findProdutos(bean.codigoProduto)
-        .map {it.grade}
+      val gradesSalvas =
+        Produto.findProdutos(bean.codigoProduto)
+          .map {it.grade}
       if(!ViewProdutoSaci.existe(bean.codigoProduto)) throw EViewModel("Este produto não existe")
       if(ViewProdutoSaci.temGrade(bean.codigoProduto)) {
         val gradesProduto = bean.gradesProduto.filter {it != ""}
@@ -69,7 +69,7 @@ class ProdutoViewModel(view: IProdutoView): CrudViewModel<Produto, QProduto, Pro
   
   private fun QProduto.filtroUsuario(): QProduto {
     return this.viewProdutoLoc.localizacao.startsWith(abreviacaoDefault)
-      .viewProdutoLoc.loja.id.eq(lojaUsuario?.id)
+      .viewProdutoLoc.loja.eq(lojaDeposito)
   }
   
   override val query: QProduto
@@ -85,7 +85,7 @@ class ProdutoViewModel(view: IProdutoView): CrudViewModel<Produto, QProduto, Pro
       entityVo = produto
       codigoProduto = produto.codigo.trim()
       //gradesProduto = Produto.findGradesProduto(produto.codigo).toSet()
-      lojaDefault = usuarioDefault.loja
+      lojaDefault = lojaDeposito
     }
   }
   
@@ -119,8 +119,9 @@ class ProdutoVo: EntityVo<Produto>() {
   var codigoProduto: String? = ""
     set(value) {
       field = value
-      if(entityVo == null) gradesProduto = Produto.findGradesProduto(value)
-        .toSet()
+      if(entityVo == null) gradesProduto =
+        Produto.findGradesProduto(value)
+          .toSet()
     }
   var gradesProduto: Set<String> = emptySet()
   val descricaoProduto: String?
@@ -141,7 +142,7 @@ class ProdutoVo: EntityVo<Produto>() {
   val temGrade get() = toEntity()?.temGrade
   val grade get() = produto?.grade ?: ""
   val saldo
-    get() = produto?.saldoAbreviacao(abreviacaoDefault) ?: 0
+    get() = produto?.saldoAbreviacao(lojaDeposito, abreviacaoDefault) ?: 0
   val comprimento: Int?
     get() = produto?.vproduto?.comp
   val lagura: Int?
@@ -157,23 +158,44 @@ class ProdutoVo: EntityVo<Produto>() {
   val itensNota: List<ItemNota>
     get() {
       produto?.recalculaSaldos()
-      
+  
       return produto?.findItensNota()
         .orEmpty()
-        .asSequence()
         .filter {item ->
-          (lojaDefault?.let {lDef -> item.nota?.loja?.id == lDef.id || item.nota?.tipoNota == VENDAF}
-           ?: true) && (filtroDI?.let {di ->
-            (item.nota?.data?.isAfter(di) ?: true) || (item.nota?.data?.isEqual(di) ?: true)
-          } ?: true) && (filtroDF?.let {df ->
-            (item.nota?.data?.isBefore(df) ?: true) || (item.nota?.data?.isEqual(df) ?: true)
-          } ?: true) && (filtroTipo?.let {t -> item.nota?.tipoNota == t}
-                         ?: true) && (filtroLocalizacao?.let {loc -> item.localizacao == loc.localizacao}
-                                      ?: true) && (item.quantidadeSaldo != 0)
+          filtroLoja(item) && filtroDataInicial(item) && filtroDataFinal(item) && filtroTipoNota(item) && filtroLocalizacao(
+            item) && filtroQuantidade(item)
         }
         .sortedWith(compareBy(ItemNota::localizacao, ItemNota::data, ItemNota::hora))
         .toList()
     }
+  
+  private fun filtroQuantidade(item: ItemNota) = (item.quantidadeSaldo != 0)
+  
+  private fun filtroLocalizacao(item: ItemNota): Boolean {
+    return (filtroLocalizacao?.let {loc ->
+      item.localizacao == loc.localizacao
+    } ?: true)
+  }
+  
+  private fun filtroTipoNota(item: ItemNota) = (filtroTipo?.let {t -> item.nota?.tipoNota == t} ?: true)
+  
+  private fun filtroDataFinal(item: ItemNota): Boolean {
+    return (filtroDF?.let {df ->
+      (item.nota?.data?.isBefore(df) ?: true) || (item.nota?.data?.isEqual(df) ?: true)
+    } ?: true)
+  }
+  
+  private fun filtroDataInicial(item: ItemNota): Boolean {
+    return (filtroDI?.let {di ->
+      (item.nota?.data?.isAfter(di) ?: true) || (item.nota?.data?.isEqual(di) ?: true)
+    } ?: true)
+  }
+  
+  private fun filtroLoja(item: ItemNota): Boolean {
+    return (lojaDefault?.let {lDef ->
+      item.nota?.loja?.id == lDef.id || item.nota?.tipoNota == VENDAF
+    } ?: true)
+  }
 }
 
 interface IProdutoView: ICrudView

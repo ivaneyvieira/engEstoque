@@ -6,7 +6,6 @@ import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.viewmodel.INotaView
 import br.com.engecopi.estoque.viewmodel.NotaViewModel
@@ -48,7 +47,7 @@ import org.vaadin.patrik.FastNavigation
 
 abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: CrudLayoutView<VO, MODEL>() {
   lateinit var gridProduto: Grid<ProdutoVO>
-  val lojaDefault = lojaUsuario ?: lojaDeposito
+  //val lojaDefault = lojaUsuario ?: lojaDeposito
   val usuario = usuarioDefault
   val isAdmin = usuario.admin
   
@@ -89,7 +88,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: 
       expandRatio = 2f
       default {it.sigla}
       isReadOnly = operation != ADD
-      setItems(viewModel.findLojas(lojaDefault))
+      setItems(viewModel.findLojas(lojaDeposito))
 
       bind(binder).asRequired("A lojaDefault deve ser informada").bind("lojaNF")
       reloadBinderOnChange(binder)

@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.model
 
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.Repositories.findByAbreviacao
 import br.com.engecopi.estoque.model.Repositories.findByProduto
 import br.com.engecopi.estoque.model.finder.ViewProdutoLocFinder
@@ -39,25 +40,35 @@ class ViewProdutoLoc(@Id
       produto ?: return emptyList()
       return findByProduto(produto)
     }
-
+  
     fun localizacoesAbreviacaoCache(abreviacao: String): List<String> {
-      return findByAbreviacao(abreviacao).map {it.localizacao}.distinct()
+      return findByAbreviacao(abreviacao).map {it.localizacao}
+        .distinct()
     }
-
+  
     fun localizacoesProdutoCache(produto: Produto?): List<String> {
       produto ?: return emptyList()
-      return findByProduto(produto).map {it.localizacao}.distinct()
+      return findByProduto(produto).map {it.localizacao}
+        .distinct()
     }
-
+  
     fun localizacoesProduto(produto: Produto?): List<String> {
+      val loja = lojaDeposito
       produto ?: return emptyList()
-      return where().produto.id.eq(produto.id).findList().asSequence().mapNotNull {it.localizacao}.distinct()
+      return where().produto.id.eq(produto.id)
+        .findList()
+        .asSequence()
+        .mapNotNull {it.localizacao}
+        .distinct()
         .map {localizacao ->
-          val saldo = produto.saldoLoja(localizacao)
+          val saldo = produto.saldoLoja(loja, localizacao)
           Pair(localizacao, saldo)
-        }.sortedBy {pair -> -pair.second}.map {it.first}.toList()
+        }
+        .sortedBy {pair -> -pair.second}
+        .map {it.first}
+        .toList()
     }
-
+  
     fun abreviacoesProduto(produto: Produto?) =
       where().produto.id.eq(produto?.id).findList().mapNotNull {it.abreviacao}.distinct()
 

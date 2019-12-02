@@ -1,6 +1,7 @@
 package br.com.engecopi.estoque.viewmodel
 
 import br.com.engecopi.estoque.model.Abreviacao
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.framework.viewmodel.ViewModel
 
@@ -12,7 +13,7 @@ class AbreciacaoViewModel(view: IAbreciacaoView): ViewModel<IAbreciacaoView>(vie
   val abreviacaoes = mutableListOf<Abreviacao>()
 
   init {
-    Abreviacao.updateAbreviacao()
+    Abreviacao.updateAbreviacao(lojaDeposito)
     updateAbreviacao()
   }
 

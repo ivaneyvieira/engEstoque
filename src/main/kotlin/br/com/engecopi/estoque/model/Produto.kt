@@ -1,6 +1,7 @@
 package br.com.engecopi.estoque.model
 
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
+import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.finder.ProdutoFinder
 import br.com.engecopi.framework.model.BaseModel
 import br.com.engecopi.saci.saci
@@ -76,13 +77,16 @@ class Produto: BaseModel() {
   fun recalculaSaldos(localizacao: String): Int {
     val loja = RegistryUserInfo.lojaDeposito ?: return 0
     var saldo = 0
-    val itensNotNull = ItemNota.where()
-      .produto.id.eq(id)
-      .nota.loja.equalTo(loja)
+    val itensNotNull =
+      ItemNota.where()
+        .produto.id.eq(id)
+        .or()
+        .nota.loja.equalTo(loja)
+        .nota.tipoNota.eq(VENDAF)
+        .endOr()
       .localizacao.like(if(localizacao == "") "%" else localizacao)
       .findList()
-    itensNotNull.asSequence()
-      .filter {it.nota?.loja?.id == loja.id && it.localizacao == localizacao}
+    itensNotNull
       .sortedWith(compareBy(ItemNota::data, ItemNota::hora))
       .forEach {item ->
         item.refresh()
@@ -103,7 +107,7 @@ class Produto: BaseModel() {
     }
     
     fun findBarcode(barcode: String?): List<Produto> {
-      val storeno = RegistryUserInfo.usuarioDefault.loja?.numero ?: return emptyList()
+      val storeno = RegistryUserInfo.lojaDeposito.numero
       barcode ?: return emptyList()
       val listProduto = saci.findBarcode(storeno, barcode)
       return listProduto.mapNotNull {chave -> findProduto(chave.codigo, chave.grade)}
@@ -184,17 +188,16 @@ class Produto: BaseModel() {
     }
   }
   
-  fun saldoLoja(localizacao: String?): Int {
+  fun saldoLoja(loja: Loja, localizacao: String?): Int {
     localizacao ?: return 0
     if(localizacao == "") return 0
-    val loja = lojaDeposito
+    
     return findItensNota().asSequence()
       .filter {it.nota?.loja?.id == loja.id && it.localizacao == localizacao}
       .sumBy {it.quantidadeSaldo}
   }
   
-  fun saldoAbreviacao(abreviacao: String): Int {
-    val loja = lojaDeposito
+  fun saldoAbreviacao(loja: Loja, abreviacao: String): Int {
     return ItemNota.where()
       .produto.id.eq(id)
       .nota.loja.eq(loja)
@@ -243,7 +246,7 @@ class Produto: BaseModel() {
   
   val barcodeGtin
     get(): List<String> {
-      val storeno = RegistryUserInfo.usuarioDefault.loja?.numero ?: return emptyList()
+      val storeno = lojaDeposito.numero
       val chave = saci.findBarcode(storeno, codigo, grade)
       return chave.map {it.barcode}
     }

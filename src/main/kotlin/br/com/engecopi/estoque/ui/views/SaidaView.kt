@@ -7,6 +7,7 @@ import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.NotaItens
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
@@ -85,7 +86,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
     viewModel = SaidaViewModel(this)
     layoutForm {
       if(operation == ADD) {
-        binder.bean.lojaNF = lojaDefault
+        binder.bean.lojaNF = lojaDeposito
         binder.bean.usuario = usuario
         operationButton?.isEnabled = false
       }

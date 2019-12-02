@@ -16,7 +16,7 @@ class TransferenciaAutomatica(id: String,
     get() = "$storenoFat$nffat$storenoTransf$nftransf"
   val numeroTransf get() = "$storenoTransf$nftransf"
   val numeroFat get() = "$storenoFat$nffat"
-
+  
   companion object {
     fun notaFutura(lojaTransferencia: Int?, numeroSerieTransferencia: String?): TransferenciaAutomatica? {
       lojaTransferencia ?: return null
@@ -25,9 +25,11 @@ class TransferenciaAutomatica(id: String,
         |where storenoTransf = $lojaTransferencia
         |  AND nftransf = '$numeroSerieTransferencia'
       """.trimMargin()
-      return DB.findDto(TransferenciaAutomatica::class.java, sql).findList().firstOrNull()
+      return DB.findDto(TransferenciaAutomatica::class.java, sql)
+        .findList()
+        .firstOrNull()
     }
-
+    
     fun notaTransfencia(lojaFatura: Int?, numeroSerieFatura: String?): TransferenciaAutomatica? {
       lojaFatura ?: return null
       numeroSerieFatura ?: return null
@@ -35,7 +37,9 @@ class TransferenciaAutomatica(id: String,
         |where storenoFat = $lojaFatura
         |  AND nffat = '$numeroSerieFatura'
       """.trimMargin()
-      return DB.findDto(TransferenciaAutomatica::class.java, sql).findList().firstOrNull()
+      return DB.findDto(TransferenciaAutomatica::class.java, sql)
+        .findList()
+        .firstOrNull()
     }
   }
 }

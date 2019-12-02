@@ -3,7 +3,7 @@ package br.com.engecopi.estoque.viewmodel
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
@@ -69,8 +69,8 @@ class EntregaClienteViewModel(view: IEntregaClienteView):
   private fun processaKeyBarcodeCliente(key: String): List<ItemNota> {
     val loja = if(key.isNotEmpty()) key.mid(0, 1).toIntOrNull() ?: return emptyList() else return emptyList()
     val numero = if(key.length > 1) key.mid(1) else return emptyList()
-    if(loja != lojaUsuario?.numero) return emptyList()
-    return Nota.findSaida(numero)
+    if(loja != lojaDeposito.numero) return emptyList()
+    return Nota.findSaida(lojaDeposito, numero)
       ?.itensNota()
       .orEmpty()
   }

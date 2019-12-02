@@ -7,6 +7,7 @@ import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.NotaSerie
 import br.com.engecopi.estoque.model.Produto
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
@@ -50,7 +51,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
   
   override fun delete(bean: NFVendaFuturaVo) {
     val nota = bean.findEntity() ?: return
-    val saida = Nota.findSaida(nota.numero) ?: return
+    val saida = Nota.findSaida(nota.loja, nota.numero) ?: return
     
     ItemNota.where()
       .nota.equalTo(saida)
@@ -114,7 +115,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
     //if(loja != lojaSaci) throw EViewModel("Esta nota pertence a loja $lojaSaci")
     val nota: Nota? = Nota.createNota(notaDoSaci)
       ?.let {
-        if(it.existe()) Nota.findSaida(it.numero)
+        if(it.existe()) Nota.findSaida(it.loja, it.numero)
         else {
           it.sequencia = Nota.maxSequencia() + 1
           it.usuario = usuarioDefault
@@ -264,7 +265,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
   
   fun saldoProduto(notaProdutoSaci: NotaProdutoSaci, abreviacao: String): Int {
     val produto = Produto.findProduto(notaProdutoSaci.codigo(), notaProdutoSaci.grade)
-    return produto?.saldoAbreviacao(abreviacao) ?: 0
+    return produto?.saldoAbreviacao(lojaDeposito, abreviacao) ?: 0
   }
   
   fun processaVendas(venda: VendasCaixa) {
@@ -276,7 +277,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
 
 class NFVendaFuturaVo: EntityVo<ViewNotaFutura>() {
   override fun findEntity(): ViewNotaFutura? {
-    return ViewNotaFutura.findSaida(numero, abreviacao)
+    return ViewNotaFutura.findSaida(loja, numero, abreviacao)
   }
   
   var numero: String = ""

@@ -34,25 +34,31 @@ class Usuario: BaseModel() {
   var locais: List<String>
     get() = localizacaoes.split(",").asSequence().filter {it.isNotBlank()}.map {it.trim()}.toList()
     set(value) {
-      localizacaoes = value.asSequence().sorted().joinToString()
+      localizacaoes =
+        value.asSequence()
+          .sorted()
+          .joinToString()
     }
   var series: List<NotaSerie>
     get() = notaSeries.split(",").filter {it.isNotBlank()}.mapNotNull {mapNotaSerie(it)}.toList()
     set(value) {
-      notaSeries = value.map {it.id.toString()}.sorted().joinToString()
+      notaSeries =
+        value.map {it.id.toString()}
+          .sorted()
+          .joinToString()
     }
   val isEstoqueExpedicao
     get() = !admin && expedicao && estoque
   val isEstoqueVendaFutura
     get() = !admin && entregaFutura && estoque
-
+  
   private fun mapNotaSerie(idStr: String): NotaSerie? {
     val id = idStr.trim().toLongOrNull() ?: return null
     return NotaSerie.values.find {it.id == id}
   }
-
+  
   private fun usuarioSaci() = saci.findUser(loginName)
-
+  
   var admin: Boolean = false
   var estoque: Boolean = true
   var expedicao: Boolean = false
@@ -60,41 +66,59 @@ class Usuario: BaseModel() {
   var etiqueta: Boolean = true
   val nome: String?
     @Transient get() = usuarioSaci()?.name
-
+  
   fun temProduto(produto: Produto?): Boolean {
     produto ?: return false
     return ViewProdutoLoc.existsCache(produto)
   }
-
+  
   fun localizacoesProduto(produto: Produto): List<String> {
-    return ViewProdutoLoc.where().produto.equalTo(produto).or().loja.equalTo(loja).loja.equalTo(null).endOr().or()
-      .abreviacao.isIn(locais).localizacao.isIn(locais).endOr().findList().mapNotNull {it.localizacao}
+    return ViewProdutoLoc.where()
+      .produto.equalTo(produto)
+      .or()
+      .loja.equalTo(loja)
+      .loja.equalTo(null)
+      .endOr()
+      .or()
+      .abreviacao.isIn(locais)
+      .localizacao.isIn(locais)
+      .endOr()
+      .findList()
+      .mapNotNull {it.localizacao}
   }
-
+  
   fun isTipoCompativel(tipo: TipoNota?): Boolean {
     tipo ?: return false
-
+    
     return series.any {it.tipoNota == tipo} || admin
   }
-
+  
   val produtoLoc: List<Produto>
     get() {
       return locais.flatMap {loc ->
-        ViewProdutoLoc.where().loja.id.eq(loja?.id).or().abreviacao.eq(loc).localizacao.eq(loc).endOr().findList()
+        ViewProdutoLoc.where()
+          .loja.eq(loja)
+          .or()
+          .abreviacao.eq(loc)
+          .localizacao.eq(loc)
+          .endOr()
+          .findList()
           .map {it.produto}
       }
     }
-
+  
   companion object Find: UsuarioFinder() {
     fun findUsuario(loginName: String?): Usuario? {
       if(loginName.isNullOrBlank()) return null
-      return where().loginName.eq(loginName).findList().firstOrNull()
+      return where().loginName.eq(loginName)
+        .findList()
+        .firstOrNull()
     }
-
+    
     fun nomeSaci(value: String): String {
       return saci.findUser(value)?.name ?: ""
     }
-
+    
     fun abreviacaoes(username: String?): List<String> {
       return findUsuario(loginName = username)?.let {usuario ->
         if(usuario.estoque) {
@@ -105,7 +129,7 @@ class Usuario: BaseModel() {
         else emptyList()
       } ?: emptyList()
     }
-
+    
     fun findLoginUser() = saci.findLoginUser()
   }
 }

@@ -26,11 +26,13 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     val sql = "/sqlSaci/findNotaEntrada.sql"
     return if(nfname == "") emptyList()
     else query(sql) {q ->
-      q.addParameter("storeno", storeno).addParameter("nfname", nfname).addParameter("invse", invse)
+      q.addParameter("storeno", storeno)
+        .addParameter("nfname", nfname)
+        .addParameter("invse", invse)
         .executeAndFetch(NotaProdutoSaci::class.java)
     }.filter {liberaNotasAntigas || filtroDataRecente(it)}
   }
-
+  
   fun findNotaSaida(storeno: Int, nfno: String, nfse: String, liberaNotasAntigas: Boolean): List<NotaProdutoSaci> {
     return if(nfno == "") emptyList()
     else if(nfse == "") findNotaSaidaOrd(storeno, nfno)
@@ -40,104 +42,127 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       else findNotaSaidaPxa(storeno, nfno, nfse)
     }.filter {liberaNotasAntigas || filtroDataRecente(it)}
   }
-
+  
   private fun filtroDataRecente(notaProdutoSaci: NotaProdutoSaci): Boolean {
     val dtEmissao = notaProdutoSaci.dtEmissao?.localDate() ?: return false
     val date = notaProdutoSaci.date?.localDate() ?: return false
-    val dataLimite = LocalDate.now().minusDays(150)
+    val dataLimite =
+      LocalDate.now()
+        .minusDays(150)
     return date.isAfter(dataLimite) || dtEmissao.isAfter(dataLimite)
   }
-
+  
   private fun findNotaSaidaNF(storeno: Int, nfno: String, nfse: String): List<NotaProdutoSaci> {
     val sql = "/sqlSaci/findNotaSaidaNF.sql"
     return query(sql) {q ->
-      q.addParameter("storeno", storeno).addParameter("nfno", nfno).addParameter("nfse", nfse)
+      q.addParameter("storeno", storeno)
+        .addParameter("nfno", nfno)
+        .addParameter("nfse", nfse)
         .executeAndFetch(NotaProdutoSaci::class.java)
     }
   }
-
+  
   private fun findNotaSaidaOrd(storeno: Int, nfno: String): List<NotaProdutoSaci> {
     val sql = "/sqlSaci/findNotaSaidaOrd.sql"
     return query(sql) {q ->
-      q.addParameter("storeno", storeno).addParameter("nfno", nfno).executeAndFetch(NotaProdutoSaci::class.java)
-    }
-  }
-
-  private fun findNotaSaidaPxa(storeno: Int, nfno: String, nfse: String): List<NotaProdutoSaci> {
-    val sql = "/sqlSaci/findNotaSaidaPXA.sql"
-    return query(sql) {q ->
-      q.addParameter("storeno", storeno).addParameter("nfno", nfno).addParameter("nfse", nfse)
+      q.addParameter("storeno", storeno)
+        .addParameter("nfno", nfno)
         .executeAndFetch(NotaProdutoSaci::class.java)
     }
   }
-
+  
+  private fun findNotaSaidaPxa(storeno: Int, nfno: String, nfse: String): List<NotaProdutoSaci> {
+    val sql = "/sqlSaci/findNotaSaidaPXA.sql"
+    return query(sql) {q ->
+      q.addParameter("storeno", storeno)
+        .addParameter("nfno", nfno)
+        .addParameter("nfse", nfse)
+        .executeAndFetch(NotaProdutoSaci::class.java)
+    }
+  }
+  
   fun findLojas(storeno: Int): List<LojaSaci> {
     val sql = "/sqlSaci/findLojas.sql"
     return query(sql) {q ->
-      q.executeAndFetch(LojaSaci::class.java).filter {it.storeno == storeno || storeno == 0}
+      q.executeAndFetch(LojaSaci::class.java)
+        .filter {it.storeno == storeno || storeno == 0}
     }
   }
-
+  
   fun findUser(login: String): UserSaci? {
     val sql = "/sqlSaci/userSenha.sql"
     return query(sql) {q ->
-      q.addParameter("login", login).executeAndFetch(UserSaci::class.java).firstOrNull()
+      q.addParameter("login", login)
+        .executeAndFetch(UserSaci::class.java)
+        .firstOrNull()
     }
   }
-
+  
   fun findLoginUser(): List<String> {
     val sql = "/sqlSaci/userSenha.sql"
     return query(sql) {q ->
-      q.addParameter("login", "TODOS").executeAndFetch(UserSaci::class.java).mapNotNull {it.login}
+      q.addParameter("login", "TODOS")
+        .executeAndFetch(UserSaci::class.java)
+        .mapNotNull {it.login}
     }
   }
-
+  
   fun findNotaSaidaKey(nfeKey: String, liberaNotasAntigas: Boolean): List<NotaProdutoSaci> {
     val sql = "/sqlSaci/findNotaSaidaKey.sql"
     return query(sql) {q ->
-      q.addParameter("nfekey", nfeKey).executeAndFetch(NfsKey::class.java).firstOrNull()
+      q.addParameter("nfekey", nfeKey)
+        .executeAndFetch(NfsKey::class.java)
+        .firstOrNull()
     }?.let {key ->
       findNotaSaida(key.storeno, key.nfno, key.nfse, liberaNotasAntigas)
     } ?: emptyList()
   }
-
+  
   fun findBarcode(storeno: Int, barcode: String): List<ChaveProduto> {
     val sql = "/sqlSaci/findBarcode.sql"
     return query(sql) {q ->
-      q.addParameter("storeno", storeno).addParameter("barcode", barcode.lpad(16, " "))
-        .executeAndFetch(ChaveProduto::class.java).findChave()
+      q.addParameter("storeno", storeno)
+        .addParameter("barcode", barcode.lpad(16, " "))
+        .executeAndFetch(ChaveProduto::class.java)
+        .findChave()
     }
   }
-
+  
   fun findBarcode(storeno: Int, prdno: String, grade: String): List<ChaveProduto> {
     val sql = "/sqlSaci/findBarcode2.sql"
     return query(sql) {q ->
-      q.addParameter("storeno", storeno).addParameter("prdno", prdno).addParameter("grade", grade)
-        .executeAndFetch(ChaveProduto::class.java).findChave()
+      q.addParameter("storeno", storeno)
+        .addParameter("prdno", prdno)
+        .addParameter("grade", grade)
+        .executeAndFetch(ChaveProduto::class.java)
+        .findChave()
     }
   }
-
+  
   fun findFornecedor(vendno: Int): List<ChaveProduto> {
     val sql = "/sqlSaci/findFornecedor.sql"
     return query(sql) {q ->
-      q.addParameter("vendno", vendno).executeAndFetch(ChaveProduto::class.java)
+      q.addParameter("vendno", vendno)
+        .executeAndFetch(ChaveProduto::class.java)
     }
   }
-
+  
   fun findCentroLucro(clno: Int): List<ChaveProduto> {
     val sql = "/sqlSaci/findCentroLucro.sql"
     return query(sql) {q ->
-      q.addParameter("clno", clno).executeAndFetch(ChaveProduto::class.java)
+      q.addParameter("clno", clno)
+        .executeAndFetch(ChaveProduto::class.java)
     }
   }
-
+  
   fun findTipoProduto(typeno: Int): List<ChaveProduto> {
     val sql = "/sqlSaci/findTipoProduto.sql"
     return query(sql) {q ->
-      q.addParameter("typeno", typeno).executeAndFetch(ChaveProduto::class.java)
+      q.addParameter("typeno", typeno)
+        .executeAndFetch(ChaveProduto::class.java)
     }
   }
-
+  
   fun findNotasSaidaCancelada(lista: List<Nota>): List<Nota> {
     val sqlTemp = temporaryTable("TempNotaSaida", lista) {nota ->
       val storeno = nota.loja?.numero ?: 0
@@ -148,17 +173,17 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     println(sqlTemp)
     return lista
   }
-
+  
   fun findNotaEntradaSaci(storeno: Int, abreviacao: String): List<NotaSaci> {
     val sql = "/sqlSaci/findNotaEntradaTodas.sql"
     return findNotaSaci(sql, storeno, abreviacao)
   }
-
+  
   fun findNotaSaidaSaci(storeno: Int, abreviacao: String): List<NotaSaci> {
     val sql = "/sqlSaci/findNotaSaidaTodas.sql"
     return findNotaSaci(sql, storeno, abreviacao)
   }
-
+  
   private fun findNotaSaci(sql: String, storeno: Int, abreviacao: String): List<NotaSaci> {
     /*
     val data = LocalDate.now()
@@ -166,77 +191,100 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       .toSaciDate()
       *
      */
-    val data = LocalDate.of(2019, 9, 1).toSaciDate()
+    val data =
+      LocalDate.of(2019, 9, 1)
+        .toSaciDate()
     val notaProdutoList = query(sql) {q ->
       q.run {
-        addParameter("storeno", storeno).addParameter("abreviacao", "${abreviacao}%").addParameter("data", data)
+        addParameter("storeno", storeno).addParameter("abreviacao", "${abreviacao}%")
+          .addParameter("data", data)
           .executeAndFetch(NotaProduto::class.java)
       }
     }.toList()
     val notaGroup = notaProdutoList.groupBy {KeyNota(it.storeno, it.numero, it.serie)}
     ProdutoSaci.updateProduto()
     return notaGroup.mapNotNull {(key, produtosChave) ->
-      produtosChave.firstOrNull()?.let {nota ->
-        val produtosValidos = produtosChave.map {ProdutoSaci(it.prdno, it.grade)}.filter {produto ->
-          val dataCadastroProduto = produto.dataCadastro ?: return@filter false
-          dataCadastroProduto <= nota.date.localDate()
-        }.distinct()
-        when {
-          produtosValidos.isNotEmpty() -> NotaSaci(invno = nota.invno,
-                                                   storeno = nota.storeno,
-                                                   numero = nota.numero,
-                                                   serie = nota.serie,
-                                                   date = nota.date,
-                                                   dtEmissao = nota.dtEmissao,
-                                                   tipo = nota.tipo,
-                                                   cancelado = nota.cancelado,
-                                                   produtos = produtosValidos)
-          else                         -> null
+      produtosChave.firstOrNull()
+        ?.let {nota ->
+          val produtosValidos =
+            produtosChave.map {ProdutoSaci(it.prdno, it.grade)}
+              .filter {produto ->
+                val dataCadastroProduto = produto.dataCadastro ?: return@filter false
+                dataCadastroProduto <= nota.date.localDate()
+              }
+              .distinct()
+          when {
+            produtosValidos.isNotEmpty() -> NotaSaci(invno = nota.invno,
+                                                     storeno = nota.storeno,
+                                                     numero = nota.numero,
+                                                     serie = nota.serie,
+                                                     date = nota.date,
+                                                     dtEmissao = nota.dtEmissao,
+                                                     tipo = nota.tipo,
+                                                     cancelado = nota.cancelado,
+                                                     produtos = produtosValidos)
+            else                         -> null
+          }
         }
-      }
     }
   }
-
+  
   fun findDevolucaoFornecedor(storeno: Int, abreviacao: String): List<DevolucaoFornecedor> {
     val sql = "/sqlSaci/findDevolucaoFornecedor.sql"
     return query(sql) {q ->
-      q.addParameter("storeno", storeno).addParameter("abreviacao", "${abreviacao}%")
+      q.addParameter("storeno", storeno)
+        .addParameter("abreviacao", "${abreviacao}%")
         .executeAndFetch(DevolucaoFornecedor::class.java)
     }
   }
-
+  
   fun findVendasCaixa(): List<VendasCaixa> {
     val sql = "/sqlSaci/findVendaCaixa.sql"
-    val data_atual = LocalDate.now().toSaciDate()
+    val data_atual =
+      LocalDate.now()
+        .toSaciDate()
     return query(sql) {q ->
-      q.addParameter("data_atual", "$data_atual").executeAndFetch(VendasCaixa::class.java)
+      q.addParameter("data_atual", "$data_atual")
+        .executeAndFetch(VendasCaixa::class.java)
     }
   }
-
+  
   fun findPedidoTransferencia(): List<PedidoSaci> {
     val sql = "/sqlSaci/findPedidoTransferencia.sql"
-    val data_inicial = LocalDate.now().minusMonths(6).toSaciDate()
+    val data_inicial =
+      LocalDate.now()
+        .minusMonths(6)
+        .toSaciDate()
     return query(sql) {q ->
-      q.addParameter("data_inicial", "$data_inicial").executeAndFetch(PedidoSaci::class.java)
+      q.addParameter("data_inicial", "$data_inicial")
+        .executeAndFetch(PedidoSaci::class.java)
     }
   }
-
+  
   fun findEntregaFutura(): List<EntregaFutura> {
     val sql = "/sqlSaci/findEntragaFutura.sql"
-    val data_inicial = LocalDate.now().minusMonths(6).toSaciDate()
+    val data_inicial =
+      LocalDate.now()
+        .minusMonths(6)
+        .toSaciDate()
     return query(sql) {q ->
-      q.addParameter("data_inicial", "$data_inicial").executeAndFetch(EntregaFutura::class.java)
+      q.addParameter("data_inicial", "$data_inicial")
+        .executeAndFetch(EntregaFutura::class.java)
     }
   }
-
+  
   fun findTransferenciaAutomatica(): List<TransferenciaAutomatica> {
     val sql = "/sqlSaci/findTransferenciaAutomatica.sql"
-    val data_inicial = LocalDate.now().minusMonths(6).toSaciDate()
+    val data_inicial =
+      LocalDate.now()
+        .minusMonths(6)
+        .toSaciDate()
     return query(sql) {q ->
-      q.addParameter("data_inicial", "$data_inicial").executeAndFetch(TransferenciaAutomatica::class.java)
+      q.addParameter("data_inicial", "$data_inicial")
+        .executeAndFetch(TransferenciaAutomatica::class.java)
     }
   }
-
+  
   companion object {
     private val db = DB("saci")
     internal val driver = db.driver
@@ -244,7 +292,9 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     internal val username = db.username
     internal val password = db.password
     internal val test = db.test
-    val ipServer = url.split("/").getOrNull(2)
+    val ipServer =
+      url.split("/")
+        .getOrNull(2)
   }
 }
 

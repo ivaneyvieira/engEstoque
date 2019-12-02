@@ -8,7 +8,7 @@ import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.NotaSerie
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
@@ -48,7 +48,7 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
   
   override fun delete(bean: NFExpedicaoVo) {
     val nota = bean.findEntity() ?: return
-    val saida = Nota.findSaida(nota.numero) ?: return
+    val saida = Nota.findSaida(nota.loja, nota.numero) ?: return
     
     ItemNota.where()
       .nota.equalTo(saida)
@@ -58,7 +58,7 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
   
   override val query: QViewNotaExpedicao
     get() = ViewNotaExpedicao.where().let {query ->
-      query.loja.eq(lojaUsuario)
+      query.loja.eq(lojaDeposito)
         .nota.tipoNota.ne(VENDAF)
         .let {q ->
           if(usuarioDefault.isEstoqueExpedicao) q.abreviacao.eq(abreviacaoDefault).filtroNotaSerie()
@@ -112,14 +112,15 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
   }
   
   private fun processaNota(itensExpedicao: List<ItemExpedicao>): Nota? {
-    val loja = lojaUsuario?.numero ?: return null
-    val notaDoSaci = itensExpedicao.firstOrNull()
-      ?.notaProdutoSaci
+    val loja = lojaDeposito.numero ?: return null
+    val notaDoSaci =
+      itensExpedicao.firstOrNull()
+        ?.notaProdutoSaci
     val lojaSaci = notaDoSaci?.storeno ?: throw EViewModel("Nota não encontrada")
     if(loja != lojaSaci) throw EViewModel("Esta nota pertence a loja $lojaSaci")
     val nota: Nota? = Nota.createNota(notaDoSaci)
       ?.let {
-        if(it.existe()) Nota.findSaida(it.numero)
+        if(it.existe()) Nota.findSaida(it.loja, it.numero)
         else {
           it.sequencia = Nota.maxSequencia() + 1
           it.usuario = usuarioDefault
@@ -219,7 +220,7 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
   fun findNotaSaidaKey(key: String) = execList {
     val notaSaci = when {
       key.length == 44 -> Nota.findNotaSaidaKey(key)
-      else             -> Nota.findNotaSaidaSaci(key)
+      else             -> Nota.findNotaSaidaSaci(lojaDeposito, key)
     }.filter {ns ->
       when {
         usuarioDefault.isEstoqueExpedicao -> ViewProdutoLoc.filtraLoc(ns.prdno, ns.grade)
@@ -267,7 +268,7 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
   
   fun saldoProduto(notaProdutoSaci: NotaProdutoSaci, abreviacao: String): Int {
     val produto = Produto.findProduto(notaProdutoSaci.codigo(), notaProdutoSaci.grade)
-    return produto?.saldoAbreviacao(abreviacao) ?: 0
+    return produto?.saldoAbreviacao(lojaDeposito, abreviacao) ?: 0
   }
   
   fun processaVendas(venda: VendasCaixa) {
@@ -279,7 +280,7 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
 
 class NFExpedicaoVo: EntityVo<ViewNotaExpedicao>() {
   override fun findEntity(): ViewNotaExpedicao? {
-    return ViewNotaExpedicao.findSaida(numero, abreviacao)
+    return ViewNotaExpedicao.findSaida(lojaDeposito, numero, abreviacao)
   }
   
   var numero: String = ""

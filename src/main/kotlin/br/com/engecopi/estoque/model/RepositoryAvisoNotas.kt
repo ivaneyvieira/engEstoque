@@ -1,7 +1,7 @@
 package br.com.engecopi.estoque.model
 
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.TipoNota.COMPRA
 import br.com.engecopi.estoque.model.TipoNota.DEV_CLI
 import br.com.engecopi.estoque.model.TipoNota.DEV_FOR
@@ -11,7 +11,7 @@ import br.com.engecopi.saci.beans.NotaSaci
 import br.com.engecopi.saci.saci
 
 object RepositoryAvisoNotas {
-  private val storeno = lojaUsuario?.numero ?: 0
+  private val storeno = lojaDeposito.numero ?: 0
   private val abreviacao = abreviacaoDefault
   private val notaSaidaTodas = mutableListOf<NotaSaci>()
   private val notaEntradaTodas = mutableListOf<NotaSaci>()
@@ -43,12 +43,12 @@ object RepositoryAvisoNotas {
 
   private fun refreshNotaSaidaApp() {
     notaSaidaSalva.clear()
-    notaSaidaSalva.addAll(Nota.notasSaidaSalva())
+    notaSaidaSalva.addAll(Nota.notasSaidaSalva(lojaDeposito))
   }
 
   private fun refreshNotaEntradaApp() {
     notaEntradaSalva.clear()
-    notaEntradaSalva.addAll(Nota.notasEntradaSalva())
+    notaEntradaSalva.addAll(Nota.notasEntradaSalva(lojaDeposito))
   }
 
   private fun refreshDevolucaoFornecedor() {

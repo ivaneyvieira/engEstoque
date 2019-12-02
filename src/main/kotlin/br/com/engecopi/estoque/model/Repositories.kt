@@ -2,7 +2,6 @@ package br.com.engecopi.estoque.model
 
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaUsuario
 import br.com.engecopi.framework.model.DB
 import io.ebean.Ebean
 import java.time.LocalDateTime
@@ -66,7 +65,7 @@ WHERE T.produto_id <> P.id;
   
   fun findByProduto(produto: Produto?): List<ViewProdutoLoc> {
     produto ?: return emptyList()
-    val numero = lojaUsuario?.numero ?: lojaDeposito?.numero ?: 0
+    val numero = lojaDeposito.numero
     return viewProdutosLocProdutoKey[ProdutoKey(produtoId = produto.id,
                                                 storeno = numero,
                                                 abreviacao = abreviacaoDefault)].orEmpty()
@@ -81,7 +80,7 @@ WHERE T.produto_id <> P.id;
     return viewProdutosLocAbreviacaoKey[abreviacao].orEmpty()
   }
   
-  fun findByLojaAbreviacao(storeno: Int = lojaUsuario?.numero ?: 0,
+  fun findByLojaAbreviacao(storeno: Int = lojaDeposito.numero,
                            abreviacao: String = abreviacaoDefault): List<ViewProdutoLoc> {
     return viewProdutosLocLojaAbreviacaoKey[LojaAbreviacaoKey(storeno = storeno, abreviacao = abreviacao)].orEmpty()
   }
