@@ -172,7 +172,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
       val listaItens = notaRef.itensNota()
       val itensAbreviacao = listaItens.groupBy {it.abreviacao}
       val impressaoCD = itensAbreviacao.map {entry ->
-        imprimeItens(CONFERIDA, entry.value)
+        imprimeItens(INCLUIDA, entry.value)
       }
       impressaoCD.joinToString(separator = "\n")
     }
