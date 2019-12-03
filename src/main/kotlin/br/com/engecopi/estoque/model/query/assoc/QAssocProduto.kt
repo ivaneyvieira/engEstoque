@@ -31,21 +31,21 @@ class QAssocProduto<R>(name: String, root: R): TQAssocBean<Produto, R>(name, roo
   lateinit var viewProdutoLoc: QAssocViewProdutoLoc<R>
   lateinit var localizacao: PString<R>
   lateinit var saldo_total: PInteger<R>
-
+  
   /**
    * Eagerly fetch this association loading the specified properties.
    */
   fun fetch(vararg properties: TQProperty<QProduto>): R {
     return fetchProperties(*properties)
   }
-
+  
   /**
    * Eagerly fetch this association using a 'query join' loading the specified properties.
    */
   fun fetchQuery(vararg properties: TQProperty<QProduto>): R {
     return fetchQueryProperties(*properties)
   }
-
+  
   /**
    * Use lazy loading for this association loading the specified properties.
    */

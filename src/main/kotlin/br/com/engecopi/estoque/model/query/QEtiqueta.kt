@@ -27,7 +27,7 @@ class QEtiqueta: TQRootBean<Etiqueta, QEtiqueta> {
      */
     val _alias = QEtiqueta(true)
   }
-
+  
   lateinit var id: PLong<QEtiqueta>
   lateinit var createdAt: PLocalDateTime<QEtiqueta>
   lateinit var updatedAt: PLocalDateTime<QEtiqueta>
@@ -37,17 +37,17 @@ class QEtiqueta: TQRootBean<Etiqueta, QEtiqueta> {
   lateinit var template: PString<QEtiqueta>
   lateinit var itensNota: QAssocItemNota<QEtiqueta>
   lateinit var etiquetaDefault: PBoolean<QEtiqueta>
-
+  
   /**
    * Construct with a given Database.
    */
   constructor(database: Database): super(Etiqueta::class.java, database)
-
+  
   /**
    * Construct using the default Database.
    */
   constructor(): super(Etiqueta::class.java)
-
+  
   /**
    * Construct for Alias.
    */

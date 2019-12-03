@@ -25,21 +25,21 @@ class QAssocViewCodBarEntrega<R>(name: String, root: R): TQAssocBean<ViewCodBarE
   lateinit var codigo: PString<R>
   lateinit var grade: PString<R>
   lateinit var quantidade: PInteger<R>
-
+  
   /**
    * Eagerly fetch this association loading the specified properties.
    */
   fun fetch(vararg properties: TQProperty<QViewCodBarEntrega>): R {
     return fetchProperties(*properties)
   }
-
+  
   /**
    * Eagerly fetch this association using a 'query join' loading the specified properties.
    */
   fun fetchQuery(vararg properties: TQProperty<QViewCodBarEntrega>): R {
     return fetchQueryProperties(*properties)
   }
-
+  
   /**
    * Use lazy loading for this association loading the specified properties.
    */

@@ -21,6 +21,7 @@ import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.model.ViewNotaExpedicao
 import br.com.engecopi.estoque.model.ViewProdutoLoc
 import br.com.engecopi.estoque.model.dtos.VendasCaixa
+import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.model.query.QViewNotaExpedicao
 import br.com.engecopi.estoque.ui.log
 import br.com.engecopi.framework.viewmodel.CrudViewModel
@@ -49,15 +50,15 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
   override fun delete(bean: NFExpedicaoVo) {
     val nota = bean.findEntity() ?: return
     val saida = Nota.findSaida(nota.loja, nota.numero) ?: return
-    
-    ItemNota.where()
+  
+    QItemNota()
       .nota.equalTo(saida)
       .localizacao.startsWith(bean.abreviacao)
       .delete()
   }
   
   override val query: QViewNotaExpedicao
-    get() = ViewNotaExpedicao.where().let {query ->
+    get() = QViewNotaExpedicao().let {query ->
       query.loja.eq(lojaDeposito)
         .nota.tipoNota.ne(VENDAF)
         .let {q ->
@@ -204,10 +205,10 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
   
   fun imprimeTudo() = execString {
     val etiquetas = Etiqueta.findByStatus(INCLUIDA)
-    val itens = ItemNota.where()
-      .impresso.eq(false)
-      .status.eq(INCLUIDA)
-      .findList()
+    val itens =
+      QItemNota().impresso.eq(false)
+        .status.eq(INCLUIDA)
+        .findList()
     val ret = etiquetas.joinToString(separator = "\n") {etiqueta ->
       itens.map {item -> imprimir(item, etiqueta)}
         .distinct()

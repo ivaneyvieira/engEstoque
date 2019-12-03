@@ -3,6 +3,8 @@ package br.com.engecopi.estoque.model
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.finder.ProdutoFinder
+import br.com.engecopi.estoque.model.query.QItemNota
+import br.com.engecopi.estoque.model.query.QProduto
 import br.com.engecopi.framework.model.BaseModel
 import br.com.engecopi.saci.saci
 import br.com.engecopi.utils.lpad
@@ -78,16 +80,14 @@ class Produto: BaseModel() {
     val loja = RegistryUserInfo.lojaDeposito ?: return 0
     var saldo = 0
     val itensNotNull =
-      ItemNota.where()
-        .produto.id.eq(id)
+      QItemNota().produto.id.eq(id)
         .or()
         .nota.loja.equalTo(loja)
         .nota.tipoNota.eq(VENDAF)
         .endOr()
-      .localizacao.like(if(localizacao == "") "%" else localizacao)
-      .findList()
-    itensNotNull
-      .sortedWith(compareBy(ItemNota::data, ItemNota::hora))
+        .localizacao.like(if(localizacao == "") "%" else localizacao)
+        .findList()
+    itensNotNull.sortedWith(compareBy(ItemNota::data, ItemNota::hora))
       .forEach {item ->
         item.refresh()
         saldo += item.quantidadeSaldo
@@ -100,7 +100,7 @@ class Produto: BaseModel() {
   companion object Find: ProdutoFinder() {
     fun findProduto(codigo: String?, grade: String?): Produto? {
       codigo ?: return null
-      return where().codigo.eq(codigo.trim().lpad(16, " "))
+      return QProduto().codigo.eq(codigo.trim().lpad(16, " "))
         .grade.eq(grade ?: "")
         .findList()
         .firstOrNull()
@@ -115,8 +115,8 @@ class Produto: BaseModel() {
     
     fun findProdutos(codigo: String?): List<Produto> {
       codigo ?: return emptyList()
-      
-      return where().codigo.eq(codigo.lpad(16, " "))
+  
+      return QProduto().codigo.eq(codigo.lpad(16, " "))
         .findList()
     }
     
@@ -149,13 +149,13 @@ class Produto: BaseModel() {
     fun findFaixaCodigo(codigoI: String?, codigoF: String?): List<Produto> {
       val prdnoI = codigoI?.lpad(16, " ") ?: return emptyList()
       val prdnoF = codigoF?.lpad(16, " ") ?: return emptyList()
-      return where().codigo.between(prdnoI, prdnoF)
+      return QProduto().codigo.between(prdnoI, prdnoF)
         .findList()
         .filtroCD()
     }
     
     fun findFaixaNome(nomeI: String?, nomeF: String?): List<Produto> {
-      return where().vproduto.nome.between(nomeI, nomeF)
+      return QProduto().vproduto.nome.between(nomeI, nomeF)
         .findList()
         .filtroCD()
     }
@@ -198,8 +198,7 @@ class Produto: BaseModel() {
   }
   
   fun saldoAbreviacao(loja: Loja, abreviacao: String): Int {
-    return ItemNota.where()
-      .produto.id.eq(id)
+    return QItemNota().produto.id.eq(id)
       .nota.loja.eq(loja)
       .localizacao.startsWith(abreviacao)
       .findList()
@@ -217,8 +216,7 @@ class Produto: BaseModel() {
   }
   
   fun findItensNota(): List<ItemNota> {
-    return ItemNota.where()
-      .produto.id.eq(id)
+    return QItemNota().produto.id.eq(id)
       .findList()
   }
   
@@ -233,11 +231,12 @@ class Produto: BaseModel() {
     val localizacoesSplit = localizacoes.map {it.split("[.\\-]".toRegex())}
     val ctParte = localizacoesSplit.asSequence().map {it.size - 1}.min() ?: 0
     for(i in ctParte downTo 0) {
-      val prefix = localizacoesSplit.asSequence()
-        .map {it.subList(0, i)}
-        .map {it.joinToString(separator = ".")}
-        .distinct()
-        .toList()
+      val prefix =
+        localizacoesSplit.asSequence()
+          .map {it.subList(0, i)}
+          .map {it.joinToString(separator = ".")}
+          .distinct()
+          .toList()
   
       if(prefix.count() == 1) return prefix[0]
     }

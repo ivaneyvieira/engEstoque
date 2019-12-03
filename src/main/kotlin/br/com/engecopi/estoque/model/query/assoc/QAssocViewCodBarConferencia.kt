@@ -22,21 +22,21 @@ class QAssocViewCodBarConferencia<R>(name: String, root: R): TQAssocBean<ViewCod
   lateinit var numero: PString<R>
   lateinit var sequencia: PInteger<R>
   lateinit var abreviacao: PString<R>
-
+  
   /**
    * Eagerly fetch this association loading the specified properties.
    */
   fun fetch(vararg properties: TQProperty<QViewCodBarConferencia>): R {
     return fetchProperties(*properties)
   }
-
+  
   /**
    * Eagerly fetch this association using a 'query join' loading the specified properties.
    */
   fun fetchQuery(vararg properties: TQProperty<QViewCodBarConferencia>): R {
     return fetchQueryProperties(*properties)
   }
-
+  
   /**
    * Use lazy loading for this association loading the specified properties.
    */

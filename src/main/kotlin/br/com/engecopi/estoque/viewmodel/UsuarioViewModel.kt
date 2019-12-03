@@ -4,6 +4,7 @@ import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.NotaSerie
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.Usuario
+import br.com.engecopi.estoque.model.query.QProduto
 import br.com.engecopi.estoque.model.query.QUsuario
 import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
@@ -13,8 +14,8 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
   override fun newBean(): UsuarioCrudVo {
     return UsuarioCrudVo()
   }
-
-  private val queryProduto get() = Produto.where()
+  
+  private val queryProduto get() = QProduto()
 
   fun findProduto(offset: Int, limit: Int): List<Produto> {
     return queryProduto.setFirstRow(offset).setMaxRows(limit).findList()
@@ -58,7 +59,7 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
   }
 
   override val query: QUsuario
-    get() = Usuario.where().loginName.`in`(Usuario.findLoginUser())
+    get() = QUsuario().loginName.`in`(Usuario.findLoginUser())
 
   override fun Usuario.toVO(): UsuarioCrudVo {
     val usuario = this

@@ -26,7 +26,7 @@ class QUsuario: TQRootBean<Usuario, QUsuario> {
      */
     val _alias = QUsuario(true)
   }
-
+  
   lateinit var id: PLong<QUsuario>
   lateinit var createdAt: PLocalDateTime<QUsuario>
   lateinit var updatedAt: PLocalDateTime<QUsuario>
@@ -42,17 +42,17 @@ class QUsuario: TQRootBean<Usuario, QUsuario> {
   lateinit var expedicao: PBoolean<QUsuario>
   lateinit var entregaFutura: PBoolean<QUsuario>
   lateinit var etiqueta: PBoolean<QUsuario>
-
+  
   /**
    * Construct with a given Database.
    */
   constructor(database: Database): super(Usuario::class.java, database)
-
+  
   /**
    * Construct using the default Database.
    */
   constructor(): super(Usuario::class.java)
-
+  
   /**
    * Construct for Alias.
    */

@@ -1,6 +1,7 @@
 package br.com.engecopi.estoque.model
 
 import br.com.engecopi.estoque.model.finder.ViewCodBarEntregaFinder
+import br.com.engecopi.estoque.model.query.QViewCodBarEntrega
 import io.ebean.annotation.Cache
 import io.ebean.annotation.View
 import javax.persistence.Column
@@ -22,10 +23,10 @@ class ViewCodBarEntrega {
   val codigo: String = ""
   val grade: String = ""
   val quantidade: Int = 0
-
+  
   companion object Find: ViewCodBarEntregaFinder() {
     fun findNota(key: String): ItemNota? {
-      val id = where().codbar.eq(key).findList().firstOrNull()?.id ?: return null
+      val id = QViewCodBarEntrega().codbar.eq(key).findList().firstOrNull()?.id ?: return null
       return ItemNota.byId(id) ?: return null
     }
   }

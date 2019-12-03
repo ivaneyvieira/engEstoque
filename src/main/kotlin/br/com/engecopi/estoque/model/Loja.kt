@@ -1,6 +1,7 @@
 package br.com.engecopi.estoque.model
 
 import br.com.engecopi.estoque.model.finder.LojaFinder
+import br.com.engecopi.estoque.model.query.QLoja
 import br.com.engecopi.framework.model.BaseModel
 import br.com.engecopi.saci.saci
 import io.ebean.annotation.Index
@@ -29,7 +30,7 @@ class Loja: BaseModel() {
   companion object Find: LojaFinder() {
     fun findLoja(storeno: Int?): Loja? {
       return if(storeno == 0 || storeno == null) null
-      else where().numero.eq(storeno).findList().firstOrNull()
+      else QLoja().numero.eq(storeno).findList().firstOrNull()
            ?: saci.findLojas(storeno).firstOrNull()?.let {lojaSaci ->
              val loja = Loja().apply {
                numero = lojaSaci.storeno ?: 0
@@ -40,7 +41,7 @@ class Loja: BaseModel() {
     }
     
     fun lojaSaldo(loja: Loja): List<Loja> {
-      return where().notas.id.gt(0)
+      return QLoja().notas.id.gt(0)
         .findList()
         .filter {it.id == loja?.id}
     }

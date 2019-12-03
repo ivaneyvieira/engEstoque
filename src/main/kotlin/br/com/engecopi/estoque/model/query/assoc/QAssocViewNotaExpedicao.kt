@@ -42,21 +42,21 @@ class QAssocViewNotaExpedicao<R>(name: String, root: R): TQAssocBean<ViewNotaExp
   lateinit var sequencia: PInteger<R>
   lateinit var usuario: QAssocUsuario<R>
   lateinit var abreviacao: PString<R>
-
+  
   /**
    * Eagerly fetch this association loading the specified properties.
    */
   fun fetch(vararg properties: TQProperty<QViewNotaExpedicao>): R {
     return fetchProperties(*properties)
   }
-
+  
   /**
    * Eagerly fetch this association using a 'query join' loading the specified properties.
    */
   fun fetchQuery(vararg properties: TQProperty<QViewNotaExpedicao>): R {
     return fetchQueryProperties(*properties)
   }
-
+  
   /**
    * Use lazy loading for this association loading the specified properties.
    */

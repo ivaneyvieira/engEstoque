@@ -2,6 +2,8 @@ package br.com.engecopi.estoque.model
 
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.finder.ViewNotaFuturaFinder
+import br.com.engecopi.estoque.model.query.QItemNota
+import br.com.engecopi.estoque.model.query.QViewNotaFutura
 import br.com.engecopi.framework.model.BaseModel
 import io.ebean.annotation.Cache
 import io.ebean.annotation.View
@@ -40,13 +42,15 @@ class ViewNotaFutura: BaseModel() {
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var usuario: Usuario? = null
   var abreviacao: String? = ""
+  val numeroBaixa: String?
+    get() = Nota.findNota(loja, numero, tipoMov)?.numeroEntrega()
   
   companion object Find: ViewNotaFuturaFinder() {
     fun findSaida(loja: Loja?, numero: String?, abreviacao: String?): ViewNotaFutura? {
       numero ?: return null
       abreviacao ?: return null
       loja ?: return null
-      return where().numero.eq(numero)
+      return QViewNotaFutura().numero.eq(numero)
         .loja.equalTo(loja)
         .abreviacao.eq(abreviacao)
         .findList()
@@ -54,7 +58,7 @@ class ViewNotaFutura: BaseModel() {
     }
     
     fun findNotaFutura(nota: Nota): ViewNotaFutura? {
-      return where().numero.eq(nota.numero)
+      return QViewNotaFutura().numero.eq(nota.numero)
         .loja.equalTo(nota.loja)
         .findList()
         .firstOrNull()
@@ -62,8 +66,7 @@ class ViewNotaFutura: BaseModel() {
   }
   
   fun findItens(): List<ItemNota> {
-    return ItemNota.where()
-      .nota.id.eq(nota?.id)
+    return QItemNota().nota.id.eq(nota?.id)
       .localizacao.startsWith(abreviacao)
       .findList()
   }

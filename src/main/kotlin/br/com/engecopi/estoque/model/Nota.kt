@@ -18,6 +18,7 @@ import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.dtos.EntregaFutura
 import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
 import br.com.engecopi.estoque.model.finder.NotaFinder
+import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.model.query.QNota
 import br.com.engecopi.framework.model.BaseModel
 import br.com.engecopi.saci.beans.NotaProdutoSaci
@@ -126,7 +127,7 @@ class Nota: BaseModel() {
     }
   
     fun maxSequencia(tipoNota: TipoNota?): Int {
-      return where().select(QNota._alias.maxSequencia).let {q ->
+      return QNota().select(QNota._alias.maxSequencia).let {q ->
         if(tipoNota == VENDAF) q.tipoNota.eq(tipoNota)
         else q
       }.findList().firstOrNull()?.maxSequencia ?: 0
@@ -134,7 +135,7 @@ class Nota: BaseModel() {
   
     fun findEntrada(loja: Loja, numero: String?): Nota? {
       return if(numero.isNullOrBlank()) null
-      else Nota.where().tipoMov.eq(ENTRADA).numero.eq(numero).loja.id.eq(loja.id).findList().firstOrNull()
+      else QNota().tipoMov.eq(ENTRADA).numero.eq(numero).loja.id.eq(loja.id).findList().firstOrNull()
     }
   
     fun findNotaFutura(key: String): String? {
@@ -149,7 +150,7 @@ class Nota: BaseModel() {
     fun findSaida(storeno: Int?, numero: String?): Nota? {
       storeno ?: return null
       return if(numero.isNullOrBlank()) null
-      else Nota.where().tipoMov.eq(SAIDA).numero.eq(numero).loja.numero.eq(storeno).findList().firstOrNull()
+      else QNota().tipoMov.eq(SAIDA).numero.eq(numero).loja.numero.eq(storeno).findList().firstOrNull()
     }
   
     fun findSaida(loja: Loja?, numero: String?): Nota? {
@@ -157,16 +158,17 @@ class Nota: BaseModel() {
       return findSaida(storeno, numero)
     }
   
-    fun findNota(loja: Loja, numero: String?, tipoMov: TipoMov): Nota? {
+    fun findNota(loja: Loja?, numero: String?, tipoMov: TipoMov): Nota? {
+      loja ?: return null
       return when(tipoMov) {
         ENTRADA -> findEntrada(loja, numero)
         SAIDA   -> findSaida(loja, numero)
       }
     }
-    
+  
     fun novoNumero(): Int {
       val regex = "[0-9]+".toRegex()
-      val max = where().findList().asSequence().map {it.numero}.filter {regex.matches(it)}.max() ?: "0"
+      val max = QNota().findList().asSequence().map {it.numero}.filter {regex.matches(it)}.max() ?: "0"
       val numMax = max.toIntOrNull() ?: 0
       return numMax + 1
     }
@@ -195,8 +197,7 @@ class Nota: BaseModel() {
       val numero = nota.numero
       val tipoMov = nota.tipoMov
       val produtoId = produto?.id ?: return false
-      return ItemNota.where().nota.loja.id.eq(lojaId).nota.numero.eq(numero).nota.tipoMov.eq(tipoMov).produto.id.eq(
-        produtoId).findCount() > 0
+      return QItemNota().nota.loja.id.eq(lojaId).nota.numero.eq(numero).nota.tipoMov.eq(tipoMov).produto.id.eq(produtoId).findCount() > 0
     }
     
     fun findNotaSaidaKey(nfeKey: String): List<NotaProdutoSaci> {
@@ -207,8 +208,7 @@ class Nota: BaseModel() {
       val data =
         LocalDate.now()
           .minusDays(10)
-      val lista =
-        Nota.where()
+      val lista = QNota()
           .tipoMov.eq(SAIDA)
           .data.ge(data)
           .tipoNota.notEqualTo(PEDIDO_S)
@@ -228,7 +228,7 @@ class Nota: BaseModel() {
       val dtInicial =
         LocalDate.now()
           .minusDays(180)
-      return where().tipoMov.eq(tipoNota)
+      return QNota().tipoMov.eq(tipoNota)
         .loja.equalTo(loja)
         .itensNota.localizacao.startsWith(abreviacaoDefault)
         .data.after(dtInicial)
@@ -240,12 +240,11 @@ class Nota: BaseModel() {
                                 ?: EntregaFutura.entrega(numero)?.numeroEntrega ?: ""
   
   fun existe(): Boolean {
-    return where().loja.equalTo(loja).tipoMov.eq(tipoMov).numero.eq(numero).findCount() > 0
+    return QNota().loja.equalTo(loja).tipoMov.eq(tipoMov).numero.eq(numero).findCount() > 0
   }
   
   fun itensNota(): List<ItemNota> {
-    return ItemNota.where()
-      .nota.equalTo(this)
+    return QItemNota().nota.equalTo(this)
       .findList()
   }
 }

@@ -40,7 +40,7 @@ class EtiquetaViewModel(view: IEtiquetaView): CrudViewModel<Etiqueta, QEtiqueta,
   }
 
   override val query: QEtiqueta
-    get() = Etiqueta.where()
+    get() = QEtiqueta()
 
   override fun Etiqueta.toVO(): EtiquetaVo {
     val etiqueta = this

@@ -26,21 +26,21 @@ class QAssocAbreviacao<R>(name: String, root: R): TQAssocBean<Abreviacao, R>(nam
   lateinit var loja: QAssocLoja<R>
   lateinit var expedicao: PBoolean<R>
   lateinit var impressora: PString<R>
-
+  
   /**
    * Eagerly fetch this association loading the specified properties.
    */
   fun fetch(vararg properties: TQProperty<QAbreviacao>): R {
     return fetchProperties(*properties)
   }
-
+  
   /**
    * Eagerly fetch this association using a 'query join' loading the specified properties.
    */
   fun fetchQuery(vararg properties: TQProperty<QAbreviacao>): R {
     return fetchQueryProperties(*properties)
   }
-
+  
   /**
    * Use lazy loading for this association loading the specified properties.
    */

@@ -33,7 +33,7 @@ class HistoricoViewModel(view: IHistoricoView): CrudViewModel<HistoricoEtiqueta,
   }
 
   override val query: QHistoricoEtiqueta
-    get() = HistoricoEtiqueta.where().orderBy().id.desc()
+    get() = QHistoricoEtiqueta().orderBy().id.desc()
 
   override fun HistoricoEtiqueta.toVO(): HistoricoVo {
     val bean = newBean()

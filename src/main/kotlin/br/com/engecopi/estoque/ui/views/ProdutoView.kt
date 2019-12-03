@@ -139,6 +139,10 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
                 this.isSortable = false
                 caption = "Nota"
               }
+              addColumnFor(ItemNota::numeroEntrega) {
+                this.isSortable = false
+                caption = "NF Baixa"
+              }
               addColumnFor(ItemNota::dataNota) {
                 this.isSortable = false
                 caption = "Data Nota"

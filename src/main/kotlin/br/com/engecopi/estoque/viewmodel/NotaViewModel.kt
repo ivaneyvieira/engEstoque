@@ -76,23 +76,20 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
         view.showWarning(msg)
       }
       else {
-        bean.entityVo = insertItemNota(nota,
-                                       produto,
-                                       bean.quantProduto ?: 0,
-                                       usuario,
-                                       bean.localizacao?.localizacao,
-                                       addTime)
+        bean.entityVo =
+          insertItemNota(nota, produto, bean.quantProduto ?: 0, usuario, bean.localizacao?.localizacao, addTime)
       }
     }
     else {
       val produtos = bean.produtos.filter {it.selecionado && it.quantidade != 0}
-      val produtosJaInserido = produtos.asSequence()
-        .distinctBy {it.produto.id}
-        .filter {prd ->
-          prd.produto.let {Nota.itemDuplicado(nota, it)}
-        }
-        .map {it.produto}
-        .filterNotNull()
+      val produtosJaInserido =
+        produtos.asSequence()
+          .distinctBy {it.produto.id}
+          .filter {prd ->
+            prd.produto.let {Nota.itemDuplicado(nota, it)}
+          }
+          .map {it.produto}
+          .filterNotNull()
       produtosJaInserido.forEach {prd ->
         val msg = "O produto ${prd.codigo} - ${prd.descricao}. Já foi inserido na nota ${nota.numero}."
         view.showWarning(msg)
@@ -100,12 +97,8 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
       produtos.filter {it.produto !in produtosJaInserido}
         .forEach {produto ->
           produto.let {prd ->
-            if(usuario.temProduto(prd.produto)) bean.entityVo = insertItemNota(nota,
-                                                                               prd.produto,
-                                                                               prd.quantidade,
-                                                                               usuario,
-                                                                               prd.localizacao?.localizacao,
-                                                                               addTime)
+            if(usuario.temProduto(prd.produto)) bean.entityVo =
+              insertItemNota(nota, prd.produto, prd.quantidade, usuario, prd.localizacao?.localizacao, addTime)
           }
         }
     }
@@ -197,8 +190,7 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
   override val query: QItemNota
     get() {
       Repositories.updateViewProdutosLoc()
-      return ItemNota.where()
-        .setUseQueryCache(true)
+      return QItemNota().setUseQueryCache(true)
         .fetch("nota")
         .fetch("usuario")
         .fetch("produto")
@@ -230,7 +222,9 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
       val seq = nota?.sequencia ?: 0
       this.numeroNF = nota?.numero
       this.numeroCodigo = itemNota.codigoBarraConferencia
-      this.numeroCodigoReduzido = if(nota?.numeroEntrega == "") itemNota.codigoBarraCliente else "$lojaTransf $numeroTransf $seq"
+      this.numeroBaixa = itemNota.nota?.numeroEntrega()
+      this.numeroCodigoReduzido =
+        if(nota?.numeroEntrega == "") itemNota.codigoBarraCliente else "$lojaTransf $numeroTransf $seq"
       this.lojaNF = nota?.loja
       this.observacaoNota = nota?.observacao
       this.produto = itemNota.produto
@@ -290,14 +284,14 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
   fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean, groupByHour: Boolean) = execString {
     itemNota ?: return@execString ""
     val ret = if(notaCompleta) {
-      val itens = ItemNota.where()
-        .nota.eq(itemNota.nota)
-        .status.eq(itemNota.status)
-        .let {if(groupByHour) it.hora.eq(itemNota.hora) else it}
-        .order()
-        .nota.loja.numero.asc()
-        .nota.numero.asc()
-        .findList()
+      val itens =
+        QItemNota().nota.eq(itemNota.nota)
+          .status.eq(itemNota.status)
+          .let {if(groupByHour) it.hora.eq(itemNota.hora) else it}
+          .order()
+          .nota.loja.numero.asc()
+          .nota.numero.asc()
+          .findList()
       imprimir(itens)
     }
     else imprimir(listOf(itemNota))
@@ -306,8 +300,9 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
   }
   
   fun imprimir() = execString {
-    val itens = ItemNota.where()
-      .let {q -> if(usuarioDefault.admin) q else q.impresso.eq(false)}
+    val itens = QItemNota().let {q ->
+      if(usuarioDefault.admin) q else q.impresso.eq(false)
+    }
       .status.eq(statusImpressao)
       .order()
       .nota.loja.numero.asc()
@@ -352,6 +347,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   var usuario: Usuario = usuarioDefault
   var numeroCodigo: String? = ""
   var numeroCodigoReduzido: String? = ""
+  var numeroBaixa: String? = ""
   var numeroNF: String? = ""
     set(value) {
       if(field != value) {
@@ -409,9 +405,10 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   
   private fun listItensEntrada(notaProdutoSaci: NotaProdutoSaci): List<ProdutoVO> {
     val prd = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return emptyList()
-    val localizacoes = prd.localizacoes(abreviacaoNota)
-      .filter {it.startsWith(abreviacaoNota)}
-      .sorted()
+    val localizacoes =
+      prd.localizacoes(abreviacaoNota)
+        .filter {it.startsWith(abreviacaoNota)}
+        .sorted()
     val ultimaLocalizacao = localizacoes.max() ?: ""
     val produtoVo = ProdutoVO(prd, RECEBIDO, LocProduto(ultimaLocalizacao), notaProdutoSaci.isSave()).apply {
       quantidade = notaProdutoSaci.quant ?: 0
@@ -422,9 +419,10 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   private fun listItensSaida(notaProdutoSaci: NotaProdutoSaci): List<ProdutoVO> {
     val prd = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return emptyList()
     var quant = notaProdutoSaci.quant ?: return emptyList()
-    val localizacoes = prd.localizacoes(abreviacaoNota)
-      .filter {it.startsWith(abreviacaoNota)}
-      .sorted()
+    val localizacoes =
+      prd.localizacoes(abreviacaoNota)
+        .filter {it.startsWith(abreviacaoNota)}
+        .sorted()
     val ultimaLocalizacao = localizacoes.max() ?: ""
     val produtosLocais = localizacoes.map {localizacao ->
       ProdutoVO(prd, CONFERIDA, LocProduto(localizacao), notaProdutoSaci.isSave()).apply {

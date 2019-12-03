@@ -141,6 +141,9 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
         caption = "Número Conferencia"
         setSortProperty("codigo_barra_conferencia")
       }
+      column(SaidaVo::numeroBaixa) {
+        caption = "NF Baixa"
+      }
       grid.addComponentColumn {item ->
         Button().apply {
           val impresso = item?.entityVo?.impresso ?: true
@@ -149,8 +152,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
           addClickListener {
             item.itemNota?.recalculaSaldos()
             val numero = item.numeroNF
-            showQuestion(msg = "Imprimir todos os itens da nota $numero?",
-                         execYes = {imprimeItem(item, true)},
+            showQuestion(msg = "Imprimir todos os itens da nota $numero?", execYes = {imprimeItem(item, true)},
                          execNo = {imprimeItem(item, false)})
           }
         }
@@ -160,6 +162,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
         caption = "Loja NF"
         setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
       }
+  
       column(SaidaVo::tipoNotaDescricao) {
         caption = "TipoNota"
         setSortProperty("nota.tipo_nota")

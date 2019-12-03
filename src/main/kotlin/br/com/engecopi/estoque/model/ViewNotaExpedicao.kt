@@ -2,6 +2,8 @@ package br.com.engecopi.estoque.model
 
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.finder.ViewNotaExpedicaoFinder
+import br.com.engecopi.estoque.model.query.QItemNota
+import br.com.engecopi.estoque.model.query.QViewNotaExpedicao
 import br.com.engecopi.framework.model.BaseModel
 import io.ebean.annotation.Cache
 import io.ebean.annotation.View
@@ -45,7 +47,7 @@ class ViewNotaExpedicao: BaseModel() {
     fun findSaida(loja: Loja, numero: String?, abreviacao: String?): ViewNotaExpedicao? {
       numero ?: return null
       abreviacao ?: return null
-      return where().numero.eq(numero)
+      return QViewNotaExpedicao().numero.eq(numero)
         .loja.equalTo(loja)
         .abreviacao.eq(abreviacao)
         .findList()
@@ -53,7 +55,7 @@ class ViewNotaExpedicao: BaseModel() {
     }
     
     fun findExpedicao(nota: Nota): ViewNotaExpedicao? {
-      return where().numero.eq(nota.numero)
+      return QViewNotaExpedicao().numero.eq(nota.numero)
         .loja.equalTo(nota.loja)
         .findList()
         .firstOrNull()
@@ -61,8 +63,7 @@ class ViewNotaExpedicao: BaseModel() {
   }
   
   fun findItens(): List<ItemNota> {
-    return ItemNota.where()
-      .nota.id.eq(nota?.id)
+    return QItemNota().nota.id.eq(nota?.id)
       .localizacao.startsWith(abreviacao)
       .findList()
   }

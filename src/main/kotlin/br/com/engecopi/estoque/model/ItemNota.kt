@@ -7,6 +7,7 @@ import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.finder.ItemNotaFinder
+import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.framework.model.BaseModel
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.utils.format
@@ -97,12 +98,14 @@ class ItemNota: BaseModel() {
     @Transient get() = nota?.loja
   val abreviacao: Abreviacao?
     @Transient get() = Abreviacao.findByAbreviacao(abrev)
+  val numeroEntrega
+    get() = nota?.numeroEntrega()
   
   companion object Find: ItemNotaFinder() {
     fun find(loja: Int?, numero: String?): List<ItemNota> {
       loja ?: return emptyList()
       numero ?: return emptyList()
-      return where().nota.loja.numero.eq(loja)
+      return QItemNota().nota.loja.numero.eq(loja)
         .nota.numero.eq(numero)
         .findList()
     }
@@ -111,7 +114,7 @@ class ItemNota: BaseModel() {
       //TODO Depois pensar na possibilidade de mais de um
       nota ?: return null
       produto ?: return null
-      return where().nota.fetchQuery()
+      return QItemNota().nota.fetchQuery()
         .nota.id.eq(nota.id)
         .produto.id.eq(produto.id)
         .findList()
@@ -122,7 +125,7 @@ class ItemNota: BaseModel() {
       notaProdutoSaci ?: return null
       val storeno = notaProdutoSaci.storeno ?: return null
       val produtoSaci = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return null
-      return where().nota.fetchQuery()
+      return QItemNota().nota.fetchQuery()
         .nota.numero.eq("${notaProdutoSaci.numero}/${notaProdutoSaci.serie}")
         .nota.loja.numero.eq(storeno)
         .produto.equalTo(produtoSaci)
@@ -154,7 +157,7 @@ class ItemNota: BaseModel() {
       val loja = Loja.findLoja(notaProdutoSaci.storeno) ?: return false
       val nota = Nota.findNota(loja, numeroSerie, tipoMov) ?: return false
       val produto = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return false
-      return where().produto.eq(produto)
+      return QItemNota().produto.eq(produto)
         .nota.eq(nota)
         .exists()
     }

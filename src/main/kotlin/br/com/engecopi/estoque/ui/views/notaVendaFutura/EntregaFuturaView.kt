@@ -93,6 +93,9 @@ class EntregaFuturaView: NotaView<EntregaFututaVo, EntregaFututaViewModel, IEntr
         caption = "Número Conferencia"
         setSortProperty("codigo_barra_conferencia")
       }
+      column(EntregaFututaVo::numeroBaixa) {
+        caption = "NF Baixa"
+      }
       column(EntregaFututaVo::lojaNF) {
         caption = "Loja NF"
         setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())

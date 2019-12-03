@@ -22,7 +22,7 @@ class QViewCodBarEntrega: TQRootBean<ViewCodBarEntrega, QViewCodBarEntrega> {
      */
     val _alias = QViewCodBarEntrega(true)
   }
-
+  
   lateinit var id: PLong<QViewCodBarEntrega>
   lateinit var codbar: PString<QViewCodBarEntrega>
   lateinit var storeno: PInteger<QViewCodBarEntrega>
@@ -32,17 +32,17 @@ class QViewCodBarEntrega: TQRootBean<ViewCodBarEntrega, QViewCodBarEntrega> {
   lateinit var codigo: PString<QViewCodBarEntrega>
   lateinit var grade: PString<QViewCodBarEntrega>
   lateinit var quantidade: PInteger<QViewCodBarEntrega>
-
+  
   /**
    * Construct with a given Database.
    */
   constructor(database: Database): super(ViewCodBarEntrega::class.java, database)
-
+  
   /**
    * Construct using the default Database.
    */
   constructor(): super(ViewCodBarEntrega::class.java)
-
+  
   /**
    * Construct for Alias.
    */

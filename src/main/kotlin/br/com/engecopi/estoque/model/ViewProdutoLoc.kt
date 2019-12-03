@@ -4,6 +4,7 @@ import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.Repositories.findByAbreviacao
 import br.com.engecopi.estoque.model.Repositories.findByProduto
 import br.com.engecopi.estoque.model.finder.ViewProdutoLocFinder
+import br.com.engecopi.estoque.model.query.QViewProdutoLoc
 import io.ebean.annotation.Cache
 import io.ebean.annotation.View
 import javax.persistence.Entity
@@ -31,11 +32,13 @@ class ViewProdutoLoc(@Id
     fun existsCache(produto: Produto?): Boolean {
       return findByProduto(produto).count() > 0
     }
-
+  
     fun produtosCache(): List<Produto> {
-      return Repositories.findByLojaAbreviacao().map {it.produto}.distinct()
+      return Repositories.findByLojaAbreviacao()
+        .map {it.produto}
+        .distinct()
     }
-
+  
     fun findCache(produto: Produto?): List<ViewProdutoLoc> {
       produto ?: return emptyList()
       return findByProduto(produto)
@@ -55,7 +58,7 @@ class ViewProdutoLoc(@Id
     fun localizacoesProduto(produto: Produto?): List<String> {
       val loja = lojaDeposito
       produto ?: return emptyList()
-      return where().produto.id.eq(produto.id)
+      return QViewProdutoLoc().produto.id.eq(produto.id)
         .findList()
         .asSequence()
         .mapNotNull {it.localizacao}
@@ -70,18 +73,20 @@ class ViewProdutoLoc(@Id
     }
   
     fun abreviacoesProduto(produto: Produto?) =
-      where().produto.id.eq(produto?.id).findList().mapNotNull {it.abreviacao}.distinct()
-
+      QViewProdutoLoc().produto.id.eq(produto?.id).findList().mapNotNull {it.abreviacao}.distinct()
+  
     fun filtraLoc(prdno: String?, grade: String?): Boolean {
       val produto = Produto.findProduto(prdno, grade) ?: return false
       val abreviacoes = findCache(produto).map {it.abreviacao}
       return abreviacoes.contains(RegistryUserInfo.abreviacaoDefault)
     }
-
+  
     fun findByCodigoGrade(prdno: String?, grade: String?): List<ViewProdutoLoc> {
       prdno ?: return emptyList()
       grade ?: return emptyList()
-      return where().codigo.eq(prdno.padStart(16, ' ')).grade.eq(grade).findList()
+      return QViewProdutoLoc().codigo.eq(prdno.padStart(16, ' '))
+        .grade.eq(grade)
+        .findList()
     }
   }
 }

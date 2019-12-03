@@ -93,8 +93,7 @@ class EntregaFututaViewModel(view: IEntregaFututaView):
   }
   
   fun notasConferidas(): List<EntregaFututaVo> {
-    return ItemNota.where()
-      .status.eq(CONFERIDA)
+    return QItemNota().status.eq(CONFERIDA)
       .findList()
       .map {it.toVO()}
   }

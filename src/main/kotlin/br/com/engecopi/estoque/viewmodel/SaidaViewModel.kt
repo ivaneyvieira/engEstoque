@@ -73,13 +73,15 @@ class SaidaViewModel(view: ISaidaView):
   }
   
   private fun processaKeyNumeroNota(key: String): NotaItens {
-    val loja = if(key.isNotEmpty()) key.mid(0, 1).toIntOrNull() ?: return NotaItens.VAZIO
+    val storeno = if(key.isNotEmpty()) key.mid(0, 1).toIntOrNull() ?: return NotaItens.VAZIO
     else return NotaItens.VAZIO
-    if(loja != lojaDeposito?.numero) return NotaItens.VAZIO
+    val loja = Loja.findLoja(storeno) ?: return NotaItens.VAZIO
     val numero = if(key.length > 1) key.mid(1) else return NotaItens.VAZIO
-    val notaItem = processaKeyNumero(lojaDeposito, numero)
-    return if(notaItem.nota?.tipoNota == VENDAF) NotaItens.VAZIO
-    else notaItem
+    val notaItem = processaKeyNumero(loja, numero)
+    return if(notaItem.nota?.tipoNota == VENDAF || loja.numero == lojaDeposito.numero) {
+      notaItem
+    }
+    else NotaItens.VAZIO
   }
   
   fun confirmaProdutos(itens: List<ProdutoVO>, situacao: StatusNota) = execList<ItemNota> {

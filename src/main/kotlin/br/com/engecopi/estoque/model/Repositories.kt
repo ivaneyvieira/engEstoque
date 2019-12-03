@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.model
 
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
+import br.com.engecopi.estoque.model.query.QViewProdutoLoc
 import br.com.engecopi.framework.model.DB
 import io.ebean.Ebean
 import java.time.LocalDateTime
@@ -27,11 +28,11 @@ object Repositories {
     updateTabelas()
     val serverCacheManager = Ebean.getServerCacheManager()
     serverCacheManager.clear(ViewProdutoLoc::class.java)
-    val list = ViewProdutoLoc.where()
-      .fetch("produto")
-      .fetch("loja")
-      .findList()
-      .toList()
+    val list =
+      QViewProdutoLoc().fetch("produto")
+        .fetch("loja")
+        .findList()
+        .toList()
     viewProdutosLocProdutoKey = list.groupBy {ProdutoKey(it.produto.id, it.storeno, it.abreviacao)}
     viewProdutosLocLojaAbreviacaoKey = list.groupBy {LojaAbreviacaoKey(it.storeno, it.abreviacao)}
     viewProdutosLocLojaKey = list.groupBy {it.storeno}

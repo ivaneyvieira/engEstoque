@@ -75,8 +75,7 @@ class ProdutoViewModel(view: IProdutoView): CrudViewModel<Produto, QProduto, Pro
   override val query: QProduto
     get() {
       Repositories.updateViewProdutosLoc()
-      return Produto.where()
-        .filtroUsuario()
+      return QProduto().filtroUsuario()
     }
   
   override fun Produto.toVO(): ProdutoVo {

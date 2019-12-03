@@ -23,21 +23,21 @@ class QAssocViewProdutoSaci<R>(name: String, root: R): TQAssocBean<ViewProdutoSa
   lateinit var custo: PDouble<R>
   lateinit var unidade: PString<R>
   lateinit var tipo: PString<R>
-
+  
   /**
    * Eagerly fetch this association loading the specified properties.
    */
   fun fetch(vararg properties: TQProperty<QViewProdutoSaci>): R {
     return fetchProperties(*properties)
   }
-
+  
   /**
    * Eagerly fetch this association using a 'query join' loading the specified properties.
    */
   fun fetchQuery(vararg properties: TQProperty<QViewProdutoSaci>): R {
     return fetchQueryProperties(*properties)
   }
-
+  
   /**
    * Use lazy loading for this association loading the specified properties.
    */

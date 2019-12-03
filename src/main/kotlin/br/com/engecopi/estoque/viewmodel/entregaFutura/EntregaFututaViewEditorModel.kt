@@ -1,6 +1,5 @@
 package br.com.engecopi.estoque.viewmodel.entregaFutura
 
-import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
@@ -36,8 +35,7 @@ class EntregaFututaEditorViewModel(view: IEntregaFututaEditorView):
   override fun createVo() = EntregaFututaVo()
   
   fun notasConferidas(): List<EntregaFututaVo> {
-    return ItemNota.where()
-      .status.eq(CONFERIDA)
+    return QItemNota().status.eq(CONFERIDA)
       .findList()
       .map {it.toVO()}
   }

@@ -20,6 +20,7 @@ import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.model.ViewNotaFutura
 import br.com.engecopi.estoque.model.ViewProdutoLoc
 import br.com.engecopi.estoque.model.dtos.VendasCaixa
+import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.model.query.QViewNotaFutura
 import br.com.engecopi.estoque.ui.log
 import br.com.engecopi.estoque.viewmodel.EChaveNaoEncontrada
@@ -51,17 +52,14 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
   override fun delete(bean: NFVendaFuturaVo) {
     val nota = bean.findEntity() ?: return
     val saida = Nota.findSaida(nota.loja, nota.numero) ?: return
-    
-    ItemNota.where()
-      .nota.equalTo(saida)
+  
+    QItemNota().nota.equalTo(saida)
       .localizacao.startsWith(bean.abreviacao)
       .delete()
   }
   
   override val query: QViewNotaFutura
-    get() = ViewNotaFutura.where().let {query ->
-      query.nota.tipoNota.eq(VENDAF)
-    }
+    get() = QViewNotaFutura().nota.tipoNota.eq(VENDAF)
   
   private fun QViewNotaFutura.filtroNotaSerie(): QViewNotaFutura {
     val tipos = usuarioDefault.series.map {it.tipoNota}
@@ -82,6 +80,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
     val bean = this
     return NFVendaFuturaVo().apply {
       numero = bean.numero
+      numeroBaixa = bean.numeroBaixa ?: ""
       tipoMov = bean.tipoMov
       tipoNota = bean.tipoNota
       rota = bean.rota
@@ -129,7 +128,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
     val itens = itensVendaFutura.mapNotNull {itemVendaFutura ->
       val notaSaci = itemVendaFutura.notaProdutoSaci
       val item = ItemNota.find(notaSaci) ?: ItemNota.createItemNota(notaSaci, nota, itemVendaFutura.abrevicao)
-    
+  
       return@mapNotNull item?.apply {
         this.status = if(abreviacao?.expedicao == true) CONFERIDA else INCLUIDA
         this.impresso = false
@@ -200,9 +199,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
         .filter {etiqueta ->
           etiqueta.titulo.contains("ETDEP")
         }
-    val itens =
-      ItemNota.where()
-        .impresso.eq(false)
+    val itens = QItemNota().impresso.eq(false)
         .status.eq(INCLUIDA)
         .findList()
     val ret = etiquetas.joinToString(separator = "\n") {etiqueta ->
@@ -284,6 +281,7 @@ class NFVendaFuturaVo: EntityVo<ViewNotaFutura>() {
   }
   
   var numero: String = ""
+  var numeroBaixa: String = ""
   var tipoMov: TipoMov = ENTRADA
   var tipoNota: TipoNota? = null
   var rota: String = ""

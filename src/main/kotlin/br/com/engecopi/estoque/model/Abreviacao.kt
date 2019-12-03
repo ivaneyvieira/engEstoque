@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.model
 
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.finder.AbreviacaoFinder
+import br.com.engecopi.estoque.model.query.QAbreviacao
 import br.com.engecopi.framework.model.BaseModel
 import io.ebean.annotation.Index
 import io.ebean.annotation.Length
@@ -26,7 +27,7 @@ class Abreviacao(
     fun findByAbreviacao(abreviacao: String?): Abreviacao? {
       abreviacao ?: return null
       val loja = lojaDeposito ?: return null
-      return where().abreviacao.eq(abreviacao)
+      return QAbreviacao().abreviacao.eq(abreviacao)
         .loja.equalTo(loja)
         .findList()
         .firstOrNull()

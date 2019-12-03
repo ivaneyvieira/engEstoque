@@ -96,6 +96,10 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
         caption = "Número NF"
         setSortProperty("numero")
       }
+      column(NFVendaFuturaVo::numeroBaixa) {
+        caption = "NF Baixa"
+        setSortProperty("numero")
+      }
       grid.addComponentColumn {item ->
         Button().apply {
           //print {viewModel.imprimir(item)}.extend(this)

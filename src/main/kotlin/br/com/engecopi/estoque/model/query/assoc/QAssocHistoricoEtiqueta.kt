@@ -31,21 +31,21 @@ class QAssocHistoricoEtiqueta<R>(name: String, root: R): TQAssocBean<HistoricoEt
   lateinit var print: PString<R>
   lateinit var gtin: PString<R>
   lateinit var gtinOk: PBoolean<R>
-
+  
   /**
    * Eagerly fetch this association loading the specified properties.
    */
   fun fetch(vararg properties: TQProperty<QHistoricoEtiqueta>): R {
     return fetchProperties(*properties)
   }
-
+  
   /**
    * Eagerly fetch this association using a 'query join' loading the specified properties.
    */
   fun fetchQuery(vararg properties: TQProperty<QHistoricoEtiqueta>): R {
     return fetchQueryProperties(*properties)
   }
-
+  
   /**
    * Use lazy loading for this association loading the specified properties.
    */

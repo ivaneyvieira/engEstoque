@@ -1,6 +1,7 @@
 package br.com.engecopi.estoque.model
 
 import br.com.engecopi.estoque.model.finder.EtiquetaFinder
+import br.com.engecopi.estoque.model.query.QEtiqueta
 import br.com.engecopi.framework.model.BaseModel
 import javax.persistence.CascadeType.MERGE
 import javax.persistence.CascadeType.PERSIST
@@ -32,14 +33,14 @@ class Etiqueta: BaseModel() {
     fun find(titulo: String?, statusNota: StatusNota?): Etiqueta? {
       titulo ?: return null
       statusNota ?: return null
-      return where().titulo.eq(titulo)
+      return QEtiqueta().titulo.eq(titulo)
         .statusNota.eq(statusNota)
         .findList()
         .firstOrNull()
     }
     
     fun findByStatus(statusNota: StatusNota?): List<Etiqueta> =
-      where().statusNota.eq(statusNota).etiquetaDefault.eq(true).orderBy().titulo.asc().findList()
+      QEtiqueta().statusNota.eq(statusNota).etiquetaDefault.eq(true).orderBy().titulo.asc().findList()
   }
   
   fun updateOutros() {

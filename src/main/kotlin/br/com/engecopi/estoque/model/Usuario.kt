@@ -1,6 +1,8 @@
 package br.com.engecopi.estoque.model
 
 import br.com.engecopi.estoque.model.finder.UsuarioFinder
+import br.com.engecopi.estoque.model.query.QUsuario
+import br.com.engecopi.estoque.model.query.QViewProdutoLoc
 import br.com.engecopi.framework.model.BaseModel
 import br.com.engecopi.saci.saci
 import io.ebean.annotation.Index
@@ -73,8 +75,7 @@ class Usuario: BaseModel() {
   }
   
   fun localizacoesProduto(produto: Produto): List<String> {
-    return ViewProdutoLoc.where()
-      .produto.equalTo(produto)
+    return QViewProdutoLoc().produto.equalTo(produto)
       .or()
       .loja.equalTo(loja)
       .loja.equalTo(null)
@@ -96,8 +97,7 @@ class Usuario: BaseModel() {
   val produtoLoc: List<Produto>
     get() {
       return locais.flatMap {loc ->
-        ViewProdutoLoc.where()
-          .loja.eq(loja)
+        QViewProdutoLoc().loja.eq(loja)
           .or()
           .abreviacao.eq(loc)
           .localizacao.eq(loc)
@@ -110,7 +110,7 @@ class Usuario: BaseModel() {
   companion object Find: UsuarioFinder() {
     fun findUsuario(loginName: String?): Usuario? {
       if(loginName.isNullOrBlank()) return null
-      return where().loginName.eq(loginName)
+      return QUsuario().loginName.eq(loginName)
         .findList()
         .firstOrNull()
     }
