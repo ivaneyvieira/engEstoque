@@ -77,7 +77,7 @@ class Produto: BaseModel() {
   
   @Transactional
   fun recalculaSaldos(localizacao: String): Int {
-    val loja = RegistryUserInfo.lojaDeposito ?: return 0
+    val loja = lojaDeposito
     var saldo = 0
     val itensNotNull =
       QItemNota().produto.id.eq(id)

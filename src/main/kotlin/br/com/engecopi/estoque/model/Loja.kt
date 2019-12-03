@@ -43,7 +43,7 @@ class Loja: BaseModel() {
     fun lojaSaldo(loja: Loja): List<Loja> {
       return QLoja().notas.id.gt(0)
         .findList()
-        .filter {it.id == loja?.id}
+        .filter {it.id == loja.id}
     }
     
     fun carregasLojas() {

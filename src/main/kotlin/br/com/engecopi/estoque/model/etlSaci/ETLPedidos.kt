@@ -1,6 +1,5 @@
 package br.com.engecopi.estoque.model.etlSaci
 
-import br.com.engecopi.estoque.model.Abreviacao
 import br.com.engecopi.estoque.model.dtos.PedidoSaci
 import br.com.engecopi.saci.saci
 import br.com.engecopi.utils.ECupsPrinter
@@ -35,8 +34,8 @@ class ETLPedidos: ETL<PedidoSaci>() {
       addListenerInsert("ImprimeInsert") {pedido ->
         if(pedido.status == 2) {
           try {
-            val etiqueta = etiquetaPedido(pedido)
-            val impressora = Abreviacao.findByAbreviacao(pedido.abreviacao)?.impressora ?: ""
+            //val etiqueta = etiquetaPedido(pedido)
+            //val impressora = Abreviacao.findByAbreviacao(pedido.abreviacao)?.impressora ?: ""
             //CupsUtils.printCups(impressora, etiqueta)
           } catch(e: ECupsPrinter) {
             //Vazio

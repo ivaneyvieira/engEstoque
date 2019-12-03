@@ -249,7 +249,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
     refreshGrid()
   }
   
-  fun itemContains(item: C?): Boolean {
+  fun itemContains(): Boolean {
     return false
   }
   
@@ -413,7 +413,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
   override fun updateView() {
     refreshGrid()
     val bean = viewModel.crudBean
-    if(itemContains(bean)) {
+    if(itemContains()) {
       grid.asSingleSelect()
         ?.value = bean
       // falta fazer o scrool para a linha

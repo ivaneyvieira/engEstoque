@@ -21,7 +21,7 @@ class EntregaFutura(id: String,
   companion object {
     fun entrega(numeroVenda: String?): EntregaFutura? {
       numeroVenda ?: return null
-      val loja = lojaDeposito?.numero
+      val loja = lojaDeposito.numero
       val sql = """select * from t_entrega_futura
         |where storeno = $loja
         |  AND numero_venda = '$numeroVenda'

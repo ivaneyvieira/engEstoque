@@ -146,7 +146,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
       }
       grid.addComponentColumn {item ->
         Button().apply {
-          val impresso = item?.entityVo?.impresso ?: true
+          //val impresso = item?.entityVo?.impresso ?: true
           isEnabled = isAdmin
           icon = VaadinIcons.PRINT
           addClickListener {

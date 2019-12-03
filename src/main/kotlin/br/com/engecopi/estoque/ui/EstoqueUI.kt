@@ -317,5 +317,6 @@ fun getCokies(name: String): String? {
   return cookie?.value
 }
 
-val log: Logger? = LoggerFactory.getLogger(EstoqueUI::class.java)
+val Any.log: Logger?
+  get() = LoggerFactory.getLogger(javaClass)
 

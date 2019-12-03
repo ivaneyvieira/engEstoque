@@ -2,7 +2,6 @@ package br.com.engecopi.estoque.viewmodel
 
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.dtos.PedidoSaci
 import br.com.engecopi.estoque.model.etlSaci.ETLPedidos
 import br.com.engecopi.framework.viewmodel.IView
@@ -18,7 +17,7 @@ class PedidoTransferenciaViewModel(view: IPedidoTransferenciaView): ViewModel<IP
   
   fun refresh() = exec {
     pedidosTransferencia.clear()
-    val storeno = lojaDeposito.numero
+    //val storeno = lojaDeposito.numero
     val notas = ETLPedidos.listDados.filter {pedido ->
       abreviacaoDefault == pedido.abreviacao
     }

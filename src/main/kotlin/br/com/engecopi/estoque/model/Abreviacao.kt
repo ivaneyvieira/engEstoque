@@ -26,7 +26,7 @@ class Abreviacao(
   companion object Find: AbreviacaoFinder() {
     fun findByAbreviacao(abreviacao: String?): Abreviacao? {
       abreviacao ?: return null
-      val loja = lojaDeposito ?: return null
+      val loja = lojaDeposito
       return QAbreviacao().abreviacao.eq(abreviacao)
         .loja.equalTo(loja)
         .findList()
@@ -40,11 +40,10 @@ class Abreviacao(
     }
   
     fun updateAbreviacao(loja: Loja) {
-      val abreviacaoes =
-        Repositories.findByLoja(loja)
-          .map {it.abreviacao}
-          .distinct()
-          .sorted()
+      val abreviacaoes = Repositories.findByLoja(loja)
+        .map {it.abreviacao}
+        .distinct()
+        .sorted()
       abreviacaoes.forEach {addAbreviacao(it)}
     }
   

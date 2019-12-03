@@ -52,7 +52,7 @@ class Etiqueta: BaseModel() {
     //  .update()
   }
   
-  fun imprimivel(tipoNota: TipoNota): Boolean {
+  fun imprimivel(): Boolean {
     return true
   }
 }

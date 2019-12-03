@@ -3,7 +3,6 @@ package br.com.engecopi.framework.ui.view
 import br.com.engecopi.framework.viewmodel.ViewModel
 import br.com.engecopi.saci.QuerySaci
 import br.com.engecopi.utils.CupsUtils
-import br.com.engecopi.utils.SystemUtils
 import br.com.engecopi.utils.ZPLPreview
 import com.fo0.advancedtokenfield.main.AdvancedTokenField
 import com.github.mvysny.karibudsl.v8.VAlign
@@ -26,8 +25,6 @@ import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.event.ShortcutAction.KeyCode
 import com.vaadin.navigator.View
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
-import com.vaadin.server.Page
-import com.vaadin.server.StreamResource
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.Component
 import com.vaadin.ui.Grid
@@ -41,7 +38,6 @@ import com.vaadin.ui.renderers.LocalDateRenderer
 import com.vaadin.ui.renderers.LocalDateTimeRenderer
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
-import org.apache.commons.io.IOUtils
 import org.vaadin.addons.filteringgrid.FilterGrid
 import org.vaadin.viritin.fields.ClearableTextField
 import org.vaadin.viritin.fields.DoubleField
@@ -101,14 +97,6 @@ abstract class LayoutView<V: ViewModel<*>>: VerticalLayout(), View {
 
   fun showQuestion(msg: String, execYes: () -> Unit, execNo: () -> Unit) {
     if(msg.isNotBlank()) MessageDialog.question(message = msg, execYes = execYes, execNo = execNo)
-  }
-
-  private fun openText(impressora: String, text: String) {
-    val comentText = "### Impressora: $impressora\n$text"
-    val resource = StreamResource({IOUtils.toInputStream(comentText)}, "${SystemUtils.md5(comentText)}.txt")
-    resource.mimeType = "text/plain"
-
-    Page.getCurrent().open(resource, "_blank", false)
   }
 
   fun printText(impressora: String, text: String?) {

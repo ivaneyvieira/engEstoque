@@ -203,16 +203,15 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }.toList()
     val notaGroup = notaProdutoList.groupBy {KeyNota(it.storeno, it.numero, it.serie)}
     ProdutoSaci.updateProduto()
-    return notaGroup.mapNotNull {(key, produtosChave) ->
+    return notaGroup.mapNotNull {(_, produtosChave) ->
       produtosChave.firstOrNull()
         ?.let {nota ->
-          val produtosValidos =
-            produtosChave.map {ProdutoSaci(it.prdno, it.grade)}
-              .filter {produto ->
-                val dataCadastroProduto = produto.dataCadastro ?: return@filter false
-                dataCadastroProduto <= nota.date.localDate()
-              }
-              .distinct()
+          val produtosValidos = produtosChave.map {ProdutoSaci(it.prdno, it.grade)}
+            .filter {produto ->
+              val dataCadastroProduto = produto.dataCadastro ?: return@filter false
+              dataCadastroProduto <= nota.date.localDate()
+            }
+            .distinct()
           when {
             produtosValidos.isNotEmpty() -> NotaSaci(invno = nota.invno,
                                                      storeno = nota.storeno,

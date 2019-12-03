@@ -113,10 +113,9 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
   }
   
   private fun processaNota(itensExpedicao: List<ItemExpedicao>): Nota? {
-    val loja = lojaDeposito.numero ?: return null
-    val notaDoSaci =
-      itensExpedicao.firstOrNull()
-        ?.notaProdutoSaci
+    val loja = lojaDeposito.numero
+    val notaDoSaci = itensExpedicao.firstOrNull()
+      ?.notaProdutoSaci
     val lojaSaci = notaDoSaci?.storeno ?: throw EViewModel("Nota não encontrada")
     if(loja != lojaSaci) throw EViewModel("Esta nota pertence a loja $lojaSaci")
     val nota: Nota? = Nota.createNota(notaDoSaci)
@@ -157,8 +156,8 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
   private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {
     if(usuarioDefault.isEstoqueExpedicao) return ""
     itemNota ?: return ""
-    val tipoNota = itemNota.tipoNota ?: return ""
-    if(!etiqueta.imprimivel(tipoNota)) return ""
+    //val tipoNota = itemNota.tipoNota ?: return ""
+    if(!etiqueta.imprimivel()) return ""
     val print = itemNota.printEtiqueta()
     itemNota.let {
       it.refresh()
