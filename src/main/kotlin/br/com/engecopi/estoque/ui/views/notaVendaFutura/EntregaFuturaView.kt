@@ -93,8 +93,17 @@ class EntregaFuturaView: NotaView<EntregaFututaVo, EntregaFututaViewModel, IEntr
         caption = "Número Conferencia"
         setSortProperty("codigo_barra_conferencia")
       }
+      column(EntregaFututaVo::dataEmissao) {
+        caption = "Emissao"
+        dateFormat()
+        setSortProperty("nota.dataEmissao", "data", "hora")
+      }
       column(EntregaFututaVo::numeroBaixa) {
         caption = "NF Baixa"
+      }
+      column(EntregaFututaVo::dataBaixa) {
+        caption = "Data Baixa"
+        dateFormat()
       }
       column(EntregaFututaVo::lojaNF) {
         caption = "Loja NF"
@@ -108,11 +117,6 @@ class EntregaFuturaView: NotaView<EntregaFututaVo, EntregaFututaViewModel, IEntr
         caption = "Lançamento"
         dateFormat()
         setSortProperty("nota.lancamento", "data", "hora")
-      }
-      column(EntregaFututaVo::dataEmissao) {
-        caption = "Emissao"
-        dateFormat()
-        setSortProperty("nota.dataEmissao", "data", "hora")
       }
       column(EntregaFututaVo::quantProduto) {
         caption = "Quantidade"

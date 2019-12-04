@@ -108,7 +108,7 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
           this.icon = PRINT
           this.addClickListener {click ->
             val text = viewModel.imprimir(item?.entityVo?.nota)
-            printText(usuarioDefault.impressora, text)
+            printText(impressora(), text)
             val print = item?.impresso ?: true
             click.button.isEnabled = print == false || isAdmin
             refreshGrid()
@@ -166,16 +166,20 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
     }
   }
   
+  private fun impressora(): String {
+    val impressora = usuarioDefault.impressora.trim()
+    return if(impressora == "") "ENTREGA" else impressora
+  }
+  
   private fun formCodbar(): PnlCodigoBarras {
     return PnlCodigoBarras("Chave da Nota Fiscal") {key ->
       val notaSaida = viewModel.findNotaSaidaKey(key)
-  
+      
       if(notaSaida.isNotEmpty()) {
         val dialog = DlgNotaFuturaLoc(notaSaida, viewModel) {itens ->
           val nota = viewModel.processaKey(itens)
           val text = viewModel.imprimir(nota)
-          val impressora = usuarioDefault.impressora
-          printText(impressora, text)
+          printText(impressora(), text)
           updateView()
         }
         dialog.showDialog()
@@ -188,8 +192,7 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
       icon = PRINT
       addClickListener {
         val text = viewModel.imprimeTudo()
-        val impressora = usuarioDefault.impressora
-        printText(impressora, text)
+        printText(impressora(), text)
         //grid.refreshGrid()
       }
     }

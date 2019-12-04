@@ -37,8 +37,10 @@ class EntregaFuturaEditorView: NotaView<EntregaFututaVo, EntregaFututaEditorView
         binder.bean.usuario = usuario
       }
       formLayout.apply {
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
-
+        w =
+          (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+            .px
+  
         grupo("Nota fiscal de saída") {
           verticalLayout {
             row {
@@ -70,7 +72,7 @@ class EntregaFuturaEditorView: NotaView<EntregaFututaVo, EntregaFututaEditorView
             }
           }
         }
-
+  
         grupo("Produto") {
           produtoField(operation, binder, "Saída")
         }
@@ -85,8 +87,17 @@ class EntregaFuturaEditorView: NotaView<EntregaFututaVo, EntregaFututaEditorView
         caption = "Número Conferencia"
         setSortProperty("codigo_barra_conferencia")
       }
+      column(EntregaFututaVo::dataEmissao) {
+        caption = "Emissao"
+        dateFormat()
+        setSortProperty("nota.dataEmissao", "data", "hora")
+      }
       column(EntregaFututaVo::numeroBaixa) {
         caption = "NF Baixa"
+      }
+      column(EntregaFututaVo::dataBaixa) {
+        caption = "Data Baixa"
+        dateFormat()
       }
       column(EntregaFututaVo::lojaNF) {
         caption = "Loja NF"
@@ -105,11 +116,6 @@ class EntregaFuturaEditorView: NotaView<EntregaFututaVo, EntregaFututaEditorView
         caption = "Hora"
         timeFormat()
         setSortProperty("nota.lancamento", "nota.hora")
-      }
-      column(EntregaFututaVo::dataEmissao) {
-        caption = "Emissao"
-        dateFormat()
-        setSortProperty("nota.dataEmissao", "data", "hora")
       }
       column(EntregaFututaVo::quantProduto) {
         caption = "Quantidade"
@@ -146,10 +152,15 @@ class EntregaFuturaEditorView: NotaView<EntregaFututaVo, EntregaFututaEditorView
         caption = "Cliente"
         setSortProperty("nota.cliente")
       }
-      val itens = viewModel.notasConferidas().groupBy {it.numeroNF}.entries.sortedBy {entry ->
-        entry.value.map {it.entityVo?.id ?: 0}.max()
-      }.mapNotNull {it.key}
-
+      val itens =
+        viewModel.notasConferidas()
+          .groupBy {it.numeroNF}
+          .entries.sortedBy {entry ->
+          entry.value.map {it.entityVo?.id ?: 0}
+            .max()
+        }
+          .mapNotNull {it.key}
+  
       grid.setStyleGenerator {saida ->
         if(saida.status == CONFERIDA) {
           val numero = saida.numeroNF

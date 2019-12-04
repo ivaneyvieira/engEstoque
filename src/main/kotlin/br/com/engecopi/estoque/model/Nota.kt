@@ -208,8 +208,8 @@ class Nota: BaseModel() {
       val data =
         LocalDate.now()
           .minusDays(10)
-      val lista = QNota()
-          .tipoMov.eq(SAIDA)
+      val lista =
+        QNota().tipoMov.eq(SAIDA)
           .data.ge(data)
           .tipoNota.notEqualTo(PEDIDO_S)
           .findList()
@@ -238,6 +238,9 @@ class Nota: BaseModel() {
   
   fun numeroEntrega(): String = TransferenciaAutomatica.notaTransfencia(loja?.numero, numero)?.numeroTransf
                                 ?: EntregaFutura.entrega(numero)?.numeroEntrega ?: ""
+  
+  fun dataEntrega(): LocalDate? = TransferenciaAutomatica.notaTransfencia(loja?.numero, numero)?.data?.localDate()
+                                  ?: EntregaFutura.entrega(numero)?.dataEntrega?.localDate()
   
   fun existe(): Boolean {
     return QNota().loja.equalTo(loja).tipoMov.eq(tipoMov).numero.eq(numero).findCount() > 0

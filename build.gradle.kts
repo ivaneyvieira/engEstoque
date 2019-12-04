@@ -70,7 +70,7 @@ dependencies {
   compile("io.ebean:ebean:12.1.3")
   compile("io.ebean:ebean-querybean:12.1.3")
   compile("io.ebean:ebean-agent:12.1.3")
-  compile("io.ebean.tools:finder-generator:11.34.2")
+  compile("io.ebean.tools:finder-generator:12.1.1")
   
   compile("com.vaadin:vaadin-themes:$vaadin8Version")
   compile("com.vaadin:vaadin-server:$vaadin8Version")

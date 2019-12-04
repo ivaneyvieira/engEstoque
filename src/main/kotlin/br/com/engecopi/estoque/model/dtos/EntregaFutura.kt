@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.model.dtos
 
+import br.com.engecopi.estoque.model.Nota.Find
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.etlSaci.EntryID
 import io.ebean.DB
@@ -17,6 +18,11 @@ class EntregaFutura(id: String,
   override val chave: String
     get() = "$numero_entrega$nfno_entrega$nfse_entrega$nfekey_entrega"
   val numeroEntrega get() = "$storeno$numero_entrega"
+  val dataEntrega: Int?
+    get() {
+      val notaSaci = Find.findNotaSaidaSaci(storeno, "$nfno_entrega/$nfse_entrega").firstOrNull() ?: return null
+      return notaSaci.dtEmissao
+    }
   
   companion object {
     fun entrega(numeroVenda: String?): EntregaFutura? {
