@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.model
 
+import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
@@ -83,7 +84,7 @@ class Nota: BaseModel() {
   @Aggregation("max(sequencia)")
   var maxSequencia: Int? = 0
   @Enumerated(EnumType.STRING)
-  var lancamentoOrigem: LancamentoOrigem = LancamentoOrigem.EXPEDICAO
+  var lancamentoOrigem: LancamentoOrigem = EXPEDICAO
   val multipicadorCancelado
     get() = if(tipoNota == CANCELADA_E || tipoNota == CANCELADA_S) 0 else 1
   
@@ -322,5 +323,6 @@ data class NotaItens(val nota: Nota?, val itens: List<ItemNota>) {
 
 enum class LancamentoOrigem(val descricao: String) {
   EXPEDICAO("Expedição"),
-  DEPOSITO("Deposito")
+  DEPOSITO("Deposito"),
+  ENTREFA_FUTURA("Entrega Futura")
 }

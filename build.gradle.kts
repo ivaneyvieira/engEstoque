@@ -1,4 +1,7 @@
 import io.ebean.gradle.EnhancePluginExtension
+import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
+import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
+import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val kotlinVersion = properties["kotlinVersion"] as String
@@ -39,19 +42,23 @@ vaadin {
 configure<EnhancePluginExtension> {
   debugLevel = 1
 }
-
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
   jvmTarget = "1.8"
 }
-
 val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
   jvmTarget = "1.8"
 }
 
-tasks.named<Test>("test") {
+tasks.test {
   useJUnitPlatform()
+  testLogging {
+    showStandardStreams = true
+    events = setOf(PASSED, FAILED, SKIPPED)
+  }
+  reports.junitXml.isEnabled = false
+  reports.html.isEnabled = true
 }
 
 dependencies {
@@ -67,9 +74,11 @@ dependencies {
   
   testImplementation("com.github.mvysny.dynatest:dynatest:0.8")
   
-  compile("io.ebean:ebean:12.1.3")
-  compile("io.ebean:ebean-querybean:12.1.3")
-  compile("io.ebean:ebean-agent:12.1.3")
+  compile("io.ebean:ebean:12.1.5")
+  compile("io.ebean:ebean-querybean:12.1.5")
+  compile("io.ebean:ebean-agent:12.1.5")
+  testImplementation("io.ebean:ebean-test:12.1.5")
+  
   compile("io.ebean.tools:finder-generator:12.1.1")
   
   compile("com.vaadin:vaadin-themes:$vaadin8Version")
@@ -104,6 +113,7 @@ dependencies {
   compile("com.whitestein.vaadin.widgets:wt-pdf-viewer:2.0.1")
   //compile("org.vaadin:grid-renderers-collection-addon:2.6.0")
   // heroku app runner
+  testImplementation("org.assertj:assertj-core:3.12.2")
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
   testRuntime("org.junit.jupiter:junit-jupiter-engine:5.4.2")
 }

@@ -2,7 +2,7 @@ package br.com.engecopi.estoque.viewmodel.entregaFutura
 
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
-import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
+import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREFA_FUTURA
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.NotaSerie
@@ -111,21 +111,23 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
   }
   
   private fun processaNota(itensVendaFutura: List<ItemVendaFutura>): Nota? {
-    val notaDoSaci = itensVendaFutura.firstOrNull()
-      ?.notaProdutoSaci
+    val notaDoSaci =
+      itensVendaFutura.firstOrNull()
+        ?.notaProdutoSaci
     notaDoSaci?.storeno ?: throw EViewModel("Nota não encontrada")
     //if(loja != lojaSaci) throw EViewModel("Esta nota pertence a loja $lojaSaci")
-    val nota: Nota? = Nota.createNota(notaDoSaci)
-      ?.let {
-        if(it.existe()) Nota.findSaida(it.loja, it.numero)
-        else {
-          it.sequencia = Nota.maxSequencia(it.tipoNota) + 1
-          it.usuario = usuarioDefault
-          it.lancamentoOrigem = EXPEDICAO
-          it.save()
-          it
+    val nota: Nota? =
+      Nota.createNota(notaDoSaci)
+        ?.let {
+          if(it.existe()) Nota.findSaida(it.loja, it.numero)
+          else {
+            it.sequencia = Nota.maxSequencia(it.tipoNota) + 1
+            it.usuario = usuarioDefault
+            it.lancamentoOrigem = ENTREFA_FUTURA
+            it.save()
+            it
+          }
         }
-      }
     nota ?: throw EViewModel("Nota não encontrada")
     val itens = itensVendaFutura.mapNotNull {itemVendaFutura ->
       val notaSaci = itemVendaFutura.notaProdutoSaci
@@ -144,8 +146,9 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
   
     if(itens.isEmpty()) throw EViewModel("Essa nota não possui itens com localização")
   
-    crudBean = ViewNotaFutura.findNotaFutura(nota)
-      ?.toVO()
+    crudBean =
+      ViewNotaFutura.findNotaFutura(nota)
+        ?.toVO()
   
     return nota
   }
@@ -174,10 +177,11 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
   }
   
   private fun imprimeItens(status: StatusNota, itens: List<ItemNota>): String {
-    val etiquetas = Etiqueta.findByStatus(status)
-      .filter {etiqueta ->
-        etiqueta.titulo.contains("ETDEP")
-      }
+    val etiquetas =
+      Etiqueta.findByStatus(status)
+        .filter {etiqueta ->
+          etiqueta.titulo.contains("ETDEP")
+        }
     return etiquetas.joinToString(separator = "\n") {etiqueta ->
       itens.map {imprimir(it, etiqueta)}
         .distinct()
@@ -186,13 +190,15 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
   }
   
   fun imprimeTudo() = execString {
-    val etiquetas = Etiqueta.findByStatus(INCLUIDA)
-      .filter {etiqueta ->
-        etiqueta.titulo.contains("ETDEP")
-      }
-    val itens = QItemNota().impresso.eq(false)
-      .status.eq(INCLUIDA)
-      .findList()
+    val etiquetas =
+      Etiqueta.findByStatus(INCLUIDA)
+        .filter {etiqueta ->
+          etiqueta.titulo.contains("ETDEP")
+        }
+    val itens =
+      QItemNota().impresso.eq(false)
+        .status.eq(INCLUIDA)
+        .findList()
     val ret = etiquetas.joinToString(separator = "\n") {etiqueta ->
       itens.map {item -> imprimir(item, etiqueta)}
         .distinct()
@@ -203,16 +209,18 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
   }
   
   fun findNotaSaidaKey(key: String) = execList {
-    val storeno = key.mid(0, 1)
-      .toIntOrNull()
+    val storeno =
+      key.mid(0, 1)
+        .toIntOrNull()
     val nfno = key.mid(1)
-    val notaSaci = Nota.findNotaSaidaSaci(storeno, nfno)
-      .filter {ns ->
-        when {
-          usuarioDefault.isEstoqueVendaFutura -> ViewProdutoLoc.filtraLoc(ns.prdno, ns.grade)
-          else                                -> true
+    val notaSaci =
+      Nota.findNotaSaidaSaci(storeno, nfno)
+        .filter {ns ->
+          when {
+            usuarioDefault.isEstoqueVendaFutura -> ViewProdutoLoc.filtraLoc(ns.prdno, ns.grade)
+            else                                -> true
+          }
         }
-      }
     val numero = notaSaci.firstOrNull()?.numero ?: ""
     val ret = when {
       notaSaci.isEmpty()                           -> throw EChaveNaoEncontrada()

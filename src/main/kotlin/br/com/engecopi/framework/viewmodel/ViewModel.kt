@@ -2,15 +2,15 @@ package br.com.engecopi.framework.viewmodel
 
 import br.com.engecopi.framework.model.Transaction
 
-abstract class ViewModel<V: IView>(val view: V) {
+abstract class ViewModel<V: IView>(val view: V): IViewModel {
   private var inTransaction = false
-
+  
   private fun updateView(exception: EViewModel) {
     exception.message?.let {message ->
       view.showError(message)
     }
   }
-
+  
   @Throws(EViewModel::class)
   fun exec(block: () -> Unit) {
     try {

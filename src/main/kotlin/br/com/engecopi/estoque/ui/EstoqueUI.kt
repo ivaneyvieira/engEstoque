@@ -21,9 +21,9 @@ import br.com.engecopi.estoque.ui.views.NFExpedicaoView
 import br.com.engecopi.estoque.ui.views.PainelGeralView
 import br.com.engecopi.estoque.ui.views.PedidoTransferenciaView
 import br.com.engecopi.estoque.ui.views.ProdutoView
-import br.com.engecopi.estoque.ui.views.SaidaView
 import br.com.engecopi.estoque.ui.views.UsuarioView
 import br.com.engecopi.estoque.ui.views.notaVendaFutura.NFVendaFuturaView
+import br.com.engecopi.estoque.ui.views.saida.SaidaView
 import br.com.engecopi.framework.ui.view.toViewName
 import br.com.engecopi.utils.SystemUtils
 import com.github.mvysny.karibudsl.v8.MenuButton

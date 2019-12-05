@@ -270,7 +270,6 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
   
   private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {
     itemNota ?: return ""
-    //val tipoNota = itemNota.tipoNota ?: return ""
     if(!etiqueta.imprimivel()) return ""
     val print = itemNota.printEtiqueta()
     if(!usuarioDefault.admin) itemNota.let {
@@ -475,20 +474,6 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   val cliente: String
     get() = entityVo?.nota?.cliente ?: notaSaci?.clienteName ?: ""
   var observacaoNota: String? = ""
-  val produtoNota: List<Produto>
-    get() {
-      if(entityVo != null) return emptyList()
-      val nota = notaProdutoProdutoSaci
-      val produtos = if(nota.isNotEmpty()) nota.asSequence().mapNotNull {notaSaci ->
-        Produto.findProduto(notaSaci.prdno, notaSaci.grade)
-      }.filter {produto ->
-        usuario.temProduto(produto)
-      }.toList()
-      else ViewProdutoLoc.produtosCache() // Produto.all().filter { usuario.temProduto(it) }
-      return produtos.sortedBy {it.codigo + it.grade}
-    }
-  val quantidadeReadOnly
-    get() = notaSaci != null
   val itemNota
     get() = toEntity()
   val produtos = ArrayList<ProdutoVO>()
@@ -496,9 +481,13 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
     set(value) {
       field = value
       quantProduto = toEntity()?.quantidade ?: notaProdutoProdutoSaci.firstOrNull {neSaci ->
-        (neSaci.prdno ?: "") == (value?.codigo?.trim() ?: "") && (neSaci.grade ?: "") == (value?.grade ?: "")
+        compara(neSaci, value)
       }?.quant ?: 0
     }
+  
+  private fun compara(neSaci: NotaProdutoSaci, value: Produto?) =
+    (neSaci.prdno ?: "") == (value?.codigo?.trim() ?: "") && (neSaci.grade ?: "") == (value?.grade ?: "")
+  
   val descricaoProduto: String
     get() = produto?.descricao ?: ""
   val codigo: String
