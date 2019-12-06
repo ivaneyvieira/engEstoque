@@ -2,7 +2,7 @@ package br.com.engecopi.estoque.ui.views.saida
 
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.DEPOSITO
-import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREFA_FUTURA
+import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREFA_F
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
 import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.NotaItens
@@ -337,7 +337,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
                   item.value?.nota?.lancamentoOrigem == EXPEDICAO
                 }
                 val itensEntregaFutura = itens.filter {item ->
-                  item.value?.nota?.lancamentoOrigem == ENTREFA_FUTURA
+                  item.value?.nota?.lancamentoOrigem == ENTREFA_F
                 }
                 viewModel.confirmaProdutos(itensDeposito, ENTREGUE)
                 viewModel.confirmaProdutos(itensExpedicao, CONFERIDA)
@@ -560,11 +560,11 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
         execPrint(viewModel.confirmaProdutos(listOf(item), ENTREGUE))
         gridProdutos.updateProdutosNota()
       }
-      EXPEDICAO      -> {
+      EXPEDICAO -> {
         execPrint(viewModel.confirmaProdutos(listOf(item), CONFERIDA))
         gridProdutos.updateProdutosNota()
       }
-      ENTREFA_FUTURA -> {
+      ENTREFA_F -> {
         execPrint(viewModel.confirmaProdutos(listOf(item), CONFERIDA))
         gridProdutos.updateProdutosNota()
       }
