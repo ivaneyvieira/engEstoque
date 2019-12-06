@@ -12,9 +12,9 @@ import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
 import br.com.engecopi.estoque.model.query.QItemNota
-import br.com.engecopi.estoque.viewmodel.INotaView
-import br.com.engecopi.estoque.viewmodel.NotaViewModel
-import br.com.engecopi.estoque.viewmodel.NotaVo
+import br.com.engecopi.estoque.viewmodel.notaFiscal.INotaView
+import br.com.engecopi.estoque.viewmodel.notaFiscal.NotaViewModel
+import br.com.engecopi.estoque.viewmodel.notaFiscal.NotaVo
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.utils.mid
 

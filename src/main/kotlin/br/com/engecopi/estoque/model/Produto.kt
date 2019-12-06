@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.model
 
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
+import br.com.engecopi.estoque.model.dtos.ProdutoGrade
 import br.com.engecopi.estoque.model.finder.ProdutoFinder
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.model.query.QProduto
@@ -56,6 +57,8 @@ class Produto: BaseModel() {
     @Transient get() = vproduto?.nome
   val temGrade: Boolean
     get() = grade != ""
+  val chaveProdutoGrade: ProdutoGrade
+    get() = ProdutoGrade(codigo.trim(), grade)
   
   fun localizacao(usuario: Usuario?): String? {
     val user = usuario ?: return ""
@@ -115,7 +118,7 @@ class Produto: BaseModel() {
     
     fun findProdutos(codigo: String?): List<Produto> {
       codigo ?: return emptyList()
-  
+      
       return QProduto().codigo.eq(codigo.lpad(16, " "))
         .findList()
     }
@@ -237,7 +240,7 @@ class Produto: BaseModel() {
           .map {it.joinToString(separator = ".")}
           .distinct()
           .toList()
-  
+      
       if(prefix.count() == 1) return prefix[0]
     }
     return ""

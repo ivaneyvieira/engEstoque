@@ -15,7 +15,7 @@ import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.ui.views.NotaView
 import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
-import br.com.engecopi.estoque.viewmodel.ProdutoVO
+import br.com.engecopi.estoque.viewmodel.notaFiscal.ProdutoVO
 import br.com.engecopi.estoque.viewmodel.saida.ISaidaView
 import br.com.engecopi.estoque.viewmodel.saida.SaidaViewModel
 import br.com.engecopi.estoque.viewmodel.saida.SaidaVo

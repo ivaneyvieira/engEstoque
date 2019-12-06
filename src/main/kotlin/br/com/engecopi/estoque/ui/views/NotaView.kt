@@ -7,10 +7,10 @@ import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
-import br.com.engecopi.estoque.viewmodel.INotaView
-import br.com.engecopi.estoque.viewmodel.NotaViewModel
-import br.com.engecopi.estoque.viewmodel.NotaVo
-import br.com.engecopi.estoque.viewmodel.ProdutoVO
+import br.com.engecopi.estoque.viewmodel.notaFiscal.INotaView
+import br.com.engecopi.estoque.viewmodel.notaFiscal.NotaViewModel
+import br.com.engecopi.estoque.viewmodel.notaFiscal.NotaVo
+import br.com.engecopi.estoque.viewmodel.notaFiscal.ProdutoVO
 import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.CrudOperation
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD

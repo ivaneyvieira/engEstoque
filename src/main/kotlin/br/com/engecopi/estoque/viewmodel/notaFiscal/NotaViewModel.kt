@@ -1,4 +1,4 @@
-package br.com.engecopi.estoque.viewmodel
+package br.com.engecopi.estoque.viewmodel.notaFiscal
 
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
@@ -29,11 +29,11 @@ import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.model.ViewProdutoLoc
 import br.com.engecopi.estoque.model.query.QItemNota
-import br.com.engecopi.estoque.viewmodel.ETipoGrupo.BLUE
-import br.com.engecopi.estoque.viewmodel.ETipoGrupo.GREEN
-import br.com.engecopi.estoque.viewmodel.ETipoGrupo.RED
-import br.com.engecopi.estoque.viewmodel.ETipoGrupo.SELECT_FT
-import br.com.engecopi.estoque.viewmodel.ETipoGrupo.WHITE
+import br.com.engecopi.estoque.viewmodel.notaFiscal.ETipoGrupo.BLUE
+import br.com.engecopi.estoque.viewmodel.notaFiscal.ETipoGrupo.GREEN
+import br.com.engecopi.estoque.viewmodel.notaFiscal.ETipoGrupo.RED
+import br.com.engecopi.estoque.viewmodel.notaFiscal.ETipoGrupo.SELECT_FT
+import br.com.engecopi.estoque.viewmodel.notaFiscal.ETipoGrupo.WHITE
 import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
@@ -277,7 +277,7 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
       it.impresso = true
       it.update()
     }
-  
+    
     return print.print(etiqueta.template)
   }
   
@@ -481,13 +481,13 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
     set(value) {
       field = value
       quantProduto = toEntity()?.quantidade ?: notaProdutoProdutoSaci.firstOrNull {neSaci ->
-        compara(neSaci, value)
+        value?.let {produto ->
+          neSaci.chaveProdutoGrade == produto.chaveProdutoGrade
+        }?: false
       }?.quant ?: 0
     }
   
-  private fun compara(neSaci: NotaProdutoSaci, value: Produto?) =
-    (neSaci.prdno ?: "") == (value?.codigo?.trim() ?: "") && (neSaci.grade ?: "") == (value?.grade ?: "")
-  
+ 
   val descricaoProduto: String
     get() = produto?.descricao ?: ""
   val codigo: String
@@ -539,13 +539,15 @@ class ProdutoVO(val produto: Produto, val statusNota: StatusNota, var localizaca
   
   fun updateItem(first: Boolean) {
     dateUpdate = LocalDateTime.now()
-    grupoSelecao = if(selecionado) {
-      if(first) SELECT_FT
-      else BLUE
+    grupoSelecao = when {
+      selecionado    -> when {
+        first -> SELECT_FT
+        else  -> BLUE
+      }
+      saldoFinal < 0 -> RED
+      !allowSelect() -> GREEN
+      else           -> WHITE
     }
-    else if(saldoFinal < 0) RED
-    else if(!allowSelect()) GREEN
-    else WHITE
   }
 }
 
