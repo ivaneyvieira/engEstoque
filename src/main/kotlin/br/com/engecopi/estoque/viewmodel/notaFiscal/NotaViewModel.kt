@@ -483,11 +483,9 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
       quantProduto = toEntity()?.quantidade ?: notaProdutoProdutoSaci.firstOrNull {neSaci ->
         value?.let {produto ->
           neSaci.chaveProdutoGrade == produto.chaveProdutoGrade
-        }?: false
+        } ?: false
       }?.quant ?: 0
     }
-  
- 
   val descricaoProduto: String
     get() = produto?.descricao ?: ""
   val codigo: String
