@@ -1,12 +1,13 @@
 package br.com.engecopi.estoque.viewmodel.saida
 
 import br.com.engecopi.estoque.model.LancamentoOrigem.DEPOSITO
-import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREFA_F
+import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.NotaItens
 import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.ViewCodBarConferencia
@@ -41,7 +42,7 @@ internal class Processamento(private val view: ISaidaView) {
       else NotaItens.VAZIO
     }
     else {
-      if(notaFutura.lancamentoOrigem == ENTREFA_F) NotaItens(notaFutura, notaFutura.itensNota())
+      if(notaFutura.lancamentoOrigem == ENTREGA_F) NotaItens(notaFutura, notaFutura.itensNota())
       else NotaItens.VAZIO
     }
   }
@@ -60,7 +61,7 @@ internal class Processamento(private val view: ISaidaView) {
     val loja = Loja.findLoja(storeno) ?: return NotaItens.VAZIO
     val numero = if(key.length > 1) key.mid(1) else return NotaItens.VAZIO
     val notaItem = processaKeyNumero(loja, numero)
-    return if(notaItem.nota?.tipoNota == VENDAF || loja.numero == RegistryUserInfo.lojaDeposito.numero) {
+    return if(notaItem.nota?.tipoNota == VENDAF || loja.numero == lojaDeposito.numero) {
       notaItem
     }
     else NotaItens.VAZIO

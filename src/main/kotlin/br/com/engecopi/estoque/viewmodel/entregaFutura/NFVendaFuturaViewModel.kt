@@ -2,7 +2,7 @@ package br.com.engecopi.estoque.viewmodel.entregaFutura
 
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
-import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREFA_F
+import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.NotaSerie
@@ -123,7 +123,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
           else {
             it.sequencia = Nota.maxSequencia(it.tipoNota) + 1
             it.usuario = usuarioDefault
-            it.lancamentoOrigem = ENTREFA_F
+            it.lancamentoOrigem = ENTREGA_F
             it.save()
             it
           }
