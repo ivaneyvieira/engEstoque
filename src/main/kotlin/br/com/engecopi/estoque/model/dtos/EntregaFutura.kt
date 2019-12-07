@@ -17,7 +17,7 @@ class EntregaFutura(id: String,
                     val nfekey_entrega: String?): EntryID(id) {
   override val chave: String
     get() = "$numero_entrega$nfno_entrega$nfse_entrega$nfekey_entrega"
-  val numeroEntrega get() = "$storeno$numero_entrega"
+  val numeroEntrega get() = if(numero_entrega == "" || numero_entrega == "0") "" else "$storeno$numero_entrega"
   val dataEntrega: Int?
     get() {
       val notaSaci = Find.findNotaSaidaSaci(storeno, "$nfno_entrega/$nfse_entrega").firstOrNull() ?: return null

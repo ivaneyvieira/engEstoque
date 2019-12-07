@@ -14,8 +14,8 @@ class TransferenciaAutomatica(id: String,
                               val nftransf: String): EntryID(id) {
   override val chave: String
     get() = "$storenoFat$nffat$storenoTransf$nftransf"
-  val numeroTransf get() = "$storenoTransf$nftransf"
-  val numeroFat get() = "$storenoFat$nffat"
+  val numeroTransf get() = if(nftransf == "" || nftransf == "0") "" else "$storenoTransf$nftransf"
+  val numeroFat get() = if(nffat == "" || nffat == "0") "" else "$storenoFat$nffat"
   
   companion object {
     fun notaFutura(lojaTransferencia: Int?, numeroSerieTransferencia: String?): TransferenciaAutomatica? {
