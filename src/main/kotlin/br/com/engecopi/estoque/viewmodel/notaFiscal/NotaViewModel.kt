@@ -224,8 +224,7 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
       this.numeroCodigo = itemNota.codigoBarraConferencia
       this.numeroBaixa = itemNota.nota?.numeroEntrega()
       this.dataBaixa = itemNota.nota?.dataEntrega()
-      this.numeroCodigoReduzido =
-        if(nota?.numeroEntrega == "") itemNota.codigoBarraCliente else "$lojaTransf $numeroTransf $seq"
+      this.numeroCodigoReduzido = itemNota.codigoBarraCliente
       this.lojaNF = nota?.loja
       this.observacaoNota = nota?.observacao
       this.produto = itemNota.produto

@@ -83,7 +83,7 @@ class EntregaFuturaEditorView: NotaView<EntregaFututaVo, EntregaFututaEditorView
     gridCrud {
       reloadOnly = !isAdmin
       addCustomToolBarComponent(btnDesfazer())
-      column(EntregaFututaVo::numeroCodigoReduzido) {
+      column(EntregaFututaVo::numeroCodigo) {
         caption = "Número Conferencia"
         setSortProperty("codigo_barra_conferencia")
       }
