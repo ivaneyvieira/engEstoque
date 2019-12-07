@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
+    <changeSet type="apply">
+        <alterColumn columnName="lancamento_origem" tableName="notas" checkConstraint="check ( lancamento_origem in ('EXPEDICAO','DEPOSITO','ENTREGA_F'))" checkConstraintName="ck_notas_lancamento_origem"/>
+    </changeSet>
+</migration>
