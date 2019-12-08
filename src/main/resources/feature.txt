@@ -1,3 +1,8 @@
 Feature nova
 Nova release
 Feature dois
+<<<<<<< HEAD
+outro
+=======
+mais um teste
+>>>>>>> feature/teste
