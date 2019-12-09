@@ -1,4 +1,4 @@
-package br.com.engecopi.estoque.viewmodel.notaFiscal
+package br.com.engecopi.estoque.viewmodel.movimentacao
 
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.DEPOSITO
@@ -27,11 +27,11 @@ import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.model.ViewProdutoLoc
 import br.com.engecopi.estoque.model.query.QItemNota
-import br.com.engecopi.estoque.viewmodel.notaFiscal.ETipoGrupo.BLUE
-import br.com.engecopi.estoque.viewmodel.notaFiscal.ETipoGrupo.GREEN
-import br.com.engecopi.estoque.viewmodel.notaFiscal.ETipoGrupo.RED
-import br.com.engecopi.estoque.viewmodel.notaFiscal.ETipoGrupo.SELECT_FT
-import br.com.engecopi.estoque.viewmodel.notaFiscal.ETipoGrupo.WHITE
+import br.com.engecopi.estoque.viewmodel.movimentacao.ETipoGrupo.BLUE
+import br.com.engecopi.estoque.viewmodel.movimentacao.ETipoGrupo.GREEN
+import br.com.engecopi.estoque.viewmodel.movimentacao.ETipoGrupo.RED
+import br.com.engecopi.estoque.viewmodel.movimentacao.ETipoGrupo.SELECT_FT
+import br.com.engecopi.estoque.viewmodel.movimentacao.ETipoGrupo.WHITE
 import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo

@@ -1,12 +1,9 @@
-package br.com.engecopi.estoque.viewmodel
+package br.com.engecopi.estoque.viewmodel.movimentacao
 
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.StatusNota.RECEBIDO
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.query.QItemNota
-import br.com.engecopi.estoque.viewmodel.notaFiscal.INotaView
-import br.com.engecopi.estoque.viewmodel.notaFiscal.NotaViewModel
-import br.com.engecopi.estoque.viewmodel.notaFiscal.NotaVo
 
 class EntradaViewModel(view: IEntradaView):
   NotaViewModel<EntradaVo, IEntradaView>(view, ENTRADA, RECEBIDO, RECEBIDO, abreviacaoDefault) {

@@ -1,4 +1,4 @@
-package br.com.engecopi.estoque.viewmodel.saida
+package br.com.engecopi.estoque.viewmodel.movimentacao
 
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.Produto
@@ -9,10 +9,6 @@ import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.query.QItemNota
-import br.com.engecopi.estoque.viewmodel.notaFiscal.INotaView
-import br.com.engecopi.estoque.viewmodel.notaFiscal.NotaViewModel
-import br.com.engecopi.estoque.viewmodel.notaFiscal.NotaVo
-import br.com.engecopi.estoque.viewmodel.notaFiscal.ProdutoVO
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -36,7 +32,7 @@ class SaidaViewModel(view: ISaidaView):
   
   override fun createVo() = SaidaVo()
   
-  private val processamento = Processamento(view)
+  private val processamento = ProcessamentoSaida(view)
   
   fun processaKey(key: String) = execValue {processamento.processaKey(key)}
   

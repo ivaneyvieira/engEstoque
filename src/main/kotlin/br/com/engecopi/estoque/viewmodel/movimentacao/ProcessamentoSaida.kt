@@ -1,4 +1,4 @@
-package br.com.engecopi.estoque.viewmodel.saida
+package br.com.engecopi.estoque.viewmodel.movimentacao
 
 import br.com.engecopi.estoque.model.LancamentoOrigem.DEPOSITO
 import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
@@ -14,7 +14,7 @@ import br.com.engecopi.estoque.model.ViewCodBarConferencia
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.utils.mid
 
-internal class Processamento(private val view: ISaidaView) {
+internal class ProcessamentoSaida(private val view: ISaidaView) {
   fun processaKey(key: String): NotaItens {
     val notaItens = processaKeyNumeroNota(key)
     val ret = if(notaItens.vazio) processaKeyBarcodeConferencia(key)

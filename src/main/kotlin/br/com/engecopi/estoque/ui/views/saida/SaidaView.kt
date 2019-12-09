@@ -15,10 +15,10 @@ import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.ui.views.NotaView
 import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
-import br.com.engecopi.estoque.viewmodel.notaFiscal.ProdutoVO
-import br.com.engecopi.estoque.viewmodel.saida.ISaidaView
-import br.com.engecopi.estoque.viewmodel.saida.SaidaViewModel
-import br.com.engecopi.estoque.viewmodel.saida.SaidaVo
+import br.com.engecopi.estoque.viewmodel.movimentacao.ISaidaView
+import br.com.engecopi.estoque.viewmodel.movimentacao.ProdutoVO
+import br.com.engecopi.estoque.viewmodel.movimentacao.SaidaViewModel
+import br.com.engecopi.estoque.viewmodel.movimentacao.SaidaVo
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
 import br.com.engecopi.framework.ui.view.dateFormat

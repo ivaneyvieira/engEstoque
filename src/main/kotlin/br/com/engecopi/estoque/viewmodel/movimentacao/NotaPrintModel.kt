@@ -1,4 +1,4 @@
-package br.com.engecopi.estoque.viewmodel.notaFiscal
+package br.com.engecopi.estoque.viewmodel.movimentacao
 
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
