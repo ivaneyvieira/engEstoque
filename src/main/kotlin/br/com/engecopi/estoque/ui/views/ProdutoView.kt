@@ -13,6 +13,7 @@ import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
 import br.com.engecopi.framework.ui.view.bindItens
+import br.com.engecopi.framework.ui.view.dateFormat
 import br.com.engecopi.framework.ui.view.default
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.reload
@@ -35,7 +36,6 @@ import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.w
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.UI
-import com.vaadin.ui.renderers.LocalDateRenderer
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
@@ -139,19 +139,23 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
                 this.isSortable = false
                 caption = "Nota"
               }
+              addColumnFor(ItemNota::dataNota) {
+                this.isSortable = false
+                caption = "Data Nota"
+                dateFormat()
+              }
               addColumnFor(ItemNota::numeroEntrega) {
                 this.isSortable = false
                 caption = "NF Baixa"
               }
-              addColumnFor(ItemNota::dataNota) {
-                this.isSortable = false
-                caption = "Data Nota"
-                setRenderer(LocalDateRenderer("dd/MM/yy"))
+              addColumnFor(ItemNota::dataEntrega) {
+                caption = "Data Baixa"
+                dateFormat()
               }
               addColumnFor(ItemNota::data) {
                 this.isSortable = false
-                caption = "Data Inserção"
-                setRenderer(LocalDateRenderer("dd/MM/yy"))
+                caption = "Data lançamento"
+                dateFormat()
               }
               addColumnFor(ItemNota::tipoNota) {
                 this.isSortable = false
