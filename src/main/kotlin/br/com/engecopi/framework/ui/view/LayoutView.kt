@@ -210,13 +210,18 @@ inline fun <reified BEAN: Any, FIELDVALUE> HasValue<FIELDVALUE>.reloadBinderOnCh
 fun <BEAN> reloadPropertys(binder: Binder<BEAN>, vararg propertys: KProperty1<BEAN, *>) {
   val bean = binder.bean
   propertys.forEach {prop ->
-    binder.getBinding(prop.name).ifPresent {binding ->
-      binding.read(bean)
-    }
+    binder.getBinding(prop.name)
+      .ifPresent {binding ->
+        binding.read(bean)
+      }
   }
 }
 
 fun <C> Column<C, LocalDate?>.dateFormat() {
+  this.setRenderer(LocalDateRenderer {DateTimeFormatter.ofPattern("dd/MM/yy")})
+}
+
+fun <C> Column<C, LocalDate>.dateFormatNotNull() {
   this.setRenderer(LocalDateRenderer {DateTimeFormatter.ofPattern("dd/MM/yy")})
 }
 

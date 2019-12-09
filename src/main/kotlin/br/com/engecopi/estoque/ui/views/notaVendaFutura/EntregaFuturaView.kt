@@ -105,6 +105,11 @@ class EntregaFuturaView: NotaView<EntregaFututaVo, EntregaFututaViewModel, IEntr
         caption = "Data Baixa"
         dateFormat()
       }
+      column(EntregaFututaVo::lancamento) {
+        caption = "Lançamento"
+        dateFormat()
+        setSortProperty("nota.lancamento", "data", "hora")
+      }
       column(EntregaFututaVo::lojaNF) {
         caption = "Loja NF"
         setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
@@ -112,11 +117,6 @@ class EntregaFuturaView: NotaView<EntregaFututaVo, EntregaFututaViewModel, IEntr
       column(EntregaFututaVo::tipoNotaDescricao) {
         caption = "TipoNota"
         setSortProperty("nota.tipo_nota")
-      }
-      column(EntregaFututaVo::lancamento) {
-        caption = "Lançamento"
-        dateFormat()
-        setSortProperty("nota.lancamento", "data", "hora")
       }
       column(EntregaFututaVo::quantProduto) {
         caption = "Quantidade"
