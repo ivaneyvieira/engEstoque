@@ -267,11 +267,17 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
     return ViewProdutoLoc.localizacoesAbreviacaoCache(abreviacaoNota)
   }
   
-  fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean, groupByHour: Boolean) = execString(notaPrintModel::imprimir)
+  fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean, groupByHour: Boolean) = execString {
+    notaPrintModel.imprimir(itemNota, notaCompleta, groupByHour)
+  }
   
-  fun imprimir() = execString(notaPrintModel::imprimir)
+  fun imprimir() = execString {
+    notaPrintModel.imprimir()
+  }
   
-  fun imprimir(itens: List<ItemNota>) = execString(notaPrintModel::imprimir)
+  fun imprimir(itens: List<ItemNota>) = execString {
+    notaPrintModel.imprimir(itens)
+  }
   
   abstract fun QItemNota.filtroStatus(): QItemNota
   
