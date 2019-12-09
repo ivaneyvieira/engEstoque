@@ -10,6 +10,7 @@ import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
+import br.com.engecopi.estoque.model.dtos.EntregaFutura
 import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
@@ -108,21 +109,21 @@ class FindNota(private val view: IEntregaFututaView) {
   
   private fun findBaixa(storeno: Int, numero: String): List<ItemNota> {
     val notaTransferencia = findItensNotaTransferencia(storeno, numero)
-    val notaFutura = findItensNotaFutura(storeno, numero)
+    val notaFutura = findItensNotaFutura(numero)
     return if(notaTransferencia.isEmpty()) notaFutura else notaTransferencia
   }
   
   private fun findItensNotaTransferencia(storeno: Int, numero: String): List<ItemNota> {
     val notaFutura = TransferenciaAutomatica.notaFutura(storeno, numero)
-    val lojaFaturamento = notaFutura?.storenoFat
-    val numeroFaturamento = notaFutura?.nffat
-    return ItemNota.find(lojaFaturamento, numeroFaturamento)
+    val storeno = notaFutura?.storenoFat
+    val numero = notaFutura?.nffat
+    return ItemNota.find(storeno, numero)
   }
   
-  private fun findItensNotaFutura(storeno: Int, numero: String): List<ItemNota> {
-    val notaFutura = TransferenciaAutomatica.notaFutura(storeno, numero)
-    val lojaFaturamento = notaFutura?.storenoFat
-    val numeroFaturamento = notaFutura?.nffat
-    return ItemNota.find(lojaFaturamento, numeroFaturamento)
+  private fun findItensNotaFutura(numero: String): List<ItemNota> {
+    val notaFutura = EntregaFutura.notaFutura(numero)
+    val storeno = notaFutura?.storeno
+    val numero = notaFutura?.numero_venda
+    return ItemNota.find(storeno, numero)
   }
 }

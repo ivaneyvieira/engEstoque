@@ -36,5 +36,17 @@ class EntregaFutura(id: String,
         .findList()
         .firstOrNull()
     }
+  
+    fun notaFutura(numero: String?): EntregaFutura? {
+      numero ?: return null
+      val loja = lojaDeposito.numero
+      val sql = """select * from t_entrega_futura
+        |where storeno = $loja
+        |  AND numero_entrega = '$numero'
+      """.trimMargin()
+      return DB.findDto(EntregaFutura::class.java, sql)
+        .findList()
+        .firstOrNull()
+    }
   }
 }
