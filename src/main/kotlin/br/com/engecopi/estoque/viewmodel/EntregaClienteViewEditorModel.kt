@@ -25,7 +25,9 @@ class EntregaClienteEditorViewModel(view: IEntregaClienteEditorView):
     return status.`in`(ENTREGUE, ENT_LOJA)
       .nota.usuario.isNotNull.nota.sequencia.ne(0)
       .let {q ->
-        if(usuarioDefault.isEstoqueExpedicao) q.localizacao.startsWith(abreviacaoDefault)
+        if(usuarioDefault.isEstoqueExpedicao) {
+          q.localizacao.startsWith(abreviacaoDefault)
+        }
         else q
       }
   }

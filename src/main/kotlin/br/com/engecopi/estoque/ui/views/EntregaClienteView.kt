@@ -161,7 +161,7 @@ class EntregaClienteView: NotaView<EntregaClienteVo, EntregaClienteViewModel, IE
 
   private fun formCodbar(): PnlCodigoBarras {
     return PnlCodigoBarras("Código de barras") {key ->
-      viewModel.processaKey(key)
+      viewModel.findKey(key)
     }
   }
 }
