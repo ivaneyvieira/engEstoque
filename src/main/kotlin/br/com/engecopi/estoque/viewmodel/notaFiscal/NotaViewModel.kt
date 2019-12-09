@@ -1,13 +1,11 @@
 package br.com.engecopi.estoque.viewmodel.notaFiscal
 
-import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.DEPOSITO
 import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.Produto
-import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.Repositories
@@ -51,6 +49,8 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
                                                        private val statusImpressao: StatusNota,
                                                        private val abreviacaoNota: String):
   CrudViewModel<ItemNota, QItemNota, VO, V>(view) {
+  private val notaPrintModel = NotaPrintModel(view, statusImpressao)
+  
   override fun update(bean: VO) {
     if(bean.localizacao?.localizacao.isNullOrBlank()) throw EViewModel("Não foi especificado a localização do item")
     val nota = updateNota(bean)
@@ -267,67 +267,16 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
     return ViewProdutoLoc.localizacoesAbreviacaoCache(abreviacaoNota)
   }
   
-  private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {
-    itemNota ?: return ""
-    if(!etiqueta.imprimivel()) return ""
-    val print = itemNota.printEtiqueta()
-    if(!usuarioDefault.admin) itemNota.let {
-      it.refresh()
-      it.impresso = true
-      it.update()
-    }
-    
-    return print.print(etiqueta.template)
-  }
-  
   fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean, groupByHour: Boolean) = execString {
-    itemNota ?: return@execString ""
-    val ret = if(notaCompleta) {
-      val itens =
-        QItemNota().nota.eq(itemNota.nota)
-          .status.eq(itemNota.status)
-          .let {
-            if(groupByHour) it.hora.eq(itemNota.hora) else it
-          }
-          .order()
-          .nota.loja.numero.asc()
-          .nota.numero.asc()
-          .findList()
-      imprimir(itens)
-    }
-    else imprimir(listOf(itemNota))
-    view.updateView()
-    ret
+    notaPrintModel.imprimir(itemNota, notaCompleta, groupByHour)
   }
   
   fun imprimir() = execString {
-    val itens = QItemNota().let {q ->
-      if(usuarioDefault.admin) q else q.impresso.eq(false)
-    }
-      .status.eq(statusImpressao)
-      .order()
-      .nota.loja.numero.asc()
-      .nota.numero.asc()
-      .findList()
-    val ret = imprimir(itens)
-    view.updateView()
-    ret
+    notaPrintModel.imprimir()
   }
   
   fun imprimir(itens: List<ItemNota>) = execString {
-    val etiquetas = Etiqueta.findByStatus(statusImpressao)
-    val ret = etiquetas.joinToString(separator = "\n") {etiqueta ->
-      imprimir(itens, etiqueta)
-    }
-    view.updateView()
-    ret
-  }
-  
-  private fun imprimir(itens: List<ItemNota>, etiqueta: Etiqueta): String {
-    return itens.filter {it.abreviacao?.abreviacao == abreviacaoDefault}
-      .map {imprimir(it, etiqueta)}
-      .distinct()
-      .joinToString(separator = "\n")
+    notaPrintModel.imprimir(itens)
   }
   
   abstract fun QItemNota.filtroStatus(): QItemNota
