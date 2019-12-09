@@ -100,6 +100,8 @@ class ItemNota: BaseModel() {
     @Transient get() = Abreviacao.findByAbreviacao(abrev)
   val numeroEntrega
     get() = nota?.numeroEntrega()
+  val dataEntrega
+    get() = nota?.dataEntrega()
   
   companion object Find: ItemNotaFinder() {
     fun find(loja: Int?, numero: String?): List<ItemNota> {
