@@ -1,4 +1,4 @@
-package br.com.engecopi.estoque.viewmodel.notaFiscal
+package br.com.engecopi.estoque.viewmodel.movimentacao
 
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.DEPOSITO
@@ -27,11 +27,11 @@ import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.model.ViewProdutoLoc
 import br.com.engecopi.estoque.model.query.QItemNota
-import br.com.engecopi.estoque.viewmodel.notaFiscal.ETipoGrupo.BLUE
-import br.com.engecopi.estoque.viewmodel.notaFiscal.ETipoGrupo.GREEN
-import br.com.engecopi.estoque.viewmodel.notaFiscal.ETipoGrupo.RED
-import br.com.engecopi.estoque.viewmodel.notaFiscal.ETipoGrupo.SELECT_FT
-import br.com.engecopi.estoque.viewmodel.notaFiscal.ETipoGrupo.WHITE
+import br.com.engecopi.estoque.viewmodel.movimentacao.ETipoGrupo.BLUE
+import br.com.engecopi.estoque.viewmodel.movimentacao.ETipoGrupo.GREEN
+import br.com.engecopi.estoque.viewmodel.movimentacao.ETipoGrupo.RED
+import br.com.engecopi.estoque.viewmodel.movimentacao.ETipoGrupo.SELECT_FT
+import br.com.engecopi.estoque.viewmodel.movimentacao.ETipoGrupo.WHITE
 import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
@@ -49,7 +49,7 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
                                                        private val statusImpressao: StatusNota,
                                                        private val abreviacaoNota: String):
   CrudViewModel<ItemNota, QItemNota, VO, V>(view) {
-  private val notaPrintModel = NotaPrintModel(view, statusImpressao)
+  private val print = NotaPrintModel(view, statusImpressao)
   
   override fun update(bean: VO) {
     if(bean.localizacao?.localizacao.isNullOrBlank()) throw EViewModel("Não foi especificado a localização do item")
@@ -268,15 +268,15 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
   }
   
   fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean, groupByHour: Boolean) = execString {
-    notaPrintModel.imprimir(itemNota, notaCompleta, groupByHour)
+    print.imprimir(itemNota, notaCompleta, groupByHour)
   }
   
   fun imprimir() = execString {
-    notaPrintModel.imprimir()
+    print.imprimir()
   }
   
   fun imprimir(itens: List<ItemNota>) = execString {
-    notaPrintModel.imprimir(itens)
+    print.imprimir(itens)
   }
   
   abstract fun QItemNota.filtroStatus(): QItemNota

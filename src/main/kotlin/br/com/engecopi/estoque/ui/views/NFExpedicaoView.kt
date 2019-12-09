@@ -3,11 +3,11 @@ package br.com.engecopi.estoque.ui.views
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
 import br.com.engecopi.estoque.model.TipoNota
-import br.com.engecopi.estoque.viewmodel.INFExpedicaoView
-import br.com.engecopi.estoque.viewmodel.ItemExpedicao
-import br.com.engecopi.estoque.viewmodel.LocalizacaoNota
-import br.com.engecopi.estoque.viewmodel.NFExpedicaoViewModel
-import br.com.engecopi.estoque.viewmodel.NFExpedicaoVo
+import br.com.engecopi.estoque.viewmodel.expedicao.INFExpedicaoView
+import br.com.engecopi.estoque.viewmodel.expedicao.ItemExpedicao
+import br.com.engecopi.estoque.viewmodel.expedicao.LocalizacaoNota
+import br.com.engecopi.estoque.viewmodel.expedicao.NFExpedicaoViewModel
+import br.com.engecopi.estoque.viewmodel.expedicao.NFExpedicaoVo
 import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.dateFormat
 import br.com.engecopi.framework.ui.view.grupo
@@ -51,12 +51,12 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), IN
   var formCodBar: PnlCodigoBarras? = null
   private val isAdmin
     get() = RegistryUserInfo.userDefaultIsAdmin
-
+  
   override fun enter(event: ViewChangeEvent) {
     super.enter(event)
     formCodBar?.focusEdit()
   }
-
+  
   init {
     viewModel = NFExpedicaoViewModel(this)
     layoutForm {

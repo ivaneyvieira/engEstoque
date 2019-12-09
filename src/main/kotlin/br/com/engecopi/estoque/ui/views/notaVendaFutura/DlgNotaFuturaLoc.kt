@@ -1,8 +1,8 @@
 package br.com.engecopi.estoque.ui.views.notaVendaFutura
 
 import br.com.engecopi.estoque.model.TipoNota
-import br.com.engecopi.estoque.viewmodel.LocalizacaoVendaFutura
 import br.com.engecopi.estoque.viewmodel.entregaFutura.ItemVendaFutura
+import br.com.engecopi.estoque.viewmodel.entregaFutura.LocalizacaoVendaFutura
 import br.com.engecopi.estoque.viewmodel.entregaFutura.NFVendaFuturaViewModel
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.row
@@ -105,10 +105,14 @@ class DlgNotaFuturaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
             }
             val abreviacoes = abreviacaoItens.keys.asSequence().flatten().distinct().map {abrev ->
               val itensVendaFutura =
-                abreviacaoItens.filter {it.key.contains(abrev)}.map {it.value}.flatten().distinct().map {notaSaci ->
-                  val saldo = viewModel.saldoProduto(notaSaci, abrev)
-                  ItemVendaFutura(notaSaci, saldo, abrev)
-                }
+                abreviacaoItens.filter {it.key.contains(abrev)}
+                  .map {it.value}
+                  .flatten()
+                  .distinct()
+                  .map {notaSaci ->
+                    val saldo = viewModel.saldoProduto(notaSaci, abrev)
+                    ItemVendaFutura(notaSaci, saldo, abrev)
+                  }
               LocalizacaoVendaFutura(abrev, itensVendaFutura)
             }.toList().sortedBy {it.abreviacao}.toList()
 

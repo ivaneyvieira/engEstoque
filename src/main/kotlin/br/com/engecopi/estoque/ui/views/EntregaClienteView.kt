@@ -3,9 +3,9 @@ package br.com.engecopi.estoque.ui.views
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.TipoNota
-import br.com.engecopi.estoque.viewmodel.EntregaClienteViewModel
-import br.com.engecopi.estoque.viewmodel.EntregaClienteVo
-import br.com.engecopi.estoque.viewmodel.IEntregaClienteView
+import br.com.engecopi.estoque.viewmodel.expedicao.EntregaClienteViewModel
+import br.com.engecopi.estoque.viewmodel.expedicao.EntregaClienteVo
+import br.com.engecopi.estoque.viewmodel.expedicao.IEntregaClienteView
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
 import br.com.engecopi.framework.ui.view.dateFormat
