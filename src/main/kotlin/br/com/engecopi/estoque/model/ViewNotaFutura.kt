@@ -56,8 +56,9 @@ class ViewNotaFutura: BaseModel() {
         .findList()
         .firstOrNull()
     }
-    
-    fun findNotaFutura(nota: Nota): ViewNotaFutura? {
+  
+    fun findNotaFutura(nota: Nota?): ViewNotaFutura? {
+      nota ?: return null
       return QViewNotaFutura().numero.eq(nota.numero)
         .loja.equalTo(nota.loja)
         .findList()

@@ -1,7 +1,7 @@
 package br.com.engecopi.estoque.ui.views.notaVendaFutura
 
-import br.com.engecopi.estoque.viewmodel.LocalizacaoVendaFutura
 import br.com.engecopi.estoque.viewmodel.entregaFutura.ItemVendaFutura
+import br.com.engecopi.estoque.viewmodel.entregaFutura.LocalizacaoVendaFutura
 import br.com.engecopi.estoque.viewmodel.entregaFutura.NFVendaFuturaViewModel
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.row

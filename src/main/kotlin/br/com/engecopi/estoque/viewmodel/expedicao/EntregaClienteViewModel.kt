@@ -1,4 +1,4 @@
-package br.com.engecopi.estoque.viewmodel
+package br.com.engecopi.estoque.viewmodel.expedicao
 
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.Nota
@@ -14,14 +14,16 @@ import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.ViewCodBarCliente
 import br.com.engecopi.estoque.model.ViewCodBarConferencia
 import br.com.engecopi.estoque.model.query.QItemNota
-import br.com.engecopi.estoque.viewmodel.notaFiscal.INotaView
-import br.com.engecopi.estoque.viewmodel.notaFiscal.NotaViewModel
-import br.com.engecopi.estoque.viewmodel.notaFiscal.NotaVo
+import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
+import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
+import br.com.engecopi.estoque.viewmodel.movimentacao.NotaVo
 import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.utils.mid
 
 class EntregaClienteViewModel(view: IEntregaClienteView):
   NotaViewModel<EntregaClienteVo, IEntregaClienteView>(view, SAIDA, ENTREGUE, CONFERIDA, "") {
+  private val entregaClienteFindModel = EntregaClienteFindModel(view)
+  
   override fun newBean(): EntregaClienteVo {
     return EntregaClienteVo()
   }
@@ -41,21 +43,40 @@ class EntregaClienteViewModel(view: IEntregaClienteView):
   
   override fun createVo() = EntregaClienteVo()
   
-  fun processaKey(key: String) = execList {
+  fun findKey(key: String) = execList {
+    entregaClienteFindModel.findKey(key)
+  }
+  
+  fun notasConferidas(): List<EntregaClienteVo> {
+    return QItemNota().status.eq(CONFERIDA)
+      .findList()
+      .map {it.toVO()}
+  }
+}
+
+class EntregaClienteVo: NotaVo(SAIDA, "")
+
+interface IEntregaClienteView: INotaView
+
+class EntregaClienteFindModel(private val view: IEntregaClienteView) {
+  fun findKey(key: String): List<ItemNota> {
     val itens = findItens(key)
     if(itens.isEmpty()) throw EViewModel("Produto não encontrado")
     itens.forEach {item ->
       val codigoProduto = item.produto?.codigo?.trim() ?: ""
-      if(item.status == ENTREGUE || item.status == ENT_LOJA) showWarning("Produto $codigoProduto já foi entregue")
-      else if(item.status == INCLUIDA) showWarning("Produto $codigoProduto ainda não foi conferido")
-      else if(item.status == CONFERIDA) {
-        item.status = ENTREGUE
-        item.save()
+      when(item.status) {
+        ENTREGUE, ENT_LOJA -> view.showWarning("Produto $codigoProduto já foi entregue")
+        INCLUIDA           -> view.showWarning("Produto $codigoProduto ainda não foi conferido")
+        CONFERIDA          -> {
+          item.status = ENTREGUE
+          item.save()
+        }
+        else               -> view.showWarning("Operação inválida")
       }
     }
     view.updateView()
     
-    itens
+    return itens
   }
   
   private fun findItens(key: String): List<ItemNota> {
@@ -77,14 +98,4 @@ class EntregaClienteViewModel(view: IEntregaClienteView):
       ?.itensNota()
       .orEmpty()
   }
-  
-  fun notasConferidas(): List<EntregaClienteVo> {
-    return QItemNota().status.eq(CONFERIDA)
-      .findList()
-      .map {it.toVO()}
-  }
 }
-
-class EntregaClienteVo: NotaVo(SAIDA, "")
-
-interface IEntregaClienteView: INotaView

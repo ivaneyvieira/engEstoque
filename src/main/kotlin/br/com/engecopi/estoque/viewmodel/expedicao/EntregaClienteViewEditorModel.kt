@@ -1,4 +1,4 @@
-package br.com.engecopi.estoque.viewmodel
+package br.com.engecopi.estoque.viewmodel.expedicao
 
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
@@ -8,8 +8,8 @@ import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.query.QItemNota
-import br.com.engecopi.estoque.viewmodel.notaFiscal.INotaView
-import br.com.engecopi.estoque.viewmodel.notaFiscal.NotaViewModel
+import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
+import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
 
 class EntregaClienteEditorViewModel(view: IEntregaClienteEditorView):
   NotaViewModel<EntregaClienteVo, IEntregaClienteEditorView>(view, SAIDA, ENTREGUE, ENTREGUE, "") {
@@ -25,7 +25,9 @@ class EntregaClienteEditorViewModel(view: IEntregaClienteEditorView):
     return status.`in`(ENTREGUE, ENT_LOJA)
       .nota.usuario.isNotNull.nota.sequencia.ne(0)
       .let {q ->
-        if(usuarioDefault.isEstoqueExpedicao) q.localizacao.startsWith(abreviacaoDefault)
+        if(usuarioDefault.isEstoqueExpedicao) {
+          q.localizacao.startsWith(abreviacaoDefault)
+        }
         else q
       }
   }

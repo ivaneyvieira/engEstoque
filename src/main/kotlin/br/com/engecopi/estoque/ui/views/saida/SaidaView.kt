@@ -15,10 +15,10 @@ import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.ui.views.NotaView
 import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
-import br.com.engecopi.estoque.viewmodel.notaFiscal.ProdutoVO
-import br.com.engecopi.estoque.viewmodel.saida.ISaidaView
-import br.com.engecopi.estoque.viewmodel.saida.SaidaViewModel
-import br.com.engecopi.estoque.viewmodel.saida.SaidaVo
+import br.com.engecopi.estoque.viewmodel.movimentacao.ISaidaView
+import br.com.engecopi.estoque.viewmodel.movimentacao.ProdutoVO
+import br.com.engecopi.estoque.viewmodel.movimentacao.SaidaViewModel
+import br.com.engecopi.estoque.viewmodel.movimentacao.SaidaVo
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
 import br.com.engecopi.framework.ui.view.dateFormat
@@ -230,7 +230,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
   
   private fun formCodbar(): PnlCodigoBarras {
     return PnlCodigoBarras("Código de barras") {key ->
-      val nota = viewModel.processaKey(key)
+      val nota = viewModel.processing.processaKey(key)
       if(nota == null || nota.vazio) showError("A nota não foi encontrada")
       else {
         val dlg = DlgNotaSaida(nota, viewModel) {itens ->
@@ -339,10 +339,10 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
                 val itensEntregaFutura = itens.filter {item ->
                   item.value?.nota?.lancamentoOrigem == ENTREGA_F
                 }
-                viewModel.confirmaProdutos(itensDeposito, ENTREGUE)
-                viewModel.confirmaProdutos(itensExpedicao, CONFERIDA)
-                viewModel.confirmaProdutos(itensEntregaFutura, CONFERIDA)
-                viewModel.confirmaProdutos(naoSelect, ENT_LOJA)
+                viewModel.processing.confirmaProdutos(itensDeposito, ENTREGUE)
+                viewModel.processing.confirmaProdutos(itensExpedicao, CONFERIDA)
+                viewModel.processing.confirmaProdutos(itensEntregaFutura, CONFERIDA)
+                viewModel.processing.confirmaProdutos(naoSelect, ENT_LOJA)
                 close()
               }
             }
@@ -532,7 +532,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
         val produtosVO = gridProdutos.dataProvider.getAll()
         produtosVO.forEach {it.updateItem(false)}
         val produtos = produtosVO.mapNotNull {it.value?.produto}
-        val interProdutos = produtos.intersect(listProduto)
+        val interProdutos = produtos intersect listProduto
         interProdutos.forEach {produto ->
           val itemVO = produtosVO.filter {it.value?.produto?.id == produto.id}
           itemVO.forEach {item ->
@@ -557,15 +557,15 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
     item.updateItem(true)
     when(item.value?.nota?.lancamentoOrigem) {
       DEPOSITO       -> {
-        execPrint(viewModel.confirmaProdutos(listOf(item), ENTREGUE))
+        execPrint(viewModel.processing.confirmaProdutos(listOf(item), ENTREGUE))
         gridProdutos.updateProdutosNota()
       }
       EXPEDICAO -> {
-        execPrint(viewModel.confirmaProdutos(listOf(item), CONFERIDA))
+        execPrint(viewModel.processing.confirmaProdutos(listOf(item), CONFERIDA))
         gridProdutos.updateProdutosNota()
       }
       ENTREGA_F -> {
-        execPrint(viewModel.confirmaProdutos(listOf(item), CONFERIDA))
+        execPrint(viewModel.processing.confirmaProdutos(listOf(item), CONFERIDA))
         gridProdutos.updateProdutosNota()
       }
     }

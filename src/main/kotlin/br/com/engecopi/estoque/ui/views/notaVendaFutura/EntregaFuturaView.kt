@@ -167,7 +167,7 @@ class EntregaFuturaView: NotaView<EntregaFututaVo, EntregaFututaViewModel, IEntr
 
   private fun formCodbar(): PnlCodigoBarras {
     return PnlCodigoBarras("Nota de transferencia") {key ->
-      viewModel.processaKey(key)
+      viewModel.findKey(key)
     }
   }
 }
