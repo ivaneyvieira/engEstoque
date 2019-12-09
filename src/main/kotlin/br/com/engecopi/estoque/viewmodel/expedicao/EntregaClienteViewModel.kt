@@ -17,7 +17,7 @@ import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaVo
-import br.com.engecopi.framework.viewmodel.EViewModel
+import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.utils.mid
 
 class EntregaClienteViewModel(view: IEntregaClienteView):
@@ -61,7 +61,7 @@ interface IEntregaClienteView: INotaView
 class EntregaClienteFindModel(private val view: IEntregaClienteView) {
   fun findKey(key: String): List<ItemNota> {
     val itens = findItens(key)
-    if(itens.isEmpty()) throw EViewModel("Produto não encontrado")
+    if(itens.isEmpty()) throw EViewModelError("Produto não encontrado")
     itens.forEach {item ->
       val codigoProduto = item.produto?.codigo?.trim() ?: ""
       when(item.status) {

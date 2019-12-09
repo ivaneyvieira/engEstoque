@@ -26,7 +26,7 @@ import br.com.engecopi.estoque.ui.log
 import br.com.engecopi.estoque.viewmodel.EChaveNaoEncontrada
 import br.com.engecopi.estoque.viewmodel.ENotaNaoEntregaFutura
 import br.com.engecopi.framework.viewmodel.CrudViewModel
-import br.com.engecopi.framework.viewmodel.EViewModel
+import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.ICrudView
 import br.com.engecopi.saci.beans.NotaProdutoSaci
@@ -139,7 +139,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
         val tipo = notaSerie.tipoNota
         when {
           usuarioDefault.isTipoCompativel(tipo) -> notaSaci
-          else                                  -> throw EViewModel("O usuário não está habilitado para lançar esse tipo de nota (${notaSerie.descricao})")
+          else                                  -> throw EViewModelError("O usuário não está habilitado para lançar esse tipo de nota (${notaSerie.descricao})")
         }
       }
       else notaSaci
@@ -282,7 +282,7 @@ class NFVendaFututraProcessamento(private val view: INFVendaFuturaView) {
   fun processaKey(notasSaci: List<ItemVendaFutura>): Nota? {
     if(notasSaci.all {
         it.isSave()
-      }) throw EViewModel("Todos os itens dessa nota já estão lançados")
+      }) throw EViewModelError("Todos os itens dessa nota já estão lançados")
     val ret = if(notasSaci.isNotEmpty()) processaNota(notasSaci)
     else throw EChaveNaoEncontrada()
     view.updateView()
@@ -293,7 +293,7 @@ class NFVendaFututraProcessamento(private val view: INFVendaFuturaView) {
     val notaDoSaci =
       itensVendaFutura.firstOrNull()
         ?.notaProdutoSaci
-    notaDoSaci?.storeno ?: throw EViewModel("Nota não encontrada")
+    notaDoSaci?.storeno ?: throw EViewModelError("Nota não encontrada")
     val nota: Nota? =
       Nota.createNota(notaDoSaci)
         ?.let {
@@ -306,7 +306,7 @@ class NFVendaFututraProcessamento(private val view: INFVendaFuturaView) {
             it
           }
         }
-    nota ?: throw EViewModel("Nota não encontrada")
+    nota ?: throw EViewModelError("Nota não encontrada")
     val itens = itensVendaFutura.mapNotNull {itemVendaFutura ->
       val notaSaci = itemVendaFutura.notaProdutoSaci
       val item = ItemNota.find(notaSaci) ?: ItemNota.createItemNota(notaSaci, nota, itemVendaFutura.abrevicao)
@@ -320,8 +320,8 @@ class NFVendaFututraProcessamento(private val view: INFVendaFuturaView) {
         if(this.status == CONFERIDA) this.recalculaSaldos()
       }
     }
-    
-    if(itens.isEmpty()) throw EViewModel("Essa nota não possui itens com localização")
+  
+    if(itens.isEmpty()) throw EViewModelError("Essa nota não possui itens com localização")
     
     
     

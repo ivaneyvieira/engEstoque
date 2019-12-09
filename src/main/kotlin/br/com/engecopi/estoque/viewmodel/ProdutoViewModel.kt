@@ -13,7 +13,7 @@ import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.ViewProdutoSaci
 import br.com.engecopi.estoque.model.query.QProduto
 import br.com.engecopi.framework.viewmodel.CrudViewModel
-import br.com.engecopi.framework.viewmodel.EViewModel
+import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.ICrudView
 import br.com.engecopi.utils.lpad
@@ -41,10 +41,10 @@ class ProdutoViewModel(view: IProdutoView): CrudViewModel<Produto, QProduto, Pro
       val gradesSalvas =
         Produto.findProdutos(bean.codigoProduto)
           .map {it.grade}
-      if(!ViewProdutoSaci.existe(bean.codigoProduto)) throw EViewModel("Este produto não existe")
+      if(!ViewProdutoSaci.existe(bean.codigoProduto)) throw EViewModelError("Este produto não existe")
       if(ViewProdutoSaci.temGrade(bean.codigoProduto)) {
         val gradesProduto = bean.gradesProduto.filter {it != ""}
-        if(gradesProduto.isEmpty()) throw EViewModel("Este produto deveria tem grade")
+        if(gradesProduto.isEmpty()) throw EViewModelError("Este produto deveria tem grade")
         else gradesProduto.filter {grade -> !gradesSalvas.contains(grade)}.forEach {grade ->
           this.codigo = bean.codigoProduto.lpad(16, " ")
           this.grade = grade
