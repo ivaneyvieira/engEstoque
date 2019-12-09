@@ -31,7 +31,6 @@ class EntregaFutura(id: String,
       val sql = """select * from t_entrega_futura
         |where storeno = $loja
         |  AND numero_venda = '$numeroVenda'
-        |  AND numero_entrega = '0'
       """.trimMargin()
       return DB.findDto(EntregaFutura::class.java, sql)
         .findList()
