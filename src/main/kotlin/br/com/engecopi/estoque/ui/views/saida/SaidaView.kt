@@ -230,8 +230,8 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
   
   private fun formCodbar(): PnlCodigoBarras {
     return PnlCodigoBarras("Código de barras") {key ->
-      val nota = viewModel.processing.processaKey(key)
-      if(nota == null || nota.vazio) showError("A nota não foi encontrada")
+      val nota = viewModel.processaKey(key)
+      if(nota.vazio) showError("A nota não foi encontrada")
       else {
         val dlg = DlgNotaSaida(nota, viewModel) {itens ->
           if(itens.isNotEmpty()) {
@@ -339,10 +339,10 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
                 val itensEntregaFutura = itens.filter {item ->
                   item.value?.nota?.lancamentoOrigem == ENTREGA_F
                 }
-                viewModel.processing.confirmaProdutos(itensDeposito, ENTREGUE)
-                viewModel.processing.confirmaProdutos(itensExpedicao, CONFERIDA)
-                viewModel.processing.confirmaProdutos(itensEntregaFutura, CONFERIDA)
-                viewModel.processing.confirmaProdutos(naoSelect, ENT_LOJA)
+                viewModel.confirmaProdutos(itensDeposito, ENTREGUE)
+                viewModel.confirmaProdutos(itensExpedicao, CONFERIDA)
+                viewModel.confirmaProdutos(itensEntregaFutura, CONFERIDA)
+                viewModel.confirmaProdutos(naoSelect, ENT_LOJA)
                 close()
               }
             }
@@ -556,16 +556,12 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
     item.selecionado = true
     item.updateItem(true)
     when(item.value?.nota?.lancamentoOrigem) {
-      DEPOSITO       -> {
-        execPrint(viewModel.processing.confirmaProdutos(listOf(item), ENTREGUE))
+      DEPOSITO             -> {
+        execPrint(viewModel.confirmaProdutos(listOf(item), ENTREGUE))
         gridProdutos.updateProdutosNota()
       }
-      EXPEDICAO -> {
-        execPrint(viewModel.processing.confirmaProdutos(listOf(item), CONFERIDA))
-        gridProdutos.updateProdutosNota()
-      }
-      ENTREGA_F -> {
-        execPrint(viewModel.processing.confirmaProdutos(listOf(item), CONFERIDA))
+      EXPEDICAO, ENTREGA_F -> {
+        execPrint(viewModel.confirmaProdutos(listOf(item), CONFERIDA))
         gridProdutos.updateProdutosNota()
       }
     }

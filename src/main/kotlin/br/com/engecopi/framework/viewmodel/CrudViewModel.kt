@@ -20,7 +20,7 @@ abstract class CrudViewModel<MODEL: BaseModel, Q: TQRootBean<MODEL, Q>, VO: Enti
   protected abstract fun newBean(): VO
 
   fun read(bean: VO) {
-    val entity = bean.toEntity() ?: throw EViewModel("Registro inválido")
+    val entity = bean.toEntity() ?: throw EViewModelError("Registro inválido")
     entity.refresh()
     crudBean = entity.toVO()
   }

@@ -15,7 +15,7 @@ import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaVo
-import br.com.engecopi.framework.viewmodel.EViewModel
+import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.utils.mid
 
 class EntregaFututaViewModel(view: IEntregaFututaView):
@@ -60,7 +60,7 @@ class FindNota(private val view: IEntregaFututaView) {
   fun findKey(key: String): List<ItemNota> {
     val itens = findItensNotaTransferencia(key)
     if(itens.isEmpty()) {
-      throw EViewModel("Produto não encontrado")
+      throw EViewModelError("Produto não encontrado")
     }
     itens.forEach {item ->
       val codigoProduto = item.produto?.codigo?.trim() ?: ""

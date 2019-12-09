@@ -25,7 +25,6 @@ import br.com.engecopi.estoque.model.TipoNota.TRANSFERENCIA_E
 import br.com.engecopi.estoque.model.TipoNota.TRANSFERENCIA_S
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.Usuario
-import br.com.engecopi.estoque.model.ViewProdutoLoc
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.viewmodel.movimentacao.ETipoGrupo.BLUE
 import br.com.engecopi.estoque.viewmodel.movimentacao.ETipoGrupo.GREEN
@@ -33,7 +32,7 @@ import br.com.engecopi.estoque.viewmodel.movimentacao.ETipoGrupo.RED
 import br.com.engecopi.estoque.viewmodel.movimentacao.ETipoGrupo.SELECT_FT
 import br.com.engecopi.estoque.viewmodel.movimentacao.ETipoGrupo.WHITE
 import br.com.engecopi.framework.viewmodel.CrudViewModel
-import br.com.engecopi.framework.viewmodel.EViewModel
+import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.ICrudView
 import br.com.engecopi.saci.beans.NotaProdutoSaci
@@ -49,10 +48,10 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
                                                        private val statusImpressao: StatusNota,
                                                        private val abreviacaoNota: String):
   CrudViewModel<ItemNota, QItemNota, VO, V>(view) {
-  private val print = NotaPrintModel(view, statusImpressao)
+  private val print = NotaPrint(view, statusImpressao)
   
   override fun update(bean: VO) {
-    if(bean.localizacao?.localizacao.isNullOrBlank()) throw EViewModel("Não foi especificado a localização do item")
+    if(bean.localizacao?.localizacao.isNullOrBlank()) throw EViewModelError("Não foi especificado a localização do item")
     val nota = updateNota(bean)
     val produto = saveProduto(bean.produto)
     
@@ -110,7 +109,7 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
                              usuario: Usuario,
                              local: String?,
                              addTime: LocalTime): ItemNota? {
-    if(local.isNullOrBlank()) throw EViewModel("Não foi especificado a localização do item")
+    if(local.isNullOrBlank()) throw EViewModelError("Não foi especificado a localização do item")
     val saldoLocal = produto?.saldoLoja(lojaDeposito, local) ?: 0
     return if(quantProduto != 0) {
       when {
@@ -154,7 +153,7 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
   }
   
   private fun saveProduto(produto: Produto?): Produto {
-    produto ?: throw EViewModel("Produto não encontrado no saci")
+    produto ?: throw EViewModelError("Produto não encontrado no saci")
     return produto.apply {
       save()
     }
@@ -252,6 +251,10 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
     return nota.data.eq(date)
   }
   
+  abstract fun QItemNota.filtroStatus(): QItemNota
+  
+  abstract fun QItemNota.filtroTipoNota(): QItemNota
+  
   override fun delete(bean: VO) {
     bean.toEntity()
       ?.also {item ->
@@ -263,25 +266,26 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
     loja?.let {listOf(it)} ?: Loja.all()
   }
   
-  fun localizacaoes(): List<String> {
-    return ViewProdutoLoc.localizacoesAbreviacaoCache(abreviacaoNota)
-  }
-  
   fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean, groupByHour: Boolean) = execString {
     print.imprimir(itemNota, notaCompleta, groupByHour)
+      .apply {
+        view.updateView()
+      }
   }
   
   fun imprimir() = execString {
     print.imprimir()
+      .apply {
+        view.updateView()
+      }
   }
   
   fun imprimir(itens: List<ItemNota>) = execString {
     print.imprimir(itens)
+      .apply {
+        view.updateView()
+      }
   }
-  
-  abstract fun QItemNota.filtroStatus(): QItemNota
-  
-  abstract fun QItemNota.filtroTipoNota(): QItemNota
   
   fun desfazOperacao(item: ItemNota?) = exec {
     item?.desfazerOperacao()

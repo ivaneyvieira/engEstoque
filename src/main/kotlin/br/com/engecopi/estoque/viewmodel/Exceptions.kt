@@ -1,12 +1,12 @@
 package br.com.engecopi.estoque.viewmodel
 
-import br.com.engecopi.framework.viewmodel.EViewModel
+import br.com.engecopi.framework.viewmodel.EViewModelError
 
-class EChaveNaoEncontrada: EViewModel("Chave não encontrada")
+class EChaveNaoEncontrada: EViewModelError("Chave não encontrada")
 
-class ENotaNaoEntregaFutura(val numero: String): EViewModel("A nota $numero não é uma fatura de entrega futura")
+class ENotaNaoEntregaFutura(val numero: String): EViewModelError("A nota $numero não é uma fatura de entrega futura")
 
-class ENotaEntregaFutura(val numero: String): EViewModel("A nota $numero é uma fatura de entrega futura")
+class ENotaEntregaFutura(val numero: String): EViewModelError("A nota $numero é uma fatura de entrega futura")
 
-class ENFKeyInvalido(val key: String): EViewModel("'$key' não é uma chave de nota válida")
+class ENFKeyInvalido(val key: String): EViewModelError("'$key' não é uma chave de nota válida")
 

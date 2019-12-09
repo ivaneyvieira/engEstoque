@@ -4,7 +4,7 @@ import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.query.QEtiqueta
 import br.com.engecopi.framework.viewmodel.CrudViewModel
-import br.com.engecopi.framework.viewmodel.EViewModel
+import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.ICrudView
 
@@ -15,9 +15,9 @@ class EtiquetaViewModel(view: IEtiquetaView): CrudViewModel<Etiqueta, QEtiqueta,
 
   override fun update(bean: EtiquetaVo) {
     bean.entityVo?.apply {
-      this.titulo = bean.titulo ?: throw EViewModel("A etiqueta está sem título")
-      this.template = bean.template ?: throw EViewModel("O template está vazio")
-      this.statusNota = bean.statusNota ?: throw EViewModel("O tipo está vazio")
+      this.titulo = bean.titulo ?: throw EViewModelError("A etiqueta está sem título")
+      this.template = bean.template ?: throw EViewModelError("O template está vazio")
+      this.statusNota = bean.statusNota ?: throw EViewModelError("O tipo está vazio")
       this.etiquetaDefault = bean.etiquetaDefault
       this.updateOutros()
       update()
@@ -26,9 +26,9 @@ class EtiquetaViewModel(view: IEtiquetaView): CrudViewModel<Etiqueta, QEtiqueta,
 
   override fun add(bean: EtiquetaVo) {
     Etiqueta().apply {
-      this.titulo = bean.titulo ?: throw EViewModel("A etiqueta está sem título")
-      this.template = bean.template ?: throw EViewModel("O template está vazio")
-      this.statusNota = bean.statusNota ?: throw EViewModel("O tipo está vazio")
+      this.titulo = bean.titulo ?: throw EViewModelError("A etiqueta está sem título")
+      this.template = bean.template ?: throw EViewModelError("O template está vazio")
+      this.statusNota = bean.statusNota ?: throw EViewModelError("O tipo está vazio")
       this.etiquetaDefault = bean.etiquetaDefault
       this.updateOutros()
       insert()

@@ -6,7 +6,7 @@ import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.query.QItemNota
 
-class NotaPrintModel<V: INotaView>(private val view: V, private val statusImpressao: StatusNota) {
+class NotaPrint<V: INotaView>(private val view: V, private val statusImpressao: StatusNota) {
   private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {
     itemNota ?: return ""
     if(!etiqueta.imprimivel()) return ""
