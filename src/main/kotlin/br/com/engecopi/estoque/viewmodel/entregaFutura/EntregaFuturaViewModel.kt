@@ -97,19 +97,32 @@ class FindNota(private val view: IEntregaFututaView) {
     return if(notaTransferencia == null) {
       val storeno = key.mid(0, 1).toIntOrNull() ?: return emptyList()
       val numero = key.mid(1)
-      findItensNotaTransferencia(storeno, numero)
+      findBaixa(storeno, numero)
     }
     else {
       val lojaTransferencia = notaTransferencia.storeno ?: return emptyList()
       val numeroSerieTransferencia = notaTransferencia.numeroSerie()
-      findItensNotaTransferencia(lojaTransferencia, numeroSerieTransferencia)
+      findBaixa(lojaTransferencia, numeroSerieTransferencia)
     }
   }
   
+  private fun findBaixa(storeno: Int, numero: String): List<ItemNota> {
+    val notaTransferencia = findItensNotaTransferencia(storeno, numero)
+    val notaFutura = findItensNotaFutura(storeno, numero)
+    return if(notaTransferencia.isEmpty()) notaFutura else notaTransferencia
+  }
+  
   private fun findItensNotaTransferencia(storeno: Int, numero: String): List<ItemNota> {
-    val notaFutura = TransferenciaAutomatica.notaFutura(storeno, numero) ?: return emptyList()
-    val lojaFaturamento = notaFutura.storenoFat
-    val numeroFaturamento = notaFutura.nffat
+    val notaFutura = TransferenciaAutomatica.notaFutura(storeno, numero)
+    val lojaFaturamento = notaFutura?.storenoFat
+    val numeroFaturamento = notaFutura?.nffat
+    return ItemNota.find(lojaFaturamento, numeroFaturamento)
+  }
+  
+  private fun findItensNotaFutura(storeno: Int, numero: String): List<ItemNota> {
+    val notaFutura = TransferenciaAutomatica.notaFutura(storeno, numero)
+    val lojaFaturamento = notaFutura?.storenoFat
+    val numeroFaturamento = notaFutura?.nffat
     return ItemNota.find(lojaFaturamento, numeroFaturamento)
   }
 }
