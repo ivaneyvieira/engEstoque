@@ -14,6 +14,7 @@ import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
 import br.com.engecopi.framework.ui.view.bindItens
 import br.com.engecopi.framework.ui.view.dateFormat
+import br.com.engecopi.framework.ui.view.dateFormatNotNull
 import br.com.engecopi.framework.ui.view.default
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.reload
@@ -155,7 +156,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
               addColumnFor(ItemNota::data) {
                 this.isSortable = false
                 caption = "Data lançamento"
-                dateFormat()
+                dateFormatNotNull()
               }
               addColumnFor(ItemNota::tipoNota) {
                 this.isSortable = false
