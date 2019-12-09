@@ -49,7 +49,7 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
                                                        private val statusImpressao: StatusNota,
                                                        private val abreviacaoNota: String):
   CrudViewModel<ItemNota, QItemNota, VO, V>(view) {
-  private val notaPrintModel = NotaPrintModel(view, statusImpressao)
+  private val print = NotaPrintModel(view, statusImpressao)
   
   override fun update(bean: VO) {
     if(bean.localizacao?.localizacao.isNullOrBlank()) throw EViewModel("Não foi especificado a localização do item")
@@ -268,15 +268,15 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
   }
   
   fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean, groupByHour: Boolean) = execString {
-    notaPrintModel.imprimir(itemNota, notaCompleta, groupByHour)
+    print.imprimir(itemNota, notaCompleta, groupByHour)
   }
   
   fun imprimir() = execString {
-    notaPrintModel.imprimir()
+    print.imprimir()
   }
   
   fun imprimir(itens: List<ItemNota>) = execString {
-    notaPrintModel.imprimir(itens)
+    print.imprimir(itens)
   }
   
   abstract fun QItemNota.filtroStatus(): QItemNota
