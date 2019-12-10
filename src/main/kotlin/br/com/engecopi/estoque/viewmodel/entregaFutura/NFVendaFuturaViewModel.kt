@@ -323,8 +323,6 @@ class NFVendaFututraProcessamento(private val view: INFVendaFuturaView) {
   
     if(itens.isEmpty()) throw EViewModelError("Essa nota não possui itens com localização")
     
-    
-    
     return nota
   }
 }
