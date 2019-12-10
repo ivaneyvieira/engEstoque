@@ -11,18 +11,16 @@ import br.com.engecopi.framework.viewmodel.EViewModelError
 import java.time.LocalDate
 import java.time.LocalTime
 
-class NFVendaFututraProcessamento(private val view: INFVendaFuturaView) {
-  fun processaKey(notasSaci: List<ItemVendaFutura>): Nota? {
+class NFVendaFututraProcessamento() {
+  fun processaKey(notasSaci: List<ItemVendaFutura>): Nota {
     if(notasSaci.all {
         it.isSave()
       }) throw EViewModelError("Todos os itens dessa nota já estão lançados")
-    val ret = if(notasSaci.isNotEmpty()) processaNota(notasSaci)
+    return if(notasSaci.isNotEmpty()) processaNota(notasSaci)
     else throw EChaveNaoEncontrada()
-    view.updateView()
-    return ret
   }
   
-  private fun processaNota(itensVendaFutura: List<ItemVendaFutura>): Nota? {
+  private fun processaNota(itensVendaFutura: List<ItemVendaFutura>): Nota {
     val notaDoSaci =
       itensVendaFutura.firstOrNull()
         ?.notaProdutoSaci
@@ -55,8 +53,6 @@ class NFVendaFututraProcessamento(private val view: INFVendaFuturaView) {
     }
     
     if(itens.isEmpty()) throw EViewModelError("Essa nota não possui itens com localização")
-    
-    
     
     return nota
   }

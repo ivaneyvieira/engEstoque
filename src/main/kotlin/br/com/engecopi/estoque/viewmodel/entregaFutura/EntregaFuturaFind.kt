@@ -10,6 +10,7 @@ import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.dtos.EntregaFutura
 import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
+import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.framework.viewmodel.EViewModelError
 
 class EntregaFuturaFind(private val view: IEntregaFututaView) {
@@ -52,7 +53,7 @@ class EntregaFuturaFind(private val view: IEntregaFututaView) {
         .firstOrNull()
     return if(notaBaixa == null) {
       val keyNota = KeyNota(key)
-      findBaixa(keyNota.storeno, keyNota.numeroSerie)
+      findBaixa(keyNota.storeno, keyNota.numero)
     }
     else {
       val lojaBaixa = notaBaixa.storeno ?: return emptyList()
@@ -80,5 +81,10 @@ class EntregaFuturaFind(private val view: IEntregaFututaView) {
     val storenoNota = notaFutura?.storeno
     val numeroNota = notaFutura?.numero_venda
     return ItemNota.find(storenoNota, numeroNota)
+  }
+  
+  fun notasConferidas(): MutableList<ItemNota> {
+    return QItemNota().status.eq(CONFERIDA)
+      .findList()
   }
 }

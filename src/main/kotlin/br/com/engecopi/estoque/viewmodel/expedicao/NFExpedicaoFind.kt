@@ -12,7 +12,7 @@ import br.com.engecopi.estoque.viewmodel.ENotaEntregaFutura
 import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 
-class NFExpedicaoFind {
+class NFExpedicaoFind() {
   fun findNotaSaidaKey(key: String): List<NotaProdutoSaci> {
     val notaSaci = when(key.length) {
       44   -> Nota.findNotaSaidaKey(key)

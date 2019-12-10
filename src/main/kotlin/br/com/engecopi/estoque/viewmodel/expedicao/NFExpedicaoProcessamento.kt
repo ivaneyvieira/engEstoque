@@ -12,13 +12,13 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 class NFExpedicaoProcessamento() {
-  fun processaKey(notasSaci: List<ItemExpedicao>): Nota? {
+  fun processaKey(notasSaci: List<ItemExpedicao>): Nota {
     if(notasSaci.all {it.isSave()}) throw EViewModelError("Todos os itens dessa nota já estão lançados")
     return if(notasSaci.isNotEmpty()) processaNota(notasSaci)
     else throw EChaveNaoEncontrada()
   }
   
-  private fun processaNota(itensExpedicao: List<ItemExpedicao>): Nota? {
+  private fun processaNota(itensExpedicao: List<ItemExpedicao>): Nota {
     val loja = RegistryUserInfo.lojaDeposito.numero
     val notaDoSaci =
       itensExpedicao.firstOrNull()
