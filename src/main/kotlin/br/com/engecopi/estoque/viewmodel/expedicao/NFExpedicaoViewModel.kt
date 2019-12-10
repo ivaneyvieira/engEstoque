@@ -29,6 +29,7 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
   CrudViewModel<ViewNotaExpedicao, QViewNotaExpedicao, NFExpedicaoVo, INFExpedicaoView>(view) {
   private val print = NFExpedicaoPrint()
   private val processing = NFExpedicaoProcessamento()
+  private val find = NFExpedicaoFind()
   
   override fun newBean(): NFExpedicaoVo {
     return NFExpedicaoVo()
@@ -45,7 +46,7 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
   override fun delete(bean: NFExpedicaoVo) {
     val nota = bean.findEntity() ?: return
     val saida = Nota.findSaida(nota.loja, nota.numero) ?: return
-  
+    
     QItemNota().nota.equalTo(saida)
       .localizacao.startsWith(bean.abreviacao)
       .delete()
@@ -119,7 +120,9 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
       }
   }
   
-  fun findNotaSaidaKey(key: String) = execList {}
+  fun findNotaSaidaKey(key: String) = execList {
+    find.findNotaSaidaKey(key)
+  }
   
   fun findLoja(storeno: Int?): Loja? = Loja.findLoja(storeno)
   

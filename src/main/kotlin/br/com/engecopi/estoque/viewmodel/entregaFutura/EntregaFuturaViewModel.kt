@@ -92,18 +92,18 @@ class FindNota(private val view: IEntregaFututaView) {
   }
   
   private fun findItensNotaTransferencia(key: String): List<ItemNota> {
-    val notaTransferencia =
+    val notaBaixa =
       Nota.findNotaSaidaKey(key)
         .firstOrNull()
-    return if(notaTransferencia == null) {
+    return if(notaBaixa == null) {
       val storeno = key.mid(0, 1).toIntOrNull() ?: return emptyList()
       val numero = key.mid(1)
       findBaixa(storeno, numero)
     }
     else {
-      val lojaTransferencia = notaTransferencia.storeno ?: return emptyList()
-      val numeroSerieTransferencia = notaTransferencia.numeroSerie()
-      findBaixa(lojaTransferencia, numeroSerieTransferencia)
+      val lojaBaixa = notaBaixa.storeno ?: return emptyList()
+      val numeroBaixa = notaBaixa.numeroSerie()
+      findBaixa(lojaBaixa, numeroBaixa)
     }
   }
   
@@ -114,16 +114,16 @@ class FindNota(private val view: IEntregaFututaView) {
   }
   
   private fun findItensNotaTransferencia(storeno: Int, numero: String): List<ItemNota> {
-    val notaFutura = TransferenciaAutomatica.notaFutura(storeno, numero)
-    val storeno = notaFutura?.storenoFat
-    val numero = notaFutura?.nffat
-    return ItemNota.find(storeno, numero)
+    val notaTransferencia = TransferenciaAutomatica.notaFutura(storeno, numero)
+    val storenoNota = notaTransferencia?.storenoFat
+    val numeroNota = notaTransferencia?.nffat
+    return ItemNota.find(storenoNota, numeroNota)
   }
   
   private fun findItensNotaFutura(numero: String): List<ItemNota> {
     val notaFutura = EntregaFutura.notaFutura(numero)
-    val storeno = notaFutura?.storeno
-    val numero = notaFutura?.numero_venda
-    return ItemNota.find(storeno, numero)
+    val storenoNota = notaFutura?.storeno
+    val numeroNota = notaFutura?.numero_venda
+    return ItemNota.find(storenoNota, numeroNota)
   }
 }
