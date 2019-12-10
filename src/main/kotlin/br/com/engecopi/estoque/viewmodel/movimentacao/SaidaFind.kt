@@ -14,7 +14,7 @@ import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.ViewCodBarConferencia
 import br.com.engecopi.framework.viewmodel.EViewModelError
 
-class SaidaFind {
+class SaidaFind() {
   fun findByBarcodeProduto(barcode: String?): List<Produto> {
     return if(barcode.isNullOrBlank()) emptyList()
     else Produto.findBarcode(barcode)
