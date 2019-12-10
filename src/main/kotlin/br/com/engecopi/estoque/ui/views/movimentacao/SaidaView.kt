@@ -141,13 +141,6 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
       formCodBar = formCodbar()
       addCustomFormComponent(formCodBar)
       addOnly = !isAdmin
-      column(SaidaVo::numeroCodigoReduzido) {
-        caption = "Número Conferencia"
-        setSortProperty("codigo_barra_conferencia")
-      }
-      column(SaidaVo::numeroBaixa) {
-        caption = "NF Baixa"
-      }
       grid.addComponentColumn {item ->
         Button().apply {
           isEnabled = isAdmin
@@ -162,15 +155,21 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
         }
       }
         .id = "btnPrint"
-  
-      column(SaidaVo::lojaNF) {
-        caption = "Loja NF"
-        setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
+      column(SaidaVo::numeroCodigoReduzido) {
+        caption = "Número Conferencia"
+        setSortProperty("codigo_barra_conferencia")
       }
-  
-      column(SaidaVo::tipoNotaDescricao) {
-        caption = "TipoNota"
-        setSortProperty("nota.tipo_nota")
+      column(SaidaVo::dataEmissao) {
+        caption = "Emissao"
+        dateFormat()
+        setSortProperty("nota.dataEmissao", "data", "hora")
+      }
+      column(SaidaVo::numeroBaixa) {
+        caption = "NF Baixa"
+      }
+      column(SaidaVo::dataBaixa) {
+        caption = "Data Baixa"
+        dateFormat()
       }
       column(SaidaVo::lancamento) {
         caption = "Data"
@@ -182,10 +181,13 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
         timeFormat()
         setSortProperty("data", "hora")
       }
-      column(SaidaVo::dataEmissao) {
-        caption = "Emissao"
-        dateFormat()
-        setSortProperty("nota.dataEmissao", "data", "hora")
+      column(SaidaVo::lojaNF) {
+        caption = "Loja NF"
+        setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
+      }
+      column(SaidaVo::tipoNotaDescricao) {
+        caption = "TipoNota"
+        setSortProperty("nota.tipo_nota")
       }
       column(SaidaVo::quantProduto) {
         caption = "Quantidade"

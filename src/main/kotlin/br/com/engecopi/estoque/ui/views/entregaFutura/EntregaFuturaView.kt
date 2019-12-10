@@ -14,6 +14,7 @@ import br.com.engecopi.framework.ui.view.default
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.intFormat
 import br.com.engecopi.framework.ui.view.row
+import br.com.engecopi.framework.ui.view.timeFormat
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.bind
 import com.github.mvysny.karibudsl.v8.comboBox
@@ -110,6 +111,11 @@ class EntregaFuturaView: NotaView<EntregaFututaVo, EntregaFututaViewModel, IEntr
         caption = "Lançamento"
         dateFormat()
         setSortProperty("nota.lancamento", "data", "hora")
+      }
+      column(EntregaFututaVo::horaLacamento) {
+        caption = "Hora"
+        timeFormat()
+        setSortProperty("nota.lancamento", "nota.hora")
       }
       column(EntregaFututaVo::lojaNF) {
         caption = "Loja NF"
