@@ -35,14 +35,14 @@ class SaidaViewModel(view: ISaidaView):
     return find.findByBarcodeProduto(barcode)
   }
   
-  fun findByKey(key: String) = execValue {
+  fun findByKey(key: String) = exec {
     find.findByKey(key)
       .apply {
         view.updateView()
       }
   }
   
-  fun confirmaProdutos(itens: List<ProdutoVO>, situacao: StatusNota) = execList {
+  fun confirmaProdutos(itens: List<ProdutoVO>, situacao: StatusNota) = exec {
     processing.confirmaProdutos(itens, situacao)
       .apply {
         view.updateView()

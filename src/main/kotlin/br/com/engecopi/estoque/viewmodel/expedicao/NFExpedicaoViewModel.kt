@@ -99,22 +99,22 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
     }
   }
   
-  fun processaKey(notasSaci: List<ItemExpedicao>) = execValue {
+  fun processaKey(notasSaci: List<ItemExpedicao>) = exec {
     processing.processaKey(notasSaci)
       .updateView()
   }
   
-  fun imprimeTudo() = execString {
+  fun imprimeTudo() = exec {
     print.imprimeTudo()
       .updateView()
   }
   
-  fun imprimir(nota: Nota?) = execList<PacoteImpressao> {
+  fun imprimir(nota: Nota?) = exec {
     print.imprimir(nota)
       .updateView()
   }
   
-  fun findNotaSaidaKey(key: String) = execList {
+  fun findNotaSaidaKey(key: String) = exec {
     find.findNotaSaidaKey(key)
   }
   

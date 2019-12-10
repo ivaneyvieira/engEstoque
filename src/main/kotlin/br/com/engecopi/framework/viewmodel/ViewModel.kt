@@ -1,6 +1,7 @@
 package br.com.engecopi.framework.viewmodel
 
 import br.com.engecopi.framework.model.Transaction
+import java.lang.reflect.Proxy
 
 abstract class ViewModel<V: IView>(val view: V): IViewModel {
   private var inTransaction = false
@@ -16,12 +17,7 @@ abstract class ViewModel<V: IView>(val view: V): IViewModel {
   }
   
   @Throws(EViewModelError::class)
-  fun exec(block: () -> Unit) {
-    execValue(block)
-  }
-  
-  @Throws(EViewModelError::class)
-  fun <T> execValue(block: () -> T): T {
+  fun <T> exec(block: () -> T): T {
     return if(inTransaction) block()
     else transaction {
       try {
@@ -44,21 +40,6 @@ abstract class ViewModel<V: IView>(val view: V): IViewModel {
     }
   }
   
-  @Throws(EViewModelError::class)
-  fun execString(block: () -> String): String {
-    return execValue(block)
-  }
-  
-  @Throws(EViewModelError::class)
-  fun execInt(block: () -> Int): Int {
-    return execValue(block)
-  }
-  
-  @Throws(EViewModelError::class)
-  fun <T> execList(block: () -> List<T>): List<T> {
-    return execValue(block)
-  }
-  
   private fun <T> transaction(block: () -> T): T {
     return Transaction.execTransacao {block()}
   }
@@ -79,4 +60,5 @@ interface IView {
   fun showError(msg: String)
   fun showInfo(msg: String)
 }
+
 

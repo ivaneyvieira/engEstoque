@@ -258,21 +258,21 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
       }
   }
   
-  fun findLojas(loja: Loja?): List<Loja> = execValue {
+  fun findLojas(loja: Loja?): List<Loja> = exec {
     loja?.let {listOf(it)} ?: Loja.all()
   }
   
-  fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean, groupByHour: Boolean) = execValue {
+  fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean, groupByHour: Boolean) = exec {
     print.imprimir(itemNota, notaCompleta, groupByHour, statusImpressao)
       .updateView()
   }
   
-  fun imprimir() = execValue {
+  fun imprimir() = exec {
     print.imprimir(statusImpressao)
       .updateView()
   }
   
-  fun imprimir(itens: List<ItemNota>) = execValue {
+  fun imprimir(itens: List<ItemNota>) = exec {
     print.imprimir(itens, statusImpressao)
       .updateView()
   }

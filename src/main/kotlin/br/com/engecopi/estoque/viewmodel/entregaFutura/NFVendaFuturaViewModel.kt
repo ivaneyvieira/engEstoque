@@ -99,17 +99,17 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
     return data.eq(date)
   }
   
-  fun processaKey(notasSaci: List<ItemVendaFutura>) = execValue {
+  fun processaKey(notasSaci: List<ItemVendaFutura>) = exec {
     processing.processaKey(notasSaci)
       .updateView()
   }
   
-  fun imprimeTudo() = execString {
+  fun imprimeTudo() = exec {
     print.imprimeTudo()
       .updateView()
   }
   
-  fun imprimir(nota: Nota?) = execString {
+  fun imprimir(nota: Nota?) = exec {
     print.imprimir(nota)
       .updateView()
   }

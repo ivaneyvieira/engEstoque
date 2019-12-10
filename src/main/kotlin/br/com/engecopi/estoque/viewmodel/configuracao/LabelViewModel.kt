@@ -15,7 +15,7 @@ class LabelViewModel(view: ILabelView): ViewModel<ILabelView>(view) {
     view.listaProduto = Produto.findFaixaCodigo(codigoI?.toString(), codigoF?.toString())
   }
 
-  fun addFaixaNome(nomeI: String?, nomeF: String?) = execValue {
+  fun addFaixaNome(nomeI: String?, nomeF: String?) = exec {
     view.listaProduto = Produto.findFaixaNome(nomeI, nomeF)
   }
 

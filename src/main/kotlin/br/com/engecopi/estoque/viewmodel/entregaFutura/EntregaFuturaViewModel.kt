@@ -37,7 +37,7 @@ class EntregaFututaViewModel(view: IEntregaFututaView):
   
   override fun createVo() = EntregaFututaVo()
   
-  fun findKey(key: String) = execList {
+  fun findKey(key: String) = exec {
     find.findKey(key)
       .updateView()
   }

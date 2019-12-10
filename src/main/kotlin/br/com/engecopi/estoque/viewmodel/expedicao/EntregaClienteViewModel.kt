@@ -34,7 +34,7 @@ class EntregaClienteViewModel(view: IEntregaClienteView):
   
   override fun createVo() = EntregaClienteVo()
   
-  fun findKey(key: String) = execList {
+  fun findKey(key: String) = exec {
     find.findKey(key)
   }
   
