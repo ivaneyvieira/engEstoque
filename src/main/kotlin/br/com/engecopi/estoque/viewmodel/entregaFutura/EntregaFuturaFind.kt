@@ -12,8 +12,9 @@ import br.com.engecopi.estoque.model.dtos.EntregaFutura
 import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.framework.viewmodel.EViewModelError
+import br.com.engecopi.framework.viewmodel.EViewModelWarning
 
-class EntregaFuturaFind(private val view: IEntregaFututaView) {
+class EntregaFuturaFind() {
   fun findKey(key: String): List<ItemNota> {
     val itens = findItensNotaTransferencia(key)
     if(itens.isEmpty()) {
@@ -23,10 +24,10 @@ class EntregaFuturaFind(private val view: IEntregaFututaView) {
       val codigoProduto = item.produto?.codigo?.trim() ?: ""
       when(item.status) {
         ENTREGUE, ENT_LOJA -> {
-          view.showWarning("Produto $codigoProduto já foi entregue")
+          throw EViewModelWarning("Produto $codigoProduto já foi entregue")
         }
         INCLUIDA           -> {
-          view.showWarning("Produto $codigoProduto ainda não foi conferido")
+          EViewModelWarning("Produto $codigoProduto ainda não foi conferido")
         }
         CONFERIDA          -> {
           item.status = ENTREGUE
@@ -39,11 +40,10 @@ class EntregaFuturaFind(private val view: IEntregaFututaView) {
           }
         }
         else               -> {
-          view.showWarning("Operação inválida")
+          EViewModelWarning("Operação inválida")
         }
       }
     }
-    view.updateView()
     return itens
   }
   
@@ -65,7 +65,7 @@ class EntregaFuturaFind(private val view: IEntregaFututaView) {
   private fun findBaixa(storeno: Int?, numero: String): List<ItemNota> {
     storeno ?: return emptyList()
     val notaTransferencia = findItensNotaTransferencia(storeno, numero)
-    val notaFutura = findItensNotaFutura(numero)
+    val notaFutura = findItensNotaFutura(storeno, numero)
     return if(notaTransferencia.isEmpty()) notaFutura else notaTransferencia
   }
   
@@ -76,8 +76,8 @@ class EntregaFuturaFind(private val view: IEntregaFututaView) {
     return ItemNota.find(storenoNota, numeroNota)
   }
   
-  private fun findItensNotaFutura(numero: String): List<ItemNota> {
-    val notaFutura = EntregaFutura.notaFutura(numero)
+  private fun findItensNotaFutura(storeno: Int, numero: String): List<ItemNota> {
+    val notaFutura = EntregaFutura.notaFutura(storeno, numero)
     val storenoNota = notaFutura?.storeno
     val numeroNota = notaFutura?.numero_venda
     return ItemNota.find(storenoNota, numeroNota)

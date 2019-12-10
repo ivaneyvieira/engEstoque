@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.model
 
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
@@ -238,10 +239,12 @@ class Nota: BaseModel() {
   }
   
   fun numeroEntrega(): String = TransferenciaAutomatica.notaTransfencia(loja?.numero, numero)?.numeroTransf
-                                ?: EntregaFutura.entrega(numero)?.numeroEntrega ?: ""
+                                ?: EntregaFutura.entrega(lojaDeposito.numero, numero)?.numeroEntrega ?: ""
   
-  fun dataEntrega(): LocalDate? = TransferenciaAutomatica.notaTransfencia(loja?.numero, numero)?.data?.localDate()
-                                  ?: EntregaFutura.entrega(numero)?.dataEntrega?.localDate()
+  fun dataEntrega(): LocalDate? =
+    TransferenciaAutomatica.notaTransfencia(loja?.numero, numero)?.data?.localDate() ?: EntregaFutura.entrega(
+      lojaDeposito.numero,
+      numero)?.dataEntrega?.localDate()
   
   fun existe(): Boolean {
     return QNota().loja.equalTo(loja).tipoMov.eq(tipoMov).numero.eq(numero).findCount() > 0

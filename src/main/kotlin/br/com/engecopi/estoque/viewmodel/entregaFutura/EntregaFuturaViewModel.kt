@@ -14,7 +14,7 @@ import br.com.engecopi.estoque.viewmodel.movimentacao.NotaVo
 
 class EntregaFututaViewModel(view: IEntregaFututaView):
   NotaViewModel<EntregaFututaVo, IEntregaFututaView>(view, SAIDA, ENTREGUE, CONFERIDA, "") {
-  private val find = EntregaFuturaFind(view)
+  private val find = EntregaFuturaFind()
   
   override fun newBean(): EntregaFututaVo {
     return EntregaFututaVo()
@@ -37,7 +37,10 @@ class EntregaFututaViewModel(view: IEntregaFututaView):
   
   override fun createVo() = EntregaFututaVo()
   
-  fun findKey(key: String) = execList {find.findKey(key)}
+  fun findKey(key: String) = execList {
+    find.findKey(key)
+      .updateView()
+  }
   
   fun notasConferidas() = find.notasConferidas().map {it.toVO()}
 }

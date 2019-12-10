@@ -1,7 +1,6 @@
 package br.com.engecopi.estoque.model.dtos
 
 import br.com.engecopi.estoque.model.Nota.Find
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.etlSaci.EntryID
 import io.ebean.DB
 
@@ -25,11 +24,11 @@ class EntregaFutura(id: String,
     }
   
   companion object {
-    fun entrega(numeroVenda: String?): EntregaFutura? {
+    fun entrega(storeno: Int?, numeroVenda: String?): EntregaFutura? {
       numeroVenda ?: return null
-      val loja = lojaDeposito.numero
+      storeno ?: return null
       val sql = """select * from t_entrega_futura
-        |where storeno = $loja
+        |where storeno = $storeno
         |  AND numero_venda = '$numeroVenda'
       """.trimMargin()
       return DB.findDto(EntregaFutura::class.java, sql)
@@ -37,11 +36,11 @@ class EntregaFutura(id: String,
         .firstOrNull()
     }
   
-    fun notaFutura(numero: String?): EntregaFutura? {
+    fun notaFutura(storeno: Int?, numero: String?): EntregaFutura? {
       numero ?: return null
-      val loja = lojaDeposito.numero
+      storeno ?: return null
       val sql = """select * from t_entrega_futura
-        |where storeno = $loja
+        |where storeno = $storeno
         |  AND numero_entrega = '$numero'
       """.trimMargin()
       return DB.findDto(EntregaFutura::class.java, sql)

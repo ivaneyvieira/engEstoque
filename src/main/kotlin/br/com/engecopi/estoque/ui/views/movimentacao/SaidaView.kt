@@ -172,7 +172,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
         dateFormat()
       }
       column(SaidaVo::lancamento) {
-        caption = "Data"
+        caption = "Data Lançamento"
         dateFormat()
         setSortProperty("data", "hora")
       }
