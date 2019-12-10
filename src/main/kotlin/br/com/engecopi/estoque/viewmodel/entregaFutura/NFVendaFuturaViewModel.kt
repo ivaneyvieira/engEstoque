@@ -1,17 +1,11 @@
 package br.com.engecopi.estoque.viewmodel.entregaFutura
 
-import br.com.engecopi.estoque.model.Etiqueta
-import br.com.engecopi.estoque.model.ItemNota
-import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.NotaSerie
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
-import br.com.engecopi.estoque.model.StatusNota
-import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
-import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.TipoNota
@@ -221,110 +215,3 @@ data class ItemVendaFutura(val notaProdutoSaci: NotaProdutoSaci,
 
 interface INFVendaFuturaView: ICrudView
 
-class NFVendaFuturaPrint(private val view: INFVendaFuturaView) {
-  fun imprimir(nota: Nota?): String {
-    nota ?: return ""
-    val id = nota.id
-    val notaRef = Nota.byId(id) ?: return ""
-    val listaItens = notaRef.itensNota()
-    return imprimeItens(INCLUIDA, listaItens).apply {
-      view.updateView()
-    }
-  }
-  
-  private fun imprimeItens(status: StatusNota, itens: List<ItemNota>): String {
-    val etiquetas =
-      Etiqueta.findByStatus(status)
-        .filter {etiqueta ->
-          etiqueta.titulo.contains("ETDEP")
-        }
-    return etiquetas.joinToString(separator = "\n") {etiqueta ->
-      itens.map {imprimir(it, etiqueta)}
-        .distinct()
-        .joinToString(separator = "\n")
-    }
-  }
-  
-  fun imprimeTudo(): String {
-    val etiquetas =
-      Etiqueta.findByStatus(INCLUIDA)
-        .filter {etiqueta ->
-          etiqueta.titulo.contains("ETDEP")
-        }
-    val itens =
-      QItemNota().impresso.eq(false)
-        .status.eq(INCLUIDA)
-        .findList()
-    val ret = etiquetas.joinToString(separator = "\n") {etiqueta ->
-      itens.map {item -> imprimir(item, etiqueta)}
-        .distinct()
-        .joinToString(separator = "\n")
-    }
-    view.updateView()
-    return ret
-  }
-  
-  private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {
-    if(usuarioDefault.isEstoqueVendaFutura) return ""
-    itemNota ?: return ""
-    if(!etiqueta.imprimivel()) return ""
-    val print = itemNota.printEtiqueta()
-    itemNota.let {
-      it.refresh()
-      it.impresso = true
-      it.update()
-    }
-    return print.print(etiqueta.template)
-  }
-}
-
-class NFVendaFututraProcessamento(private val view: INFVendaFuturaView) {
-  fun processaKey(notasSaci: List<ItemVendaFutura>): Nota? {
-    if(notasSaci.all {
-        it.isSave()
-      }) throw EViewModelError("Todos os itens dessa nota já estão lançados")
-    val ret = if(notasSaci.isNotEmpty()) processaNota(notasSaci)
-    else throw EChaveNaoEncontrada()
-    view.updateView()
-    return ret
-  }
-  
-  private fun processaNota(itensVendaFutura: List<ItemVendaFutura>): Nota? {
-    val notaDoSaci =
-      itensVendaFutura.firstOrNull()
-        ?.notaProdutoSaci
-    notaDoSaci?.storeno ?: throw EViewModelError("Nota não encontrada")
-    val nota: Nota? =
-      Nota.createNota(notaDoSaci)
-        ?.let {
-          if(it.existe()) Nota.findSaida(it.loja, it.numero)
-          else {
-            it.sequencia = Nota.maxSequencia(it.tipoNota) + 1
-            it.usuario = usuarioDefault
-            it.lancamentoOrigem = ENTREGA_F
-            it.save()
-            it
-          }
-        }
-    nota ?: throw EViewModelError("Nota não encontrada")
-    val itens = itensVendaFutura.mapNotNull {itemVendaFutura ->
-      val notaSaci = itemVendaFutura.notaProdutoSaci
-      val item = ItemNota.find(notaSaci) ?: ItemNota.createItemNota(notaSaci, nota, itemVendaFutura.abrevicao)
-      return@mapNotNull item?.apply {
-        this.status = INCLUIDA
-        this.impresso = false
-        this.usuario = usuarioDefault
-        this.data = LocalDate.now()
-        this.hora = LocalTime.now()
-        this.save()
-        if(this.status == CONFERIDA) this.recalculaSaldos()
-      }
-    }
-  
-    if(itens.isEmpty()) throw EViewModelError("Essa nota não possui itens com localização")
-    
-    
-    
-    return nota
-  }
-}

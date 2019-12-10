@@ -50,6 +50,7 @@ abstract class CrudViewModel<MODEL: BaseModel, Q: TQRootBean<MODEL, Q>, VO: Enti
       resultadoOK = true
     }
     crudBean = null
+    view.updateView()
   }
 
   fun cleanBean() = exec {

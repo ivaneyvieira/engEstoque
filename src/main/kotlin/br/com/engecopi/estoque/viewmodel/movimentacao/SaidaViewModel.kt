@@ -11,6 +11,7 @@ import br.com.engecopi.estoque.model.query.QItemNota
 class SaidaViewModel(view: ISaidaView):
   NotaViewModel<SaidaVo, ISaidaView>(view, SAIDA, ENTREGUE, CONFERIDA, abreviacaoDefault) {
   private val processing = SaidaProcessamento()
+  private val find = SaidaFind()
   
   override fun newBean(): SaidaVo {
     return SaidaVo()
@@ -31,12 +32,11 @@ class SaidaViewModel(view: ISaidaView):
   override fun createVo() = SaidaVo()
   
   fun findByBarcodeProduto(barcode: String?): List<Produto> {
-    return if(barcode.isNullOrBlank()) emptyList()
-    else Produto.findBarcode(barcode)
+    return find.findByBarcodeProduto(barcode)
   }
   
-  fun processaKey(key: String) = execValue {
-    processing.processaKey(key)
+  fun findByKey(key: String) = execValue {
+    find.findByKey(key)
       .apply {
         view.updateView()
       }
