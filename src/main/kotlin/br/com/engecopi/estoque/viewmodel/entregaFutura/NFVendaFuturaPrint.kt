@@ -7,15 +7,13 @@ import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.query.QItemNota
 
-class NFVendaFuturaPrint(private val view: INFVendaFuturaView) {
+class NFVendaFuturaPrint() {
   fun imprimir(nota: Nota?): String {
     nota ?: return ""
     val id = nota.id
     val notaRef = Nota.byId(id) ?: return ""
     val listaItens = notaRef.itensNota()
-    return imprimeItens(listaItens).apply {
-      view.updateView()
-    }
+    return imprimeItens(listaItens)
   }
   
   private fun imprimeItens(itens: List<ItemNota>): String {
@@ -41,13 +39,11 @@ class NFVendaFuturaPrint(private val view: INFVendaFuturaView) {
       QItemNota().impresso.eq(false)
         .status.eq(INCLUIDA)
         .findList()
-    val ret = etiquetas.joinToString(separator = "\n") {etiqueta ->
+    return etiquetas.joinToString(separator = "\n") {etiqueta ->
       itens.map {item -> imprimir(item, etiqueta)}
         .distinct()
         .joinToString(separator = "\n")
     }
-    view.updateView()
-    return ret
   }
   
   private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {

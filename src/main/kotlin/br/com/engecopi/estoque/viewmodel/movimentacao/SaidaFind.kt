@@ -65,7 +65,7 @@ class SaidaFind {
   
   private fun processaKeyNumeroNota(key: String): NotaItens {
     val keyNota = KeyNota(key)
-    val notaItem = processaKeyNumero(keyNota.loja, keyNota.numeroSerie)
+    val notaItem = processaKeyNumero(keyNota.loja, keyNota.numero)
     return if(notaItem.nota?.tipoNota == VENDAF || keyNota.storeno == lojaDeposito.numero) {
       notaItem
     }

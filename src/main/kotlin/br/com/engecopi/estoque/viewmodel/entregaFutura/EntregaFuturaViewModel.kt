@@ -39,11 +39,7 @@ class EntregaFututaViewModel(view: IEntregaFututaView):
   
   fun findKey(key: String) = execList {find.findKey(key)}
   
-  fun notasConferidas(): List<EntregaFututaVo> {
-    return QItemNota().status.eq(CONFERIDA)
-      .findList()
-      .map {it.toVO()}
-  }
+  fun notasConferidas() = find.notasConferidas().map {it.toVO()}
 }
 
 class EntregaFututaVo: NotaVo(SAIDA, "") {

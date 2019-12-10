@@ -6,7 +6,7 @@ import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.query.QItemNota
 
-class NotaPrint<V: INotaView>(private val view: V, private val statusImpressao: StatusNota) {
+class NotaPrint() {
   private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {
     itemNota ?: return ""
     if(!etiqueta.imprimivel()) return ""
@@ -20,9 +20,9 @@ class NotaPrint<V: INotaView>(private val view: V, private val statusImpressao: 
     return print.print(etiqueta.template)
   }
   
-  fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean, groupByHour: Boolean): String {
+  fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean, groupByHour: Boolean, statusImpressao: StatusNota): String {
     itemNota ?: return ""
-    val ret = if(notaCompleta) {
+    return if(notaCompleta) {
       val itens =
         QItemNota().nota.eq(itemNota.nota)
           .status.eq(itemNota.status)
@@ -33,14 +33,12 @@ class NotaPrint<V: INotaView>(private val view: V, private val statusImpressao: 
           .nota.loja.numero.asc()
           .nota.numero.asc()
           .findList()
-      imprimir(itens)
+      imprimir(itens, statusImpressao)
     }
-    else imprimir(listOf(itemNota))
-    view.updateView()
-    return ret
+    else imprimir(listOf(itemNota), statusImpressao)
   }
   
-  fun imprimir(): String {
+  fun imprimir(statusImpressao: StatusNota): String {
     val itens = QItemNota().let {q ->
       if(RegistryUserInfo.usuarioDefault.admin) q else q.impresso.eq(false)
     }
@@ -49,18 +47,14 @@ class NotaPrint<V: INotaView>(private val view: V, private val statusImpressao: 
       .nota.loja.numero.asc()
       .nota.numero.asc()
       .findList()
-    val ret = imprimir(itens)
-    view.updateView()
-    return ret
+    return imprimir(itens, statusImpressao)
   }
   
-  fun imprimir(itens: List<ItemNota>): String {
+  fun imprimir(itens: List<ItemNota>, statusImpressao: StatusNota): String {
     val etiquetas = Etiqueta.findByStatus(statusImpressao)
-    val ret = etiquetas.joinToString(separator = "\n") {etiqueta ->
+    return etiquetas.joinToString(separator = "\n") {etiqueta ->
       imprimir(itens, etiqueta)
     }
-    view.updateView()
-    return ret
   }
   
   private fun imprimir(itens: List<ItemNota>, etiqueta: Etiqueta): String {

@@ -2,9 +2,7 @@ package br.com.engecopi.estoque.viewmodel.entregaFutura
 
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
-import br.com.engecopi.estoque.model.NotaSerie
 import br.com.engecopi.estoque.model.Produto
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.TipoMov
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
@@ -12,27 +10,23 @@ import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.model.ViewNotaFutura
-import br.com.engecopi.estoque.model.ViewProdutoLoc
 import br.com.engecopi.estoque.model.dtos.VendasCaixa
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.model.query.QViewNotaFutura
 import br.com.engecopi.estoque.ui.log
-import br.com.engecopi.estoque.viewmodel.EChaveNaoEncontrada
-import br.com.engecopi.estoque.viewmodel.ENotaNaoEntregaFutura
 import br.com.engecopi.framework.viewmodel.CrudViewModel
-import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.ICrudView
 import br.com.engecopi.saci.beans.NotaProdutoSaci
-import br.com.engecopi.utils.mid
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
 class NFVendaFuturaViewModel(view: INFVendaFuturaView):
   CrudViewModel<ViewNotaFutura, QViewNotaFutura, NFVendaFuturaVo, INFVendaFuturaView>(view) {
-  private val processing = NFVendaFututraProcessamento(view)
-  private val print = NFVendaFuturaPrint(view)
+  private val processing = NFVendaFututraProcessamento()
+  private val print = NFVendaFuturaPrint()
+  private val find = NotaFuturaFind()
   
   override fun newBean(): NFVendaFuturaVo {
     return NFVendaFuturaVo()
@@ -97,63 +91,6 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
     }
   }
   
-  fun processaKey(notasSaci: List<ItemVendaFutura>) = execValue {
-    val nota = processing.processaKey(notasSaci)
-    crudBean =
-      ViewNotaFutura.findNotaFutura(nota)
-        ?.toVO()
-    view.updateView()
-    return@execValue nota
-  }
-  
-  fun imprimeTudo() = execString {print.imprimeTudo()}
-  
-  fun imprimir(nota: Nota?) = execString {print.imprimir(nota)}
-  
-  fun findNotaSaidaKey(key: String) = execList {
-    val storeno =
-      key.mid(0, 1)
-        .toIntOrNull()
-    val nfno = key.mid(1)
-    val notaSaci =
-      Nota.findNotaSaidaSaci(storeno, nfno)
-        .filter {ns ->
-          when {
-            usuarioDefault.isEstoqueVendaFutura -> ViewProdutoLoc.filtraLoc(ns.prdno, ns.grade)
-            else                                -> true
-          }
-        }
-    val numero = notaSaci.firstOrNull()?.numero ?: ""
-    val ret = when {
-      notaSaci.isEmpty()                           -> throw EChaveNaoEncontrada()
-      notaSaci.firstOrNull()?.tipoNota() != VENDAF -> throw ENotaNaoEntregaFutura(numero)
-      else                                         -> if(usuarioDefault.isEstoqueVendaFutura) {
-        val nota = notaSaci.firstOrNull() ?: throw EChaveNaoEncontrada()
-        val notaSerie = nota.notaSerie() ?: throw EChaveNaoEncontrada()
-        val tipo = notaSerie.tipoNota
-        when {
-          usuarioDefault.isTipoCompativel(tipo) -> notaSaci
-          else                                  -> throw EViewModelError("O usuário não está habilitado para lançar esse tipo de nota (${notaSerie.descricao})")
-        }
-      }
-      else notaSaci
-    }
-    view.updateView()
-    ret
-  }
-  
-  fun NotaProdutoSaci.notaSerie(): NotaSerie? {
-    val tipo = TipoNota.value(tipo)
-    return NotaSerie.findByTipo(tipo)
-  }
-  
-  fun findLoja(storeno: Int?): Loja? = Loja.findLoja(storeno)
-  
-  fun abreviacoes(prdno: String?, grade: String?): List<String> {
-    val produto = Produto.findProduto(prdno, grade) ?: return emptyList()
-    return ViewProdutoLoc.abreviacoesProduto(produto)
-  }
-  
   override fun QViewNotaFutura.filterString(text: String): QViewNotaFutura {
     return nota.numero.startsWith(text)
   }
@@ -162,10 +99,29 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
     return data.eq(date)
   }
   
-  fun saldoProduto(notaProdutoSaci: NotaProdutoSaci, abreviacao: String): Int {
-    val produto = Produto.findProduto(notaProdutoSaci.codigo(), notaProdutoSaci.grade)
-    return produto?.saldoAbreviacao(lojaDeposito, abreviacao) ?: 0
+  fun processaKey(notasSaci: List<ItemVendaFutura>) = execValue {
+    processing.processaKey(notasSaci)
+      .updateView()
   }
+  
+  fun imprimeTudo() = execString {
+    print.imprimeTudo()
+      .updateView()
+  }
+  
+  fun imprimir(nota: Nota?) = execString {
+    print.imprimir(nota)
+      .updateView()
+  }
+  
+  fun findNotaSaidaKey(key: String) = find.findNotaSaidaKey(key)
+  
+  fun findLoja(storeno: Int?) = find.findLoja(storeno)
+  
+  fun abreviacoes(prdno: String?, grade: String?) = find.abreviacoes(prdno, grade)
+  
+  fun saldoProduto(notaProdutoSaci: NotaProdutoSaci, abreviacao: String) =
+    find.saldoProduto(notaProdutoSaci, abreviacao)
   
   fun processaVendas(venda: VendasCaixa) {
     val produto = Produto.findProduto(venda.prdno, venda.grade) ?: return
