@@ -164,7 +164,7 @@ class ProdutoVo: EntityVo<Produto>() {
           filtroLoja(item) && filtroDataInicial(item) && filtroDataFinal(item) && filtroTipoNota(item) && filtroLocalizacao(
             item) && filtroQuantidade(item)
         }
-        .sortedWith(compareBy(ItemNota::localizacao).thenByDescending(ItemNota::data).thenByDescending(ItemNota::hora))
+        .sortedWith(compareBy(ItemNota::localizacao, ItemNota::data, ItemNota::hora))
         .toList()
     }
   

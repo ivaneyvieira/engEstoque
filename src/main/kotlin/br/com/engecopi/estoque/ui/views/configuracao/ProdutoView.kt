@@ -35,6 +35,8 @@ import com.github.mvysny.karibudsl.v8.h
 import com.github.mvysny.karibudsl.v8.px
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.w
+import com.vaadin.data.Binder
+import com.vaadin.data.HasValue
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.NumberRenderer
@@ -60,7 +62,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
               expandRatio = 1f
               caption = "Código"
               bind(binder).bind(ProdutoVo::codigoProduto)
-              reloadBinderOnChange(binder)
+              reloadBinderOnChangeAndScroll(binder)
             }
             textField("Descrição") {
               expandRatio = 3f
@@ -72,7 +74,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
                 expandRatio = 1f
                 caption = "Grade"
                 bind(binder).bind(ProdutoVo::grade.name)
-                reloadBinderOnChange(binder)
+                reloadBinderOnChangeAndScroll(binder)
               }
             }
           }
@@ -95,14 +97,14 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
               id = "filtro"
               value = null
               bind(binder).bind(ProdutoVo::filtroDI)
-              reloadBinderOnChange(binder)
+              reloadBinderOnChangeAndScroll(binder)
             }
             dateField("Data Final") {
               expandRatio = 1f
               id = "filtro"
               value = null
               bind(binder).bind(ProdutoVo::filtroDF)
-              reloadBinderOnChange(binder)
+              reloadBinderOnChangeAndScroll(binder)
             }
             comboBox<TipoNota>("Tipo") {
               expandRatio = 1f
@@ -113,7 +115,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
               emptySelectionCaption = "Todos"
               value = null
               bind(binder).bind(ProdutoVo::filtroTipo)
-              reloadBinderOnChange(binder)
+              reloadBinderOnChangeAndScroll(binder)
             }
             comboBox<LocProduto>("Local") {
               expandRatio = 2f
@@ -125,7 +127,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
               setItems(itens)
               bind(binder).bind(ProdutoVo::filtroLocalizacao)
               value = itens.firstOrNull()
-              reloadBinderOnChange(binder)
+              reloadBinderOnChangeAndScroll(binder)
             }
           }
           row {
@@ -188,7 +190,9 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
               }
               editor.addOpenListener {event ->
                 event.bean.produto?.let {produto ->
-                  val locSulfixos = produto.localizacoes(RegistryUserInfo.abreviacaoDefault).map {LocProduto(it)}
+                  val locSulfixos =
+                    produto.localizacoes(RegistryUserInfo.abreviacaoDefault)
+                      .map {LocProduto(it)}
                   comboLoc.setItems(locSulfixos.map {it.localizacao})
                   comboLoc.value = event.bean.localizacao
                 }
@@ -198,16 +202,20 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
                 viewModel.saveItem(item)
                 binder.reload()
               }
-
+  
               editor.cancelCaption = "Cancelar"
               editor.saveCaption = "Salvar"
               editor.isBuffered = true
               bindItens(binder, "itensNota")
+              binder.addValueChangeListener {
+                this.scrollToEnd()
+              }
+              this.scrollToEnd()
             }
           }
         }
       }
-      if(!RegistryUserInfo.usuarioDefault.admin && operation == UPDATE) binder.setReadOnly(true)
+      if(!usuarioDefault.admin && operation == UPDATE) binder.setReadOnly(true)
       readButton.isVisible = true
     }
     form("Entrada de produtos")
@@ -271,6 +279,11 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
       }
     }
   }
+  
+  inline fun <reified BEAN: Any, FIELDVALUE> HasValue<FIELDVALUE>.reloadBinderOnChangeAndScroll(binder: Binder<BEAN>) {
+    reloadBinderOnChange(binder)
+  }
 }
+
 
 
