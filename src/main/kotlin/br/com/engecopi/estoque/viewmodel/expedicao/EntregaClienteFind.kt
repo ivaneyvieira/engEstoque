@@ -1,8 +1,9 @@
 package br.com.engecopi.estoque.viewmodel.expedicao
 
 import br.com.engecopi.estoque.model.ItemNota
+import br.com.engecopi.estoque.model.KeyNota
 import br.com.engecopi.estoque.model.Nota
-import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
@@ -11,7 +12,6 @@ import br.com.engecopi.estoque.model.ViewCodBarCliente
 import br.com.engecopi.estoque.model.ViewCodBarConferencia
 import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.framework.viewmodel.EViewModelWarning
-import br.com.engecopi.utils.mid
 
 class EntregaClienteFind() {
   fun findKey(key: String): List<ItemNota> {
@@ -44,10 +44,11 @@ class EntregaClienteFind() {
   }
   
   private fun processaKeyBarcodeCliente(key: String): List<ItemNota> {
-    val loja = if(key.isNotEmpty()) key.mid(0, 1).toIntOrNull() ?: return emptyList() else return emptyList()
-    val numero = if(key.length > 1) key.mid(1) else return emptyList()
-    if(loja != RegistryUserInfo.lojaDeposito.numero) return emptyList()
-    return Nota.findSaida(RegistryUserInfo.lojaDeposito, numero)
+    val keyNota = KeyNota(key)
+    val loja = keyNota.storeno
+    val numero = keyNota.numero
+    if(loja != lojaDeposito.numero) return emptyList()
+    return Nota.findSaida(lojaDeposito, numero)
       ?.itensNota()
       .orEmpty()
   }
