@@ -77,7 +77,7 @@ dependencies {
   compile("io.ebean:ebean:12.1.5")
   compile("io.ebean:ebean-querybean:12.1.5")
   compile("io.ebean:ebean-agent:12.1.5")
-  testImplementation("io.ebean:ebean-test:12.1.5")
+ // testImplementation("io.ebean:ebean-test:12.1.5")
   
   compile("io.ebean.tools:finder-generator:12.1.1")
   

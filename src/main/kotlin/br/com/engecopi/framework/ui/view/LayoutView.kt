@@ -60,45 +60,45 @@ import kotlin.streams.toList
 
 abstract class LayoutView<V: ViewModel<*>>: VerticalLayout(), View {
   lateinit var viewModel: V
-
+  
   init {
     this.setSizeFull()
   }
-
+  
   open fun form(titleForm: String, block: (@VaadinDsl VerticalLayout).() -> Unit = {}) {
     isMargin = true
     this.title(titleForm)
     this.block()
   }
-
+  
   override fun enter(event: ViewChangeEvent) {
     //if(::viewModel.isInitialized) updateView()
   }
-
+  
   fun <T> Grid<T>.actionSelected(msgErro: String = "Selecione um item", action: (T) -> Unit) {
     this.selectedItems.firstOrNull()?.let {item -> action(item)} ?: showWarning(msgErro)
   }
-
+  
   fun showWarning(msg: String) {
     if(msg.isNotBlank()) MessageDialog.warning(message = msg)
   }
-
+  
   fun showError(msg: String) {
     if(msg.isNotBlank()) MessageDialog.error(message = msg)
   }
-
+  
   fun showInfo(msg: String) {
     if(msg.isNotBlank()) MessageDialog.info(message = msg)
   }
-
+  
   fun showImage(title: String, image: ByteArray) {
     MessageDialog.image(title, image)
   }
-
+  
   fun showQuestion(msg: String, execYes: () -> Unit, execNo: () -> Unit) {
     if(msg.isNotBlank()) MessageDialog.question(message = msg, execYes = execYes, execNo = execNo)
   }
-
+  
   fun printText(impressora: String, text: String?) {
     if(!text.isNullOrBlank()) {
       when {
@@ -122,15 +122,16 @@ fun <T> ComboBox<T>.default(valueEmpty: T? = null, captionGenerator: (T) -> Stri
   setItemCaptionGenerator(captionGenerator)
 }
 
-fun <V, T> HasItems<T>.bindItens(binder: Binder<V>, propertyList: String) {
+fun <V, T> HasItems<T>.bindItens(binder: Binder<V>, propertyList: String): Binding<V, Collection<T>> {
   val hasValue = (this as? HasValue<*>)
   val itensOld: List<T>? = (this.dataProvider as? ListDataProvider<T>)?.items?.toList()
-
-  bind<V, Collection<T>>(binder, propertyList) {itens ->
+  
+  return bind<V, Collection<T>>(binder, propertyList) {itens ->
     val oldValue = hasValue?.value
     if(itensOld != itens) {
       if(this is ComboBox<T>) setItems({itemCaption, filterText ->
-                                         itemCaption.toUpperCase().startsWith(filterText.toUpperCase())
+                                         itemCaption.toUpperCase()
+                                           .startsWith(filterText.toUpperCase())
                                        }, itens)
       else if(this is TwinColSelect<T>) setItems(itens)
       else setItems(itens)
@@ -176,7 +177,8 @@ private fun <BEAN, FIELDVALUE> bind(binder: Binder<BEAN>,
                                     property: String,
                                     blockBinder: (FIELDVALUE) -> Unit): Binding<BEAN, FIELDVALUE> {
   val field = ReadOnlyHasValue<FIELDVALUE> {itens -> blockBinder(itens)}
-  return field.bind(binder).bind(property)
+  return field.bind(binder)
+    .bind(property)
 }
 
 fun Binder<*>.reload() {
@@ -190,15 +192,18 @@ inline fun <reified BEAN: Any, FIELDVALUE> HasValue<FIELDVALUE>.reloadBinderOnCh
       val bean = binder.bean
       if(propertys.isEmpty()) {
         val bindings = BEAN::class.memberProperties.mapNotNull {prop ->
-          binder.getBinding(prop.name).orElse(null)
+          binder.getBinding(prop.name)
+            .orElse(null)
         }
-        binder.fields.toList().mapNotNull {field ->
-          bindings.find {binding ->
-            binding.field == field && binding.field != this
+        binder.fields.toList()
+          .mapNotNull {field ->
+            bindings.find {binding ->
+              binding.field == field && binding.field != this
+            }
           }
-        }.forEach {binding ->
-          binding.read(bean)
-        }
+          .forEach {binding ->
+            binding.read(bean)
+          }
       }
       else {
         reloadPropertys(binder, *propertys)
@@ -301,7 +306,8 @@ fun Window.showDialog() {
   //isTabStopEnabled=true
   tabIndex = -1
   addCloseShortcut(KeyCode.ESCAPE)
-  UI.getCurrent().addWindow(this)
+  UI.getCurrent()
+    .addWindow(this)
   center()
 }
 

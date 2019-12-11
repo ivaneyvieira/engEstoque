@@ -1,7 +1,7 @@
 package br.com.engecopi.estoque.model
 
 import br.com.engecopi.framework.model.Transaction
-import br.com.engecopi.framework.viewmodel.EViewModel
+import br.com.engecopi.framework.viewmodel.EViewModelError
 import com.vaadin.server.Page
 
 object RegistryUserInfo {
@@ -28,7 +28,7 @@ object RegistryUserInfo {
   val abreviacaoDefault
     get() = info?.abreviacao ?: throw EUsuarioNaoInicializado()
   val lojaDeposito
-    get() = Loja.findLoja(4) ?: throw EViewModel("Loja depósito não cadastrada")
+    get() = Loja.findLoja(4) ?: throw EViewModelError("Loja depósito não cadastrada")
   val userDefaultIsAdmin
     get() = usuarioDefault.admin
   val endereco

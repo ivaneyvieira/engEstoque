@@ -1,84 +1,64 @@
 package br.com.engecopi.framework.viewmodel
 
 import br.com.engecopi.framework.model.Transaction
+import java.lang.reflect.Proxy
 
 abstract class ViewModel<V: IView>(val view: V): IViewModel {
   private var inTransaction = false
   
-  private fun updateView(exception: EViewModel) {
+  private fun showException(exception: Exception) {
     exception.message?.let {message ->
-      view.showError(message)
+      when(exception) {
+        is EViewModelError   -> view.showError(message)
+        is EViewModelWarning -> view.showWarning(message)
+        is EViewModelInfo    -> view.showInfo(message)
+      }
     }
   }
   
-  @Throws(EViewModel::class)
-  fun exec(block: () -> Unit) {
-    try {
-      if(inTransaction) block()
-      else transaction {
-        inTransaction = true
-        block()
-        inTransaction = false
-      }
-    } catch(e: EViewModel) {
-      updateView(e)
-    } finally {
-      inTransaction = false
-    }
-  }
-
-  @Throws(EViewModel::class)
-  fun <T> execValue(block: () -> T): T? {
-    var ret: T? = null
-    if(inTransaction) ret = block()
+  @Throws(EViewModelError::class)
+  fun <T> exec(block: () -> T): T {
+    return if(inTransaction) block()
     else transaction {
       try {
         inTransaction = true
-        ret = block()
+        val ret = block()
         inTransaction = false
-      } catch(e: EViewModel) {
-        updateView(e)
+        ret
+      } catch(e: EViewModelError) {
+        showException(e)
+        throw e
+      } catch(e: EViewModelWarning) {
+        showException(e)
+        throw e
+      } catch(e: EViewModelInfo) {
+        showException(e)
         throw e
       } finally {
         inTransaction = false
       }
     }
-    return ret
   }
-
-  @Throws(EViewModel::class)
-  fun execString(block: () -> String): String {
-    return execValue(block) ?: ""
+  
+  private fun <T> transaction(block: () -> T): T {
+    return Transaction.execTransacao {block()}
   }
-
-  @Throws(EViewModel::class)
-  fun execInt(block: () -> Int): Int {
-    return execValue(block) ?: 0
-  }
-
-  @Throws(EViewModel::class)
-  fun <T> execList(block: () -> List<T>): List<T> {
-    return execValue(block).orEmpty()
-  }
-
-  private fun <T> transaction(block: () -> T) {
-    try {
-      Transaction.execTransacao {block()}
-    } catch(e: EViewModel) {
-      //Não faz nada
-    }
-  }
-
+  
   protected fun showWarning(msg: String) {
     view.showWarning(msg)
   }
 }
 
-open class EViewModel(msg: String): Exception(msg)
+open class EViewModelError(msg: String): Exception(msg)
+
+open class EViewModelWarning(msg: String): Exception(msg)
+
+open class EViewModelInfo(msg: String): Exception(msg)
 
 interface IView {
   fun showWarning(msg: String)
   fun showError(msg: String)
   fun showInfo(msg: String)
 }
+
 

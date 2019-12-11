@@ -20,7 +20,7 @@ abstract class CrudViewModel<MODEL: BaseModel, Q: TQRootBean<MODEL, Q>, VO: Enti
   protected abstract fun newBean(): VO
 
   fun read(bean: VO) {
-    val entity = bean.toEntity() ?: throw EViewModel("Registro inválido")
+    val entity = bean.toEntity() ?: throw EViewModelError("Registro inválido")
     entity.refresh()
     crudBean = entity.toVO()
   }
@@ -50,6 +50,7 @@ abstract class CrudViewModel<MODEL: BaseModel, Q: TQRootBean<MODEL, Q>, VO: Enti
       resultadoOK = true
     }
     crudBean = null
+    view.updateView()
   }
 
   fun cleanBean() = exec {
@@ -131,15 +132,24 @@ abstract class CrudViewModel<MODEL: BaseModel, Q: TQRootBean<MODEL, Q>, VO: Enti
   fun updateQueryView(queryView: QueryView) {
     if(this.queryView != queryView) {
       this.queryView = queryView
-      pagedList = query.filterBlank(queryView.filter).makeSort(queryView.sorts).setFirstRow(queryView.offset)
-        .setMaxRows(queryView.limit).findPagedList()
+      pagedList =
+        query.filterBlank(queryView.filter)
+          .makeSort(queryView.sorts)
+          .setFirstRow(queryView.offset)
+          .setMaxRows(queryView.limit)
+          .findPagedList()
       pagedList?.loadCount()
     }
   }
-
+  
   fun existsBean(bean: VO): Boolean {
     val entity = bean.toEntity() ?: return false
     return pagedList?.list?.any {it.id == entity.id} ?: false
+  }
+  
+  fun <T: Any> T.updateView(): T {
+    view.updateView()
+    return this
   }
 }
 

@@ -295,8 +295,9 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       url.split("/")
         .getOrNull(2)
   }
+  
+  private data class KeyNota(val storeno: Int, val numero: String, val serie: String)
 }
 
-data class KeyNota(val storeno: Int, val numero: String, val serie: String)
 
 val saci = QuerySaci()

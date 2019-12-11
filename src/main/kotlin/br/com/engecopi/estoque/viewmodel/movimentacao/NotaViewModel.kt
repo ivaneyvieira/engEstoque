@@ -33,12 +33,11 @@ import br.com.engecopi.estoque.viewmodel.movimentacao.ETipoGrupo.RED
 import br.com.engecopi.estoque.viewmodel.movimentacao.ETipoGrupo.SELECT_FT
 import br.com.engecopi.estoque.viewmodel.movimentacao.ETipoGrupo.WHITE
 import br.com.engecopi.framework.viewmodel.CrudViewModel
-import br.com.engecopi.framework.viewmodel.EViewModel
+import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.ICrudView
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.utils.localDate
-import br.com.engecopi.utils.mid
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -49,10 +48,10 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
                                                        private val statusImpressao: StatusNota,
                                                        private val abreviacaoNota: String):
   CrudViewModel<ItemNota, QItemNota, VO, V>(view) {
-  private val print = NotaPrintModel(view, statusImpressao)
+  private val print = NotaPrint()
   
   override fun update(bean: VO) {
-    if(bean.localizacao?.localizacao.isNullOrBlank()) throw EViewModel("Não foi especificado a localização do item")
+    if(bean.localizacao?.localizacao.isNullOrBlank()) throw EViewModelError("Não foi especificado a localização do item")
     val nota = updateNota(bean)
     val produto = saveProduto(bean.produto)
     
@@ -110,7 +109,7 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
                              usuario: Usuario,
                              local: String?,
                              addTime: LocalTime): ItemNota? {
-    if(local.isNullOrBlank()) throw EViewModel("Não foi especificado a localização do item")
+    if(local.isNullOrBlank()) throw EViewModelError("Não foi especificado a localização do item")
     val saldoLocal = produto?.saldoLoja(lojaDeposito, local) ?: 0
     return if(quantProduto != 0) {
       when {
@@ -154,7 +153,7 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
   }
   
   private fun saveProduto(produto: Produto?): Produto {
-    produto ?: throw EViewModel("Produto não encontrado no saci")
+    produto ?: throw EViewModelError("Produto não encontrado no saci")
     return produto.apply {
       save()
     }
@@ -217,9 +216,6 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
       readOnly = true
       entityVo = itemNota
       val nota = itemNota.nota
-      val lojaTransf = nota?.numeroEntrega?.mid(0, 1) ?: ""
-      val numeroTransf = nota?.numeroEntrega?.mid(1) ?: ""
-      val seq = nota?.sequencia ?: 0
       this.numeroNF = nota?.numero
       this.numeroCodigo = itemNota.codigoBarraConferencia
       this.numeroBaixa = itemNota.nota?.numeroEntrega()
@@ -252,6 +248,10 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
     return nota.data.eq(date)
   }
   
+  abstract fun QItemNota.filtroStatus(): QItemNota
+  
+  abstract fun QItemNota.filtroTipoNota(): QItemNota
+  
   override fun delete(bean: VO) {
     bean.toEntity()
       ?.also {item ->
@@ -259,29 +259,24 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
       }
   }
   
-  fun findLojas(loja: Loja?): List<Loja> = execList {
+  fun findLojas(loja: Loja?): List<Loja> = exec {
     loja?.let {listOf(it)} ?: Loja.all()
   }
   
-  fun localizacaoes(): List<String> {
-    return ViewProdutoLoc.localizacoesAbreviacaoCache(abreviacaoNota)
+  fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean, groupByHour: Boolean) = exec {
+    print.imprimir(itemNota, notaCompleta, groupByHour, statusImpressao)
+      .updateView()
   }
   
-  fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean, groupByHour: Boolean) = execString {
-    print.imprimir(itemNota, notaCompleta, groupByHour)
+  fun imprimir() = exec {
+    print.imprimir(statusImpressao)
+      .updateView()
   }
   
-  fun imprimir() = execString {
-    print.imprimir()
+  fun imprimir(itens: List<ItemNota>) = exec {
+    print.imprimir(itens, statusImpressao)
+      .updateView()
   }
-  
-  fun imprimir(itens: List<ItemNota>) = execString {
-    print.imprimir(itens)
-  }
-  
-  abstract fun QItemNota.filtroStatus(): QItemNota
-  
-  abstract fun QItemNota.filtroTipoNota(): QItemNota
   
   fun desfazOperacao(item: ItemNota?) = exec {
     item?.desfazerOperacao()
@@ -422,6 +417,20 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   val cliente: String
     get() = entityVo?.nota?.cliente ?: notaSaci?.clienteName ?: ""
   var observacaoNota: String? = ""
+  val produtoNota: List<Produto>
+    get() {
+      if(entityVo != null) return emptyList()
+      val nota = notaProdutoProdutoSaci
+      val produtos = if(nota.isNotEmpty()) nota.asSequence().mapNotNull {notaSaci ->
+        Produto.findProduto(notaSaci.prdno, notaSaci.grade)
+      }.filter {produto ->
+        usuario.temProduto(produto)
+      }.toList()
+      else ViewProdutoLoc.produtosCache() // Produto.all().filter { usuario.temProduto(it) }
+      return produtos.sortedBy {it.codigo + it.grade}
+    }
+  val quantidadeReadOnly
+    get() = notaSaci != null
   val itemNota
     get() = toEntity()
   val produtos = ArrayList<ProdutoVO>()
