@@ -206,7 +206,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
               editor.cancelCaption = "Cancelar"
               editor.saveCaption = "Salvar"
               editor.isBuffered = true
-              bindItens(binder, "itensNota")
+              bindItens(binder, ProdutoVo::itensNota.name)
               binder.addValueChangeListener {
                 this.scrollToEnd()
               }

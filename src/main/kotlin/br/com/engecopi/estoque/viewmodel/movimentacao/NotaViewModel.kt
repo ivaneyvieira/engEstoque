@@ -25,6 +25,7 @@ import br.com.engecopi.estoque.model.TipoNota.TRANSFERENCIA_E
 import br.com.engecopi.estoque.model.TipoNota.TRANSFERENCIA_S
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.Usuario
+import br.com.engecopi.estoque.model.ViewProdutoLoc
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.viewmodel.movimentacao.ETipoGrupo.BLUE
 import br.com.engecopi.estoque.viewmodel.movimentacao.ETipoGrupo.GREEN
@@ -416,6 +417,20 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   val cliente: String
     get() = entityVo?.nota?.cliente ?: notaSaci?.clienteName ?: ""
   var observacaoNota: String? = ""
+  val produtoNota: List<Produto>
+    get() {
+      if(entityVo != null) return emptyList()
+      val nota = notaProdutoProdutoSaci
+      val produtos = if(nota.isNotEmpty()) nota.asSequence().mapNotNull {notaSaci ->
+        Produto.findProduto(notaSaci.prdno, notaSaci.grade)
+      }.filter {produto ->
+        usuario.temProduto(produto)
+      }.toList()
+      else ViewProdutoLoc.produtosCache() // Produto.all().filter { usuario.temProduto(it) }
+      return produtos.sortedBy {it.codigo + it.grade}
+    }
+  val quantidadeReadOnly
+    get() = notaSaci != null
   val itemNota
     get() = toEntity()
   val produtos = ArrayList<ProdutoVO>()

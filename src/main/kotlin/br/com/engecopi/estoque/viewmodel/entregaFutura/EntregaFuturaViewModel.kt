@@ -1,6 +1,5 @@
 package br.com.engecopi.estoque.viewmodel.entregaFutura
 
-import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
@@ -45,9 +44,7 @@ class EntregaFututaViewModel(view: IEntregaFututaView):
   fun notasConferidas() = find.notasConferidas().map {it.toVO()}
 }
 
-class EntregaFututaVo: NotaVo(SAIDA, "") {
-  val produtoNota = Produto.all()
-}
+class EntregaFututaVo: NotaVo(SAIDA, "")
 
 interface IEntregaFututaView: INotaView
 
