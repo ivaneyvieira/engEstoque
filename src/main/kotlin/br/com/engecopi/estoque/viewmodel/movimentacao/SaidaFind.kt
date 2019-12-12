@@ -57,8 +57,8 @@ class SaidaFind() {
       throw EViewModelError("Esta nota não pertence ao cd ${RegistryUserInfo.abreviacaoDefault}")
     }
     val nota = Nota.findSaida(item.storeno, item.numero) ?: return NotaItens.VAZIO
-    if(nota.lancamentoOrigem != EXPEDICAO) {
-      throw EViewModelError("Essa nota não foi lançada pela a expedição")
+    if(nota.lancamentoOrigem != EXPEDICAO && nota.lancamentoOrigem != ENTREGA_F) {
+      throw EViewModelError("Essa nota não foi lançada pela a expedição ou pela entrega futura")
     }
     return NotaItens(nota, nota.itensNota())
   }
