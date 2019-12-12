@@ -104,12 +104,12 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
       .updateView()
   }
   
-  fun imprimeTudo() = exec {
+  fun imprimeTudo() = execString {
     print.imprimeTudo()
       .updateView()
   }
   
-  fun imprimir(nota: Nota?) = exec {
+  fun imprimir(nota: Nota?) = execString {
     print.imprimir(nota)
       .updateView()
   }

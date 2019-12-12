@@ -36,9 +36,6 @@ object LoginService {
     EstoqueUI.current?.updateLogin()
   }
   
-  val currentUser: LoginInfo?
-    get() = EstoqueUI.current?.loginInfo
-  
   fun logout() {
     EstoqueUI.current?.loginInfo = null
     RegistryUserInfo.loginInfoProvider = null
@@ -47,8 +44,11 @@ object LoginService {
 }
 
 class SessionLoginInfoProvider: LoginInfoProvider {
-  override val loginInfo: LoginInfo?
-    get() = EstoqueUI.current?.loginInfo
+  override val loginInfo: LoginInfo? = null
+    get() {
+      if(field == null) log?.debug("O usuário não está logado")
+      return EstoqueUI.current?.loginInfo
+    }
 }
 
 class LoginForm(private val appTitle: String): VerticalLayout() {

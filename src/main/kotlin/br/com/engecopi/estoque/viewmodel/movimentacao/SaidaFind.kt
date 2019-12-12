@@ -30,25 +30,31 @@ class SaidaFind() {
     loja ?: return NotaItens.VAZIO
     val notaFutura = Nota.findSaida(loja, numeroNota)
     return if(notaFutura == null) {
-      val notasSaci =
-        Nota.findNotaSaidaSaci(loja, numeroNota)
-          .filter {loc ->
-            loc.localizacaoes()
-              .any {it.abreviacao == RegistryUserInfo.abreviacaoDefault}
-          }
-      val notaSaci = notasSaci.firstOrNull() ?: return NotaItens.VAZIO
-      if(RegistryUserInfo.usuarioDefault.isTipoCompativel(notaSaci.tipoNota())) {
-        Nota.createNotaItens(notasSaci)
-          .apply {
-            this.nota?.lancamentoOrigem = DEPOSITO
-          }
-      }
-      else NotaItens.VAZIO
+      processaNotaSaci(loja, numeroNota)
     }
     else {
-      if(notaFutura.lancamentoOrigem == ENTREGA_F) NotaItens(notaFutura, notaFutura.itensNota())
-      else NotaItens.VAZIO
+      if(notaFutura.lancamentoOrigem == ENTREGA_F) {
+        NotaItens(notaFutura, notaFutura.itensNota())
+      }
+      else processaNotaSaci(loja, numeroNota)
     }
+  }
+  
+  private fun processaNotaSaci(loja: Loja, numeroNota: String): NotaItens {
+    val notasSaci =
+      Nota.findNotaSaidaSaci(loja, numeroNota)
+        .filter {loc ->
+          loc.localizacaoes()
+            .any {it.abreviacao == RegistryUserInfo.abreviacaoDefault}
+        }
+    val notaSaci = notasSaci.firstOrNull() ?: return NotaItens.VAZIO
+    return if(RegistryUserInfo.usuarioDefault.isTipoCompativel(notaSaci.tipoNota())) {
+      Nota.createNotaItens(notasSaci)
+        .apply {
+          this.nota?.lancamentoOrigem = DEPOSITO
+        }
+    }
+    else NotaItens.VAZIO
   }
   
   private fun processaKeyBarcodeConferencia(key: String): NotaItens {

@@ -104,7 +104,7 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
       .updateView()
   }
   
-  fun imprimeTudo() = exec {
+  fun imprimeTudo() = execString {
     print.imprimeTudo()
       .updateView()
   }

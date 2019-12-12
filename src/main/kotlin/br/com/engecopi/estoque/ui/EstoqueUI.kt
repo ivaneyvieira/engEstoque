@@ -7,7 +7,6 @@ import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.model.etlSaci.ETLEntregaFutura
 import br.com.engecopi.estoque.model.etlSaci.ETLPedidos
 import br.com.engecopi.estoque.model.etlSaci.ETLTransferenciaAutomatica
-import br.com.engecopi.estoque.model.etlSaci.ETLVendasCaixa
 import br.com.engecopi.estoque.ui.views.EntregaFuturaEditorView
 import br.com.engecopi.estoque.ui.views.EntregaFuturaView
 import br.com.engecopi.estoque.ui.views.configuracao.AbreciacaoView
@@ -93,7 +92,6 @@ class EstoqueUI: UI() {
   
   override fun init(request: VaadinRequest?) {
     isResponsive = true
-    
     updateContent(request?.contextPath ?: "")
   }
   
@@ -113,8 +111,10 @@ class EstoqueUI: UI() {
   
   private fun updateContent(contextPath: String) {
     val info = loginInfo
-    if(info == null) loginScreen()
-    else appScreen(info, contextPath)
+    when(info) {
+      null -> loginScreen()
+      else -> appScreen(info, contextPath)
+    }
   }
   
   private fun appScreen(info: LoginInfo, contextPath: String) {
@@ -282,8 +282,7 @@ class MyUIServlet: VaadinServlet() {
       // Vaadin logs into java.util.logging. Redirect that, so that all logging goes through slf4j.
       SLF4JBridgeHandler.removeHandlersForRootLogger()
       SLF4JBridgeHandler.install()
-  
-      ETLVendasCaixa.start()
+      //ETLVendasCaixa.start()
       ETLPedidos.start()
       ETLEntregaFutura.start()
       ETLTransferenciaAutomatica.start()
