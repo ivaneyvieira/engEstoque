@@ -30,7 +30,7 @@ class NFVendaFututraProcessamento() {
         ?.let {
           if(it.existe()) Nota.findSaida(it.loja, it.numero)
           else {
-            it.sequencia = Nota.maxSequencia(it.tipoNota) + 1
+            it.sequencia = Nota.maxSequencia() + 1
             it.usuario = RegistryUserInfo.usuarioDefault
             it.lancamentoOrigem = ENTREGA_F
             it.save()

@@ -115,7 +115,7 @@ class Nota: BaseModel() {
       val tipoNota = notaSimples.tipoNota() ?: return NotaItens.VAZIO
       val loja = notaSimples.loja() ?: return NotaItens.VAZIO
       val nota = findNota(loja, numero, tipoNota.tipoMov) ?: createNota(notaSimples) ?: return NotaItens.VAZIO
-      nota.sequencia = maxSequencia(tipoNota) + 1
+      nota.sequencia = maxSequencia() + 1
       nota.usuario = usuarioDefault
       val itens = notasaci.mapNotNull {item ->
         val produto = Produto.findProduto(item.prdno, item.grade)
@@ -128,11 +128,9 @@ class Nota: BaseModel() {
       return NotaItens(nota, itens)
     }
   
-    fun maxSequencia(tipoNota: TipoNota?): Int {
-      return QNota().select(QNota._alias.maxSequencia).let {q ->
-        if(tipoNota == VENDAF) q.tipoNota.eq(tipoNota)
-        else q
-      }.findList().firstOrNull()?.maxSequencia ?: 0
+    fun maxSequencia(): Int {
+      return QNota().select(QNota._alias.maxSequencia)
+      .findList().firstOrNull()?.maxSequencia ?: 0
     }
   
     fun findEntrada(loja: Loja, numero: String?): Nota? {
