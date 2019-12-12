@@ -175,7 +175,9 @@ class EstoqueUI: UI() {
   
   private fun @VaadinDsl ValoMenu.sessionMovimentacao() {
     section("Movimentação") {
-      menuButton("Entrada", INBOX, view = EntradaView::class.java)
+      menuButton("Entrada", INBOX, view = EntradaView::class.java) {
+        this.id = "menuEntrada"
+      }
       menuButton("Saída", OUTBOX, view = SaidaView::class.java)
     }
   }
