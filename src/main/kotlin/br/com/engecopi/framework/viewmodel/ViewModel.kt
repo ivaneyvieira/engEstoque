@@ -16,7 +16,27 @@ abstract class ViewModel<V: IView>(val view: V): IViewModel {
   }
   
   @Throws(EViewModelError::class)
-  fun <T> exec(block: () -> T): T {
+  fun <T> execList(block: () -> List<T>): List<T> {
+    return exec(block) ?: emptyList()
+  }
+
+  @Throws(EViewModelError::class)
+  fun execUnit(block: () -> Unit) {
+    exec(block)
+  }
+  
+  @Throws(EViewModelError::class)
+  fun execString(block: () -> String): String {
+    return exec(block) ?: ""
+  }
+  
+  @Throws(EViewModelError::class)
+  fun execInt(block: () -> Int): Int {
+    return exec(block) ?: 0
+  }
+  
+  @Throws(EViewModelError::class)
+  fun <T> exec(block: () -> T): T? {
     return if(inTransaction) block()
     else transaction {
       try {
@@ -39,8 +59,12 @@ abstract class ViewModel<V: IView>(val view: V): IViewModel {
     }
   }
   
-  private fun <T> transaction(block: () -> T): T {
-    return Transaction.execTransacao {block()}
+  private fun <T> transaction(block: () -> T): T? {
+    return try {
+      Transaction.execTransacao {block()}
+    } catch(e: Throwable) {
+      null
+    }
   }
   
   protected fun showWarning(msg: String) {

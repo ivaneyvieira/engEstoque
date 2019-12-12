@@ -142,7 +142,7 @@ class EstoqueUI: UI() {
     
     navigator = Navigator(this, content as ViewDisplay)
     navigator.addProvider(autoViewProvider)
-    //setErrorHandler {e -> errorHandler(e)}
+    setErrorHandler {e -> errorHandler(e)}
     val contextPathDeafualt = when {
       user.roleExpedicao() && contextPath == "" -> NFExpedicaoView::class.java.toViewName()
       user.roleFutura() && contextPath == ""    -> NFVendaFuturaView::class.java.toViewName()
