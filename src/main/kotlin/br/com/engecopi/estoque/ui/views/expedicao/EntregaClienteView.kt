@@ -164,6 +164,7 @@ class EntregaClienteView: NotaView<EntregaClienteVo, EntregaClienteViewModel, IE
   private fun formCodbar(): PnlCodigoBarras {
     return PnlCodigoBarras("Código de barras") {key ->
       viewModel.findKey(key)
+      refreshGrid()
     }
   }
 }

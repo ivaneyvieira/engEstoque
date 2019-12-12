@@ -36,6 +36,7 @@ class EntregaClienteViewModel(view: IEntregaClienteView):
   
   fun findKey(key: String) = exec {
     find.findKey(key)
+      .updateView()
   }
   
   fun notasConferidas(): List<EntregaClienteVo> {

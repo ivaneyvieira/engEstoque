@@ -1,7 +1,6 @@
 package br.com.engecopi.framework.viewmodel
 
 import br.com.engecopi.framework.model.Transaction
-import java.lang.reflect.Proxy
 
 abstract class ViewModel<V: IView>(val view: V): IViewModel {
   private var inTransaction = false
@@ -49,11 +48,13 @@ abstract class ViewModel<V: IView>(val view: V): IViewModel {
   }
 }
 
-open class EViewModelError(msg: String): Exception(msg)
+abstract class EViewModel(msg: String): Exception(msg)
 
-open class EViewModelWarning(msg: String): Exception(msg)
+open class EViewModelError(msg: String): EViewModel(msg)
 
-open class EViewModelInfo(msg: String): Exception(msg)
+open class EViewModelWarning(msg: String): EViewModel(msg)
+
+open class EViewModelInfo(msg: String): EViewModel(msg)
 
 interface IView {
   fun showWarning(msg: String)

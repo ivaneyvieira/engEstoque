@@ -25,6 +25,7 @@ import br.com.engecopi.estoque.ui.views.movimentacao.SaidaView
 import br.com.engecopi.estoque.ui.views.paineis.PainelGeralView
 import br.com.engecopi.estoque.ui.views.paineis.PedidoTransferenciaView
 import br.com.engecopi.framework.ui.view.toViewName
+import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.utils.SystemUtils
 import com.github.mvysny.karibudsl.v8.MenuButton
 import com.github.mvysny.karibudsl.v8.VaadinDsl
@@ -141,9 +142,7 @@ class EstoqueUI: UI() {
     
     navigator = Navigator(this, content as ViewDisplay)
     navigator.addProvider(autoViewProvider)
-    
-    
-    setErrorHandler {e -> errorHandler(e)}
+    //setErrorHandler {e -> errorHandler(e)}
     val contextPathDeafualt = when {
       user.roleExpedicao() && contextPath == "" -> NFExpedicaoView::class.java.toViewName()
       user.roleFutura() && contextPath == ""    -> NFVendaFuturaView::class.java.toViewName()
@@ -245,12 +244,14 @@ class EstoqueUI: UI() {
   private fun errorHandler(e: ErrorEvent) {
     log?.error("Erro não identificado ${e.throwable.message}", e.throwable)
     // when the exception occurs, show a nice notification
-    Notification("Oops",
-                 "\n" + "Ocorreu um erro e lamentamos muito isso. Já está trabalhando na correção!",
-                 ERROR_MESSAGE).apply {
-      styleName += " " + ValoTheme.NOTIFICATION_CLOSABLE
-      position = TOP_CENTER
-      show(Page.getCurrent())
+    if(e !is EViewModel) {
+      Notification("Oops",
+                   "\n" + "Ocorreu um erro e lamentamos muito isso. Já está trabalhando na correção!",
+                   ERROR_MESSAGE).apply {
+        styleName += " " + ValoTheme.NOTIFICATION_CLOSABLE
+        position = TOP_CENTER
+        show(Page.getCurrent())
+      }
     }
   }
   
