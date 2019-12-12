@@ -42,7 +42,7 @@ class SaidaViewModel(view: ISaidaView):
       }
   }
   
-  fun confirmaProdutos(itens: List<ProdutoVO>, situacao: StatusNota) = exec {
+  fun confirmaProdutos(itens: List<ProdutoVO>, situacao: StatusNota) = execList {
     processing.confirmaProdutos(itens, situacao)
       .apply {
         view.updateView()

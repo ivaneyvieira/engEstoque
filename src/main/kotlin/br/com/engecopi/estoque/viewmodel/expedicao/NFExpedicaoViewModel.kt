@@ -109,12 +109,12 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
       .updateView()
   }
   
-  fun imprimir(nota: Nota?) = exec {
+  fun imprimir(nota: Nota?) = execList {
     print.imprimir(nota)
       .updateView()
   }
   
-  fun findNotaSaidaKey(key: String) = exec {
+  fun findNotaSaidaKey(key: String) = execList {
     find.findNotaSaidaKey(key)
   }
   

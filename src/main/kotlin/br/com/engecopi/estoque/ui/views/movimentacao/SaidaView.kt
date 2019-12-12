@@ -232,7 +232,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
   private fun formCodbar(): PnlCodigoBarras {
     return PnlCodigoBarras("Código de barras") {key ->
       val nota = viewModel.findByKey(key)
-      if(nota.vazio) showError("A nota não foi encontrada")
+      if(nota == null || nota.vazio) showError("A nota não foi encontrada")
       else {
         val dlg = DlgNotaSaida(nota, viewModel) {itens ->
           if(itens.isNotEmpty()) {
