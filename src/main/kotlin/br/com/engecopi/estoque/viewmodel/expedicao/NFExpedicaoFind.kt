@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.viewmodel.expedicao
 
+import br.com.engecopi.estoque.model.KeyNota
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.NotaSerie
 import br.com.engecopi.estoque.model.RegistryUserInfo
@@ -16,7 +17,10 @@ class NFExpedicaoFind() {
   fun findNotaSaidaKey(key: String): List<NotaProdutoSaci> {
     val notaSaci = when(key.length) {
       44   -> Nota.findNotaSaidaKey(key)
-      else -> Nota.findNotaSaidaSaci(RegistryUserInfo.lojaDeposito, key)
+      else -> {
+        val keyNota = KeyNota(key)
+        Nota.findNotaSaidaSaci(keyNota.storeno, keyNota.numero)
+      }
     }.filter {ns ->
       when {
         usuarioDefault.isEstoqueExpedicao -> ViewProdutoLoc.filtraLoc(ns.prdno, ns.grade)
