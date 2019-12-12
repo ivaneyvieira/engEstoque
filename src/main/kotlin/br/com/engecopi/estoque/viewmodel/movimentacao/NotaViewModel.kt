@@ -259,7 +259,7 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
       }
   }
   
-  fun findLojas(loja: Loja?): List<Loja> = exec {
+  fun findLojas(loja: Loja?): List<Loja> = execList {
     loja?.let {listOf(it)} ?: Loja.all()
   }
   

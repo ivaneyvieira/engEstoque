@@ -11,33 +11,33 @@ import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.framework.viewmodel.ViewModel
 
 class LabelViewModel(view: ILabelView): ViewModel<ILabelView>(view) {
-  fun addFaixaCodigo(codigoI: Int?, codigoF: Int?) = exec {
+  fun addFaixaCodigo(codigoI: Int?, codigoF: Int?) = execUnit {
     view.listaProduto = Produto.findFaixaCodigo(codigoI?.toString(), codigoF?.toString())
   }
 
-  fun addFaixaNome(nomeI: String?, nomeF: String?) = exec {
+  fun addFaixaNome(nomeI: String?, nomeF: String?) = execUnit {
     view.listaProduto = Produto.findFaixaNome(nomeI, nomeF)
   }
 
-  fun addFaixaFabricante(vendno: Int?) = exec {
+  fun addFaixaFabricante(vendno: Int?) = execUnit {
     view.listaProduto = Produto.findFaixaFabricante(vendno)
   }
 
-  fun addFaixaCentroLucro(clno: Int?) = exec {
+  fun addFaixaCentroLucro(clno: Int?) = execUnit {
     view.listaProduto = Produto.findFaixaCentroLucro(clno)
   }
 
-  fun addFaixaTipoProduto(typeno: Int?) = exec {
+  fun addFaixaTipoProduto(typeno: Int?) = execUnit {
     view.listaProduto = Produto.findTipoProduto(typeno)
   }
 
-  fun addFaixaCodigoGrade(codigo: String?, grade: String?) = exec {
-    val produto = Produto.findProduto(codigo, grade) ?: return@exec
+  fun addFaixaCodigoGrade(codigo: String?, grade: String?) = execUnit {
+    val produto = Produto.findProduto(codigo, grade) ?: return@execUnit
     val localizacoes = produto.localizacoes(RegistryUserInfo.abreviacaoDefault)
     if(localizacoes.any {it.startsWith(RegistryUserInfo.abreviacaoDefault)} && !view.listaProduto.contains(produto)) view.listaProduto += produto
   }
 
-  fun clearProduto() = exec {
+  fun clearProduto() = execUnit {
     view.listaProduto = emptyList()
   }
 
@@ -60,7 +60,7 @@ class LabelViewModel(view: ILabelView): ViewModel<ILabelView>(view) {
     }
   }
 
-  fun addFaixaNfe(nfe: String?) = exec {
+  fun addFaixaNfe(nfe: String?) = execUnit {
     val produtos =
       Nota.findNotaEntradaSaci(lojaDeposito, nfe)
         .mapNotNull {

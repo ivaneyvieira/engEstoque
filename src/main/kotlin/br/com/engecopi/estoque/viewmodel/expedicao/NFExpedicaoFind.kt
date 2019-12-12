@@ -31,7 +31,7 @@ class NFExpedicaoFind() {
     return when {
       notaSaci.isEmpty()                           -> throw EChaveNaoEncontrada()
       notaSaci.firstOrNull()?.tipoNota() == VENDAF -> throw ENotaEntregaFutura(numero)
-      else                                         -> if(RegistryUserInfo.usuarioDefault.isEstoqueExpedicao) {
+      else                                         -> if(usuarioDefault.isEstoqueExpedicao) {
         val nota = notaSaci.firstOrNull() ?: throw EChaveNaoEncontrada()
         val notaSerie = nota.notaSerie() ?: throw EChaveNaoEncontrada()
         val tipo = notaSerie.tipoNota
