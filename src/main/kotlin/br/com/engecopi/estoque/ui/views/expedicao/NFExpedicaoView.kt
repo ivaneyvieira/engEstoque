@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.ui.views.expedicao
 
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
+import br.com.engecopi.estoque.model.RegistryUserInfo.userDefaultIsAdmin
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
 import br.com.engecopi.estoque.viewmodel.expedicao.INFExpedicaoView
@@ -51,7 +52,7 @@ import com.vaadin.ui.themes.ValoTheme
 class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), INFExpedicaoView {
   var formCodBar: PnlCodigoBarras? = null
   private val isAdmin
-    get() = RegistryUserInfo.userDefaultIsAdmin
+    get() = userDefaultIsAdmin
   
   override fun enter(event: ViewChangeEvent) {
     super.enter(event)

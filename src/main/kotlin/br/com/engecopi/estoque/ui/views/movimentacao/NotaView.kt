@@ -48,8 +48,8 @@ import org.vaadin.patrik.FastNavigation
 abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: CrudLayoutView<VO, MODEL>() {
   lateinit var gridProduto: Grid<ProdutoVO>
   //val lojaDefault = lojaUsuario ?: lojaDeposito
-  val usuario = usuarioDefault
-  val isAdmin = usuario.admin
+  val usuario get() = usuarioDefault
+  val isAdmin get() = usuario.admin
   
   inline fun <reified V: NotaVo> (@VaadinDsl HasComponents).notaFiscalField(operation: CrudOperation?,
                                                                             binder: Binder<V>): TextField {
