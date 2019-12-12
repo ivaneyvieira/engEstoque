@@ -25,7 +25,6 @@ import br.com.engecopi.estoque.ui.views.movimentacao.SaidaView
 import br.com.engecopi.estoque.ui.views.paineis.PainelGeralView
 import br.com.engecopi.estoque.ui.views.paineis.PedidoTransferenciaView
 import br.com.engecopi.framework.ui.view.toViewName
-import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.utils.SystemUtils
 import com.github.mvysny.karibudsl.v8.MenuButton
 import com.github.mvysny.karibudsl.v8.VaadinDsl
@@ -87,11 +86,10 @@ class EstoqueUI: UI() {
   val title = "<h3>Estoque <strong>Engecopi</strong></h3>"
   private val versao = SystemUtils.readFile("/versao.txt")
   var loginInfo: LoginInfo? = null
-    set(value) {
-      field = value
-      RegistryUserInfo.loginInfo = value
-      updateContent("")
-    }
+  
+  fun updateLogin() {
+    updateContent("")
+  }
   
   override fun init(request: VaadinRequest?) {
     isResponsive = true
@@ -244,14 +242,12 @@ class EstoqueUI: UI() {
   private fun errorHandler(e: ErrorEvent) {
     log?.error("Erro não identificado ${e.throwable.message}", e.throwable)
     // when the exception occurs, show a nice notification
-    if(e !is EViewModel) {
-      Notification("Oops",
-                   "\n" + "Ocorreu um erro e lamentamos muito isso. Já está trabalhando na correção!",
-                   ERROR_MESSAGE).apply {
-        styleName += " " + ValoTheme.NOTIFICATION_CLOSABLE
-        position = TOP_CENTER
-        show(Page.getCurrent())
-      }
+    Notification("Oops",
+                 "\n" + "Ocorreu um erro e lamentamos muito isso. Já está trabalhando na correção!",
+                 ERROR_MESSAGE).apply {
+      styleName += " " + ValoTheme.NOTIFICATION_CLOSABLE
+      position = TOP_CENTER
+      show(Page.getCurrent())
     }
   }
   

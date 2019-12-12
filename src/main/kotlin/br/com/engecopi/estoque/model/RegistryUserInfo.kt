@@ -8,7 +8,9 @@ object RegistryUserInfo {
   private const val LOJA_FIELD = "LOJA_DEFAULT"
   private const val USER_FIELD = "USER_DEFAULT"
   private const val ABREV_FIELD = "ABREV_DEFAULT"
-  var loginInfo: LoginInfo? = null
+  var loginInfoProvider: LoginInfoProvider? = null
+  val loginInfo
+    get() = loginInfoProvider?.loginInfo
   private val info: LoginInfo?
     get() {
       if(loginInfo == null) {
@@ -46,4 +48,8 @@ enum class TipoUsuario(val descricao: String) {
   EXPEDICAO("Expedição")
 }
 
-class EUsuarioNaoInicializado: Exception("O usuário não está logado")
+class EUsuarioNaoInicializado: EViewModelError("O usuário não está logado")
+
+interface LoginInfoProvider {
+  val loginInfo: LoginInfo?
+}

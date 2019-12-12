@@ -1,8 +1,9 @@
 package br.com.engecopi.estoque.ui
 
 import br.com.engecopi.estoque.model.LoginInfo
+import br.com.engecopi.estoque.model.LoginInfoProvider
+import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.Usuario
-import br.com.engecopi.framework.ui.Session
 import br.com.engecopi.saci.saci
 import com.github.mvysny.karibudsl.v8.alignment
 import com.github.mvysny.karibudsl.v8.button
@@ -31,22 +32,30 @@ import com.vaadin.ui.themes.ValoTheme
 object LoginService {
   fun login(loginInfo: LoginInfo) {
     EstoqueUI.current?.loginInfo = loginInfo
-    Session[LoginInfo::class] = loginInfo
+    RegistryUserInfo.loginInfoProvider = SessionLoginInfoProvider()
+    EstoqueUI.current?.updateLogin()
   }
-
+  
   val currentUser: LoginInfo?
     get() = EstoqueUI.current?.loginInfo
-
+  
   fun logout() {
     EstoqueUI.current?.loginInfo = null
+    RegistryUserInfo.loginInfoProvider = null
+    EstoqueUI.current?.updateLogin()
   }
+}
+
+class SessionLoginInfoProvider: LoginInfoProvider {
+  override val loginInfo: LoginInfo?
+    get() = EstoqueUI.current?.loginInfo
 }
 
 class LoginForm(private val appTitle: String): VerticalLayout() {
   private lateinit var username: TextField
   private lateinit var password: TextField
   private lateinit var abreviacao: ComboBox<String>
-
+  
   init {
     setSizeFull()
     isResponsive = true

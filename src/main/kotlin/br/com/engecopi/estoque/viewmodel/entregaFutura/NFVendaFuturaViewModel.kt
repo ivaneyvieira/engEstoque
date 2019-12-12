@@ -114,7 +114,10 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
       .updateView()
   }
   
-  fun findNotaSaidaKey(key: String) = find.findNotaSaidaKey(key)
+  fun findNotaSaidaKey(key: String) = execList {
+    find.findNotaSaidaKey(key)
+      .updateView()
+  }
   
   fun findLoja(storeno: Int?) = find.findLoja(storeno)
   
