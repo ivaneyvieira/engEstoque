@@ -23,7 +23,7 @@ class NotaFuturaFind {
       Nota.findNotaSaidaSaci(storeno, nfno)
         .filter {ns ->
           when {
-            RegistryUserInfo.usuarioDefault.isEstoqueVendaFutura -> ViewProdutoLoc.filtraLoc(ns.prdno, ns.grade)
+            RegistryUserInfo.usuarioDefault.isEstoqueVendaFutura -> filtraLoc(ns)
             else                                                 -> true
           }
         }
@@ -41,7 +41,12 @@ class NotaFuturaFind {
         }
       }
       else notaSaci
-    }
+    }.expandeGradeGenerica()
+  }
+  
+  private fun filtraLoc(notaSaci: NotaProdutoSaci): Boolean {
+    val gradeStr = notaSaci.grade ?: ""
+    return ViewProdutoLoc.filtraLoc(notaSaci.prdno, gradeStr) || gradeStr.startsWith("***")
   }
   
   private fun NotaProdutoSaci.notaSerie(): NotaSerie? {
@@ -59,5 +64,22 @@ class NotaFuturaFind {
   fun saldoProduto(notaProdutoSaci: NotaProdutoSaci, abreviacao: String): Int {
     val produto = Produto.findProduto(notaProdutoSaci.codigo(), notaProdutoSaci.grade)
     return produto?.saldoAbreviacao(RegistryUserInfo.lojaDeposito, abreviacao) ?: 0
+  }
+}
+
+private fun List<NotaProdutoSaci>.expandeGradeGenerica(): List<NotaProdutoSaci> {
+  return this.flatMap {notaSaci ->
+    val gradeStr = notaSaci.grade ?: ""
+    if(gradeStr.startsWith("***")) {
+      Produto.findProdutos(notaSaci.codigo())
+        .mapNotNull {produto ->
+          val quant = notaSaci.quant ?: 0
+          if(produto.saldoTotal() >= quant) {
+            notaSaci.copy(grade = produto.grade)
+          }
+          else null
+        }
+    }
+    else listOf(notaSaci)
   }
 }
