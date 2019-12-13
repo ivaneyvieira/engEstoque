@@ -4,9 +4,6 @@ import br.com.engecopi.estoque.model.LoginInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RepositoryAvisoNotas
 import br.com.engecopi.estoque.model.Usuario
-import br.com.engecopi.estoque.model.etlSaci.ETLEntregaFutura
-import br.com.engecopi.estoque.model.etlSaci.ETLPedidos
-import br.com.engecopi.estoque.model.etlSaci.ETLTransferenciaAutomatica
 import br.com.engecopi.estoque.ui.views.EntregaFuturaEditorView
 import br.com.engecopi.estoque.ui.views.EntregaFuturaView
 import br.com.engecopi.estoque.ui.views.configuracao.AbreciacaoView
@@ -283,9 +280,9 @@ class MyUIServlet: VaadinServlet() {
       SLF4JBridgeHandler.removeHandlersForRootLogger()
       SLF4JBridgeHandler.install()
       //ETLVendasCaixa.start()
-      ETLPedidos.start()
-      ETLEntregaFutura.start()
-      ETLTransferenciaAutomatica.start()
+      //ETLPedidos.start()
+      //ETLEntregaFutura.start()
+      //ETLTransferenciaAutomatica.start()
     }
   }
 }

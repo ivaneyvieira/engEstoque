@@ -1,8 +1,11 @@
+
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import io.ebean.gradle.EnhancePluginExtension
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 
 val kotlinVersion = properties["kotlinVersion"] as String
 val karibuVersion = properties["karibuVersion"] as String
@@ -14,6 +17,7 @@ plugins {
   id("org.gretty") version "2.3.1"
   id("com.devsoap.plugin.vaadin") version "1.4.1"
   id("io.ebean") version "12.1.5"
+  id("com.github.johnrengelman.shadow") version "5.1.0"
   war
 }
 
@@ -28,7 +32,6 @@ defaultTasks("clean", "build")
 
 group = "engEstoque"
 version = "1.0-SNAPSHOT"
-
 
 gretty {
   contextPath = "/"
@@ -126,3 +129,8 @@ tasks.getByName<War>("war") {
   enabled = true
 }
 
+tasks.withType<ShadowJar>() {
+  manifest {
+    attributes["Main-Class"] = "br.com.engecopi.estoque.background.EtlExecuteKt"
+  }
+}
