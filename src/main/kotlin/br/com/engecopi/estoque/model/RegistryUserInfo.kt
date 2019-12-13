@@ -1,6 +1,6 @@
 package br.com.engecopi.estoque.model
 
-import br.com.engecopi.estoque.ui.log
+
 import br.com.engecopi.framework.model.Transaction
 import br.com.engecopi.framework.viewmodel.EViewModelError
 import com.vaadin.server.Page
@@ -12,9 +12,6 @@ object RegistryUserInfo {
   var loginInfoProvider: LoginInfoProvider? = null
     set(value) {
       field = value
-      if(value == null) {
-        log?.debug("O login provider foi anulado...")
-      }
       val loginInfo = value?.loginInfo
       if(loginInfo == null) {
         Transaction.variable(LOJA_FIELD, "NULL")
@@ -27,8 +24,11 @@ object RegistryUserInfo {
         Transaction.variable(ABREV_FIELD, "'${loginInfo.abreviacao}'")
       }
     }
-  private val info
-    get() = loginInfoProvider?.loginInfo
+  private val info : LoginInfo?
+    get() {
+      val loginProv = loginInfoProvider ?: throw EViewModelError("Não há provedor de login")
+      return loginProv.loginInfo
+    }
   val usuarioDefault
     get() = info?.usuario ?: throw EUsuarioNaoInicializado()
   val abreviacaoDefault

@@ -84,6 +84,7 @@ class EstoqueUI: UI() {
   private lateinit var menuVisaoGeral: MenuButton
   val title = "<h3>Estoque <strong>Engecopi</strong></h3>"
   private val versao = SystemUtils.readFile("/versao.txt")
+  
   var loginInfo: LoginInfo? = null
   
   fun updateLogin() {
@@ -110,8 +111,7 @@ class EstoqueUI: UI() {
   }
   
   private fun updateContent(contextPath: String) {
-    val info = loginInfo
-    when(info) {
+    when(val info = loginInfo) {
       null -> loginScreen()
       else -> appScreen(info, contextPath)
     }
