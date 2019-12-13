@@ -76,10 +76,15 @@ private fun List<NotaProdutoSaci>.expandeGradeGenerica(): List<NotaProdutoSaci> 
           val quant = notaSaci.quant ?: 0
           if(produto.saldoTotal() >= quant) {
             notaSaci.copy(grade = produto.grade)
+              .apply {
+                this.gradeGenerica = true
+              }
           }
           else null
         }
     }
-    else listOf(notaSaci)
+    else listOf(notaSaci.apply {
+      this.gradeGenerica = false
+    })
   }
 }

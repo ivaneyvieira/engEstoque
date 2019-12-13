@@ -21,6 +21,8 @@ data class NotaProdutoSaci(val rota: String?,
                       val clienteName: String? = "",
                       val tipo: String?,
                       val invno: Int?) {
+  var gradeGenerica: Boolean = false
+  
   fun isSave(): Boolean {
     return ItemNota.isSave(this)
   }
