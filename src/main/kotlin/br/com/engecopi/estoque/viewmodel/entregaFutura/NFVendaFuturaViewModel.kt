@@ -104,17 +104,20 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
       .updateView()
   }
   
-  fun imprimeTudo() = exec {
+  fun imprimeTudo() = execString {
     print.imprimeTudo()
       .updateView()
   }
   
-  fun imprimir(nota: Nota?) = exec {
+  fun imprimir(nota: Nota?) = execString {
     print.imprimir(nota)
       .updateView()
   }
   
-  fun findNotaSaidaKey(key: String) = find.findNotaSaidaKey(key)
+  fun findNotaSaidaKey(key: String) = execList {
+    find.findNotaSaidaKey(key)
+      .updateView()
+  }
   
   fun findLoja(storeno: Int?) = find.findLoja(storeno)
   

@@ -7,7 +7,6 @@ import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.model.etlSaci.ETLEntregaFutura
 import br.com.engecopi.estoque.model.etlSaci.ETLPedidos
 import br.com.engecopi.estoque.model.etlSaci.ETLTransferenciaAutomatica
-import br.com.engecopi.estoque.model.etlSaci.ETLVendasCaixa
 import br.com.engecopi.estoque.ui.views.EntregaFuturaEditorView
 import br.com.engecopi.estoque.ui.views.EntregaFuturaView
 import br.com.engecopi.estoque.ui.views.configuracao.AbreciacaoView
@@ -25,7 +24,6 @@ import br.com.engecopi.estoque.ui.views.movimentacao.SaidaView
 import br.com.engecopi.estoque.ui.views.paineis.PainelGeralView
 import br.com.engecopi.estoque.ui.views.paineis.PedidoTransferenciaView
 import br.com.engecopi.framework.ui.view.toViewName
-import br.com.engecopi.framework.viewmodel.EViewModel
 import br.com.engecopi.utils.SystemUtils
 import com.github.mvysny.karibudsl.v8.MenuButton
 import com.github.mvysny.karibudsl.v8.VaadinDsl
@@ -87,15 +85,13 @@ class EstoqueUI: UI() {
   val title = "<h3>Estoque <strong>Engecopi</strong></h3>"
   private val versao = SystemUtils.readFile("/versao.txt")
   var loginInfo: LoginInfo? = null
-    set(value) {
-      field = value
-      RegistryUserInfo.loginInfo = value
-      updateContent("")
-    }
+  
+  fun updateLogin() {
+    updateContent("")
+  }
   
   override fun init(request: VaadinRequest?) {
     isResponsive = true
-    
     updateContent(request?.contextPath ?: "")
   }
   
@@ -115,8 +111,10 @@ class EstoqueUI: UI() {
   
   private fun updateContent(contextPath: String) {
     val info = loginInfo
-    if(info == null) loginScreen()
-    else appScreen(info, contextPath)
+    when(info) {
+      null -> loginScreen()
+      else -> appScreen(info, contextPath)
+    }
   }
   
   private fun appScreen(info: LoginInfo, contextPath: String) {
@@ -244,14 +242,12 @@ class EstoqueUI: UI() {
   private fun errorHandler(e: ErrorEvent) {
     log?.error("Erro não identificado ${e.throwable.message}", e.throwable)
     // when the exception occurs, show a nice notification
-    if(e !is EViewModel) {
-      Notification("Oops",
-                   "\n" + "Ocorreu um erro e lamentamos muito isso. Já está trabalhando na correção!",
-                   ERROR_MESSAGE).apply {
-        styleName += " " + ValoTheme.NOTIFICATION_CLOSABLE
-        position = TOP_CENTER
-        show(Page.getCurrent())
-      }
+    Notification("Oops",
+                 "\n" + "Ocorreu um erro e lamentamos muito isso. Já está trabalhando na correção!",
+                 ERROR_MESSAGE).apply {
+      styleName += " " + ValoTheme.NOTIFICATION_CLOSABLE
+      position = TOP_CENTER
+      show(Page.getCurrent())
     }
   }
   
@@ -286,8 +282,7 @@ class MyUIServlet: VaadinServlet() {
       // Vaadin logs into java.util.logging. Redirect that, so that all logging goes through slf4j.
       SLF4JBridgeHandler.removeHandlersForRootLogger()
       SLF4JBridgeHandler.install()
-  
-      ETLVendasCaixa.start()
+      //ETLVendasCaixa.start()
       ETLPedidos.start()
       ETLEntregaFutura.start()
       ETLTransferenciaAutomatica.start()

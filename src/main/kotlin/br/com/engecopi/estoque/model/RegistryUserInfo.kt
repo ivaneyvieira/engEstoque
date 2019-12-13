@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.model
 
+import br.com.engecopi.estoque.ui.log
 import br.com.engecopi.framework.model.Transaction
 import br.com.engecopi.framework.viewmodel.EViewModelError
 import com.vaadin.server.Page
@@ -8,9 +9,13 @@ object RegistryUserInfo {
   private const val LOJA_FIELD = "LOJA_DEFAULT"
   private const val USER_FIELD = "USER_DEFAULT"
   private const val ABREV_FIELD = "ABREV_DEFAULT"
-  var loginInfo: LoginInfo? = null
-  private val info: LoginInfo?
-    get() {
+  var loginInfoProvider: LoginInfoProvider? = null
+    set(value) {
+      field = value
+      if(value == null) {
+        log?.debug("O login provider foi anulado...")
+      }
+      val loginInfo = value?.loginInfo
       if(loginInfo == null) {
         Transaction.variable(LOJA_FIELD, "NULL")
         Transaction.variable(USER_FIELD, "NULL")
@@ -18,11 +23,12 @@ object RegistryUserInfo {
       }
       else {
         Transaction.variable(LOJA_FIELD, "${lojaDeposito.numero}")
-        Transaction.variable(USER_FIELD, "${loginInfo?.usuario?.id}")
-        Transaction.variable(ABREV_FIELD, "'${loginInfo?.abreviacao}'")
+        Transaction.variable(USER_FIELD, "${loginInfo.usuario.id}")
+        Transaction.variable(ABREV_FIELD, "'${loginInfo.abreviacao}'")
       }
-      return loginInfo
     }
+  private val info
+    get() = loginInfoProvider?.loginInfo
   val usuarioDefault
     get() = info?.usuario ?: throw EUsuarioNaoInicializado()
   val abreviacaoDefault
@@ -36,7 +42,7 @@ object RegistryUserInfo {
   val impressora
     get() = Abreviacao.findByAbreviacao(abreviacaoDefault)?.impressora ?: ""
   val isLogged
-    get() = loginInfo != null
+    get() = info != null
 }
 
 data class LoginInfo(val usuario: Usuario, val abreviacao: String)
@@ -46,4 +52,8 @@ enum class TipoUsuario(val descricao: String) {
   EXPEDICAO("Expedição")
 }
 
-class EUsuarioNaoInicializado: Exception("O usuário não está logado")
+class EUsuarioNaoInicializado: EViewModelError("O usuário não está logado")
+
+interface LoginInfoProvider {
+  val loginInfo: LoginInfo?
+}

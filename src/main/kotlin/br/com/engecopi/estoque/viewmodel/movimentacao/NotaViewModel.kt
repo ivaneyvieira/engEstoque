@@ -66,7 +66,7 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
   
   override fun add(bean: VO) {
     val nota = insertNota(bean)
-    val usuario = bean.usuario
+    val usuario = bean.usuario ?: usuarioDefault
     val addTime = LocalTime.now()
     if(bean.notaSaci == null) {
       val produto = saveProduto(bean.produto)
@@ -263,17 +263,17 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
     loja?.let {listOf(it)} ?: Loja.all()
   }
   
-  fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean, groupByHour: Boolean) = exec {
+  fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean, groupByHour: Boolean) = execString {
     print.imprimir(itemNota, notaCompleta, groupByHour, statusImpressao)
       .updateView()
   }
   
-  fun imprimir() = exec {
+  fun imprimir() = execString {
     print.imprimir(statusImpressao)
       .updateView()
   }
   
-  fun imprimir(itens: List<ItemNota>) = exec {
+  fun imprimir(itens: List<ItemNota>) = execString {
     print.imprimir(itens, statusImpressao)
       .updateView()
   }
@@ -289,7 +289,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
     return ItemNota.find(nota, produto)
   }
   
-  var usuario: Usuario = usuarioDefault
+  var usuario: Usuario? = null
   var numeroCodigo: String? = ""
   var numeroCodigoReduzido: String? = ""
   var numeroBaixa: String? = ""
@@ -322,7 +322,8 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
     get() = if(entityVo == null) mapNotaSaci.getOrPut(numeroNF) {
       when(tipo) {
         SAIDA   -> Nota.findNotaSaidaSaci(lojaDeposito, numeroNF).filter {
-          usuario.admin || (it.tipo != "PEDIDO_E")
+          val user = usuario ?: return@filter false
+          user.admin || (it.tipo != "PEDIDO_E")
         }
         ENTRADA -> Nota.findNotaEntradaSaci(lojaDeposito, numeroNF)
       }
@@ -424,7 +425,8 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
       val produtos = if(nota.isNotEmpty()) nota.asSequence().mapNotNull {notaSaci ->
         Produto.findProduto(notaSaci.prdno, notaSaci.grade)
       }.filter {produto ->
-        usuario.temProduto(produto)
+        val user = usuario ?: return@filter false
+        user.temProduto(produto)
       }.toList()
       else ViewProdutoLoc.produtosCache() // Produto.all().filter { usuario.temProduto(it) }
       return produtos.sortedBy {it.codigo + it.grade}
