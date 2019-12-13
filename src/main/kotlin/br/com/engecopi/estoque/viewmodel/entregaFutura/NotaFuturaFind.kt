@@ -58,6 +58,6 @@ class NotaFuturaFind {
   
   fun saldoProduto(notaProdutoSaci: NotaProdutoSaci, abreviacao: String): Int {
     val produto = Produto.findProduto(notaProdutoSaci.codigo(), notaProdutoSaci.grade)
-    return produto?.saldoAbreviacao(RegistryUserInfo.lojaDeposito, abreviacao) ?: 0
+    return produto?.saldoAbreviacao(abreviacao) ?: 0
   }
 }

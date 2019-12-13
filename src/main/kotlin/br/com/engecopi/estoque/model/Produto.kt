@@ -200,9 +200,8 @@ class Produto: BaseModel() {
       .sumBy {it.quantidadeSaldo}
   }
   
-  fun saldoAbreviacao(loja: Loja, abreviacao: String): Int {
+  fun saldoAbreviacao(abreviacao: String): Int {
     return QItemNota().produto.id.eq(id)
-      .nota.loja.eq(loja)
       .localizacao.startsWith(abreviacao)
       .findList()
       .sumBy {it.quantidadeSaldo}
