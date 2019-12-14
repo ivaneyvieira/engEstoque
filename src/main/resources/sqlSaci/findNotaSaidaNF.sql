@@ -28,8 +28,8 @@ SELECT CAST(IFNULL(X.xrouteno, '') AS CHAR) AS rota,
            END                              AS tipo
 FROM sqldados.nf AS                      N
        INNER JOIN sqldados.xaprd AS      P USING (storeno, pdvno, xano)
-       INNER JOIN engEstoque.produtos AS E
-         ON E.codigo = P.prdno AND E.grade = P.grade
+       INNER JOIN sqldados.prdloc AS E
+         ON E.prdno = P.prdno AND E.grade = P.grade AND E.storeno = 4
        LEFT JOIN  sqldados.custp AS      C
          ON C.no = N.custno
        LEFT JOIN  sqldados.inv AS        I
