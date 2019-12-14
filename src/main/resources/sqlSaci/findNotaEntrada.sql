@@ -1,4 +1,3 @@
-
 select P.invno, N.storeno, cast(nfname as char) as numero, invse as serie,
        CAST(IFNULL(X.xrouteno, '') AS CHAR) AS rota,
        N.date,
@@ -41,8 +40,8 @@ select 0                    as invno, N.storeno, cast(ordno as char) as numero, 
 from sqldados.eord AS N
   inner join sqldados.eoprd AS P
   USING(storeno, ordno)
-  inner join engEstoque.produtos AS E
-    ON E.codigo = P.prdno AND E.grade = P.grade
+       INNER JOIN sqldados.prdloc AS E
+         ON E.prdno = P.prdno AND E.grade = P.grade AND E.storeno = 4
   left join sqldados.custp AS C
     ON C.no = N.custno
 WHERE N.paymno = 290 AND

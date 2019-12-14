@@ -135,7 +135,7 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
   
   fun saldoProduto(notaProdutoSaci: NotaProdutoSaci, abreviacao: String): Int {
     val produto = Produto.findProduto(notaProdutoSaci.codigo(), notaProdutoSaci.grade)
-    return produto?.saldoAbreviacao(lojaDeposito, abreviacao) ?: 0
+    return produto?.saldoAbreviacao(abreviacao) ?: 0
   }
   
   fun processaVendas(venda: VendasCaixa) {

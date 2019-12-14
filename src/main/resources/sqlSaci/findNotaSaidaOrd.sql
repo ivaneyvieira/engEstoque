@@ -11,8 +11,8 @@ SELECT DISTINCT cast(CONCAT(N.paymno) as char)     AS rota,
                 'PEDIDO_S'    AS tipo
 FROM sqldados.eord AS                    N
        INNER JOIN sqldados.eoprd AS      P USING (storeno, ordno)
-       INNER JOIN engEstoque.produtos AS E
-         ON E.codigo = P.prdno AND E.grade = P.grade
+       INNER JOIN sqldados.prdloc AS E
+         ON E.prdno = P.prdno AND E.grade = P.grade AND E.storeno = 4
        LEFT JOIN  sqldados.custp AS      C
          ON C.no = N.custno
 WHERE N.paymno = 291 AND
