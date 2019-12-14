@@ -8,7 +8,7 @@ import br.com.engecopi.estoque.model.ViewProdutoLoc
 import br.com.engecopi.estoque.model.dtos.ProdutoGrade
 import br.com.engecopi.utils.lpad
 
-class NotaProdutoSaci(val rota: String?,
+data class NotaProdutoSaci(val rota: String?,
                       val storeno: Int?,
                       val numero: String?,
                       val serie: String?,
@@ -21,6 +21,8 @@ class NotaProdutoSaci(val rota: String?,
                       val clienteName: String? = "",
                       val tipo: String?,
                       val invno: Int?) {
+  var gradeGenerica: Boolean = false
+  
   fun isSave(): Boolean {
     return ItemNota.isSave(this)
   }

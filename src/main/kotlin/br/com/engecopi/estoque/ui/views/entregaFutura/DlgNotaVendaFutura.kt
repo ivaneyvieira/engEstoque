@@ -41,16 +41,31 @@ class DlgNotaVendaFutura(val localizacaoNota: LocalizacaoVendaFutura,
               alignment = Alignment.BOTTOM_RIGHT
               addStyleName(ValoTheme.BUTTON_PRIMARY)
               addClickListener {
-                localizacaoNota.itensVendaFutura.forEach {
-                  it.selecionado = false
+                val produtosPepetidos = gridProdutos.selectedItems.filter {
+                  val notaItemSaci = it.notaProdutoSaci
+                  notaItemSaci.gradeGenerica
                 }
-                val itensSelecionado = gridProdutos.selectedItems.toList().filter {!it.isSave()}
-
-                itensSelecionado.forEach {
-                  it.selecionado = true
+                  .groupBy {it.prdno}
+                  .filter {entry ->
+                    entry.value.size > 1
+                  }
+                if(produtosPepetidos.isNotEmpty()) {
+                  viewModel.view.showWarning("Foi selecionado mais uma grade do mesmo produto")
                 }
-                update()
-                close()
+                else {
+                  localizacaoNota.itensVendaFutura.forEach {
+                    it.selecionado = false
+                  }
+                  val itensSelecionado =
+                    gridProdutos.selectedItems.toList()
+                      .filter {!it.isSave()}
+    
+                  itensSelecionado.forEach {
+                    it.selecionado = true
+                  }
+                  update()
+                  close()
+                }
               }
             }
             button("Cancela") {
