@@ -16,12 +16,12 @@ class ETLVendasCaixa: ETL<VendasCaixa>() {
       WHERE id = :id
     """.trimIndent()
 
-  companion object: ETLThread<VendasCaixa>(ETLVendasCaixa()) {
+  companion object: ETLThread<VendasCaixa>(ETLVendasCaixa(), 30) {
     val sql
       get() = "select id, storeno, nfno, nfse, prdno, grade, qtty from t_vendas_caixa"
-
+  
     override fun getSource() = saci.findVendasCaixa()
-
+  
     override fun getTarget() = DB.findDto(VendasCaixa::class.java, sql).findList()
   }
 }

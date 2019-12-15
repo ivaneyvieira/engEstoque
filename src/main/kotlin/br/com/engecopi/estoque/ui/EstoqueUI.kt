@@ -4,6 +4,7 @@ import br.com.engecopi.estoque.model.LoginInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RepositoryAvisoNotas
 import br.com.engecopi.estoque.model.Usuario
+import br.com.engecopi.estoque.model.etlSaci.ETLDadosProdutosSaci
 import br.com.engecopi.estoque.model.etlSaci.ETLEntregaFutura
 import br.com.engecopi.estoque.model.etlSaci.ETLPedidos
 import br.com.engecopi.estoque.model.etlSaci.ETLTransferenciaAutomatica
@@ -286,6 +287,7 @@ class MyUIServlet: VaadinServlet() {
       ETLPedidos.start()
       ETLEntregaFutura.start()
       ETLTransferenciaAutomatica.start()
+      ETLDadosProdutosSaci.start()
     }
   }
 }
