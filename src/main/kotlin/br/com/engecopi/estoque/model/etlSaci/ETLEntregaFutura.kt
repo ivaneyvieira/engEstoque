@@ -21,15 +21,15 @@ class ETLEntregaFutura: ETL<EntregaFutura>() {
     WHERE id = :id
   """.trimIndent()
 
-  companion object: ETLThread<EntregaFutura>(ETLEntregaFutura()) {
+  companion object: ETLThread<EntregaFutura>(ETLEntregaFutura(), 60) {
     val sql
       get() = """select id, storeno, ordno, numero_venda, nfno_venda, nfse_venda, 
                         numero_entrega, nfno_entrega, nfse_entrega, nfekey_entrega
       |FROM t_entrega_futura
       |""".trimMargin()
-
+  
     override fun getSource() = saci.findEntregaFutura()
-
+  
     override fun getTarget() = DB.findDto(EntregaFutura::class.java, sql).findList()
   }
 }

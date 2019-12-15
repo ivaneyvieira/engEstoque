@@ -20,16 +20,16 @@ class ETLPedidos: ETL<PedidoSaci>() {
       WHERE id = :id
     """.trimIndent()
 
-  companion object: ETLThread<PedidoSaci>(ETLPedidos()) {
+  companion object: ETLThread<PedidoSaci>(ETLPedidos(), 60) {
     val sql
       get() = """select id, rota, storeno, numero, date, clienteName, abreviacao, nfno, nfse, status 
       |from t_pedido
       |""".trimMargin()
-
+  
     override fun getSource() = saci.findPedidoTransferencia()
-
+  
     override fun getTarget() = DB.findDto(PedidoSaci::class.java, sql).findList()
-
+  
     init {
       addListenerInsert("ImprimeInsert") {pedido ->
         if(pedido.status == 2) {

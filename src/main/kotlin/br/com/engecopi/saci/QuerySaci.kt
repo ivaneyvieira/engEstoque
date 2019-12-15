@@ -1,6 +1,7 @@
 package br.com.engecopi.saci
 
 import br.com.engecopi.estoque.model.Nota
+import br.com.engecopi.estoque.model.dtos.DadosProdutosSaci
 import br.com.engecopi.estoque.model.dtos.EntregaFutura
 import br.com.engecopi.estoque.model.dtos.PedidoSaci
 import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
@@ -281,6 +282,13 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     return query(sql) {q ->
       q.addParameter("data_inicial", "$data_inicial")
         .executeAndFetch(TransferenciaAutomatica::class.java)
+    }
+  }
+  
+  fun findDadosProdutosSaci(): List<DadosProdutosSaci> {
+    val sql = "/sqlSaci/tab_produtos.sql"
+    return query(sql) {q ->
+      q.executeAndFetch(DadosProdutosSaci::class.java)
     }
   }
   

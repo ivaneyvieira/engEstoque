@@ -108,14 +108,14 @@ fun <T: Any> SqlUpdate.setParameter(bean: T): SqlUpdate {
   return this
 }
 
-abstract class ETLThread<T: EntryID>(private val etl: ETL<T>) {
+abstract class ETLThread<T: EntryID>(private val etl: ETL<T>, private val intervalInSeconds: Int) {
   protected abstract fun getSource(): List<T>
-
+  
   protected abstract fun getTarget(): List<T>
-
+  
   val listDados
     get() = if(isLogged) getTarget() else emptyList()
-
+  
   fun addListenerInsert(name: String, listener: ListenerEventInsert<T>) {
     etl.addListenerInsert(name, listener)
   }
@@ -143,7 +143,7 @@ abstract class ETLThread<T: EntryID>(private val etl: ETL<T>) {
       } catch(e: Throwable) {
         e.printStackTrace()
       }
-      Thread.sleep(30000)
+      Thread.sleep((intervalInSeconds * 1000).toLong())
     }
   }
 
