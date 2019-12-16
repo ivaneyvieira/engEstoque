@@ -12,7 +12,7 @@ SELECT
     cast(CONCAT(awnfrnf.nfNfno,"/",awnfrnf.nfNfse) as char)                       AS  nftransf
 FROM sqldados.awnfrnf
    INNER JOIN sqldados.awnfr  ON (awnfr.storeno = awnfrnf.awnfrStoreno and awnfr.cargano=awnfrnf.awnfrCargano)
-WHERE
-   (awnfrnf.emissao > :data_inicial)
+   INNER JOIN sqldados.nf ON (storenoNfr = nf.storeno and pdvnoNfr = nf.pdvno and xanoNfr = nf.xano)
+WHERE  awnfrnf.emissao > :data_inicial
    AND awnfrnf.nfStoreno = 4
-GROUP BY  storenoNfr, pdvnoNfr, xanoNfr;
+   AND nf.status <> 1
