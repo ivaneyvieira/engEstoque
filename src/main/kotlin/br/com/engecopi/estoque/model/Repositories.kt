@@ -3,7 +3,6 @@ package br.com.engecopi.estoque.model
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.query.QViewProdutoLoc
-import br.com.engecopi.framework.model.DB
 import io.ebean.Ebean
 import java.time.LocalDateTime
 
@@ -61,7 +60,7 @@ update tab_produtos AS T
 SET T.produto_id = IFNULL(P.id, 0)
 WHERE T.produto_id <> P.id;
 """
-    DB.sciptSql(sql)
+    //DB.sciptSql(sql)
   }
   
   fun findByProduto(produto: Produto?): List<ViewProdutoLoc> {
