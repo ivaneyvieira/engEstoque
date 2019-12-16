@@ -9,7 +9,6 @@ val kotlinVersion = properties["kotlinVersion"] as String
 val karibuVersion = properties["karibuVersion"] as String
 val vaadin8Version = properties["vaadin8Version"] as String
 
-
 plugins {
   id("org.jetbrains.kotlin.jvm") version "1.3.60"
   id("org.gretty") version "2.3.1"
