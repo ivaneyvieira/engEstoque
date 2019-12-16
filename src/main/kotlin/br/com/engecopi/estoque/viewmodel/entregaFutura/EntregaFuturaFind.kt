@@ -16,7 +16,10 @@ import br.com.engecopi.framework.viewmodel.EViewModelWarning
 
 class EntregaFuturaFind() {
   fun findKey(key: String): List<ItemNota> {
-    val itens = findItensNotaTransferencia(key)
+    val itens = findItensNotaTransferencia(key).filter {
+      val tipoNota = it.status
+      tipoNota == CONFERIDA
+    }
     if(itens.isEmpty()) {
       throw EViewModelError("Produto não encontrado")
     }
