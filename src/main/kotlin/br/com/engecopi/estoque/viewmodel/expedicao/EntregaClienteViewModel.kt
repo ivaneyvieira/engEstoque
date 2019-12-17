@@ -13,7 +13,7 @@ import br.com.engecopi.estoque.viewmodel.movimentacao.NotaVo
 
 class EntregaClienteViewModel(view: IEntregaClienteView):
   NotaViewModel<EntregaClienteVo, IEntregaClienteView>(view, SAIDA, ENTREGUE, CONFERIDA, "") {
-  private val find = EntregaClienteFind()
+  private val find = EntregaClienteFind(view)
   
   override fun newBean(): EntregaClienteVo {
     return EntregaClienteVo()

@@ -12,9 +12,9 @@ import br.com.engecopi.estoque.model.dtos.EntregaFutura
 import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.framework.viewmodel.EViewModelError
-import br.com.engecopi.framework.viewmodel.EViewModelWarning
+import br.com.engecopi.framework.viewmodel.IView
 
-class EntregaFuturaFind() {
+class EntregaFuturaFind(val view: IView) {
   fun findKey(key: String): List<ItemNota> {
     val itens = findItensNotaTransferencia(key).filter {
       val tipoNota = it.status
@@ -27,10 +27,10 @@ class EntregaFuturaFind() {
       val codigoProduto = item.produto?.codigo?.trim() ?: ""
       when(item.status) {
         ENTREGUE, ENT_LOJA -> {
-          throw EViewModelWarning("Produto $codigoProduto já foi entregue")
+          view.showWarning("Produto $codigoProduto já foi entregue")
         }
         INCLUIDA           -> {
-          EViewModelWarning("Produto $codigoProduto ainda não foi conferido")
+          view.showWarning("Produto $codigoProduto ainda não foi conferido")
         }
         CONFERIDA          -> {
           item.status = ENTREGUE
@@ -43,7 +43,7 @@ class EntregaFuturaFind() {
           }
         }
         else               -> {
-          EViewModelWarning("Operação inválida")
+          view.showWarning("Operação inválida")
         }
       }
     }

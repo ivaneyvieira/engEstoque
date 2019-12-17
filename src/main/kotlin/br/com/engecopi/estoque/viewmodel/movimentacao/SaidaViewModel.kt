@@ -10,7 +10,7 @@ import br.com.engecopi.estoque.model.query.QItemNota
 
 class SaidaViewModel(view: ISaidaView):
   NotaViewModel<SaidaVo, ISaidaView>(view, SAIDA, ENTREGUE, CONFERIDA, abreviacaoDefault) {
-  private val processing = SaidaProcessamento()
+  private val processing = SaidaProcessamento(view)
   private val find = SaidaFind()
   
   override fun newBean(): SaidaVo {
