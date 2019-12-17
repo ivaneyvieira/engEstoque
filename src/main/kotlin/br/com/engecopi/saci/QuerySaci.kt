@@ -73,12 +73,13 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   
   private fun findNotaSaidaPxa(storeno: Int, nfno: String, nfse: String): List<NotaProdutoSaci> {
     val sql = "/sqlSaci/findNotaSaidaPXA.sql"
-    return query(sql) {q ->
+    val notas = query(sql) {q ->
       q.addParameter("storeno", storeno)
         .addParameter("nfno", nfno)
         .addParameter("nfse", nfse)
         .executeAndFetch(NotaProdutoSaci::class.java)
     }
+    return notas
   }
   
   fun findLojas(storeno: Int): List<LojaSaci> {

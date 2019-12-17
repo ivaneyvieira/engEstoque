@@ -6,7 +6,7 @@ SELECT DISTINCT ''            AS rota,
                 N.date as dtEmissao,
                 P.prdno,
                 P.grade,
-                SUM(P.qtty / 1000) AS quant,
+                (P.qtty / 1000) AS quant,
                 C.name        AS clienteName,
                 CASE WHEN N.nfse = 1 AND N.cfo IN (5922, 6922)
                           THEN 'VENDAF'
