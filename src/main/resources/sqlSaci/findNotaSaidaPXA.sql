@@ -17,7 +17,8 @@ SELECT DISTINCT ''            AS rota,
                      ELSE 'VENDA'
                     END       AS tipo
 FROM sqlpdv.pxa AS                       N
-       INNER JOIN sqlpdv.pxaprd AS       P USING (storeno, pdvno, xano)
+       INNER JOIN sqlpdv.pxaprd AS       P
+       USING (storeno, pdvno, xano)
        INNER JOIN sqldados.prdloc AS E
          ON E.prdno = P.prdno AND E.grade = P.grade AND E.storeno = 4
        LEFT JOIN  sqldados.custp AS      C

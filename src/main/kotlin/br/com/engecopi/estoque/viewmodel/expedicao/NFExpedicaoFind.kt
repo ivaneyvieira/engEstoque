@@ -25,10 +25,8 @@ class NFExpedicaoFind() {
     return when {
       notaSaci.isEmpty()                           -> throw EChaveNaoEncontrada()
       notaSaci.firstOrNull()?.tipoNota() == VENDAF -> throw ENotaEntregaFutura(numero)
-      else                                         -> if(usuarioDefault.isEstoqueExpedicao) {
-        findNotaSaci(notaSaci)
-      }
-      else notaSaci
+      usuarioDefault.isEstoqueExpedicao            -> findNotaSaci(notaSaci)
+      else                                         -> notaSaci
     }
   }
   
