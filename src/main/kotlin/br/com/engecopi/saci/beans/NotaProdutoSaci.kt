@@ -5,7 +5,9 @@ import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.model.ViewProdutoLoc
+import br.com.engecopi.estoque.model.dtos.EntregaFutura
 import br.com.engecopi.estoque.model.dtos.ProdutoGrade
+import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
 import br.com.engecopi.utils.lpad
 
 data class NotaProdutoSaci(val rota: String?,
@@ -49,4 +51,10 @@ data class NotaProdutoSaci(val rota: String?,
     get() = ProdutoGrade(prdno = prdno?.trim() ?: "", grade = grade ?: "")
   val nome
     get() = Produto.findProduto(prdno, grade)?.descricao ?: ""
+  
+  fun isNotaBaixa(): Boolean {
+    val transferencia = TransferenciaAutomatica.notaFutura(storeno, numeroSerie())
+    val notaFutura = EntregaFutura.notaFutura(storeno, numeroSerie());
+    return (transferencia != null) || (notaFutura != null)
+  }
 }

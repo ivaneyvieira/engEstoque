@@ -11,22 +11,22 @@ import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.ViewCodBarCliente
 import br.com.engecopi.estoque.model.ViewCodBarConferencia
 import br.com.engecopi.framework.viewmodel.EViewModelError
-import br.com.engecopi.framework.viewmodel.EViewModelWarning
+import br.com.engecopi.framework.viewmodel.IView
 
-class EntregaClienteFind() {
+class EntregaClienteFind(val view: IView) {
   fun findKey(key: String): List<ItemNota> {
     val itens = findItens(key)
     if(itens.isEmpty()) throw EViewModelError("Produto não encontrado")
     itens.forEach {item ->
       val codigoProduto = item.produto?.codigo?.trim() ?: ""
       when(item.status) {
-        ENTREGUE, ENT_LOJA -> throw EViewModelWarning("Produto $codigoProduto já foi entregue")
-        INCLUIDA           -> throw EViewModelWarning("Produto $codigoProduto ainda não foi conferido")
+        ENTREGUE, ENT_LOJA -> view.showWarning("Produto $codigoProduto já foi entregue")
+        INCLUIDA           -> view.showWarning("Produto $codigoProduto ainda não foi conferido")
         CONFERIDA          -> {
           item.status = ENTREGUE
           item.save()
         }
-        else               -> throw EViewModelWarning("Operação inválida")
+        else               -> view.showWarning("Operação inválida")
       }
     }
     return itens

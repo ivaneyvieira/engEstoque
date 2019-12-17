@@ -1,4 +1,5 @@
-SELECT CAST(IFNULL(X.xrouteno, '') AS CHAR) AS rota,
+SELECT DISTINCT
+       CAST(IFNULL(X.xrouteno, '') AS CHAR) AS rota,
        N.storeno,
        N.nfno                               AS numero,
        N.nfse                               AS serie,

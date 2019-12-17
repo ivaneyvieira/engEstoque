@@ -3,11 +3,11 @@ package br.com.engecopi.estoque.viewmodel.movimentacao
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.StatusNota
-import br.com.engecopi.framework.viewmodel.EViewModelWarning
+import br.com.engecopi.framework.viewmodel.IView
 import java.time.LocalDate
 import java.time.LocalTime
 
-class SaidaProcessamento() {
+class SaidaProcessamento(val view: IView) {
   fun confirmaProdutos(itens: List<ProdutoVO>, situacao: StatusNota): List<ItemNota> {
     itens.firstOrNull()
       ?.value?.nota?.save()
@@ -29,7 +29,7 @@ class SaidaProcessamento() {
           this.recalculaSaldos()
           listMultable.add(this)
         }
-        else throw EViewModelWarning("A quantidade do produto ${produto?.codigo} não pode ser maior que $quantidade")
+        else view.showWarning("A quantidade do produto ${produto?.codigo} não pode ser maior que $quantidade")
       }
     }
     return listMultable

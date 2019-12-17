@@ -30,7 +30,7 @@ where N.invno = (SELECT MAX(invno)
                      AND invse <> ''
 )
 UNION
-select 0                    as invno, N.storeno, cast(ordno as char) as numero, '' as serie,
+select DISTINCT 0                    as invno, N.storeno, cast(ordno as char) as numero, '' as serie,
        cast(CONCAT(N.paymno) as char)      AS rota,
        N.date,
        N.date,
