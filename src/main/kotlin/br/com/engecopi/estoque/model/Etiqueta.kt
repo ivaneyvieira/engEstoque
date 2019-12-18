@@ -42,17 +42,4 @@ class Etiqueta: BaseModel() {
     fun findByStatus(statusNota: StatusNota?): List<Etiqueta> =
       QEtiqueta().statusNota.eq(statusNota).etiquetaDefault.eq(true).orderBy().titulo.asc().findList()
   }
-  
-  fun updateOutros() {
-    //db().update(Etiqueta::class.java)
-    //   .set("etiqueta_default", false)
-    //   .where()
-    //   .eq("status_nota", statusNota)
-    //   .ne("id", id)
-    //  .update()
-  }
-  
-  fun imprimivel(): Boolean {
-    return true
-  }
 }

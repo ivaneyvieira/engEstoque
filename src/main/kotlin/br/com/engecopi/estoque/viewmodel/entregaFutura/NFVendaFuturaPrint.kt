@@ -49,7 +49,6 @@ class NFVendaFuturaPrint() {
   private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {
     if(RegistryUserInfo.usuarioDefault.isEstoqueVendaFutura) return ""
     itemNota ?: return ""
-    if(!etiqueta.imprimivel()) return ""
     val print = itemNota.printEtiqueta()
     itemNota.let {
       it.refresh()

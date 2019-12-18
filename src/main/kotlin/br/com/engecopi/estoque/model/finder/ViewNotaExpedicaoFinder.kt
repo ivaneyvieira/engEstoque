@@ -5,3 +5,4 @@ import io.ebean.Finder
 
 open class ViewNotaExpedicaoFinder: Finder<Long, ViewNotaExpedicao>(ViewNotaExpedicao::class.java)
 
+

@@ -5,3 +5,4 @@ import io.ebean.Finder
 
 open class ViewProdutoLocFinder: Finder<String, ViewProdutoLoc>(ViewProdutoLoc::class.java)
 
+

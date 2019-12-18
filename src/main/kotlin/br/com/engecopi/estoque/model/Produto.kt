@@ -180,7 +180,7 @@ class Produto: BaseModel() {
         }
         .filtroCD()
     }
-    
+  
     fun findTipoProduto(typeno: Int?): List<Produto> {
       typeno ?: return emptyList()
       return saci.findTipoProduto(typeno)
@@ -191,12 +191,10 @@ class Produto: BaseModel() {
     }
   }
   
-  fun saldoLoja(loja: Loja, localizacao: String?): Int {
-    localizacao ?: return 0
-    if(localizacao == "") return 0
-    
-    return findItensNota().asSequence()
-      .filter {it.nota?.loja?.id == loja.id && it.localizacao == localizacao}
+  fun saldoLocalizacao(localizacao: String?): Int {
+    return QItemNota().produto.id.eq(id)
+      .localizacao.startsWith(localizacao)
+      .findList()
       .sumBy {it.quantidadeSaldo}
   }
   

@@ -40,6 +40,7 @@ class QAssocItemNota<R>(name: String, root: R): TQAssocBean<ItemNota, R>(name, r
   lateinit var status: PEnum<R, StatusNota>
   lateinit var codigoBarraCliente: PString<R>
   lateinit var codigoBarraConferencia: PString<R>
+  lateinit var codigoBarraConferenciaBaixa: PString<R>
   lateinit var codigoBarraEntrega: PString<R>
   
   /**

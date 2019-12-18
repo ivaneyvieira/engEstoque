@@ -5,3 +5,4 @@ import io.ebean.Finder
 
 open class EtiquetaFinder: Finder<Long, Etiqueta>(Etiqueta::class.java)
 
+
