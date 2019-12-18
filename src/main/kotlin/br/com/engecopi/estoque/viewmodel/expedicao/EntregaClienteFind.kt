@@ -15,7 +15,7 @@ import br.com.engecopi.framework.viewmodel.IView
 
 class EntregaClienteFind(val view: IView) {
   fun findKey(key: String): List<ItemNota> {
-    val itens = findItensNumero(key) + findItensBarcode(key)
+    val itens = (findItensNumero(key) + findItensBarcode(key)).filter {it.status == CONFERIDA}
     if(itens.isEmpty()) throw EViewModelError("Produto não encontrado")
     itens.forEach {item ->
       val codigoProduto = item.produto?.codigo?.trim() ?: ""
@@ -44,7 +44,7 @@ class EntregaClienteFind(val view: IView) {
       else itensConferencia
     }
     else itemUnico
-    return itens.filter {it.status == CONFERIDA}
+    return itens
   }
   
   private fun processaKeyBarcodeCliente(key: String): List<ItemNota> {
