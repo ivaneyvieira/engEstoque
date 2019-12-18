@@ -8,7 +8,6 @@ import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.query.QItemNota
 
 class NotaPrint() {
-  
   fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean, groupByHour: Boolean, statusImpressao: StatusNota): String {
     itemNota ?: return ""
     return if(notaCompleta) {
@@ -22,9 +21,9 @@ class NotaPrint() {
           .nota.loja.numero.asc()
           .nota.numero.asc()
           .findList()
-      imprimir(itens, statusImpressao)
+      imprimirItens(itens, statusImpressao)
     }
-    else imprimir(listOf(itemNota), statusImpressao)
+    else imprimirItens(listOf(itemNota), statusImpressao)
   }
   
   fun imprimir(statusImpressao: StatusNota): String {
@@ -36,11 +35,26 @@ class NotaPrint() {
       .nota.loja.numero.asc()
       .nota.numero.asc()
       .findList()
-    return imprimir(itens, statusImpressao)
+    return imprimirItens(itens, statusImpressao)
   }
   
-  fun imprimir(itens: List<ItemNota>, statusImpressao: StatusNota): String {
-    val etiquetas = Etiqueta.findByStatus(statusImpressao)
+  fun imprimirItens(itens: List<ItemNota>, statusImpressao: StatusNota): String {
+    val etiquetas =
+      Etiqueta.findByStatus(statusImpressao)
+        .filter {
+          !it.titulo.contains("ETENT")
+        }
+    return etiquetas.joinToString(separator = "\n") {etiqueta ->
+      imprimir(itens, etiqueta)
+    }
+  }
+  
+  fun imprimirNota(itens: List<ItemNota>, statusImpressao: StatusNota): String {
+    val etiquetas =
+      Etiqueta.findByStatus(statusImpressao)
+        .filter {
+          it.titulo.contains("ETENT")
+        }
     return etiquetas.joinToString(separator = "\n") {etiqueta ->
       imprimir(itens, etiqueta)
     }

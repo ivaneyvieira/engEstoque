@@ -273,8 +273,13 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
       .updateView()
   }
   
-  fun imprimir(itens: List<ItemNota>) = execString {
-    print.imprimir(itens, statusImpressao)
+  fun imprimirItens(itens: List<ItemNota>) = execString {
+    print.imprimirItens(itens, statusImpressao)
+      .updateView()
+  }
+  
+  fun imprimirNota(itens: List<ItemNota>) = execString {
+    print.imprimirNota(itens, statusImpressao)
       .updateView()
   }
   

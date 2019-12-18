@@ -38,13 +38,12 @@ class EntregaClienteFind(val view: IView) {
   
   private fun findItensNumero(key: String): List<ItemNota> {
     val itemUnico = processaKeyBarcodeCliente(key)
-    val itens = if(itemUnico.isEmpty()) {
+    return if(itemUnico.isEmpty()) {
       val itensConferencia = ViewCodBarConferencia.findKeyItemNota(key)
       if(itensConferencia.isEmpty()) ViewCodBarCliente.findKeyItemNota(key, CONFERIDA)
       else itensConferencia
     }
     else itemUnico
-    return itens
   }
   
   private fun processaKeyBarcodeCliente(key: String): List<ItemNota> {

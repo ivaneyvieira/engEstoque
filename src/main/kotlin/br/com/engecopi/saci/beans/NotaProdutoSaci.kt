@@ -1,9 +1,12 @@
 package br.com.engecopi.saci.beans
 
 import br.com.engecopi.estoque.model.ItemNota
+import br.com.engecopi.estoque.model.KeyNota
 import br.com.engecopi.estoque.model.Loja
+import br.com.engecopi.estoque.model.Nota.Find
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.TipoNota
+import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.ViewProdutoLoc
 import br.com.engecopi.estoque.model.dtos.EntregaFutura
 import br.com.engecopi.estoque.model.dtos.ProdutoGrade
@@ -53,8 +56,18 @@ data class NotaProdutoSaci(val rota: String?,
     get() = Produto.findProduto(prdno, grade)?.descricao ?: ""
   
   fun isNotaBaixa(): Boolean {
-    val transferencia = TransferenciaAutomatica.notaFutura(storeno, numeroSerie())
-    val notaFutura = EntregaFutura.notaFutura(storeno, numeroSerie());
-    return (transferencia != null) || (notaFutura != null)
+    val transferencia =
+      TransferenciaAutomatica.notaFutura(storeno, numeroSerie())
+        ?.let {
+          KeyNota("${it.storenoFat}${it.nffat}")
+        }
+    val notaFutura =
+      EntregaFutura.notaFutura(storeno, numeroSerie())
+        ?.let {
+          KeyNota("${it.storeno}${it.nfno_venda}${it.nfse_venda}")
+        }
+    val keyNota = transferencia ?: notaFutura ?: return false
+    val nota = Find.findSaida(keyNota.storeno, keyNota.numero) ?: return false
+    return nota.tipoNota == VENDAF
   }
 }
