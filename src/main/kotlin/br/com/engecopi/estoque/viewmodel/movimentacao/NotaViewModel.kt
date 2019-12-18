@@ -110,7 +110,7 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
                              local: String?,
                              addTime: LocalTime): ItemNota? {
     if(local.isNullOrBlank()) throw EViewModelError("Não foi especificado a localização do item")
-    val saldoLocal = produto?.saldoLoja(lojaDeposito, local) ?: 0
+    val saldoLocal = produto?.saldoLocalizacao(local) ?: 0
     return if(quantProduto != 0) {
       when {
         (saldoLocal + (statusDefault.multiplicador * quantProduto)) < 0 -> {
@@ -453,7 +453,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
     get() = produto?.grade ?: ""
   var quantProduto: Int? = 0
   val saldo: Int
-    get() = produto?.saldoLoja(lojaDeposito, localizacao?.localizacao) ?: 0
+    get() = produto?.saldoLocalizacao(localizacao?.localizacao) ?: 0
   var localizacao: LocProduto? = null
   val localizacaoProduto
     get() = produto?.localizacoes(abreviacaoNota)?.map {LocProduto(it)}.orEmpty()
@@ -466,7 +466,7 @@ class ProdutoVO(val produto: Produto, val statusNota: StatusNota, var localizaca
   var quantidade: Int = 0
   var selecionado: Boolean = false
   val saldo: Int
-    get() = produto.saldoLoja(lojaDeposito, localizacao?.localizacao) - if(isSave) quantidade * multipicador else 0
+    get() = produto.saldoLocalizacao(localizacao?.localizacao) - if(isSave) quantidade * multipicador else 0
   val tipoMov
     get() = statusNota.tipoMov
   val multipicador
