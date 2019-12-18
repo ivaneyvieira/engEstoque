@@ -5,3 +5,4 @@ import io.ebean.Finder
 
 open class AbreviacaoFinder: Finder<Long, Abreviacao>(Abreviacao::class.java)
 
+

@@ -5,3 +5,4 @@ import io.ebean.Finder
 
 open class UsuarioFinder: Finder<Long, Usuario>(Usuario::class.java)
 
+
