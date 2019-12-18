@@ -154,7 +154,7 @@ class ItemNota: BaseModel() {
         localizacao = locProduto
       }
     }
-    
+  
     fun isSave(notaProdutoSaci: NotaProdutoSaci): Boolean {
       val numeroSerie = notaProdutoSaci.numeroSerie()
       val tipoMov = notaProdutoSaci.tipoNota()?.tipoMov ?: return false
@@ -164,6 +164,11 @@ class ItemNota: BaseModel() {
       return QItemNota().produto.eq(produto)
         .nota.eq(nota)
         .exists()
+    }
+  
+    fun findItensBarcodeBaixa(barcode: String): List<ItemNota> {
+      return QItemNota().codigoBarraConferenciaBaixa.eq(barcode)
+        .findList()
     }
   }
   
