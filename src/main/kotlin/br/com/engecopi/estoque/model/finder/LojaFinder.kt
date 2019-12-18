@@ -5,3 +5,4 @@ import io.ebean.Finder
 
 open class LojaFinder: Finder<Long, Loja>(Loja::class.java)
 
+

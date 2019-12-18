@@ -19,7 +19,6 @@ class EtiquetaViewModel(view: IEtiquetaView): CrudViewModel<Etiqueta, QEtiqueta,
       this.template = bean.template ?: throw EViewModelError("O template está vazio")
       this.statusNota = bean.statusNota ?: throw EViewModelError("O tipo está vazio")
       this.etiquetaDefault = bean.etiquetaDefault
-      this.updateOutros()
       update()
     }
   }
@@ -30,7 +29,6 @@ class EtiquetaViewModel(view: IEtiquetaView): CrudViewModel<Etiqueta, QEtiqueta,
       this.template = bean.template ?: throw EViewModelError("O template está vazio")
       this.statusNota = bean.statusNota ?: throw EViewModelError("O tipo está vazio")
       this.etiquetaDefault = bean.etiquetaDefault
-      this.updateOutros()
       insert()
     }
   }

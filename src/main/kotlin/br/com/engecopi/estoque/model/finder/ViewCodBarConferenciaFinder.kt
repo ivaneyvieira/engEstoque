@@ -5,3 +5,4 @@ import io.ebean.Finder
 
 open class ViewCodBarConferenciaFinder: Finder<Long, ViewCodBarConferencia>(ViewCodBarConferencia::class.java)
 
+

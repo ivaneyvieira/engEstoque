@@ -59,6 +59,8 @@ class ItemNota: BaseModel() {
   @Size(max = 60)
   var codigoBarraConferencia: String? = ""
   @Size(max = 60)
+  var codigoBarraConferenciaBaixa: String? = ""
+  @Size(max = 60)
   var codigoBarraEntrega: String? = ""
   val quantidadeSaldo: Int
     get() = (status.multiplicador) * quantidade * (nota?.multipicadorCancelado ?: 0)
@@ -152,7 +154,7 @@ class ItemNota: BaseModel() {
         localizacao = locProduto
       }
     }
-    
+  
     fun isSave(notaProdutoSaci: NotaProdutoSaci): Boolean {
       val numeroSerie = notaProdutoSaci.numeroSerie()
       val tipoMov = notaProdutoSaci.tipoNota()?.tipoMov ?: return false
@@ -162,6 +164,11 @@ class ItemNota: BaseModel() {
       return QItemNota().produto.eq(produto)
         .nota.eq(nota)
         .exists()
+    }
+  
+    fun findItensBarcodeBaixa(barcode: String): List<ItemNota> {
+      return QItemNota().codigoBarraConferenciaBaixa.eq(barcode)
+        .findList()
     }
   }
   
@@ -174,16 +181,35 @@ class ItemNota: BaseModel() {
   
   override fun save() {
     super.save()
-    if(codigoBarraCliente.isNullOrEmpty()) codigoBarraCliente = viewCodigoBarraCliente?.codbar ?: ""
-    if(codigoBarraConferencia.isNullOrEmpty()) codigoBarraConferencia = viewCodigoBarraConferencia?.codbar ?: ""
-    if(codigoBarraEntrega.isNullOrEmpty()) codigoBarraEntrega = viewCodigoBarraEntrega?.codbar ?: ""
+    if(codigoBarraCliente.isNullOrEmpty()) {
+      codigoBarraCliente = viewCodigoBarraCliente?.codbar ?: ""
+    }
+    if(codigoBarraConferencia.isNullOrEmpty()) {
+      codigoBarraConferencia = viewCodigoBarraConferencia?.codbar ?: ""
+      codigoBarraConferenciaBaixa = if(codigoBarraConferencia != "") {
+        codigoBarraConferencia + "BAIXA"
+      }
+      else ""
+    }
+    if(codigoBarraEntrega.isNullOrEmpty()) {
+      codigoBarraEntrega = viewCodigoBarraEntrega?.codbar ?: ""
+    }
     super.save()
   }
   
   override fun insert() {
     super.insert()
-    if(codigoBarraConferencia.isNullOrEmpty()) codigoBarraConferencia = viewCodigoBarraConferencia?.codbar ?: ""
-    if(codigoBarraEntrega.isNullOrEmpty()) codigoBarraEntrega = viewCodigoBarraEntrega?.codbar ?: ""
+    if(codigoBarraConferencia.isNullOrEmpty()) {
+      codigoBarraConferencia = viewCodigoBarraConferencia?.codbar ?: ""
+      codigoBarraConferenciaBaixa = if(codigoBarraConferencia != "") {
+        codigoBarraConferencia + "BAIXA"
+      }
+      else ""
+    }
+    if(codigoBarraEntrega.isNullOrEmpty()) {
+      codigoBarraEntrega = viewCodigoBarraEntrega?.codbar ?: ""
+    }
+  
     super.save()
   }
   
@@ -225,6 +251,8 @@ class NotaPrint(val item: ItemNota) {
     get() = item.codigoBarraEntrega ?: ""
   val codigoBarraConferencia
     get() = item.codigoBarraConferencia ?: ""
+  val codigoBarraConferenciaBaixa
+    get() = item.codigoBarraConferenciaBaixa ?: ""
   val codigoBarraCliente
     get() = item.codigoBarraCliente ?: ""
   val dataLancamento

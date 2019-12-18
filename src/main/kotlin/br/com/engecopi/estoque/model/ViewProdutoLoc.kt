@@ -1,6 +1,5 @@
 package br.com.engecopi.estoque.model
 
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.Repositories.findByAbreviacao
 import br.com.engecopi.estoque.model.Repositories.findByProduto
 import br.com.engecopi.estoque.model.finder.ViewProdutoLocFinder
@@ -56,7 +55,6 @@ class ViewProdutoLoc(@Id
     }
   
     fun localizacoesProduto(produto: Produto?): List<String> {
-      val loja = lojaDeposito
       produto ?: return emptyList()
       return QViewProdutoLoc().produto.id.eq(produto.id)
         .findList()
@@ -64,7 +62,7 @@ class ViewProdutoLoc(@Id
         .mapNotNull {it.localizacao}
         .distinct()
         .map {localizacao ->
-          val saldo = produto.saldoLoja(loja, localizacao)
+          val saldo = produto.saldoLocalizacao(localizacao)
           Pair(localizacao, saldo)
         }
         .sortedBy {pair -> -pair.second}

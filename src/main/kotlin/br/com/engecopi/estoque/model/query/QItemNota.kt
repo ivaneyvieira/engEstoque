@@ -51,6 +51,7 @@ class QItemNota: TQRootBean<ItemNota, QItemNota> {
   lateinit var status: PEnum<QItemNota, StatusNota>
   lateinit var codigoBarraCliente: PString<QItemNota>
   lateinit var codigoBarraConferencia: PString<QItemNota>
+  lateinit var codigoBarraConferenciaBaixa: PString<QItemNota>
   lateinit var codigoBarraEntrega: PString<QItemNota>
   
   /**

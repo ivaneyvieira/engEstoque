@@ -5,3 +5,4 @@ import io.ebean.Finder
 
 open class ViewNotaFuturaFinder: Finder<Long, ViewNotaFutura>(ViewNotaFutura::class.java)
 
+

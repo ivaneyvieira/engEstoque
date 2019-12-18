@@ -5,3 +5,4 @@ import io.ebean.Finder
 
 open class ItemNotaFinder: Finder<Long, ItemNota>(ItemNota::class.java)
 
+
