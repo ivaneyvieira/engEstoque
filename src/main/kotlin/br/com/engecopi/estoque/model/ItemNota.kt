@@ -187,7 +187,7 @@ class ItemNota: BaseModel() {
     if(codigoBarraConferencia.isNullOrEmpty()) {
       codigoBarraConferencia = viewCodigoBarraConferencia?.codbar ?: ""
       codigoBarraConferenciaBaixa = if(codigoBarraConferencia != "") {
-        codigoBarraConferencia + "BAIXA"
+        codigoBarraConferencia + " ENTREGUE"
       }
       else ""
     }
