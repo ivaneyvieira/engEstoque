@@ -56,17 +56,17 @@ data class NotaProdutoSaci(val rota: String?,
     get() = Produto.findProduto(prdno, grade)?.descricao ?: ""
   
   fun isNotaBaixa(): Boolean {
-    val transferencia =
+    val notaFatTransf =
       TransferenciaAutomatica.notaFutura(storeno, numeroSerie())
         ?.let {
           KeyNota("${it.storenoFat}${it.nffat}")
         }
-    val notaFutura =
+    val notaFatEntrega =
       EntregaFutura.notaFutura(storeno, numeroSerie())
         ?.let {
           KeyNota("${it.storeno}${it.nfno_venda}${it.nfse_venda}")
         }
-    val keyNota = transferencia ?: notaFutura ?: return false
+    val keyNota = notaFatTransf ?: notaFatEntrega ?: return false
     val nota = Find.findSaida(keyNota.storeno, keyNota.numero) ?: return false
     return nota.tipoNota == VENDAF
   }
