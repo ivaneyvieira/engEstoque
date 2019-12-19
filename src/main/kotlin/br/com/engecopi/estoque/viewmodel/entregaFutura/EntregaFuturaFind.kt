@@ -37,7 +37,7 @@ class EntregaFuturaFind(val view: IView) {
           item.save()
           item.nota?.let {nota ->
             if(nota.tipoNota == VENDAF) {
-              nota.numeroEntrega = nota.numeroEntrega()
+              nota.numeroEntrega = nota.numeroBaixa()
               nota.save()
             }
           }

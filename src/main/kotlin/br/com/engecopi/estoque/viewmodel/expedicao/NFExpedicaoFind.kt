@@ -9,7 +9,7 @@ import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.ViewProdutoLoc
 import br.com.engecopi.estoque.viewmodel.EChaveNaoEncontrada
 import br.com.engecopi.estoque.viewmodel.ENotaEntregaFutura
-import br.com.engecopi.estoque.viewmodel.ENovaBaixa
+import br.com.engecopi.estoque.viewmodel.ENovaFaturaLancada
 import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 
@@ -23,7 +23,7 @@ class NFExpedicaoFind() {
       }
     }.filtroNotaSaci()
     val nota = notaSaci.firstOrNull() ?: throw EChaveNaoEncontrada()
-    if(nota.isNotaBaixa()) throw ENovaBaixa()
+    if(nota.isNotaFaturaLancada()) throw ENovaFaturaLancada()
     val numero = nota.numero ?: ""
     return when {
       notaSaci.isEmpty()                -> throw EChaveNaoEncontrada()

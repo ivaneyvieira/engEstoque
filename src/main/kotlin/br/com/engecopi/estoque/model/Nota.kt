@@ -2,7 +2,6 @@ package br.com.engecopi.estoque.model
 
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
-import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
@@ -26,7 +25,6 @@ import br.com.engecopi.framework.model.BaseModel
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.saci.saci
 import br.com.engecopi.utils.localDate
-import io.ebean.DB
 import io.ebean.annotation.Aggregation
 import io.ebean.annotation.Cache
 import io.ebean.annotation.CacheQueryTuning
@@ -137,15 +135,6 @@ class Nota: BaseModel() {
       else QNota().tipoMov.eq(ENTRADA).numero.eq(numero).loja.id.eq(loja.id).findList().firstOrNull()
     }
   
-    fun findNotaFutura(key: String): String? {
-      val sql = "select * from t_entrega_futura where nfekey_entrega = ? AND nfekey_entrega <> ''"
-      return DB.findDto(EntregaFutura::class.java, sql)
-        .setParameter(1, key)
-        .findList()
-        .map {it.numero_venda}
-        .firstOrNull()
-    }
-  
     fun findSaida(storeno: Int?, numero: String?): Nota? {
       storeno ?: return null
       return if(numero.isNullOrBlank()) null
@@ -233,15 +222,21 @@ class Nota: BaseModel() {
         .data.after(dtInicial)
         .findList()
     }
+  
+    fun notaBaixa(storeno: Int?, numero: String?) =
+      TransferenciaAutomatica.notaBaixa(storeno, numero) ?: EntregaFutura.notaBaixa(storeno, numero)
+  
+    fun notaFatura(storeno: Int?, numero: String?) =
+      TransferenciaAutomatica.notaFatura(storeno, numero) ?: EntregaFutura.notaFatura(storeno, numero)
   }
   
-  fun numeroEntrega(): String =
-    TransferenciaAutomatica.notaBaixa(loja?.numero, numero)?.numero ?: EntregaFutura.notaBaixa(lojaDeposito.numero,
-                                                                                               numero)?.numero ?: ""
+  fun numeroBaixa(): String = notaBaixa()?.numero ?: ""
   
-  fun dataEntrega(): LocalDate? =
-    TransferenciaAutomatica.notaBaixa(loja?.numero, numero)?.data ?: EntregaFutura.notaBaixa(lojaDeposito.numero,
-                                                                                             numero)?.data
+  fun dataBaixa(): LocalDate? = notaBaixa()?.data
+  
+  fun notaBaixa() = notaBaixa(loja?.numero, numero)
+  
+  fun notaFatura() = notaFatura(loja?.numero, numero)
   
   fun existe(): Boolean {
     return QNota().loja.equalTo(loja).tipoMov.eq(tipoMov).numero.eq(numero).findCount() > 0

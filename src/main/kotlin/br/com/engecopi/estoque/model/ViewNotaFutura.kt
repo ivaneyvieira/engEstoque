@@ -43,7 +43,7 @@ class ViewNotaFutura: BaseModel() {
   var usuario: Usuario? = null
   var abreviacao: String? = ""
   val numeroBaixa: String?
-    get() = Nota.findNota(loja, numero, tipoMov)?.numeroEntrega()
+    get() = Nota.findNota(loja, numero, tipoMov)?.numeroBaixa()
   
   companion object Find: ViewNotaFuturaFinder() {
     fun findSaida(loja: Loja?, numero: String?, abreviacao: String?): ViewNotaFutura? {

@@ -10,5 +10,5 @@ class ENotaEntregaFutura(val numero: String): EViewModelError("A nota $numero é
 
 class ENFKeyInvalido(val key: String): EViewModelError("'$key' não é uma chave de nota válida")
 
-class ENovaBaixa(): EViewModelError("Não pode usar nota de baixa na expedição")
+class ENovaFaturaLancada(): EViewModelError("Não pode usar nota já faturada como entrega futura")
 
