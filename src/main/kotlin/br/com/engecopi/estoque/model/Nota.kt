@@ -236,13 +236,13 @@ class Nota: BaseModel() {
     }
   }
   
-  fun numeroEntrega(): String = TransferenciaAutomatica.notaTransfencia(loja?.numero, numero)?.numeroTransf
-                                ?: EntregaFutura.entrega(lojaDeposito.numero, numero)?.numeroEntrega ?: ""
+  fun numeroEntrega(): String =
+    TransferenciaAutomatica.notaBaixa(loja?.numero, numero)?.numeroTransf ?: EntregaFutura.entrega(lojaDeposito.numero,
+                                                                                                   numero)?.numeroEntrega
+    ?: ""
   
-  fun dataEntrega(): LocalDate? =
-    TransferenciaAutomatica.notaTransfencia(loja?.numero, numero)?.data?.localDate() ?: EntregaFutura.entrega(
-      lojaDeposito.numero,
-      numero)?.dataEntrega?.localDate()
+  fun dataEntrega(): LocalDate? = TransferenciaAutomatica.notaBaixa(loja?.numero, numero)?.data?.localDate()
+                                  ?: EntregaFutura.entrega(lojaDeposito.numero, numero)?.dataEntrega?.localDate()
   
   fun existe(): Boolean {
     return QNota().loja.equalTo(loja).tipoMov.eq(tipoMov).numero.eq(numero).findCount() > 0

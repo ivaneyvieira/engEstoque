@@ -73,7 +73,7 @@ class EntregaFuturaFind(val view: IView) {
   }
   
   private fun findItensNotaTransferencia(storeno: Int, numero: String): List<ItemNota> {
-    val notaTransferencia = TransferenciaAutomatica.notaFutura(storeno, numero)
+    val notaTransferencia = TransferenciaAutomatica.notaFatura(storeno, numero)
     val storenoNota = notaTransferencia?.storenoFat
     val numeroNota = notaTransferencia?.nffat
     return ItemNota.find(storenoNota, numeroNota)
