@@ -1,7 +1,6 @@
 package br.com.engecopi.saci.beans
 
 import br.com.engecopi.estoque.model.ItemNota
-import br.com.engecopi.estoque.model.KeyNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota.Find
@@ -14,18 +13,18 @@ import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
 import br.com.engecopi.utils.lpad
 
 data class NotaProdutoSaci(val rota: String?,
-                      val storeno: Int?,
-                      val numero: String?,
-                      val serie: String?,
-                      val date: Int?,
-                      val dtEmissao: Int?,
-                      val prdno: String?,
-                      val grade: String?,
-                      val quant: Int?,
-                      val vendName: String? = "",
-                      val clienteName: String? = "",
-                      val tipo: String?,
-                      val invno: Int?) {
+                           val storeno: Int?,
+                           val numero: String?,
+                           val serie: String?,
+                           val date: Int?,
+                           val dtEmissao: Int?,
+                           val prdno: String?,
+                           val grade: String?,
+                           val quant: Int?,
+                           val vendName: String? = "",
+                           val clienteName: String? = "",
+                           val tipo: String?,
+                           val invno: Int?) {
   var gradeGenerica: Boolean = false
   
   fun isSave(): Boolean {
@@ -56,15 +55,12 @@ data class NotaProdutoSaci(val rota: String?,
     get() = Produto.findProduto(prdno, grade)?.descricao ?: ""
   
   fun isNotaBaixa(): Boolean {
-    val notaFatTransf = TransferenciaAutomatica.notaFatura(storeno, numeroSerie())
-        ?.let {
-          KeyNota("${it.storenoFat}${it.nffat}")
-        }
+    val notaFatTransf =
+      TransferenciaAutomatica.notaFatura(storeno, numeroSerie())
+        ?.keyNota()
     val notaFatEntrega =
-      EntregaFutura.notaFutura(storeno, numeroSerie())
-        ?.let {
-          KeyNota("${it.storeno}${it.nfno_venda}${it.nfse_venda}")
-        }
+      EntregaFutura.notaFatura(storeno, numeroSerie())
+        ?.keyNota()
     val keyNota = notaFatTransf ?: notaFatEntrega ?: return false
     val nota = Find.findSaida(keyNota.storeno, keyNota.numero) ?: return false
     return nota.lancamentoOrigem != EXPEDICAO

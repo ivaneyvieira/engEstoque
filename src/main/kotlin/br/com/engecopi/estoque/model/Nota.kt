@@ -129,8 +129,7 @@ class Nota: BaseModel() {
     }
   
     fun maxSequencia(): Int {
-      return QNota().select(QNota._alias.maxSequencia)
-      .findList().firstOrNull()?.maxSequencia ?: 0
+      return QNota().select(QNota._alias.maxSequencia).findList().firstOrNull()?.maxSequencia ?: 0
     }
   
     fun findEntrada(loja: Loja, numero: String?): Nota? {
@@ -237,12 +236,12 @@ class Nota: BaseModel() {
   }
   
   fun numeroEntrega(): String =
-    TransferenciaAutomatica.notaBaixa(loja?.numero, numero)?.numeroTransf ?: EntregaFutura.entrega(lojaDeposito.numero,
-                                                                                                   numero)?.numeroEntrega
-    ?: ""
+    TransferenciaAutomatica.notaBaixa(loja?.numero, numero)?.numero ?: EntregaFutura.notaBaixa(lojaDeposito.numero,
+                                                                                               numero)?.numero ?: ""
   
-  fun dataEntrega(): LocalDate? = TransferenciaAutomatica.notaBaixa(loja?.numero, numero)?.data?.localDate()
-                                  ?: EntregaFutura.entrega(lojaDeposito.numero, numero)?.dataEntrega?.localDate()
+  fun dataEntrega(): LocalDate? =
+    TransferenciaAutomatica.notaBaixa(loja?.numero, numero)?.data ?: EntregaFutura.notaBaixa(lojaDeposito.numero,
+                                                                                             numero)?.data
   
   fun existe(): Boolean {
     return QNota().loja.equalTo(loja).tipoMov.eq(tipoMov).numero.eq(numero).findCount() > 0

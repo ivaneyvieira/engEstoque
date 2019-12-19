@@ -1,7 +1,7 @@
 package br.com.engecopi.estoque.model.dtos
 
-import br.com.engecopi.estoque.model.KeyNota
 import br.com.engecopi.estoque.model.etlSaci.EntryID
+import br.com.engecopi.utils.localDate
 import io.ebean.DB
 
 class TransferenciaAutomatica(id: String,
@@ -15,11 +15,9 @@ class TransferenciaAutomatica(id: String,
                               val nftransf: String): EntryID(id) {
   override val chave: String
     get() = "$storenoFat$nffat$storenoTransf$nftransf"
-  val numeroTransf get() = if(nftransf == "" || nftransf == "0") "" else "$storenoTransf$nftransf"
-  val numeroFat get() = if(nffat == "" || nffat == "0") "" else "$storenoFat$nffat"
   
   companion object {
-    fun notaFatura(lojaTransferencia: Int?, numeroSerieTransferencia: String?): KeyNota? {
+    fun notaFatura(lojaTransferencia: Int?, numeroSerieTransferencia: String?): NotaBaixaFatura? {
       lojaTransferencia ?: return null
       numeroSerieTransferencia ?: return null
       val sql = """select * from t_transferencia_automatica
@@ -32,11 +30,11 @@ class TransferenciaAutomatica(id: String,
         .findList()
         .firstOrNull()
         ?.let {
-          KeyNota("${it.storenoFat}${it.nffat}")
+          NotaBaixaFatura(it.storenoFat, it.nffat, it.data.localDate())
         }
     }
   
-    fun notaBaixa(lojaFatura: Int?, numeroSerieFatura: String?): KeyNota? {
+    fun notaBaixa(lojaFatura: Int?, numeroSerieFatura: String?): NotaBaixaFatura? {
       lojaFatura ?: return null
       numeroSerieFatura ?: return null
       val sql = """select * from t_transferencia_automatica
@@ -49,7 +47,7 @@ class TransferenciaAutomatica(id: String,
         .findList()
         .firstOrNull()
         ?.let {
-          KeyNota("${it.storenoTransf}${it.nftransf}")
+          NotaBaixaFatura(it.storenoTransf, it.nftransf, it.data.localDate())
         }
     }
   }
