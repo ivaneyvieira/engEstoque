@@ -218,8 +218,8 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
       val nota = itemNota.nota
       this.numeroNF = nota?.numero
       this.numeroCodigo = itemNota.codigoBarraConferencia
-      this.numeroBaixa = itemNota.nota?.numeroEntrega()
-      this.dataBaixa = itemNota.nota?.dataEntrega()
+      this.numeroBaixa = itemNota.nota?.numeroBaixa()
+      this.dataBaixa = itemNota.nota?.dataBaixa()
       this.numeroCodigoReduzido = itemNota.codigoBarraCliente
       this.lojaNF = nota?.loja
       this.observacaoNota = nota?.observacao
@@ -273,8 +273,13 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
       .updateView()
   }
   
-  fun imprimir(itens: List<ItemNota>) = execString {
-    print.imprimir(itens, statusImpressao)
+  fun imprimirItens(itens: List<ItemNota>) = execString {
+    print.imprimirItens(itens, statusImpressao)
+      .updateView()
+  }
+  
+  fun imprimirNota(itens: List<ItemNota>) = execString {
+    print.imprimirNota(itens, statusImpressao)
       .updateView()
   }
   

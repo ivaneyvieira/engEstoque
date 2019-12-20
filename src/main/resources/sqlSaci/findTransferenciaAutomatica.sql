@@ -16,3 +16,4 @@ FROM sqldados.awnfrnf
 WHERE  awnfrnf.emissao > :data_inicial
    AND awnfrnf.nfStoreno = 4
    AND nf.status <> 1
+   AND awnfr.storenoNfr <> awnfrnf.nfStoreno
