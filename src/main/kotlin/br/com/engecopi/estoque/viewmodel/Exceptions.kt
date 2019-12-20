@@ -12,3 +12,4 @@ class ENFKeyInvalido(val key: String): EViewModelError("'$key' não é uma chave
 
 class ENovaFaturaLancada(): EViewModelError("Não pode usar nota já faturada como entrega futura")
 
+class ENovaBaixaLancada(): EViewModelError("Não pode usar nota já faturada na expedição")

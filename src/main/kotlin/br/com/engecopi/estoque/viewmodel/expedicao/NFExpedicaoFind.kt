@@ -4,7 +4,7 @@ import br.com.engecopi.estoque.model.KeyNota
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
-import br.com.engecopi.estoque.model.ViewProdutoLoc
+import br.com.engecopi.estoque.model.ViewProdutoLoc.Find.filtraLoc
 import br.com.engecopi.estoque.viewmodel.EChaveNaoEncontrada
 import br.com.engecopi.estoque.viewmodel.ENotaEntregaFutura
 import br.com.engecopi.estoque.viewmodel.ENovaFaturaLancada
@@ -23,10 +23,9 @@ class NFExpedicaoFind() {
     val numero = nota.numero ?: ""
     return when {
       nota.isNotaFaturaLancada()        -> throw ENovaFaturaLancada()
-      notaSaci.isEmpty()                -> throw EChaveNaoEncontrada()
       nota.tipoNota() == VENDAF         -> throw ENotaEntregaFutura(numero)
       usuarioDefault.isEstoqueExpedicao -> notaSaci.filtroTipoCompativel()
-      else                              -> notaSaci
+      else                              -> emptyList()
     }
   }
   
@@ -40,8 +39,8 @@ class NFExpedicaoFind() {
   private fun List<NotaProdutoSaci>.filtroLocalizacao(): List<NotaProdutoSaci> {
     return this.filter {ns ->
       when {
-        usuarioDefault.isEstoqueExpedicao -> ViewProdutoLoc.filtraLoc(ns.prdno, ns.grade)
-        else                              -> true
+        usuarioDefault.isEstoqueExpedicao -> filtraLoc(ns.prdno, ns.grade)
+        else                              -> usuarioDefault.admin
       }
     }
   }

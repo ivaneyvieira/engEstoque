@@ -2,6 +2,7 @@ package br.com.engecopi.saci.beans
 
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
+import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota.Find
 import br.com.engecopi.estoque.model.Produto
@@ -57,5 +58,12 @@ data class NotaProdutoSaci(val rota: String?,
     val keyNotaFatura = notaSaida.notaFatura() ?: return false
     val notaFatura = Find.findSaida(keyNotaFatura.storeno, keyNotaFatura.numero) ?: return false
     return notaFatura.lancamentoOrigem == ENTREGA_F
+  }
+  
+  fun isNotaBaixaLancada(): Boolean {
+    val notaSaida = Find.findSaida(storeno, numeroSerie()) ?: return false
+    val keyNotaBaixa = notaSaida.notaBaixa() ?: return false
+    val notaBaixa = Find.findSaida(keyNotaBaixa.storeno, keyNotaBaixa.numero) ?: return false
+    return notaBaixa.lancamentoOrigem == EXPEDICAO
   }
 }
