@@ -2,7 +2,7 @@ package br.com.engecopi.estoque.model
 
 import br.com.engecopi.utils.mid
 
-class KeyNota(val key: String) {
+open class KeyNota(val key: String) {
   val storeno
     get() = if(key.isNotEmpty()) key.mid(0, 1).toIntOrNull() else 0
   val numero
