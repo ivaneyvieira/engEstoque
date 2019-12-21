@@ -4,6 +4,7 @@ import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.TipoNota
+import br.com.engecopi.estoque.ui.print.PrintUtil.printText
 import br.com.engecopi.estoque.viewmodel.movimentacao.EntradaViewModel
 import br.com.engecopi.estoque.viewmodel.movimentacao.EntradaVo
 import br.com.engecopi.estoque.viewmodel.movimentacao.IEntradaView

@@ -1,9 +1,6 @@
 package br.com.engecopi.framework.ui.view
 
 import br.com.engecopi.framework.viewmodel.ViewModel
-import br.com.engecopi.saci.QuerySaci
-import br.com.engecopi.utils.CupsUtils
-import br.com.engecopi.utils.ZPLPreview
 import com.fo0.advancedtokenfield.main.AdvancedTokenField
 import com.github.mvysny.karibudsl.v8.VAlign
 import com.github.mvysny.karibudsl.v8.VaadinDsl
@@ -99,17 +96,7 @@ abstract class LayoutView<V: ViewModel<*>>: VerticalLayout(), View {
     if(msg.isNotBlank()) MessageDialog.question(message = msg, execYes = execYes, execNo = execNo)
   }
   
-  fun printText(impressora: String, text: String?) {
-    if(!text.isNullOrBlank()) {
-      when {
-        QuerySaci.test -> {
-          val image = ZPLPreview.createPdf(text, "4x2")
-          if(image != null) showImage("Preview", image)
-        }
-        else           -> CupsUtils.printCups(impressora, text)
-      }
-    }
-  }
+
 }
 
 fun <T> ComboBox<T>.default(valueEmpty: T? = null, captionGenerator: (T) -> String = {it.toString()}) {
