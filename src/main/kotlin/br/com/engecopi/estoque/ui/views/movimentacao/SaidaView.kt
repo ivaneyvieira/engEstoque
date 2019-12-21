@@ -149,8 +149,8 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
             item.itemNota?.recalculaSaldos()
             val numero = item.numeroNF
             showQuestion(msg = "Imprimir todos os itens da nota $numero?",
-                         execYes = {imprimeItem(item, true)},
-                         execNo = {imprimeItem(item, false)})
+                         execYes = {imprimeNotaCompleta(item)},
+                         execNo = {imprimeItem(item)})
           }
         }
       }
@@ -251,8 +251,14 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
     }
   }
   
-  protected fun imprimeItem(item: SaidaVo, notaComleta: Boolean) {
-    val text = viewModel.imprimir(item.itemNota, notaComleta, false)
+  private fun imprimeItem(item: SaidaVo) {
+    val text = viewModel.imprimirItem(item.itemNota)
+    printText(impressora, text)
+    refreshGrid()
+  }
+  
+  private fun imprimeNotaCompleta(item: SaidaVo) {
+    val text = viewModel.imprimirNotaCompleta(item.itemNota)
     printText(impressora, text)
     refreshGrid()
   }
