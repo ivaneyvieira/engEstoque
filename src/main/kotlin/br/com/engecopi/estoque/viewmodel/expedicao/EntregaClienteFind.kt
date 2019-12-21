@@ -33,7 +33,7 @@ class EntregaClienteFind(val view: IView) {
   }
   
   private fun findItensBarcode(key: String): List<ItemNota> {
-    return ItemNota.findItensBarcodeBaixa(key)
+    return ItemNota.findItensBarcodeCliente(key)
   }
   
   private fun findItensNumero(key: String): List<ItemNota> {

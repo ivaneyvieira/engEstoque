@@ -166,8 +166,8 @@ class ItemNota: BaseModel() {
         .exists()
     }
   
-    fun findItensBarcodeBaixa(barcode: String): List<ItemNota> {
-      return QItemNota().codigoBarraConferenciaBaixa.eq(barcode)
+    fun findItensBarcodeCliente(barcode: String): List<ItemNota> {
+      return QItemNota().codigoBarraCliente.eq(barcode)
         .findList()
     }
   }
