@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.ui.views.movimentacao
 
+import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.TipoNota
@@ -45,8 +46,10 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel, IEntradaView>(), IEntra
       }
       formLayout.apply {
         formBinder = binder
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
-
+        w =
+          (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+            .px
+  
         grupo("Nota fiscal de entrada") {
           row {
             fieldNotaFiscal = notaFiscalField(operation, binder)
@@ -79,7 +82,8 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel, IEntradaView>(), IEntra
             integerField("Número Interno") {
               expandRatio = 1f
               isReadOnly = true
-              this.bind(binder).bind(EntradaVo::numeroInterno.name)
+              this.bind(binder)
+                .bind(EntradaVo::numeroInterno.name)
             }
             textField("Fornecedor") {
               expandRatio = 2f
@@ -88,7 +92,7 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel, IEntradaView>(), IEntra
             }
           }
         }
-
+  
         grupo("Produto") {
           produtoField(operation, binder, "Entrada")
         }
@@ -111,13 +115,20 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel, IEntradaView>(), IEntra
         button.addClickListener {
           item.itemNota?.recalculaSaldos()
           val numero = item.numeroNF
-          showQuestion(msg = "Imprimir todos os itens da nota $numero?",
-                       execYes = {imprimeItem(item, true, false)},
-                       execNo = {imprimeItem(item, false, false)})
+          showQuestion(msg = "Imprimir todos os itens da nota $numero?", execYes = {
+            imprimeItem(item) {
+              viewModel.imprimirNotaCompletaAgrupada(it)
+            }
+          }, execNo = {
+            imprimeItem(item) {
+              viewModel.imprimirItem(it)
+            }
+          })
         }
-
+  
         button
-      }.id = "btnPrint"
+      }
+        .id = "btnPrint"
       column(EntradaVo::lojaNF) {
         caption = "Loja NF"
         setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
@@ -158,7 +169,7 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel, IEntradaView>(), IEntra
       }
       column(EntradaVo::localizacao) {
         caption = "Local"
-
+  
         setRenderer({it?.localizacao}, TextRenderer())
       }
       column(EntradaVo::usuario) {
@@ -175,28 +186,30 @@ class EntradaView: NotaView<EntradaVo, EntradaViewModel, IEntradaView>(), IEntra
       }
     }
   }
-
-  protected fun imprimeItem(item: EntradaVo, notaCompleta: Boolean, groupByHour: Boolean) {
-    val itemNota = item.itemNota ?: item.findEntity()
-    val text = viewModel.imprimir(itemNota, notaCompleta, groupByHour)
-
+  
+  protected fun imprimeItem(domainObject: EntradaVo, imprimir: (ItemNota?) -> String) {
+    val itemNota = domainObject.itemNota ?: domainObject.findEntity()
+    val text = imprimir(itemNota)
     printText(impressora, text)
     refreshGrid()
   }
-
+  
   override fun processAdd(domainObject: EntradaVo) {
     super.processAdd(domainObject)
-    imprimeItem(domainObject, notaCompleta = true, groupByHour = true)
+    imprimeItem(domainObject) {itemNota ->
+      viewModel.imprimirNotaCompletaAgrupada(itemNota)
+    }
   }
-
+  
   override fun stillShow() {
     val bean = formBinder.bean
     if(gridProduto.editor.isOpen) gridProduto.editor.save()
     bean.entityVo = null
     bean.atualizaNota()
-    formBinder.getBinding("produtos").ifPresent {binding ->
-      binding.read(bean)
-    }
+    formBinder.getBinding("produtos")
+      .ifPresent {binding ->
+        binding.read(bean)
+      }
     if(bean.produtosCompletos()) hideForm()
   }
 }
