@@ -1,7 +1,5 @@
 package br.com.engecopi.estoque.viewmodel.entregaFutura
 
-import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
-import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
@@ -26,12 +24,6 @@ class EntregaFututaViewModel(view: IEntregaFututaView):
   override fun QItemNota.filtroStatus(): QItemNota {
     return status.`in`(CONFERIDA)
       .nota.usuario.isNotNull.nota.sequencia.ne(0)
-      .let {q ->
-        if(usuarioDefault.isEstoqueExpedicao) {
-          q.localizacao.startsWith(abreviacaoDefault)
-        }
-        else q
-      }
   }
   
   override fun createVo() = EntregaFututaVo()

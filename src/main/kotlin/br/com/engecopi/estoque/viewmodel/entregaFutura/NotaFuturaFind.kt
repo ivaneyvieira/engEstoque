@@ -17,27 +17,14 @@ class NotaFuturaFind {
     val notaKey = KeyNota(key)
     val storeno = notaKey.storeno
     val nfno = notaKey.numero
-    val notaSaci =
-      Nota.findNotaSaidaSaci(storeno, nfno)
-        .filtroLocalizacao()
+    val notaSaci = Nota.findNotaSaidaSaci(storeno, nfno)
     val nota = notaSaci.firstOrNull() ?: throw EChaveNaoEncontrada()
     val numero = nota.numero ?: ""
     return when {
-      nota.isNotaBaixaLancada()           -> throw ENovaBaixaLancada()
-      nota.tipoNota() != VENDAF           -> throw ENotaNaoEntregaFutura(numero)
-      usuarioDefault.isEstoqueVendaFutura -> notaSaci.filtroTipoCompativel()
-      else                                -> emptyList()
+      nota.isNotaBaixaLancada() -> throw ENovaBaixaLancada()
+      nota.tipoNota() != VENDAF -> throw ENotaNaoEntregaFutura(numero)
+      else                      -> notaSaci
     }.expandeGradeGenerica()
-  }
-  
-  private fun filtraLoc(notaSaci: NotaProdutoSaci): Boolean {
-    return when {
-      usuarioDefault.isEstoqueVendaFutura -> {
-        val gradeStr = notaSaci.grade ?: ""
-        ViewProdutoLoc.filtraLoc(notaSaci.prdno, gradeStr) || gradeStr.startsWith("***")
-      }
-      else                                -> usuarioDefault.admin
-    }
   }
   
   fun findLoja(storeno: Int?): Loja? = Loja.findLoja(storeno)
@@ -71,15 +58,6 @@ class NotaFuturaFind {
       else listOf(notaSaci.apply {
         this.gradeGenerica = false
       })
-    }
-  }
-  
-  private fun List<NotaProdutoSaci>.filtroLocalizacao(): List<NotaProdutoSaci> {
-    return this.filter {ns ->
-      when {
-        usuarioDefault.isEstoqueVendaFutura -> filtraLoc(ns)
-        else                                -> usuarioDefault.admin
-      }
     }
   }
   

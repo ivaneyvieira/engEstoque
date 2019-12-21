@@ -52,7 +52,7 @@ class Usuario: BaseModel() {
   val isEstoqueExpedicao
     get() = !admin && expedicao && estoque
   val isEstoqueVendaFutura
-    get() = !admin && entregaFutura && estoque
+    get() = !admin && entregaFutura
   
   private fun mapNotaSerie(idStr: String): NotaSerie? {
     val id = idStr.trim().toLongOrNull() ?: return null
@@ -90,7 +90,6 @@ class Usuario: BaseModel() {
   
   fun isTipoCompativel(tipo: TipoNota?): Boolean {
     tipo ?: return false
-    
     return series.any {it.tipoNota == tipo} || admin
   }
   
