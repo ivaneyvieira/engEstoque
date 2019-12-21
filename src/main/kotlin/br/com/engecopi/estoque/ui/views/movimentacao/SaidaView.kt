@@ -234,16 +234,24 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
       val nota = viewModel.findByKey(key)
       if(nota == null || nota.vazio) showError("A nota não foi encontrada")
       else {
-        val dlg = DlgNotaSaida(nota, viewModel, {itens ->
+        val dlg = DlgNotaSaida(nota, viewModel) {itens ->
           if(itens.isNotEmpty()) {
             val text = viewModel.imprimirItens(itens)
             printText(impressora, text)
             refreshGrid()
+            //Imprime nota
+            itens.firstOrNull()
+              ?.nota?.let {nota ->
+              val impressoraNota = when(nota.lancamentoOrigem) {
+                EXPEDICAO -> "EXP4"
+                ENTREGA_F -> "ENTREGA"
+                else      -> ""
+              }
+              val textNota = viewModel.imprimirNota(nota)
+              printText(impressoraNota, textNota)
+            }
           }
-        }, {itens ->
-                                 val text = viewModel.imprimirNota(itens)
-                                 printText(impressora, text)
-                               })
+        }
         dlg.showDialog()
         Thread.sleep(1000)
         dlg.focusEditor()
@@ -264,10 +272,8 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
   }
 }
 
-class DlgNotaSaida(val nota: NotaItens,
-                   val viewModel: SaidaViewModel,
-                   val execPrint: (List<ItemNota>) -> Unit,
-                   val execPrintNota: (List<ItemNota>) -> Unit): Window("Nota de Saída") {
+class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execPrint: (List<ItemNota>) -> Unit):
+  Window("Nota de Saída") {
   private lateinit var grupoSelecaoCol: Column<ProdutoVO, Int>
   private lateinit var dateUpdateCol: Column<ProdutoVO, LocalDateTime>
   private lateinit var gridProdutos: Grid<ProdutoVO>
@@ -355,7 +361,6 @@ class DlgNotaSaida(val nota: NotaItens,
                 viewModel.confirmaProdutos(itensExpedicao, CONFERIDA)
                 viewModel.confirmaProdutos(itensEntregaFutura, CONFERIDA)
                 viewModel.confirmaProdutos(naoSelect, ENT_LOJA)
-                execPrintNota((itensEntregaFutura + itensExpedicao).mapNotNull {it.value})
                 close()
               }
             }

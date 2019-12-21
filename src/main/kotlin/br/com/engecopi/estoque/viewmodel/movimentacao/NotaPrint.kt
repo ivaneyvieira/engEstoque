@@ -2,9 +2,12 @@ package br.com.engecopi.estoque.viewmodel.movimentacao
 
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
+import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota
+import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
+import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.query.QItemNota
 
 class NotaPrint() {
@@ -85,7 +88,7 @@ class NotaPrint() {
     }
   }
   
-  fun imprimirNota(itens: List<ItemNota>, statusImpressao: StatusNota): String {
+  private fun imprimirNota(itens: List<ItemNota>, statusImpressao: StatusNota): String {
     val etiquetas =
       Etiqueta.findByStatus(statusImpressao)
         .filter {
@@ -94,6 +97,16 @@ class NotaPrint() {
     return etiquetas.joinToString(separator = "\n") {etiqueta ->
       imprimir(itens, etiqueta)
     }
+  }
+  
+  fun imprimirNota(nota: Nota): String {
+    val itens = nota.itensNota()
+    val itensIncluidos = itens.filter {it.status == INCLUIDA}
+    val itensConferidos = itens.filter {it.status == CONFERIDA}
+    return if(itensIncluidos.isEmpty()) {
+      imprimirNota(itensConferidos, CONFERIDA)
+    }
+    else ""
   }
   
   private fun imprimir(itens: List<ItemNota>, etiqueta: Etiqueta): String {
