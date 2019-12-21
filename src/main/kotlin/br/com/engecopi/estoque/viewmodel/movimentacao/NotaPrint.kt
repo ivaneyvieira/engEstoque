@@ -2,13 +2,52 @@ package br.com.engecopi.estoque.viewmodel.movimentacao
 
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
-import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
+import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota
+import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
+import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.query.QItemNota
 
 class NotaPrint() {
-  fun imprimir(itemNota: ItemNota?, notaCompleta: Boolean, groupByHour: Boolean, statusImpressao: StatusNota): String {
+  //notaCompleta = false
+  fun imprimirItem(itemNota: ItemNota?, statusImpressao: StatusNota): String {
+    itemNota ?: return ""
+    return imprimirItens(listOf(itemNota), statusImpressao)
+  }
+  
+  //notaCompleta= true e groupByHour = false
+  fun imprimirNotaCompleta(itemNota: ItemNota?, statusImpressao: StatusNota): String {
+    itemNota ?: return ""
+    val itens =
+      QItemNota().nota.eq(itemNota.nota)
+        .status.eq(itemNota.status)
+        .order()
+        .nota.loja.numero.asc()
+        .nota.numero.asc()
+        .findList()
+    return imprimirItens(itens, statusImpressao)
+  }
+  
+  //notaCompleta= true e groupByHour = true
+  fun imprimirNotaCompletaAgrupada(itemNota: ItemNota?, statusImpressao: StatusNota): String {
+    itemNota ?: return ""
+    val itens =
+      QItemNota().nota.eq(itemNota.nota)
+        .status.eq(itemNota.status)
+        .hora.eq(itemNota.hora)
+        .order()
+        .nota.loja.numero.asc()
+        .nota.numero.asc()
+        .findList()
+    return imprimirItens(itens, statusImpressao)
+  }
+  
+  private fun imprimir(itemNota: ItemNota?,
+                       notaCompleta: Boolean,
+                       groupByHour: Boolean,
+                       statusImpressao: StatusNota): String {
     itemNota ?: return ""
     return if(notaCompleta) {
       val itens =
@@ -26,9 +65,9 @@ class NotaPrint() {
     else imprimirItens(listOf(itemNota), statusImpressao)
   }
   
-  fun imprimir(statusImpressao: StatusNota): String {
+  fun imprimirItensPendentes(statusImpressao: StatusNota): String {
     val itens = QItemNota().let {q ->
-      if(RegistryUserInfo.usuarioDefault.admin) q else q.impresso.eq(false)
+      if(usuarioDefault.admin) q else q.impresso.eq(false)
     }
       .status.eq(statusImpressao)
       .order()
@@ -49,7 +88,7 @@ class NotaPrint() {
     }
   }
   
-  fun imprimirNota(itens: List<ItemNota>, statusImpressao: StatusNota): String {
+  private fun imprimirNota(itens: List<ItemNota>, statusImpressao: StatusNota): String {
     val etiquetas =
       Etiqueta.findByStatus(statusImpressao)
         .filter {
@@ -58,6 +97,16 @@ class NotaPrint() {
     return etiquetas.joinToString(separator = "\n") {etiqueta ->
       imprimir(itens, etiqueta)
     }
+  }
+  
+  fun imprimirNota(nota: Nota): String {
+    val itens = nota.itensNota()
+    val itensIncluidos = itens.filter {it.status == INCLUIDA}
+    val itensConferidos = itens.filter {it.status == CONFERIDA}
+    return if(itensIncluidos.isEmpty()) {
+      imprimirNota(itensConferidos, CONFERIDA)
+    }
+    else ""
   }
   
   private fun imprimir(itens: List<ItemNota>, etiqueta: Etiqueta): String {
@@ -70,7 +119,7 @@ class NotaPrint() {
   private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {
     itemNota ?: return ""
     val print = itemNota.printEtiqueta()
-    if(!RegistryUserInfo.usuarioDefault.admin) itemNota.let {
+    if(!usuarioDefault.admin) itemNota.let {
       it.refresh()
       it.impresso = true
       it.update()
