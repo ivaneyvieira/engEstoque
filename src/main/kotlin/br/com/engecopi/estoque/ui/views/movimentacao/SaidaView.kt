@@ -13,6 +13,8 @@ import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.TipoNota
+import br.com.engecopi.estoque.ui.print.PrintUtil.imprimeNotaConcluida
+import br.com.engecopi.estoque.ui.print.PrintUtil.printText
 import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
 import br.com.engecopi.estoque.viewmodel.movimentacao.ISaidaView
 import br.com.engecopi.estoque.viewmodel.movimentacao.ProdutoVO
@@ -242,13 +244,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
             //Imprime nota
             itens.firstOrNull()
               ?.nota?.let {nota ->
-              val impressoraNota = when(nota.lancamentoOrigem) {
-                EXPEDICAO -> "EXP4"
-                ENTREGA_F -> "ENTREGA"
-                else      -> ""
-              }
-              val textNota = viewModel.imprimirNota(nota)
-              printText(impressoraNota, textNota)
+              imprimeNotaConcluida(nota)
             }
           }
         }
@@ -258,6 +254,8 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
       }
     }
   }
+  
+
   
   private fun imprimeItem(item: SaidaVo) {
     val text = viewModel.imprimirItem(item.itemNota)

@@ -4,6 +4,8 @@ import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
 import br.com.engecopi.estoque.model.RegistryUserInfo.userDefaultIsAdmin
 import br.com.engecopi.estoque.model.TipoNota
+import br.com.engecopi.estoque.ui.print.PrintUtil.imprimeNotaConcluida
+import br.com.engecopi.estoque.ui.print.PrintUtil.printText
 import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
 import br.com.engecopi.estoque.viewmodel.expedicao.INFExpedicaoView
 import br.com.engecopi.estoque.viewmodel.expedicao.ItemExpedicao
@@ -194,6 +196,7 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), IN
           pacotes.forEach {
             printText(it.impressora, it.text)
           }
+          imprimeNotaConcluida(nota)
         }
         dialog.showDialog()
       }

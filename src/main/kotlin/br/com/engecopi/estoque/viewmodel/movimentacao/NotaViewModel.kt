@@ -288,11 +288,6 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
       .updateView()
   }
   
-  fun imprimirNota(nota: Nota) = execString {
-    print.imprimirNota(nota)
-      .updateView()
-  }
-  
   fun desfazOperacao(item: ItemNota?) = exec {
     item?.desfazerOperacao()
     view.updateView()

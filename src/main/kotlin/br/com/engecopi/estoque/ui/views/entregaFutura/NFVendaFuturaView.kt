@@ -2,6 +2,8 @@ package br.com.engecopi.estoque.ui.views.entregaFutura
 
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
+import br.com.engecopi.estoque.ui.print.PrintUtil.imprimeNotaConcluida
+import br.com.engecopi.estoque.ui.print.PrintUtil.printText
 import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
 import br.com.engecopi.estoque.viewmodel.entregaFutura.INFVendaFuturaView
 import br.com.engecopi.estoque.viewmodel.entregaFutura.NFVendaFuturaViewModel
@@ -179,6 +181,7 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
         val dialog = DlgNotaFuturaLoc(notaSaida, viewModel) {itens ->
           val nota = viewModel.processaKey(itens)
           val text = viewModel.imprimir(nota)
+          imprimeNotaConcluida(nota)
           printText(impressora(), text)
           updateView()
         }
