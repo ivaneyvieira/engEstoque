@@ -3,7 +3,6 @@ package br.com.engecopi.estoque.viewmodel.entregaFutura
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.Nota
-import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.query.QItemNota
 
@@ -47,7 +46,6 @@ class NFVendaFuturaPrint() {
   }
   
   private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {
-    if(RegistryUserInfo.usuarioDefault.isEstoqueVendaFutura) return ""
     itemNota ?: return ""
     val print = itemNota.printEtiqueta()
     itemNota.let {

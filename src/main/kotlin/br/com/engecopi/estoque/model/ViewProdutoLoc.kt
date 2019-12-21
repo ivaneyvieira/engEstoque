@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.model
 
+import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.Repositories.findByAbreviacao
 import br.com.engecopi.estoque.model.Repositories.findByProduto
 import br.com.engecopi.estoque.model.finder.ViewProdutoLocFinder
@@ -76,7 +77,7 @@ class ViewProdutoLoc(@Id
     fun filtraLoc(prdno: String?, grade: String?): Boolean {
       val produto = Produto.findProduto(prdno, grade) ?: return false
       val abreviacoes = findCache(produto).map {it.abreviacao}
-      return abreviacoes.contains(RegistryUserInfo.abreviacaoDefault)
+      return abreviacoes.contains(abreviacaoDefault)
     }
   
     fun findByCodigoGrade(prdno: String?, grade: String?): List<ViewProdutoLoc> {

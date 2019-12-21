@@ -3,7 +3,6 @@ package br.com.engecopi.estoque.viewmodel.expedicao
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.Produto
-import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.TipoMov
@@ -53,14 +52,7 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
   }
   
   override val query: QViewNotaExpedicao
-    get() = QViewNotaExpedicao().let {query ->
-      query.loja.eq(lojaDeposito)
-        .nota.tipoNota.ne(VENDAF)
-        .let {q ->
-          if(usuarioDefault.isEstoqueExpedicao) q.abreviacao.eq(abreviacaoDefault).filtroNotaSerie()
-          else q
-        }
-    }
+    get() = QViewNotaExpedicao().loja.eq(lojaDeposito).nota.tipoNota.ne(VENDAF)
   
   private fun QViewNotaExpedicao.filtroNotaSerie(): QViewNotaExpedicao {
     val tipos = usuarioDefault.series.map {it.tipoNota}

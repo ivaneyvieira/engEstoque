@@ -1,7 +1,5 @@
 package br.com.engecopi.estoque.viewmodel.expedicao
 
-import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
-import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
@@ -24,12 +22,6 @@ class EntregaClienteEditorViewModel(view: IEntregaClienteEditorView):
   override fun QItemNota.filtroStatus(): QItemNota {
     return status.`in`(ENTREGUE, ENT_LOJA)
       .nota.usuario.isNotNull.nota.sequencia.ne(0)
-      .let {q ->
-        if(usuarioDefault.isEstoqueExpedicao) {
-          q.localizacao.startsWith(abreviacaoDefault)
-        }
-        else q
-      }
   }
   
   override fun createVo() = EntregaClienteVo()
