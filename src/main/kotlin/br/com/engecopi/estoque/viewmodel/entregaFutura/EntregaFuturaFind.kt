@@ -62,7 +62,7 @@ class EntregaFuturaFind(val view: IView) {
       val lojaBaixa = notaBaixa.storeno ?: return emptyList()
       val numeroBaixa = notaBaixa.numeroSerie()
       findBaixa(lojaBaixa, numeroBaixa)
-    }
+    } + ItemNota.findItensBarcodeCliente(key)
   }
   
   private fun findBaixa(storeno: Int?, numero: String): List<ItemNota> {
