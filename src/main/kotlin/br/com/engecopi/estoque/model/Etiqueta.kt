@@ -38,8 +38,14 @@ class Etiqueta: BaseModel() {
         .findList()
         .firstOrNull()
     }
-    
-    fun findByStatus(statusNota: StatusNota?): List<Etiqueta> =
-      QEtiqueta().statusNota.eq(statusNota).etiquetaDefault.eq(true).orderBy().titulo.asc().findList()
+  
+    fun findByStatus(statusNota: StatusNota?, prefixo: String = ""): List<Etiqueta> {
+      return QEtiqueta().statusNota.eq(statusNota)
+        .etiquetaDefault.eq(true)
+        .titulo.contains(prefixo)
+        .orderBy()
+        .titulo.asc()
+        .findList()
+    }
   }
 }

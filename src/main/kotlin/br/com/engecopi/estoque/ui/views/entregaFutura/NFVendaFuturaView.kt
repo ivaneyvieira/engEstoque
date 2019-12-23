@@ -93,7 +93,7 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
       addCustomFormComponent(formCodBar)
       updateOperationVisible = false
       addOperationVisible = false
-      deleteOperationVisible = RegistryUserInfo.usuarioDefault.admin
+      deleteOperationVisible = usuarioDefault.admin
       column(NFVendaFuturaVo::numero) {
         caption = "Número NF"
         setSortProperty("numero")

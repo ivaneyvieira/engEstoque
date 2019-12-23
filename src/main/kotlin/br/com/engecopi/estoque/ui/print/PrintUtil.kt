@@ -1,12 +1,12 @@
 package br.com.engecopi.estoque.ui.print
 
-
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
@@ -40,11 +40,7 @@ object PrintUtil {
   }
   
   private fun imprimirNota(itens: List<ItemNota>, statusImpressao: StatusNota): String {
-    val etiquetas =
-      Etiqueta.findByStatus(statusImpressao)
-        .filter {
-          it.titulo.contains("ETENT")
-        }
+    val etiquetas = Etiqueta.findByStatus(statusImpressao, "ETENT")
     return etiquetas.joinToString(separator = "\n") {etiqueta ->
       imprimir(itens, etiqueta)
     }
@@ -70,7 +66,7 @@ object PrintUtil {
   private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {
     itemNota ?: return ""
     val print = itemNota.printEtiqueta()
-    if(!RegistryUserInfo.usuarioDefault.admin) itemNota.let {
+    if(!usuarioDefault.admin) itemNota.let {
       it.refresh()
       it.impresso = true
       it.update()
