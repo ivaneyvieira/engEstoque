@@ -241,47 +241,47 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   
   fun findVendasCaixa(): List<VendasCaixa> {
     val sql = "/sqlSaci/findVendaCaixa.sql"
-    val data_atual =
+    val dataAtual =
       LocalDate.now()
         .toSaciDate()
     return query(sql) {q ->
-      q.addParameter("data_atual", "$data_atual")
+      q.addParameter("data_atual", "$dataAtual")
         .executeAndFetch(VendasCaixa::class.java)
     }
   }
   
   fun findPedidoTransferencia(): List<PedidoSaci> {
     val sql = "/sqlSaci/findPedidoTransferencia.sql"
-    val data_inicial =
+    val dataInicial =
       LocalDate.now()
         .minusMonths(6)
         .toSaciDate()
     return query(sql) {q ->
-      q.addParameter("data_inicial", "$data_inicial")
+      q.addParameter("data_inicial", "$dataInicial")
         .executeAndFetch(PedidoSaci::class.java)
     }
   }
   
   fun findEntregaFutura(): List<EntregaFutura> {
     val sql = "/sqlSaci/findEntragaFutura.sql"
-    val data_inicial =
+    val dataInicial =
       LocalDate.now()
         .minusMonths(6)
         .toSaciDate()
     return query(sql) {q ->
-      q.addParameter("data_inicial", "$data_inicial")
+      q.addParameter("data_inicial", "$dataInicial")
         .executeAndFetch(EntregaFutura::class.java)
     }
   }
   
   fun findTransferenciaAutomatica(): List<TransferenciaAutomatica> {
     val sql = "/sqlSaci/findTransferenciaAutomatica.sql"
-    val data_inicial =
+    val dataInicial =
       LocalDate.now()
         .minusMonths(6)
         .toSaciDate()
     return query(sql) {q ->
-      q.addParameter("data_inicial", "$data_inicial")
+      q.addParameter("data_inicial", "$dataInicial")
         .executeAndFetch(TransferenciaAutomatica::class.java)
     }
   }

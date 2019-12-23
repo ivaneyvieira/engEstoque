@@ -105,7 +105,6 @@ object RepositoryAvisoNotas {
 
   fun notaSaidaPendente(): List<NotaSaci> {
     val naoCanceladas = notaSaidaTodas.filter {
-      //print(".")
       it.cancelado == "N"
     }
     return naoCanceladas.filter {nfSaida ->
