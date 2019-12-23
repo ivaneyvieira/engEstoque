@@ -10,6 +10,7 @@ import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
+import br.com.engecopi.estoque.model.envelopes.Printer
 import br.com.engecopi.framework.ui.view.MessageDialog
 import br.com.engecopi.saci.QuerySaci
 import br.com.engecopi.utils.CupsUtils
@@ -19,22 +20,22 @@ object PrintUtil {
   fun imprimeNotaConcluida(nota: Nota?) {
     nota ?: return
     val impressoraNota = when(nota.lancamentoOrigem) {
-      EXPEDICAO -> "EXP4"
-      ENTREGA_F -> "ENTREGA"
-      else      -> ""
+      EXPEDICAO -> Printer("EXP4")
+      ENTREGA_F -> Printer("ENTREGA")
+      else      -> Printer("")
     }
     val textNota = imprimirNota(nota)
     printText(impressoraNota, textNota)
   }
   
-  fun printText(impressora: String, text: String?) {
+  fun printText(impressora: Printer, text: String?) {
     if(!text.isNullOrBlank()) {
       when {
         QuerySaci.test -> {
           val image = ZPLPreview.createPdf(text, "4x2")
           if(image != null) showImage("Preview", image)
         }
-        else           -> CupsUtils.printCups(impressora, text)
+        else           -> CupsUtils.printCups(impressora.nome, text)
       }
     }
   }

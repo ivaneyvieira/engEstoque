@@ -4,10 +4,13 @@ import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
+import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.viewmodel.EChaveNaoEncontrada
 import br.com.engecopi.framework.viewmodel.EViewModelError
+import br.com.engecopi.saci.beans.NotaProdutoSaci
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -19,24 +22,13 @@ class NFExpedicaoProcessamento() {
   }
   
   private fun processaNota(itensExpedicao: List<ItemExpedicao>): Nota {
-    val loja = RegistryUserInfo.lojaDeposito.numero
+    val loja = lojaDeposito.numero
     val notaDoSaci =
       itensExpedicao.firstOrNull()
         ?.notaProdutoSaci
     val lojaSaci = notaDoSaci?.storeno ?: throw EViewModelError("Nota não encontrada")
     if(loja != lojaSaci) throw EViewModelError("Esta nota pertence a loja $lojaSaci")
-    val nota: Nota? =
-      Nota.createNota(notaDoSaci)
-        ?.let {
-          if(it.existe()) Nota.findSaida(it.loja, it.numero)
-          else {
-            it.sequencia = Nota.maxSequencia() + 1
-            it.usuario = RegistryUserInfo.usuarioDefault
-            it.lancamentoOrigem = EXPEDICAO
-            it.save()
-            it
-          }
-        }
+    val nota: Nota? = createNota(notaDoSaci)
     nota ?: throw EViewModelError("Nota não encontrada")
     val itens = itensExpedicao.mapNotNull {itemExpedicao ->
       val notaSaci = itemExpedicao.notaProdutoSaci
@@ -52,9 +44,22 @@ class NFExpedicaoProcessamento() {
         if(this.status == CONFERIDA) this.recalculaSaldos()
       }
     }
-    
+  
     if(itens.isEmpty()) throw EViewModelError("Essa nota não possui itens com localização")
-    
+  
     return nota
+  }
+  
+  private fun createNota(notaDoSaci: NotaProdutoSaci?): Nota? {
+    return Nota.createNota(notaDoSaci)
+      ?.apply {
+        if(this.existe()) Nota.findSaida(this.loja, this.numero)
+        else {
+          this.sequencia = Nota.maxSequencia() + 1
+          this.usuario = usuarioDefault
+          this.lancamentoOrigem = EXPEDICAO
+          this.save()
+        }
+      }
   }
 }

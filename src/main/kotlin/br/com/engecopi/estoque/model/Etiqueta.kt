@@ -39,7 +39,7 @@ class Etiqueta: BaseModel() {
         .firstOrNull()
     }
   
-    fun findByStatus(statusNota: StatusNota?, prefixo: String = ""): List<Etiqueta> {
+    fun findByStatus(statusNota: StatusNota?, prefixo: String): List<Etiqueta> {
       return QEtiqueta().statusNota.eq(statusNota)
         .etiquetaDefault.eq(true)
         .titulo.contains(prefixo)

@@ -48,8 +48,7 @@ class AbreciacaoView: LayoutView<AbreciacaoViewModel>(), IAbreciacaoView {
         setRenderer({value -> if(value) "Sim" else "Não"}, TextRenderer())
         setEditorComponent(edtLoc)
       }
-
-
+  
       addColumnFor(Abreviacao::impressora) {
         caption = "Impressora"
         setEditorComponent(edtImpressora)
