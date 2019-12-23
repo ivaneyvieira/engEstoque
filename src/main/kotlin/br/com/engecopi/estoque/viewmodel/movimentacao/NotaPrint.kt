@@ -75,11 +75,7 @@ class NotaPrint() {
   }
   
   fun imprimirItens(itens: List<ItemNota>, statusImpressao: StatusNota): String {
-    val etiquetas =
-      Etiqueta.findByStatus(statusImpressao)
-        .filter {
-          !it.titulo.contains("ETENT")
-        }
+    val etiquetas = Etiqueta.findByStatus(statusImpressao, "ETEXP")
     return etiquetas.joinToString(separator = "\n") {etiqueta ->
       imprimir(itens, etiqueta)
     }

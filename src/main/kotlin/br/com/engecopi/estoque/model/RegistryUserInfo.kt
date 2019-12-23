@@ -1,6 +1,7 @@
 package br.com.engecopi.estoque.model
 
 
+import br.com.engecopi.estoque.model.envelopes.Printer
 import br.com.engecopi.framework.model.Transaction
 import br.com.engecopi.framework.viewmodel.EViewModelError
 import com.vaadin.server.Page
@@ -40,7 +41,7 @@ object RegistryUserInfo {
   val endereco
     get() = Page.getCurrent().webBrowser.address ?: ""
   val impressora
-    get() = Abreviacao.findByAbreviacao(abreviacaoDefault)?.impressora ?: ""
+    get() = Printer(Abreviacao.findByAbreviacao(abreviacaoDefault)?.impressora ?: "")
   val isLogged
     get() = info != null
 }

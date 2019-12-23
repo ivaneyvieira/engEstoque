@@ -92,8 +92,6 @@ class ItemNota: BaseModel() {
         it.id == this.id
       } ?: true
     }
-  val etiquetas: List<Etiqueta>
-    @Transient get() = Etiqueta.findByStatus(status)
   private val abrev: String
     @Transient get() = localizacao.split('.').getOrNull(0) ?: ""
   val loja: Loja?
