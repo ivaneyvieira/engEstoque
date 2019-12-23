@@ -5,7 +5,6 @@ import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
 import br.com.engecopi.estoque.model.Nota
-import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
@@ -58,8 +57,7 @@ object PrintUtil {
   }
   
   private fun imprimir(itens: List<ItemNota>, etiqueta: Etiqueta): String {
-    return itens.filter {it.abreviacao?.abreviacao == RegistryUserInfo.abreviacaoDefault}
-      .map {imprimir(it, etiqueta)}
+    return itens.map {imprimir(it, etiqueta)}
       .distinct()
       .joinToString(separator = "\n")
   }
@@ -67,12 +65,12 @@ object PrintUtil {
   private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {
     itemNota ?: return ""
     val print = itemNota.printEtiqueta()
-    if(!usuarioDefault.admin) itemNota.let {
-      it.refresh()
-      it.impresso = true
-      it.update()
+    if(!usuarioDefault.admin) itemNota.let {item ->
+      item.refresh()
+      item.impresso = true
+      item.update()
     }
-    
+  
     return print.print(etiqueta.template)
   }
   
