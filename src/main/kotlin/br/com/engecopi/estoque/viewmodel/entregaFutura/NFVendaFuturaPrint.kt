@@ -17,10 +17,7 @@ class NFVendaFuturaPrint() {
   
   private fun imprimeItens(itens: List<ItemNota>): String {
     val etiquetas =
-      Etiqueta.findByStatus(INCLUIDA)
-        .filter {etiqueta ->
-          etiqueta.titulo.contains("ETDEP")
-        }
+      Etiqueta.findByStatus(INCLUIDA, "ETDEP")
     return etiquetas.joinToString(separator = "\n") {etiqueta ->
       itens.map {imprimir(it, etiqueta)}
         .distinct()
@@ -29,11 +26,7 @@ class NFVendaFuturaPrint() {
   }
   
   fun imprimeTudo(): String {
-    val etiquetas =
-      Etiqueta.findByStatus(INCLUIDA)
-        .filter {etiqueta ->
-          etiqueta.titulo.contains("ETDEP")
-        }
+    val etiquetas = Etiqueta.findByStatus(INCLUIDA, "ETDEP")
     val itens =
       QItemNota().impresso.eq(false)
         .status.eq(INCLUIDA)

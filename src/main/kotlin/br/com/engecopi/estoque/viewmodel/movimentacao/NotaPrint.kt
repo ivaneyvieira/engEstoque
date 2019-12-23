@@ -85,8 +85,6 @@ class NotaPrint() {
     }
   }
   
-
-  
   private fun imprimir(itens: List<ItemNota>, etiqueta: Etiqueta): String {
     return itens.filter {it.abreviacao?.abreviacao == abreviacaoDefault}
       .map {imprimir(it, etiqueta)}
@@ -102,7 +100,7 @@ class NotaPrint() {
       it.impresso = true
       it.update()
     }
-    
+  
     return print.print(etiqueta.template)
   }
 }
