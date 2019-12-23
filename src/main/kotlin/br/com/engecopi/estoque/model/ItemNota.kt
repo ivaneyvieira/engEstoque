@@ -258,6 +258,7 @@ class NotaPrint(val item: ItemNota) {
   val nomeFilial
     get() = "ENGECOPI ${item.nota?.loja?.sigla}"
   val numeroLoja = notaSaci?.loja?.numero ?: 0
+  val horaLancamento = notaSaci?.hora?.format() ?: ""
   
   fun print(template: String): String {
     return NotaPrint::class.memberProperties.fold(template) {reduce, prop ->
