@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.model
 
+import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
@@ -148,7 +149,7 @@ class ItemNota: BaseModel() {
         quantidadeSaci = quantidade
         produto = produtoSaci
         nota = notaPrd
-        usuario = RegistryUserInfo.usuarioDefault
+        usuario = usuarioDefault
         localizacao = locProduto
       }
     }

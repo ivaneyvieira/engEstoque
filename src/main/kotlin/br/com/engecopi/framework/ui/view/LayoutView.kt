@@ -21,7 +21,6 @@ import com.vaadin.data.provider.DataProvider
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.event.ShortcutAction.KeyCode
 import com.vaadin.navigator.View
-import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.Component
 import com.vaadin.ui.Grid
@@ -66,10 +65,6 @@ abstract class LayoutView<V: ViewModel<*>>: VerticalLayout(), View {
     isMargin = true
     this.title(titleForm)
     this.block()
-  }
-  
-  override fun enter(event: ViewChangeEvent) {
-    //if(::viewModel.isInitialized) updateView()
   }
   
   fun <T> Grid<T>.actionSelected(msgErro: String = "Selecione um item", action: (T) -> Unit) {

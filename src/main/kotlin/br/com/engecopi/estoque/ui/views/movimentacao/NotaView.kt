@@ -48,7 +48,6 @@ import org.vaadin.patrik.FastNavigation
 
 abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: CrudLayoutView<VO, MODEL>() {
   lateinit var gridProduto: Grid<ProdutoVO>
-  //val lojaDefault = lojaUsuario ?: lojaDeposito
   val usuario get() = usuarioDefault
   val isAdmin get() = usuario.admin
   

@@ -2,7 +2,6 @@ package br.com.engecopi.estoque.model.etlSaci
 
 import br.com.engecopi.estoque.model.dtos.PedidoSaci
 import br.com.engecopi.saci.saci
-import br.com.engecopi.utils.ECupsPrinter
 import br.com.engecopi.utils.format
 import br.com.engecopi.utils.localDate
 import io.ebean.DB
@@ -29,20 +28,6 @@ class ETLPedidos: ETL<PedidoSaci>() {
     override fun getSource() = saci.findPedidoTransferencia()
 
     override fun getTarget() = DB.findDto(PedidoSaci::class.java, sql).findList()
-
-    init {
-      addListenerInsert("ImprimeInsert") {pedido ->
-        if(pedido.status == 2) {
-          try {
-            //val etiqueta = etiquetaPedido(pedido)
-            //val impressora = Abreviacao.findByAbreviacao(pedido.abreviacao)?.impressora ?: ""
-            //CupsUtils.printCups(impressora, etiqueta)
-          } catch(e: ECupsPrinter) {
-            //Vazio
-          }
-        }
-      }
-    }
   }
 }
 
