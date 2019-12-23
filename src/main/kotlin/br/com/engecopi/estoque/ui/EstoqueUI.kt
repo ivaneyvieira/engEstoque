@@ -84,7 +84,6 @@ class EstoqueUI: UI() {
   private lateinit var menuVisaoGeral: MenuButton
   val title = "<h3>Estoque <strong>Engecopi</strong></h3>"
   private val versao = SystemUtils.readFile("/versao.txt")
-  
   var loginInfo: LoginInfo? = null
   
   fun updateLogin() {
@@ -191,9 +190,7 @@ class EstoqueUI: UI() {
   
   private fun @VaadinDsl ValoMenu.sectionFutura(user: Usuario) {
     section("Entrega Futura") {
-      if(!user.estoque || user.admin) {
-        menuButton("Nota Fiscal", NEWSPAPER, view = NFVendaFuturaView::class.java)
-      }
+      menuButton("Nota Fiscal", NEWSPAPER, view = NFVendaFuturaView::class.java)
       menuButton("Entrega ao Cliente", TRUCK, view = EntregaFuturaView::class.java)
       menuButton("Editor de Entrega", TRUCK, view = EntregaFuturaEditorView::class.java)
     }
