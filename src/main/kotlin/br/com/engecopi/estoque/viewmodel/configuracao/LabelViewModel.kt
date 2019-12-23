@@ -46,7 +46,7 @@ class LabelViewModel(view: ILabelView): ViewModel<ILabelView>(view) {
   }
 
   fun impressao(): String? {
-    val etiquetas = Etiqueta.findByStatus(StatusNota.PRODUTO)
+    val etiquetas = Etiqueta.findByStatus(StatusNota.PRODUTO, "")
     val template = etiquetas.joinToString(separator = "\n") {it.template}
 
     return view.listaProduto.joinToString(separator = "\n") {prd ->

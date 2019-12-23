@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.ui.views.entregaFutura
 
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
+import br.com.engecopi.estoque.model.envelopes.Printer
 import br.com.engecopi.estoque.ui.print.PrintUtil.imprimeNotaConcluida
 import br.com.engecopi.estoque.ui.print.PrintUtil.printText
 import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
@@ -168,9 +169,9 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
     }
   }
   
-  private fun impressora(): String {
+  private fun impressora(): Printer {
     val impressora = usuarioDefault.impressora.trim()
-    return if(impressora == "") "ENTREGA" else impressora
+    return Printer(if(impressora == "") "ENTREGA" else impressora)
   }
   
   private fun formCodbar(): PnlCodigoBarras {
