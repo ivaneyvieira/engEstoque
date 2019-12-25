@@ -33,7 +33,7 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView
-class EntradaView: NotaView<EntradaVo, EntradaViewModel, IEntradaView>(), IEntradaView {
+open class EntradaView: NotaView<EntradaVo, EntradaViewModel, IEntradaView>(), IEntradaView {
   private lateinit var formBinder: Binder<EntradaVo>
   private lateinit var fieldNotaFiscal: TextField
   
