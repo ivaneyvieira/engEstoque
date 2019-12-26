@@ -212,7 +212,7 @@ class EstoqueUI: UI() {
       info.usuario.loja?.sigla?.let {siglaLoja ->
         menuButton("Loja:", badge = siglaLoja)
       }
-      menuButton(caption = "Endereco: ", badge = RegistryUserInfo.endereco)
+      menuButton(caption = "Endereco: ", badge = RegistryUserInfo.enderecoBrowser)
       menuButton("Sair", icon = OUT) {
         onLeftClick {
           LoginService.logout()

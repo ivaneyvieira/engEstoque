@@ -7,7 +7,7 @@ import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
 import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.NotaItens
 import br.com.engecopi.estoque.model.RegistryUserInfo
-import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
+import br.com.engecopi.estoque.model.RegistryUserInfo.impressoraUsuario
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
@@ -239,7 +239,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
         val dlg = DlgNotaSaida(nota, viewModel) {itens ->
           if(itens.isNotEmpty()) {
             val text = viewModel.imprimirItens(itens)
-            printText(impressora, text)
+            printText(impressoraUsuario, text)
             refreshGrid()
             //Imprime nota
             itens.firstOrNull()
@@ -259,13 +259,13 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
   
   private fun imprimeItem(item: SaidaVo) {
     val text = viewModel.imprimirItem(item.itemNota)
-    printText(impressora, text)
+    printText(impressoraUsuario, text)
     refreshGrid()
   }
   
   private fun imprimeNotaCompleta(item: SaidaVo) {
     val text = viewModel.imprimirNotaCompleta(item.itemNota)
-    printText(impressora, text)
+    printText(impressoraUsuario, text)
     refreshGrid()
   }
 }

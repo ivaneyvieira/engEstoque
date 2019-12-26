@@ -2,9 +2,9 @@ package br.com.engecopi.estoque.ui.views.configuracao
 
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.StatusNota
-import br.com.engecopi.estoque.viewmodel.etiquetas.EtiquetaViewModel
-import br.com.engecopi.estoque.viewmodel.etiquetas.EtiquetaVo
-import br.com.engecopi.estoque.viewmodel.etiquetas.IEtiquetaView
+import br.com.engecopi.estoque.viewmodel.configuracao.EtiquetaViewModel
+import br.com.engecopi.estoque.viewmodel.configuracao.EtiquetaVo
+import br.com.engecopi.estoque.viewmodel.configuracao.IEtiquetaView
 import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.default
 import br.com.engecopi.framework.ui.view.row

@@ -4,7 +4,7 @@ import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo
-import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
+import br.com.engecopi.estoque.model.RegistryUserInfo.impressoraUsuario
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.ui.print.PrintUtil.printText
@@ -65,7 +65,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: 
     return Button("Imprime Etiquetas").apply {
       icon = PRINT
       addClickListener {
-        printText(impressora, viewModel.imprimirItensPendentes())
+        printText(impressoraUsuario, viewModel.imprimirItensPendentes())
         //grid.refreshGrid()
       }
     }
