@@ -18,6 +18,7 @@ import br.com.engecopi.estoque.model.TipoNota.VENDA
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.dtos.EntregaFutura
 import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
+import br.com.engecopi.estoque.model.envelopes.Printer
 import br.com.engecopi.estoque.model.finder.NotaFinder
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.model.query.QNota
@@ -316,8 +317,8 @@ data class NotaItens(val nota: Nota?, val itens: List<ItemNota>) {
   }
 }
 
-enum class LancamentoOrigem(val descricao: String) {
-  EXPEDICAO("Expedição"),
-  DEPOSITO("Deposito"),
-  ENTREGA_F("Entrega Futura")
+enum class LancamentoOrigem(val descricao: String, val printer: Printer) {
+  EXPEDICAO("Expedição", Printer("EXP4")),
+  DEPOSITO("Deposito", Printer("ENTREGA")),
+  ENTREGA_F("Entrega Futura", Printer(""));
 }

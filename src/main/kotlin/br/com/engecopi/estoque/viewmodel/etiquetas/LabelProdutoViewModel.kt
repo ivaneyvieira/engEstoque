@@ -10,7 +10,7 @@ import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.framework.viewmodel.ViewModel
 
-class LabelViewModel(view: ILabelView): ViewModel<ILabelView>(view) {
+class LabelProdutoViewModel(view: ILabelProdutoView): ViewModel<ILabelProdutoView>(view) {
   fun addFaixaCodigo(codigoI: Int?, codigoF: Int?) = execUnit {
     view.listaProduto = Produto.findFaixaCodigo(codigoI?.toString(), codigoF?.toString())
   }
@@ -74,6 +74,6 @@ class LabelViewModel(view: ILabelView): ViewModel<ILabelView>(view) {
   }
 }
 
-interface ILabelView: IView {
+interface ILabelProdutoView: IView {
   var listaProduto: List<Produto>
 }
