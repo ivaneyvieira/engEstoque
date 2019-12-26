@@ -255,8 +255,6 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
     }
   }
   
-
-  
   private fun imprimeItem(item: SaidaVo) {
     val text = viewModel.imprimirItem(item.itemNota)
     printText(impressoraUsuario, text)

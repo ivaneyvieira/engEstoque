@@ -4,9 +4,6 @@ import br.com.engecopi.estoque.model.LoginInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RepositoryAvisoNotas
 import br.com.engecopi.estoque.model.Usuario
-import br.com.engecopi.estoque.model.etlSaci.ETLEntregaFutura
-import br.com.engecopi.estoque.model.etlSaci.ETLPedidos
-import br.com.engecopi.estoque.model.etlSaci.ETLTransferenciaAutomatica
 import br.com.engecopi.estoque.ui.views.EntregaFuturaEditorView
 import br.com.engecopi.estoque.ui.views.EntregaFuturaView
 import br.com.engecopi.estoque.ui.views.configuracao.AbreciacaoView
@@ -15,7 +12,8 @@ import br.com.engecopi.estoque.ui.views.configuracao.ProdutoView
 import br.com.engecopi.estoque.ui.views.configuracao.UsuarioView
 import br.com.engecopi.estoque.ui.views.entregaFutura.NFVendaFuturaView
 import br.com.engecopi.estoque.ui.views.etiquetas.HistoricoView
-import br.com.engecopi.estoque.ui.views.etiquetas.LabelView
+import br.com.engecopi.estoque.ui.views.etiquetas.LabelNotaView
+import br.com.engecopi.estoque.ui.views.etiquetas.LabelProdutoView
 import br.com.engecopi.estoque.ui.views.expedicao.EntregaClienteEditorView
 import br.com.engecopi.estoque.ui.views.expedicao.EntregaClienteView
 import br.com.engecopi.estoque.ui.views.expedicao.NFExpedicaoView
@@ -151,9 +149,10 @@ class EstoqueUI: UI() {
   
   private fun @VaadinDsl ValoMenu.sectionEtiqueta(user: Usuario) {
     section("Etiquetas") {
-      menuButton("Imprimir", BARCODE, view = LabelView::class.java)
-      when {
-        user.admin -> menuButton("Histórico", BARCODE, view = HistoricoView::class.java)
+      menuButton("Imprimir Produto", BARCODE, view = LabelProdutoView::class.java)
+      if(user.admin) {
+        menuButton("Imprimir Nota", BARCODE, view = LabelNotaView::class.java)
+        menuButton("Histórico", BARCODE, view = HistoricoView::class.java)
       }
     }
   }
@@ -279,10 +278,6 @@ class MyUIServlet: VaadinServlet() {
       // Vaadin logs into java.util.logging. Redirect that, so that all logging goes through slf4j.
       SLF4JBridgeHandler.removeHandlersForRootLogger()
       SLF4JBridgeHandler.install()
-      //ETLVendasCaixa.start()
-      ETLPedidos.start()
-      ETLEntregaFutura.start()
-      ETLTransferenciaAutomatica.start()
     }
   }
 }
