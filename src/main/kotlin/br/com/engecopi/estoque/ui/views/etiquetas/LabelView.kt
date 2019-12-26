@@ -3,8 +3,8 @@ package br.com.engecopi.estoque.ui.views.etiquetas
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.ui.print.PrintUtil.printText
-import br.com.engecopi.estoque.viewmodel.configuracao.ILabelView
-import br.com.engecopi.estoque.viewmodel.configuracao.LabelViewModel
+import br.com.engecopi.estoque.viewmodel.etiquetas.ILabelView
+import br.com.engecopi.estoque.viewmodel.etiquetas.LabelViewModel
 import br.com.engecopi.framework.ui.view.LayoutView
 import br.com.engecopi.framework.ui.view.default
 import br.com.engecopi.framework.ui.view.grupo

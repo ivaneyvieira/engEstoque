@@ -1,4 +1,4 @@
-package br.com.engecopi.estoque.viewmodel.etiquetas
+package br.com.engecopi.estoque.viewmodel.configuracao
 
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.StatusNota
