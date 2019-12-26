@@ -1,6 +1,5 @@
 package br.com.engecopi.estoque.model
 
-
 import br.com.engecopi.estoque.model.envelopes.Printer
 import br.com.engecopi.framework.model.Transaction
 import br.com.engecopi.framework.viewmodel.EViewModelError
@@ -25,7 +24,7 @@ object RegistryUserInfo {
         Transaction.variable(ABREV_FIELD, "'${loginInfo.abreviacao}'")
       }
     }
-  private val info : LoginInfo?
+  private val info: LoginInfo?
     get() {
       val loginProv = loginInfoProvider ?: throw EViewModelError("Não há provedor de login")
       return loginProv.loginInfo
@@ -38,9 +37,9 @@ object RegistryUserInfo {
     get() = Loja.findLoja(4) ?: throw EViewModelError("Loja depósito não cadastrada")
   val userDefaultIsAdmin
     get() = usuarioDefault.admin
-  val endereco
+  val enderecoBrowser
     get() = Page.getCurrent().webBrowser.address ?: ""
-  val impressora
+  val impressoraUsuario
     get() = Printer(Abreviacao.findByAbreviacao(abreviacaoDefault)?.impressora ?: "")
   val isLogged
     get() = info != null
