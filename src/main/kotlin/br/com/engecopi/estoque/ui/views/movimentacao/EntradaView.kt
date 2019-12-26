@@ -1,7 +1,7 @@
 package br.com.engecopi.estoque.ui.views.movimentacao
 
 import br.com.engecopi.estoque.model.ItemNota
-import br.com.engecopi.estoque.model.RegistryUserInfo.impressora
+import br.com.engecopi.estoque.model.RegistryUserInfo.impressoraUsuario
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.ui.print.PrintUtil.printText
@@ -191,7 +191,7 @@ open class EntradaView: NotaView<EntradaVo, EntradaViewModel, IEntradaView>(), I
   protected fun imprimeItem(domainObject: EntradaVo, imprimir: (ItemNota?) -> String) {
     val itemNota = domainObject.itemNota ?: domainObject.findEntity()
     val text = imprimir(itemNota)
-    printText(impressora, text)
+    printText(impressoraUsuario, text)
     refreshGrid()
   }
   

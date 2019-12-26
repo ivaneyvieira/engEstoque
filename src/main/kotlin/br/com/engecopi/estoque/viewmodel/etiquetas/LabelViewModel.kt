@@ -4,7 +4,7 @@ import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.HistoricoEtiqueta
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.Produto
-import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.framework.viewmodel.IView
@@ -33,8 +33,8 @@ class LabelViewModel(view: ILabelView): ViewModel<ILabelView>(view) {
   
   fun addFaixaCodigoGrade(codigo: String?, grade: String?) = execUnit {
     val produto = Produto.findProduto(codigo, grade) ?: return@execUnit
-    val localizacoes = produto.localizacoes(RegistryUserInfo.abreviacaoDefault)
-    if(localizacoes.any {it.startsWith(RegistryUserInfo.abreviacaoDefault)} && !view.listaProduto.contains(produto)) view.listaProduto += produto
+    val localizacoes = produto.localizacoes(abreviacaoDefault)
+    if(localizacoes.any {it.startsWith(abreviacaoDefault)} && !view.listaProduto.contains(produto)) view.listaProduto += produto
   }
   
   fun clearProduto() = execUnit {
@@ -46,7 +46,7 @@ class LabelViewModel(view: ILabelView): ViewModel<ILabelView>(view) {
       .map {it.grade}
   }
   
-  fun impressao(): String? {
+  fun impressaoProduto(): String? {
     val etiquetas = Etiqueta.findByStatus(StatusNota.PRODUTO, "")
     val template = etiquetas.joinToString(separator = "\n") {it.template}
     

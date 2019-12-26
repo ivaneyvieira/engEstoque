@@ -1,7 +1,8 @@
 package br.com.engecopi.estoque.ui.views.etiquetas
 
 import br.com.engecopi.estoque.model.Produto
-import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.RegistryUserInfo.impressoraUsuario
+import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.ui.print.PrintUtil.printText
 import br.com.engecopi.estoque.viewmodel.etiquetas.ILabelView
 import br.com.engecopi.estoque.viewmodel.etiquetas.LabelViewModel
@@ -48,14 +49,15 @@ class LabelView: LayoutView<LabelViewModel>(), ILabelView {
     val filtroTipoProduto = FiltroTipoProduto(viewModel)
     val filtroCodigoGrade = FiltroCodigoGrade(viewModel)
     val filtroNfe = FiltroNfe(viewModel)
-    val filtrosView = if(RegistryUserInfo.usuarioDefault.admin) listOf(filtroFaixaCodigo,
-                                                                       filtroFaixaNome,
-                                                                       filtroFabricante,
-                                                                       filtroCentroLucro,
-                                                                       filtroTipoProduto,
-                                                                       filtroNfe,
-                                                                       filtroCodigoGrade)
-    else listOf(filtroCodigoGrade)
+    val filtrosView =
+      if(usuarioDefault.admin) listOf(filtroFaixaCodigo,
+                                      filtroFaixaNome,
+                                      filtroFabricante,
+                                      filtroCentroLucro,
+                                      filtroTipoProduto,
+                                      filtroNfe,
+                                      filtroCodigoGrade)
+      else listOf(filtroCodigoGrade)
     setSizeFull()
     form("Código de barras")
     verticalLayout {
@@ -81,16 +83,15 @@ class LabelView: LayoutView<LabelViewModel>(), ILabelView {
             isSpacing = false
             isMargin = false
           }
-
+        
           button("Imprimir") {
             this.expandRatio = 1f
             alignment = Alignment.BOTTOM_RIGHT
             addClickListener {
               cmbTipoFiltro.value?.let {filtroView ->
                 filtroView.processaFiltro()
-                val impressora = RegistryUserInfo.impressora
-                val print = viewModel.impressao()
-                printText(impressora, print)
+                val print = viewModel.impressaoProduto()
+                printText(impressoraUsuario, print)
               }
             }
           }
@@ -119,16 +120,16 @@ class LabelView: LayoutView<LabelViewModel>(), ILabelView {
         }
       }
     }
-
+  
     setFiltro(filtroCodigoGrade)
   }
-
+  
   override var listaProduto
     get() = gridProduto.dataProvider.getAll()
     set(value) {
       gridProduto.setItems(value)
     }
-
+  
   private fun setFiltro(pnlFIltro: FiltroView) {
     cmbTipoFiltro.value = pnlFIltro
     pnlFiltro.removeAllComponents()
@@ -142,46 +143,46 @@ abstract class FiltroView(val viewModel: LabelViewModel, val descricao: String):
     isSpacing = false
     isMargin = false
   }
-
+  
   abstract fun processaFiltro()
 }
 
 class FiltroFaixaCodigo(viewModel: LabelViewModel): FiltroView(viewModel, "Faixa de Código") {
   private lateinit var edtCodigoI: IntegerField
   private lateinit var edtCodigoF: IntegerField
-
+  
   init {
     row {
       edtCodigoI = integerField("Código Inicial") {
         isExpanded = false
-
+  
         addValueChangeListener {
           processaFiltro()
         }
       }
-
+  
       edtCodigoF = integerField("Código Final") {
         isExpanded = false
-
+    
         addValueChangeListener {
           processaFiltro()
         }
       }
     }
   }
-
+  
   override fun processaFiltro() = viewModel.addFaixaCodigo(edtCodigoI.value, edtCodigoF.value)
 }
 
 class FiltroFaixaNome(viewModel: LabelViewModel): FiltroView(viewModel, "Faixa de Nome") {
   private lateinit var edtNomeI: TextField
   private lateinit var edtNomeF: TextField
-
+  
   init {
     row {
       edtNomeI = textField("Nome Incial") {
         expandRatio = 1f
-
+  
         valueChangeMode = BLUR
         addValueChangeListener {
           processaFiltro()
@@ -196,13 +197,13 @@ class FiltroFaixaNome(viewModel: LabelViewModel): FiltroView(viewModel, "Faixa d
       }
     }
   }
-
+  
   override fun processaFiltro() = viewModel.addFaixaNome(edtNomeI.value, edtNomeF.value)
 }
 
 class FiltroNfe(viewModel: LabelViewModel): FiltroView(viewModel, "NF Entrada") {
   private lateinit var edtNfe: TextField
-
+  
   init {
     row {
       edtNfe = textField("Numero NF Entrada") {
@@ -213,13 +214,13 @@ class FiltroNfe(viewModel: LabelViewModel): FiltroView(viewModel, "NF Entrada") 
       }
     }
   }
-
+  
   override fun processaFiltro() = viewModel.addFaixaNfe(edtNfe.value)
 }
 
 class FiltroFabricante(viewModel: LabelViewModel): FiltroView(viewModel, "Fabricante") {
   private lateinit var edtFabricante: IntegerField
-
+  
   init {
     row {
       edtFabricante = integerField("Código do Fabricante") {
@@ -229,13 +230,13 @@ class FiltroFabricante(viewModel: LabelViewModel): FiltroView(viewModel, "Fabric
       }
     }
   }
-
+  
   override fun processaFiltro() = viewModel.addFaixaFabricante(edtFabricante.value)
 }
 
 class FiltroCentroLucro(viewModel: LabelViewModel): FiltroView(viewModel, "Centro de lucro") {
   private lateinit var edtCentroLucro: IntegerField
-
+  
   init {
     row {
       edtCentroLucro = integerField("Centro de lucro") {
@@ -245,13 +246,13 @@ class FiltroCentroLucro(viewModel: LabelViewModel): FiltroView(viewModel, "Centr
       }
     }
   }
-
+  
   override fun processaFiltro() = viewModel.addFaixaCentroLucro(edtCentroLucro.value)
 }
 
 class FiltroTipoProduto(viewModel: LabelViewModel): FiltroView(viewModel, "Tipo de produto") {
   private lateinit var edtTipo: IntegerField
-
+  
   init {
     row {
       edtTipo = integerField("Tipo do Produto") {
@@ -261,14 +262,14 @@ class FiltroTipoProduto(viewModel: LabelViewModel): FiltroView(viewModel, "Tipo 
       }
     }
   }
-
+  
   override fun processaFiltro() = viewModel.addFaixaTipoProduto(edtTipo.value)
 }
 
 class FiltroCodigoGrade(viewModel: LabelViewModel): FiltroView(viewModel, "Código e grade") {
   private lateinit var edtGrade: ComboBox<String>
   private lateinit var edtCodigo: TextField
-
+  
   init {
     row {
       edtCodigo = textField("Código") {
@@ -292,7 +293,7 @@ class FiltroCodigoGrade(viewModel: LabelViewModel): FiltroView(viewModel, "Códi
       }
     }
   }
-
+  
   override fun processaFiltro() = viewModel.addFaixaCodigoGrade(edtCodigo.value, edtGrade.value)
 }
 
