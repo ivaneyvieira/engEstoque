@@ -78,6 +78,7 @@ class LabelProdutoView: LayoutView<LabelProdutoViewModel>(), ILabelProdutoView {
               }
             }
           }
+  
           pnlFiltro = horizontalLayout {
             this.expandRatio = 10f
             isSpacing = false

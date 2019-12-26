@@ -9,20 +9,46 @@ import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoNota.TRANSFERENCIA_E
 import br.com.engecopi.estoque.model.TipoNota.TRANSFERENCIA_S
+import br.com.engecopi.estoque.model.envelopes.Printer
 import br.com.engecopi.estoque.viewmodel.etiquetas.ETipoEtiqueta.ENTREGA
 import br.com.engecopi.estoque.viewmodel.etiquetas.ETipoEtiqueta.LANCAMENTO
+import br.com.engecopi.estoque.viewmodel.expedicao.PacoteImpressao
 import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.framework.viewmodel.ViewModel
 import java.time.LocalDate
 
 class LabelNotaViewModel(view: ILabelNotaView): ViewModel<ILabelNotaView>(view) {
-  fun impressaoNota(): String? = exec {
+  fun impressaoNota(): List<PacoteImpressao> = execList {
     val etiqueta = etiqueta() ?: throw EViewModelError("Não foi encontrado nenhuma etiqueta")
     val itensNota = view.listaNota.flatMap {nota ->
       nota.itensNota()
     }
-    imprimir(itensNota, etiqueta)
+    val tipoEtiqueta = view.tipoEtiqueta ?: throw EViewModelError("Tipo de etiqueta não informado")
+    when(tipoEtiqueta) {
+      LANCAMENTO -> imprimirLancamento(itensNota, etiqueta)
+      ENTREGA    -> imprimirEntrega(itensNota, etiqueta)
+      else       -> emptyList()
+    }
+  }
+  
+  private fun imprimirLancamento(itensNota: List<ItemNota>, etiqueta: Etiqueta): List<PacoteImpressao> {
+    val agrupaAbreviacao = itensNota.groupBy {it.abreviacao}
+    return agrupaAbreviacao.mapNotNull {(abrev, itens) ->
+      val impressora = abrev?.impressora ?: return@mapNotNull null
+      val text = imprimir(itens, etiqueta)
+      PacoteImpressao(Printer(impressora), text)
+    }
+  }
+  
+  private fun imprimirEntrega(itensNota: List<ItemNota>, etiqueta: Etiqueta): List<PacoteImpressao> {
+    val groupOrigem = itensNota.groupBy {it.nota?.lancamentoOrigem}
+    
+    return groupOrigem.mapNotNull {(origem, itens) ->
+      val impressora = origem?.printer ?: return@mapNotNull null
+      val text = imprimir(itens, etiqueta)
+      PacoteImpressao(impressora, text)
+    }
   }
   
   private fun etiqueta(): Etiqueta? {
@@ -86,7 +112,7 @@ class NotaLabelVo(private val nota: Nota) {
   val lancamento: LocalDate?
     get() = nota.data
   val localizacao
-    get() = nota.itensNota().mapNotNull {it.abreviacao}.distinct().joinToString(separator = "/")
+    get() = nota.itensNota().mapNotNull {it.abreviacao?.abreviacao}.distinct().joinToString(separator = "/")
   val usuario
     get() = nota.usuario?.nome
   val rotaDescricao

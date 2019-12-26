@@ -1,6 +1,5 @@
 package br.com.engecopi.estoque.ui.views.etiquetas
 
-import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.ui.print.PrintUtil
 import br.com.engecopi.estoque.viewmodel.etiquetas.ETipoEtiqueta
 import br.com.engecopi.estoque.viewmodel.etiquetas.ETipoEtiqueta.LANCAMENTO
@@ -14,6 +13,7 @@ import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.row
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.addColumnFor
+import com.github.mvysny.karibudsl.v8.alignment
 import com.github.mvysny.karibudsl.v8.button
 import com.github.mvysny.karibudsl.v8.comboBox
 import com.github.mvysny.karibudsl.v8.expandRatio
@@ -21,9 +21,10 @@ import com.github.mvysny.karibudsl.v8.getAll
 import com.github.mvysny.karibudsl.v8.grid
 import com.github.mvysny.karibudsl.v8.horizontalLayout
 import com.github.mvysny.karibudsl.v8.isExpanded
-import com.github.mvysny.karibudsl.v8.isMargin
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.verticalLayout
+import com.vaadin.shared.ui.ValueChangeMode.BLUR
+import com.vaadin.ui.Alignment.BOTTOM_RIGHT
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.Grid
 import com.vaadin.ui.TextField
@@ -55,10 +56,9 @@ class LabelNotaView: LayoutView<LabelNotaViewModel>(), ILabelNotaView {
           }
           
           horizontalLayout {
-            this.expandRatio = 10f
-            isSpacing = false
-            isMargin = false
+            this.expandRatio = 14f
             edtNumeroNota = textField("Numero NF") {
+              valueChangeMode = BLUR
               addValueChangeListener {
                 viewModel.processaFiltro()
               }
@@ -66,48 +66,51 @@ class LabelNotaView: LayoutView<LabelNotaViewModel>(), ILabelNotaView {
           }
           
           button("Imprimir") {
+            alignment = BOTTOM_RIGHT
             addClickListener {
-              val print = viewModel.impressaoNota()
-              PrintUtil.printText(RegistryUserInfo.impressoraUsuario, print)
+              viewModel.impressaoNota()
+                .forEach {pacote ->
+                  PrintUtil.printText(pacote.impressora, pacote.text)
+                }
             }
           }
         }
-        gridNota = grid(NotaLabelVo::class) {
-          isExpanded = true
-          setSizeFull()
-          this.removeAllColumns()
-          addColumnFor(NotaLabelVo::numero) {
-            caption = "Número"
-          }
-          addColumnFor(NotaLabelVo::dataEmissao) {
-            caption = "Emissao"
-            dateFormat()
-          }
-          addColumnFor(NotaLabelVo::numeroBaixa) {
-            caption = "NF Baixa"
-          }
-          addColumnFor(NotaLabelVo::dataBaixa) {
-            caption = "Data Baixa"
-            dateFormat()
-          }
-          addColumnFor(NotaLabelVo::lancamento) {
-            caption = "Data Lançamento"
-            dateFormat()
-            setSortProperty("data", "hora")
-          }
-          addColumnFor(NotaLabelVo::localizacao) {
-            caption = "Localização"
-          }
-          addColumnFor(NotaLabelVo::usuario) {
-            caption = "Usuário"
-          }
-          addColumnFor(NotaLabelVo::rotaDescricao) {
-            caption = "Rota"
-          }
-          addColumnFor(NotaLabelVo::cliente) {
-            caption = "Cliente"
-            setSortProperty("nota.cliente")
-          }
+      }
+      gridNota = grid(NotaLabelVo::class) {
+        isExpanded = true
+        setSizeFull()
+        this.removeAllColumns()
+        addColumnFor(NotaLabelVo::numero) {
+          caption = "Número"
+        }
+        addColumnFor(NotaLabelVo::dataEmissao) {
+          caption = "Emissao"
+          dateFormat()
+        }
+        addColumnFor(NotaLabelVo::numeroBaixa) {
+          caption = "NF Baixa"
+        }
+        addColumnFor(NotaLabelVo::dataBaixa) {
+          caption = "Data Baixa"
+          dateFormat()
+        }
+        addColumnFor(NotaLabelVo::lancamento) {
+          caption = "Data Lançamento"
+          dateFormat()
+          setSortProperty("data", "hora")
+        }
+        addColumnFor(NotaLabelVo::localizacao) {
+          caption = "Localização"
+        }
+        addColumnFor(NotaLabelVo::usuario) {
+          caption = "Usuário"
+        }
+        addColumnFor(NotaLabelVo::rotaDescricao) {
+          caption = "Rota"
+        }
+        addColumnFor(NotaLabelVo::cliente) {
+          caption = "Cliente"
+          setSortProperty("nota.cliente")
         }
       }
     }
