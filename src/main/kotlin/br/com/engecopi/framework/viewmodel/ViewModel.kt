@@ -41,6 +41,8 @@ abstract class ViewModel<V: IView>(val view: V): IViewModel {
       } catch(e: EViewModelError) {
         showException(e)
         throw e
+      }catch(e : Throwable){
+        throw e
       } finally {
         inTransaction = false
       }
