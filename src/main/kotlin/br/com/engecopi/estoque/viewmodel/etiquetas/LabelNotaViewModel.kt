@@ -16,13 +16,14 @@ import br.com.engecopi.estoque.viewmodel.expedicao.PacoteImpressao
 import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.framework.viewmodel.ViewModel
+import br.com.engecopi.utils.PrinterInfo
 import java.time.LocalDate
 
 class LabelNotaViewModel(view: ILabelNotaView): ViewModel<ILabelNotaView>(view) {
   fun impressaoNota(): List<PacoteImpressao> = execList {
     val etiqueta = etiqueta() ?: throw EViewModelError("Não foi encontrado nenhuma etiqueta")
-    val itensNota = view.listaNota.flatMap {nota ->
-      nota.itensNota()
+    val itensNota = view.listaNota.map {nota ->
+      nota.itensNota
     }
     val tipoEtiqueta = view.tipoEtiqueta ?: throw EViewModelError("Tipo de etiqueta não informado")
     when(tipoEtiqueta) {
@@ -81,7 +82,11 @@ class LabelNotaViewModel(view: ILabelNotaView): ViewModel<ILabelNotaView>(view) 
     val numeroKey = view.numeroNota ?: ""
     val key = KeyNota(numeroKey)
     val nota = Nota.findSaida(key.storeno, key.numero) ?: throw EViewModelError("Nota não encontrada")
-    view.listaNota = listOf(NotaLabelVo(nota))
+    view.listaNota =
+      nota.itensNota()
+        .groupBy {it.abreviacao}
+        .values.mapNotNull {it.firstOrNull()}
+        .map {NotaLabelVo(it)}
   }
 }
 
@@ -89,6 +94,7 @@ interface ILabelNotaView: IView {
   var listaNota: List<NotaLabelVo>
   var tipoEtiqueta: ETipoEtiqueta?
   var numeroNota: String?
+  var impressora: PrinterInfo?
 }
 
 enum class ETipoEtiqueta(val descricao: String) {
@@ -96,28 +102,25 @@ enum class ETipoEtiqueta(val descricao: String) {
   ENTREGA("Entrega")
 }
 
-class NotaLabelVo(private val nota: Nota) {
-  fun itensNota(): List<ItemNota> {
-    return nota.itensNota()
-  }
-  
+class NotaLabelVo(val itensNota: ItemNota) {
+  val nota = itensNota.nota
   val numero
-    get() = "${nota.loja?.numero}${nota.numero}"
+    get() = "${nota?.loja?.numero}${nota?.numero}"
   val dataEmissao: LocalDate?
-    get() = nota.dataEmissao
+    get() = nota?.dataEmissao
   val numeroBaixa
-    get() = nota.numeroBaixa()
+    get() = nota?.numeroBaixa()
   val dataBaixa: LocalDate?
-    get() = nota.dataBaixa()
+    get() = nota?.dataBaixa()
   val lancamento: LocalDate?
-    get() = nota.data
+    get() = nota?.data
   val localizacao
-    get() = nota.itensNota().mapNotNull {it.abreviacao?.abreviacao}.distinct().joinToString(separator = "/")
+    get() = itensNota.abreviacao?.abreviacao
   val usuario
-    get() = nota.usuario?.nome
+    get() = nota?.usuario?.nome
   val rotaDescricao
-    get() = if(nota.tipoNota == TRANSFERENCIA_E || nota.tipoNota == TRANSFERENCIA_S) nota.rota
+    get() = if(nota?.tipoNota == TRANSFERENCIA_E || nota?.tipoNota == TRANSFERENCIA_S) nota.rota
     else ""
   val cliente
-    get() = nota.cliente
+    get() = nota?.cliente
 }
