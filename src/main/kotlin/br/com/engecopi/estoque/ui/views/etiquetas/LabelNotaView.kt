@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.ui.views.etiquetas
 
+import br.com.engecopi.estoque.model.envelopes.Printer
 import br.com.engecopi.estoque.ui.print.PrintUtil
 import br.com.engecopi.estoque.viewmodel.etiquetas.ETipoEtiqueta
 import br.com.engecopi.estoque.viewmodel.etiquetas.ETipoEtiqueta.LANCAMENTO
@@ -11,13 +12,14 @@ import br.com.engecopi.framework.ui.view.dateFormat
 import br.com.engecopi.framework.ui.view.default
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.row
+import br.com.engecopi.utils.CupsUtils
+import br.com.engecopi.utils.PrinterInfo
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.addColumnFor
 import com.github.mvysny.karibudsl.v8.alignment
 import com.github.mvysny.karibudsl.v8.button
 import com.github.mvysny.karibudsl.v8.comboBox
 import com.github.mvysny.karibudsl.v8.expandRatio
-import com.github.mvysny.karibudsl.v8.getAll
 import com.github.mvysny.karibudsl.v8.grid
 import com.github.mvysny.karibudsl.v8.horizontalLayout
 import com.github.mvysny.karibudsl.v8.isExpanded
@@ -27,10 +29,12 @@ import com.vaadin.shared.ui.ValueChangeMode.BLUR
 import com.vaadin.ui.Alignment.BOTTOM_RIGHT
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.Grid
+import com.vaadin.ui.Grid.SelectionMode
 import com.vaadin.ui.TextField
 
 @AutoView
 class LabelNotaView: LayoutView<LabelNotaViewModel>(), ILabelNotaView {
+  private lateinit var cmbImpressora: ComboBox<PrinterInfo>
   private lateinit var edtNumeroNota: TextField
   private lateinit var gridNota: Grid<NotaLabelVo>
   private lateinit var cmbTipoEtiqueta: ComboBox<ETipoEtiqueta>
@@ -44,7 +48,7 @@ class LabelNotaView: LayoutView<LabelNotaViewModel>(), ILabelNotaView {
       setSizeFull()
       grupo("Pesquisa Nota") {
         this.row {
-          cmbTipoEtiqueta = comboBox("Tipo Filtro") {
+          cmbTipoEtiqueta = comboBox("Tipo Nota") {
             this.expandRatio = 2f
             default()
             val filtrosView =
@@ -63,6 +67,14 @@ class LabelNotaView: LayoutView<LabelNotaViewModel>(), ILabelNotaView {
                 viewModel.processaFiltro()
               }
             }
+            cmbImpressora = comboBox<PrinterInfo>("Impressora") {
+              expandRatio = 2f
+              val itens = CupsUtils.printersInfo
+              setItems(itens)
+              setItemCaptionGenerator {it.description}
+    
+              isTextInputAllowed = false
+            }
           }
           
           button("Imprimir") {
@@ -70,7 +82,9 @@ class LabelNotaView: LayoutView<LabelNotaViewModel>(), ILabelNotaView {
             addClickListener {
               viewModel.impressaoNota()
                 .forEach {pacote ->
-                  PrintUtil.printText(pacote.impressora, pacote.text)
+                  val impressoraCmb = impressora?.let {Printer(it.name)}
+                  val printer = impressoraCmb ?: pacote.impressora
+                  PrintUtil.printText(printer, pacote.text)
                 }
             }
           }
@@ -80,6 +94,8 @@ class LabelNotaView: LayoutView<LabelNotaViewModel>(), ILabelNotaView {
         isExpanded = true
         setSizeFull()
         this.removeAllColumns()
+        this.setSelectionMode(SelectionMode.MULTI)
+  
         addColumnFor(NotaLabelVo::numero) {
           caption = "Número"
         }
@@ -117,9 +133,10 @@ class LabelNotaView: LayoutView<LabelNotaViewModel>(), ILabelNotaView {
   }
   
   override var listaNota: List<NotaLabelVo>
-    get() = gridNota.dataProvider.getAll()
+    get() = gridNota.selectedItems.toList()
     set(value) {
       gridNota.setItems(value)
+      value.forEach {item -> gridNota.select(item)}
     }
   override var tipoEtiqueta: ETipoEtiqueta?
     get() = cmbTipoEtiqueta.value
@@ -130,6 +147,11 @@ class LabelNotaView: LayoutView<LabelNotaViewModel>(), ILabelNotaView {
     get() = edtNumeroNota.value
     set(value) {
       edtNumeroNota.value = value
+    }
+  override var impressora: PrinterInfo?
+    get() = cmbImpressora.value
+    set(value) {
+      cmbImpressora.value = value
     }
 }
 

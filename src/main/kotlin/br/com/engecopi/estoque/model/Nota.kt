@@ -215,8 +215,7 @@ class Nota: BaseModel() {
   
     private fun notasSalva(loja: Loja, tipoNota: TipoMov): List<Nota> {
       val dtInicial =
-        LocalDate.now()
-          .minusDays(180)
+        LocalDate.of(2020, 1, 1)
       return QNota().tipoMov.eq(tipoNota)
         .loja.equalTo(loja)
         .itensNota.localizacao.startsWith(abreviacaoDefault)
