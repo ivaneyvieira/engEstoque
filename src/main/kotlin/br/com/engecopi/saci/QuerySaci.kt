@@ -183,22 +183,17 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   
   fun findNotaSaidaSaci(storeno: Int, abreviacao: String): List<NotaSaci> {
     val sql = "/sqlSaci/findNotaSaidaTodas.sql"
-    return findNotaSaci(sql, storeno, "${abreviacao}%")
+    return findNotaSaci(sql, storeno, abreviacao)
   }
   
   private fun findNotaSaci(sql: String, storeno: Int, abreviacao: String): List<NotaSaci> {
-    /*
-    val data = LocalDate.now()
-      .minusDays(7)
-      .toSaciDate()
-      *
-     */
     val data =
       LocalDate.of(2020, 1, 1)
         .toSaciDate()
     val notaProdutoList = query(sql) {q ->
       q.run {
-        addParameter("storeno", storeno).addParameter("abreviacao", "${abreviacao}%")
+        addParameter("storeno", storeno)
+          .addParameter("abreviacao", "${abreviacao}%")
           .addParameter("data", data)
           .executeAndFetch(NotaProduto::class.java)
       }
