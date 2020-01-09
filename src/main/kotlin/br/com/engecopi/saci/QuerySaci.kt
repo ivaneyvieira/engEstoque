@@ -183,7 +183,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   
   fun findNotaSaidaSaci(storeno: Int, abreviacao: String): List<NotaSaci> {
     val sql = "/sqlSaci/findNotaSaidaTodas.sql"
-    return findNotaSaci(sql, storeno, abreviacao)
+    return findNotaSaci(sql, storeno, "${abreviacao}%")
   }
   
   private fun findNotaSaci(sql: String, storeno: Int, abreviacao: String): List<NotaSaci> {
