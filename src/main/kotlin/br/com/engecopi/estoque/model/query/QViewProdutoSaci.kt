@@ -9,11 +9,12 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for ViewProdutoSaci.
- *
+ * 
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
-class QViewProdutoSaci: TQRootBean<ViewProdutoSaci, QViewProdutoSaci> {
+class QViewProdutoSaci : TQRootBean<ViewProdutoSaci, QViewProdutoSaci> {
+
   companion object {
     /**
      * shared 'Alias' instance used to provide
@@ -21,7 +22,7 @@ class QViewProdutoSaci: TQRootBean<ViewProdutoSaci, QViewProdutoSaci> {
      */
     val _alias = QViewProdutoSaci(true)
   }
-  
+
   lateinit var id: PString<QViewProdutoSaci>
   lateinit var codigo: PString<QViewProdutoSaci>
   lateinit var nome: PString<QViewProdutoSaci>
@@ -30,19 +31,20 @@ class QViewProdutoSaci: TQRootBean<ViewProdutoSaci, QViewProdutoSaci> {
   lateinit var custo: PDouble<QViewProdutoSaci>
   lateinit var unidade: PString<QViewProdutoSaci>
   lateinit var tipo: PString<QViewProdutoSaci>
-  
+
+
   /**
    * Construct with a given Database.
    */
-  constructor(database: Database): super(ViewProdutoSaci::class.java, database)
-  
+  constructor(database: Database) : super(ViewProdutoSaci::class.java, database)
+
   /**
    * Construct using the default Database.
    */
-  constructor(): super(ViewProdutoSaci::class.java)
-  
+  constructor() : super(ViewProdutoSaci::class.java)
+
   /**
    * Construct for Alias.
    */
-  private constructor(dummy: Boolean): super(dummy)
+  private constructor(dummy: Boolean) : super(dummy)
 }

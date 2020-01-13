@@ -17,19 +17,20 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Association query bean for AssocViewNotaFutura.
- *
+ * 
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
-class QAssocViewNotaFutura<R>(name: String, root: R): TQAssocBean<ViewNotaFutura, R>(name, root) {
+class QAssocViewNotaFutura<R>(name: String, root: R) : TQAssocBean<ViewNotaFutura,R>(name, root) {
+
   lateinit var id: PLong<R>
   lateinit var createdAt: PLocalDateTime<R>
   lateinit var updatedAt: PLocalDateTime<R>
   lateinit var version: PInteger<R>
   lateinit var nota: QAssocNota<R>
   lateinit var numero: PString<R>
-  lateinit var tipoMov: PEnum<R, TipoMov>
-  lateinit var tipoNota: PEnum<R, TipoNota>
+  lateinit var tipoMov: PEnum<R,TipoMov>
+  lateinit var tipoNota: PEnum<R,TipoNota>
   lateinit var rota: PString<R>
   lateinit var fornecedor: PString<R>
   lateinit var cliente: PString<R>
@@ -42,25 +43,26 @@ class QAssocViewNotaFutura<R>(name: String, root: R): TQAssocBean<ViewNotaFutura
   lateinit var sequencia: PInteger<R>
   lateinit var usuario: QAssocUsuario<R>
   lateinit var abreviacao: PString<R>
-  
+
   /**
    * Eagerly fetch this association loading the specified properties.
    */
-  fun fetch(vararg properties: TQProperty<QViewNotaFutura>): R {
+  fun fetch(vararg properties: TQProperty<QViewNotaFutura>) : R {
     return fetchProperties(*properties)
   }
-  
+
   /**
    * Eagerly fetch this association using a 'query join' loading the specified properties.
    */
-  fun fetchQuery(vararg properties: TQProperty<QViewNotaFutura>): R {
+  fun fetchQuery(vararg properties: TQProperty<QViewNotaFutura>) : R {
     return fetchQueryProperties(*properties)
   }
-  
+
   /**
    * Use lazy loading for this association loading the specified properties.
    */
-  fun fetchLazy(vararg properties: TQProperty<QViewNotaFutura>): R {
+  fun fetchLazy(vararg properties: TQProperty<QViewNotaFutura>) : R {
     return fetchLazyProperties(*properties)
   }
+
 }

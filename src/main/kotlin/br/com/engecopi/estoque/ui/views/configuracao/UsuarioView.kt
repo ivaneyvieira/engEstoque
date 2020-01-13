@@ -86,32 +86,31 @@ class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>(), IUsuarioVi
             }
 
             checkBox("Administrador") {
-              expandRatio = 1f
               bind(binder).bind(UsuarioCrudVo::admin)
               alignment = Alignment.BOTTOM_RIGHT
             }
-
+            checkBox("Paineis") {
+              bind(binder).bind(UsuarioCrudVo::painel)
+              alignment = Alignment.BOTTOM_RIGHT
+            }
             checkBox("Expedição") {
-              expandRatio = 1f
               bind(binder).bind(UsuarioCrudVo::expedicao)
               alignment = Alignment.BOTTOM_RIGHT
             }
-
-            checkBox("Estoque") {
-              expandRatio = 1f
+            checkBox("Entrega Futura") {
+              bind(binder).bind(UsuarioCrudVo::entregaFutura)
+              alignment = Alignment.BOTTOM_RIGHT
+            }
+            checkBox("Movimentacao") {
               bind(binder).bind(UsuarioCrudVo::estoque)
               alignment = Alignment.BOTTOM_RIGHT
             }
-
-            checkBox("Etiquetas") {
-              expandRatio = 1f
-              bind(binder).bind(UsuarioCrudVo::etiqueta)
+            checkBox("Configuração") {
+              bind(binder).bind(UsuarioCrudVo::configuracao)
               alignment = Alignment.BOTTOM_RIGHT
             }
-
-            checkBox("Entrega Futura") {
-              expandRatio = 1f
-              bind(binder).bind(UsuarioCrudVo::entregaFutura)
+            checkBox("Etiquetas") {
+              bind(binder).bind(UsuarioCrudVo::etiqueta)
               alignment = Alignment.BOTTOM_RIGHT
             }
           }

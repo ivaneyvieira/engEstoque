@@ -15,11 +15,12 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for Etiqueta.
- *
+ * 
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
-class QEtiqueta: TQRootBean<Etiqueta, QEtiqueta> {
+class QEtiqueta : TQRootBean<Etiqueta, QEtiqueta> {
+
   companion object {
     /**
      * shared 'Alias' instance used to provide
@@ -27,29 +28,30 @@ class QEtiqueta: TQRootBean<Etiqueta, QEtiqueta> {
      */
     val _alias = QEtiqueta(true)
   }
-  
+
   lateinit var id: PLong<QEtiqueta>
   lateinit var createdAt: PLocalDateTime<QEtiqueta>
   lateinit var updatedAt: PLocalDateTime<QEtiqueta>
   lateinit var version: PInteger<QEtiqueta>
   lateinit var titulo: PString<QEtiqueta>
-  lateinit var statusNota: PEnum<QEtiqueta, StatusNota>
+  lateinit var statusNota: PEnum<QEtiqueta,StatusNota>
   lateinit var template: PString<QEtiqueta>
   lateinit var itensNota: QAssocItemNota<QEtiqueta>
   lateinit var etiquetaDefault: PBoolean<QEtiqueta>
-  
+
+
   /**
    * Construct with a given Database.
    */
-  constructor(database: Database): super(Etiqueta::class.java, database)
-  
+  constructor(database: Database) : super(Etiqueta::class.java, database)
+
   /**
    * Construct using the default Database.
    */
-  constructor(): super(Etiqueta::class.java)
-  
+  constructor() : super(Etiqueta::class.java)
+
   /**
    * Construct for Alias.
    */
-  private constructor(dummy: Boolean): super(dummy)
+  private constructor(dummy: Boolean) : super(dummy)
 }
