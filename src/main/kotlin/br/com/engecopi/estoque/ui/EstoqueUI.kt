@@ -133,7 +133,7 @@ class EstoqueUI: UI() {
       
       if(user.roleMovimentacao()) sessionMovimentacao()
       
-      if(user.roleMovimentacao()) sectionConfiguracao(user)
+      if(user.roleConfiguracao()) sectionConfiguracao(user)
       
       if(user.roleEtiqueta()) sectionEtiqueta(user)
     }
@@ -226,11 +226,11 @@ class EstoqueUI: UI() {
     }
   }
   
-  private fun Usuario.rolePaineis() = this.admin
+  private fun Usuario.rolePaineis() = this.admin || this.painel
   private fun Usuario.roleExpedicao() = this.admin || this.expedicao
   private fun Usuario.roleFutura() = this.admin || this.entregaFutura
   private fun Usuario.roleMovimentacao() = this.admin || this.estoque
-  private fun Usuario.roleConfiguracao() = this.admin || this.estoque
+  private fun Usuario.roleConfiguracao() = this.admin || this.configuracao
   private fun Usuario.roleEtiqueta() = this.admin || this.etiqueta
   
   private fun loginScreen() {
