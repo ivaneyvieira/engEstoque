@@ -63,7 +63,10 @@ object RepositoryAvisoNotas {
 
   private fun refreshNotaSaidaTodas() {
     notaSaidaTodas.clear()
-    notaSaidaTodas.addAll(saci.findNotaSaidaSaci(storeno, abreviacao))
+    val lista =
+      saci.findNotaSaidaSaci(storeno, abreviacao)
+        .sortedBy {it.tipo}
+    notaSaidaTodas.addAll(lista)
   }
 
   fun notaEntradaDevolvida(): List<NotaSaci> {
@@ -107,6 +110,7 @@ object RepositoryAvisoNotas {
     val naoCanceladas = notaSaidaTodas.filter {
       it.cancelado == "N"
     }
+      .sortedBy {it.tipo}
     return naoCanceladas.filter {nfSaida ->
       nfSaida.saidaAceita()
     }.filter {nfSaida ->
