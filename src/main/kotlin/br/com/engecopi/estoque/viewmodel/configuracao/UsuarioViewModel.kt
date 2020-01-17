@@ -76,6 +76,7 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
       this.series = usuario.series.toSet()
       this.estoque = usuario.estoque
       this.expedicao = usuario.expedicao
+      this.painel = usuario.painel
       this.entregaFutura = usuario.entregaFutura
       this.admin = usuario.admin
       this.etiqueta = usuario.etiqueta
