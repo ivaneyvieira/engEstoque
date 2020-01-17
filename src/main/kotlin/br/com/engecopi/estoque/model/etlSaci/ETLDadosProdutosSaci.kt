@@ -21,12 +21,14 @@ class ETLDadosProdutosSaci: ETL<DadosProdutosSaci>() {
       WHERE id = :id
     """.trimIndent()
   
-  companion object: ETLThread<DadosProdutosSaci>(ETLDadosProdutosSaci(), 60) {
+  companion object: ETLThread<DadosProdutosSaci>(
+    ETLDadosProdutosSaci(), 60) {
     val sql
       get() = "select * FROM t_dados_produto_saci"
     
     override fun getSource() = saci.findDadosProdutosSaci()
     
-    override fun getTarget() = DB.findDto(DadosProdutosSaci::class.java, sql).findList()
+    override fun getTarget() = DB.findDto(DadosProdutosSaci::class.java,
+                                          sql).findList()
   }
 }

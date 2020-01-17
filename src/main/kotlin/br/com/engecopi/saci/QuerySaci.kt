@@ -2,12 +2,12 @@ package br.com.engecopi.saci
 
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.dtos.DadosProdutosSaci
+import br.com.engecopi.estoque.model.dtos.DevolucaoFornecedor
 import br.com.engecopi.estoque.model.dtos.EntregaFutura
 import br.com.engecopi.estoque.model.dtos.PedidoSaci
 import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
 import br.com.engecopi.estoque.model.dtos.VendasCaixa
 import br.com.engecopi.saci.beans.ChaveProduto
-import br.com.engecopi.saci.beans.DevolucaoFornecedor
 import br.com.engecopi.saci.beans.LojaSaci
 import br.com.engecopi.saci.beans.NfsKey
 import br.com.engecopi.saci.beans.NotaProduto
@@ -225,11 +225,14 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun findDevolucaoFornecedor(storeno: Int, abreviacao: String): List<DevolucaoFornecedor> {
+  fun findDevolucaoFornecedor(storeno: Int): List<DevolucaoFornecedor> {
     val sql = "/sqlSaci/findDevolucaoFornecedor.sql"
+    val data =
+      LocalDate.of(2020, 1, 1)
+        .toSaciDate()
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
-        .addParameter("abreviacao", "${abreviacao}%")
+        .addParameter("dataIncial", data)
         .executeAndFetch(DevolucaoFornecedor::class.java)
     }
   }
