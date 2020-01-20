@@ -42,6 +42,7 @@ open class DialogPopup<BEAN: Any>(caption: String, classBean: KClass<BEAN>): Win
     content = VerticalLayout(form, toolBar)
     addStyleName(ValoTheme.PANEL_WELL)
     UI.getCurrent().addWindow(this)
+    this.isResponsive = true
   }
 
   fun initForm(configForm: (VerticalLayout) -> Unit) {

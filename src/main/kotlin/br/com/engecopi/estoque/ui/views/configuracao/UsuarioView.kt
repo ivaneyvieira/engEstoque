@@ -20,9 +20,8 @@ import com.github.mvysny.karibudsl.v8.bind
 import com.github.mvysny.karibudsl.v8.checkBox
 import com.github.mvysny.karibudsl.v8.checkBoxGroup
 import com.github.mvysny.karibudsl.v8.comboBox
-import com.github.mvysny.karibudsl.v8.em
 import com.github.mvysny.karibudsl.v8.expandRatio
-import com.github.mvysny.karibudsl.v8.h
+import com.github.mvysny.karibudsl.v8.isExpanded
 import com.github.mvysny.karibudsl.v8.perc
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.twinColSelect
@@ -69,13 +68,13 @@ class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>(), IUsuarioVi
               bind(binder).bind(UsuarioCrudVo::loja)
               reloadBinderOnChange(binder)
             }
-
+            
             comboBox<PrinterInfo>("Impressora") {
-              expandRatio = 2f
+              expandRatio = 1f
               val itens = CupsUtils.printersInfo
               setItems(itens)
               setItemCaptionGenerator {it.description}
-
+              
               isTextInputAllowed = false
               bind(binder).withConverter({printerInfo ->
                                            printerInfo?.name ?: ""
@@ -84,7 +83,7 @@ class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>(), IUsuarioVi
                                          })
                 .bind(UsuarioCrudVo::impressora)
             }
-
+            
             checkBox("Administrador") {
               bind(binder).bind(UsuarioCrudVo::admin)
               alignment = Alignment.BOTTOM_RIGHT
@@ -127,13 +126,16 @@ class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>(), IUsuarioVi
             }
           }
         }
-        grupo("Localização") {
-          twinColSelect<String> {
-            expandRatio = 1f
-            w = 99.perc
-            h = 16.em
-            bindItensSet(binder, UsuarioCrudVo::locaisLoja.name)
-            bind(binder).bind(UsuarioCrudVo::localizacaoes)
+        grupo("Localização", true) {
+          row {
+            isExpanded = true
+            twinColSelect<String> {
+              this.w = 80.perc
+              this.rows = 12
+              bindItensSet(binder, UsuarioCrudVo::locaisLoja.name)
+              bind(binder).bind(UsuarioCrudVo::localizacaoes)
+              alignment = Alignment.TOP_LEFT
+            }
           }
         }
       }
