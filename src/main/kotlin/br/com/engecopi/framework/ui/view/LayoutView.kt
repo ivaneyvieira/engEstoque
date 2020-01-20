@@ -34,6 +34,7 @@ import com.vaadin.ui.renderers.LocalDateRenderer
 import com.vaadin.ui.renderers.LocalDateTimeRenderer
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
+import org.tepi.listbuilder.ListBuilder
 import org.vaadin.addons.filteringgrid.FilterGrid
 import org.vaadin.viritin.fields.ClearableTextField
 import org.vaadin.viritin.fields.DoubleField
@@ -90,8 +91,6 @@ abstract class LayoutView<V: ViewModel<*>>: VerticalLayout(), View {
   fun showQuestion(msg: String, execYes: () -> Unit, execNo: () -> Unit) {
     if(msg.isNotBlank()) MessageDialog.question(message = msg, execYes = execYes, execNo = execNo)
   }
-  
-
 }
 
 fun <T> ComboBox<T>.default(valueEmpty: T? = null, captionGenerator: (T) -> String = {it.toString()}) {
@@ -279,6 +278,11 @@ fun <T: Any> (@VaadinDsl HasComponents).filterGrid(itemClass: KClass<T>? = null,
     if(dataProvider != null) this.dataProvider = dataProvider
     block()
   }
+
+@VaadinDsl
+fun (@VaadinDsl HasComponents).listBuilder(caption: String? = null,
+                                               block: (@VaadinDsl ListBuilder).() -> Unit = {}) =
+  init(ListBuilder(caption), block)
 
 fun Window.showDialog() {
   isClosable = true

@@ -77,6 +77,7 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
       this.estoque = usuario.estoque
       this.expedicao = usuario.expedicao
       this.painel = usuario.painel
+      this.configuracao = usuario.configuracao
       this.entregaFutura = usuario.entregaFutura
       this.admin = usuario.admin
       this.etiqueta = usuario.etiqueta
@@ -135,6 +136,8 @@ class UsuarioCrudVo: EntityVo<Usuario>() {
       if(estoque) tipos.add("Estoque")
       if(expedicao) tipos.add("Expedicao")
       if(entregaFutura) tipos.add("Entrega Futura")
+      if(painel) tipos.add("Painel")
+      if(configuracao) tipos.add("Configuração")
     }
 
     return tipos
