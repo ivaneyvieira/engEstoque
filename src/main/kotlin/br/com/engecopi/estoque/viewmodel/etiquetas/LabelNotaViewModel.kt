@@ -29,7 +29,6 @@ class LabelNotaViewModel(view: ILabelNotaView): ViewModel<ILabelNotaView>(view) 
     when(tipoEtiqueta) {
       LANCAMENTO -> imprimirLancamento(itensNota, etiqueta)
       ENTREGA    -> imprimirEntrega(itensNota, etiqueta)
-      else       -> emptyList()
     }
   }
   
