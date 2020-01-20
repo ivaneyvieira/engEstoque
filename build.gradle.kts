@@ -36,7 +36,7 @@ gretty {
 }
 
 vaadin {
-  version = "8.9.3"
+  version = "8.9.4"
 }
 
 configure<EnhancePluginExtension> {
@@ -110,6 +110,7 @@ dependencies {
   compile("com.fo0.advancedtokenfield:AdvancedTokenField:0.5.1")
   compile("org.vaadin:grideditorcolumnfix:0.3.1")
   compile("com.whitestein.vaadin.widgets:wt-pdf-viewer:2.0.1")
+  compile("org.tepi.listbuilder:listbuilder:1.0.0-v8-compatibility")
   //compile("org.vaadin:grid-renderers-collection-addon:2.6.0")
   // heroku app runner
   testImplementation("org.assertj:assertj-core:3.12.2")
