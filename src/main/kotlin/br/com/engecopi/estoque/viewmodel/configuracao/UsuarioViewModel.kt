@@ -133,11 +133,12 @@ class UsuarioCrudVo: EntityVo<Usuario>() {
     val tipos = mutableListOf<String>()
     if(admin == true) tipos.add("Administrado")
     else {
-      if(estoque) tipos.add("Estoque")
+      if(estoque) tipos.add("Movimentação")
       if(expedicao) tipos.add("Expedicao")
       if(entregaFutura) tipos.add("Entrega Futura")
       if(painel) tipos.add("Painel")
       if(configuracao) tipos.add("Configuração")
+      if(etiqueta) tipos.add("Etiqueta")
     }
 
     return tipos

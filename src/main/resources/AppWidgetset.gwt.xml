@@ -8,6 +8,7 @@
         <inherits name="org.vaadin.alump.searchdropdown.WidgetSet" />
         <inherits name="org.vaadin.grideditorcolumnfix.WidgetSet" />
         <inherits name="com.whitestein.vaadin.widgets.wtpdfviewer.Widgetset" />
+        <inherits name="org.tepi.listbuilder.WidgetSet" />
         <set-configuration-property name="devModeRedirectEnabled" value="true" />
         <set-property name="user.agent" value="gecko1_8,safari,ie10" />
         <source path="client" />
