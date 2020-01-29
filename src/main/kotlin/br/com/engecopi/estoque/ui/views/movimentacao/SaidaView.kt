@@ -285,6 +285,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
     addBlurListener {
       edtBarcode.focus()
     }
+    
     verticalLayout {
       setSizeFull()
       grupo("Nota fiscal de saída") {
