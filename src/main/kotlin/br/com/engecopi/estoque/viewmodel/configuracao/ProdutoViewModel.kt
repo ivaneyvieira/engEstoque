@@ -63,8 +63,9 @@ class ProdutoViewModel(view: IProdutoView): CrudViewModel<Produto, QProduto, Pro
   }
   
   override fun delete(bean: ProdutoVo) {
-    Produto.findProdutos(bean.codigoProduto, bean.gradesProduto.toList())
-      .forEach {it.delete()}
+    val produto = bean.toEntity()
+    val bean = Produto.byId(produto?.id ?: 0)
+    bean?.delete()
   }
   
   private fun QProduto.filtroUsuario(): QProduto {
@@ -157,7 +158,7 @@ class ProdutoVo: EntityVo<Produto>() {
   val itensNota: List<ItemNota>
     get() {
       produto?.recalculaSaldos()
-  
+      
       return produto?.findItensNota()
         .orEmpty()
         .filter {item ->
