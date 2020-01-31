@@ -189,6 +189,11 @@ class Produto: BaseModel() {
         }
         .filtroCD()
     }
+  
+    fun delete(idDelete: Long?) {
+      QProduto().id.eq(idDelete)
+        .delete()
+    }
   }
   
   fun saldoLocalizacao(localizacao: String?): Int {
