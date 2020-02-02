@@ -5,28 +5,26 @@ import br.com.engecopi.saci.saci
 import io.ebean.DB
 
 class ETLEntregaFutura: ETL<EntregaFutura>() {
-  override val sqlDelete = "DELETE FROM t_entrega_futura where id = :id"
+  override val sqlDelete = "DELETE FROM tEntrega_futura where id = :id"
   override val sqlInsert = """
-    INSERT INTO t_entrega_futura(id, storeno, ordno, numero_venda, nfno_venda, nfse_venda, 
-                                 numero_entrega, nfno_entrega, nfse_entrega, nfekey_entrega) 
-    VALUES(:id, :storeno, :ordno, :numero_venda, :nfno_venda, :nfse_venda, 
-           :numero_entrega, :nfno_entrega, :nfse_entrega, :nfekey_entrega)
+    INSERT INTO t_entrega_futura(id, storenoVenda, numeroVenda, nfnoVenda, nfseVenda,
+                                 storenoEntrega, numeroEntrega, nfnoEntrega, nfseEntrega, nfekeyEntrega)
+    VALUES(:id, :storenoVenda, :numeroVenda, :nfnoVenda, :nfseVenda,
+           :storenoEntrega, :numeroEntrega, :nfnoEntrega, :nfseEntrega, :nfekeyEntrega)
   """.trimIndent()
   override val sqlUpdate = """
-    UPDATE t_entrega_futura 
-    SET  numero_entrega=:numero_entrega, 
-         nfno_entrega=:nfno_entrega, 
-         nfse_entrega=:nfse_entrega,
-         nfekey_entrega=:nfekey_entrega
+    UPDATE t_entrega_futura
+    SET  storenoEntrega=:storenoEntrega,
+         numeroEntrega=:numeroEntrega,
+         nfnoEntrega=:nfnoEntrega, 
+         nfseEntrega=:nfseEntrega,
+         nfekeyEntrega=:nfekeyEntrega
     WHERE id = :id
   """.trimIndent()
 
   companion object: ETLThread<EntregaFutura>(ETLEntregaFutura(), 60) {
     val sql
-      get() = """select id, storeno, ordno, numero_venda, nfno_venda, nfse_venda, 
-                        numero_entrega, nfno_entrega, nfse_entrega, nfekey_entrega
-      |FROM t_entrega_futura
-      |""".trimMargin()
+      get() = "select * FROM t_entrega_futura"
   
     override fun getSource() = saci.findEntregaFutura()
   
