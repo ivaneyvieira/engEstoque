@@ -20,4 +20,5 @@ FROM (SELECT P.storeno, P.eordno AS ordno, cast(CONCAT(P.nfno, '/', P.nfse) AS C
                USING (storeno, ordno)
 WHERE V.storeno = 4 OR
       E.store_from = 4
-GROUP BY storenoVenda, numeroVenda, storenoEntrega, numeroEntrega;
+GROUP BY storenoVenda, numeroVenda, storenoEntrega, numeroEntrega
+

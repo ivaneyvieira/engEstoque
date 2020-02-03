@@ -64,8 +64,7 @@ class ProdutoViewModel(view: IProdutoView): CrudViewModel<Produto, QProduto, Pro
   
   override fun delete(bean: ProdutoVo) {
     val produto = bean.toEntity()
-    val bean = Produto.byId(produto?.id ?: 0)
-    bean?.delete()
+    Produto.delete(produto?.id)
   }
   
   private fun QProduto.filtroUsuario(): QProduto {
