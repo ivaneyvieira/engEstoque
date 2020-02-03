@@ -108,7 +108,7 @@ class NotaLabelVo(val itensNota: ItemNota) {
   val dataEmissao: LocalDate?
     get() = nota?.dataEmissao
   val numeroBaixa
-    get() = nota?.numeroBaixa()
+    get() = nota?.notaBaixa() ?: emptyList()
   val dataBaixa: LocalDate?
     get() = nota?.dataBaixa()
   val lancamento: LocalDate?

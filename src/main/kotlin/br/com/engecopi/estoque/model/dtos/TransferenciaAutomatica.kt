@@ -17,9 +17,9 @@ class TransferenciaAutomatica(id: String,
     get() = "$storenoFat$nffat$storenoTransf$nftransf"
   
   companion object {
-    fun notaFatura(lojaTransferencia: Int?, numeroSerieTransferencia: String?): NotaBaixaFatura? {
-      lojaTransferencia ?: return null
-      numeroSerieTransferencia ?: return null
+    fun notaFatura(lojaTransferencia: Int?, numeroSerieTransferencia: String?): List<NotaBaixaFatura> {
+      lojaTransferencia ?: return emptyList()
+      numeroSerieTransferencia ?: return emptyList()
       val sql = """select * from t_transferencia_automatica
         |where storenoTransf = :lojaTransferencia
         |  AND nftransf = :numeroSerieTransferencia
@@ -28,15 +28,16 @@ class TransferenciaAutomatica(id: String,
         .setParameter("lojaTransferencia", lojaTransferencia)
         .setParameter("numeroSerieTransferencia", numeroSerieTransferencia)
         .findList()
-        .firstOrNull()
-        ?.let {
-          NotaBaixaFatura(it.storenoFat, it.nffat, it.data.localDate())
+        .map {nf ->
+          NotaBaixaFatura(nf.storenoFat,
+                          nf.nffat,
+                          nf.data.localDate())
         }
     }
   
-    fun notaBaixa(lojaFatura: Int?, numeroSerieFatura: String?): NotaBaixaFatura? {
-      lojaFatura ?: return null
-      numeroSerieFatura ?: return null
+    fun notaBaixa(lojaFatura: Int?, numeroSerieFatura: String?): List<NotaBaixaFatura> {
+      lojaFatura ?: return emptyList()
+      numeroSerieFatura ?: return emptyList()
       val sql = """select * from t_transferencia_automatica
         |where storenoFat = :lojaFatura
         |  AND nffat = :numeroSerieFatura
@@ -45,9 +46,10 @@ class TransferenciaAutomatica(id: String,
         .setParameter("lojaFatura", lojaFatura)
         .setParameter("numeroSerieFatura", numeroSerieFatura)
         .findList()
-        .firstOrNull()
-        ?.let {
-          NotaBaixaFatura(it.storenoTransf, it.nftransf, it.data.localDate())
+        .map {nf ->
+          NotaBaixaFatura(nf.storenoTransf,
+                          nf.nftransf,
+                          nf.data.localDate())
         }
     }
   }

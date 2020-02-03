@@ -7,6 +7,7 @@ import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
+import br.com.engecopi.estoque.model.dtos.filterProduto
 import br.com.engecopi.estoque.model.finder.ItemNotaFinder
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.framework.model.BaseModel
@@ -100,7 +101,7 @@ class ItemNota: BaseModel() {
   val abreviacao: Abreviacao?
     @Transient get() = Abreviacao.findByAbreviacao(abrev)
   val numeroEntrega
-    get() = nota?.numeroBaixa()
+    get() = nota?.notaBaixa()?.filterProduto(codigo, grade) ?: emptyList()
   val dataEntrega
     get() = nota?.dataBaixa()
   

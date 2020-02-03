@@ -218,7 +218,7 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
       val nota = itemNota.nota
       this.numeroNF = nota?.numero
       this.numeroCodigo = itemNota.codigoBarraConferencia
-      this.numeroBaixa = itemNota.nota?.numeroBaixa()
+      this.numeroBaixa = itemNota.nota?.notaBaixa()
       this.dataBaixa = itemNota.nota?.dataBaixa()
       this.numeroCodigoReduzido = itemNota.codigoBarraCliente
       this.lojaNF = nota?.loja
@@ -302,7 +302,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   var usuario: Usuario? = null
   var numeroCodigo: String? = ""
   var numeroCodigoReduzido: String? = ""
-  var numeroBaixa: String? = ""
+  var numeroBaixa: String = ""
   var dataBaixa: LocalDate? = null
   var numeroNF: String? = ""
     set(value) {
