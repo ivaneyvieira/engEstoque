@@ -6,20 +6,20 @@ import br.com.engecopi.utils.localDate
 import io.ebean.DB
 
 class EntregaFutura(id: String,
-                    val storeno: Int,
-                    val ordno: Int,
-                    val numero_venda: String,
-                    val nfno_venda: Int,
-                    val nfse_venda: String,
-                    val numero_entrega: String,
-                    val nfno_entrega: Int,
-                    val nfse_entrega: String,
-                    val nfekey_entrega: String?): EntryID(id) {
+                    val storenoVenda: Int,
+                    val numeroVenda: String,
+                    val nfnoVenda: Int,
+                    val nfseVenda: String,
+                    val storenoEntrega: Int,
+                    val numeroEntrega: String,
+                    val nfnoEntrega: Int,
+                    val nfseEntrega: String,
+                    val nfekeyEntrega: String?): EntryID(id) {
   override val chave: String
-    get() = "$numero_entrega$nfno_entrega$nfse_entrega$nfekey_entrega"
+    get() = "$storenoEntrega$numeroEntrega$nfnoEntrega$nfseEntrega$nfekeyEntrega"
   val dataEntrega: Int?
     get() {
-      val notaSaci = Find.findNotaSaidaSaci(storeno, "$nfno_entrega/$nfse_entrega").firstOrNull() ?: return null
+      val notaSaci = Find.findNotaSaidaSaci(storenoEntrega, "$nfnoEntrega/$nfseEntrega").firstOrNull() ?: return null
       return notaSaci.dtEmissao
     }
   
@@ -37,10 +37,10 @@ class EntregaFutura(id: String,
         .findList()
         .firstOrNull()
         ?.let {
-          NotaBaixaFatura(it.storeno, it.numero_entrega, it.dataEntrega?.localDate())
+          NotaBaixaFatura(it.storenoEntrega, it.numeroEntrega, it.dataEntrega?.localDate())
         }
     }
-  
+    
     fun notaFatura(storeno: Int?, numero: String?): NotaBaixaFatura? {
       numero ?: return null
       storeno ?: return null
@@ -54,7 +54,7 @@ class EntregaFutura(id: String,
         .findList()
         .firstOrNull()
         ?.let {
-          NotaBaixaFatura(it.storeno, it.numero_venda, it.dataEntrega?.localDate())
+          NotaBaixaFatura(it.storenoEntrega, it.numeroVenda, it.dataEntrega?.localDate())
         }
     }
   }
