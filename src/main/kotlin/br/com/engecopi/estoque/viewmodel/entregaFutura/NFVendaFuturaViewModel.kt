@@ -79,7 +79,10 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
     val bean = this
     return NFVendaFuturaVo().apply {
       numero = bean.numero
-      numeroBaixa = bean.numeroBaixa ?: ""
+      numeroBaixa = bean.numeroBaixa.filter {
+        it.abreviacoes.contains(bean.abreviacao)
+      }
+        .joinToString(" ") {it.numero}
       tipoMov = bean.tipoMov
       tipoNota = bean.tipoNota
       rota = bean.rota

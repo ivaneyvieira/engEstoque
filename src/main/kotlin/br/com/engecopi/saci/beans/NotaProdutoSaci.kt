@@ -55,14 +55,18 @@ data class NotaProdutoSaci(val rota: String?,
     get() = Produto.findProduto(prdno, grade)?.descricao ?: ""
   
   fun isNotaFaturaLancada(): Boolean {
-    val keyNotaFatura = Nota.notaFatura(storeno, numeroSerie()) ?: return false
-    val notaFatura = Find.findSaida(keyNotaFatura.storeno, keyNotaFatura.numero) ?: return false
-    return notaFatura.lancamentoOrigem == ENTREGA_F
+    val keyNotaFatura = Nota.notaFatura(storeno, numeroSerie())
+    val notaFatura = keyNotaFatura.mapNotNull {
+      Find.findSaida(it.storeno, it.numero)
+    }
+    return notaFatura.any {it.lancamentoOrigem == ENTREGA_F}
   }
   
   fun isNotaBaixaLancada(): Boolean {
     val keyNotaBaixa = Nota.notaBaixa(storeno, numeroSerie()) ?: return false
-    val notaBaixa = Find.findSaida(keyNotaBaixa.storeno, keyNotaBaixa.numero) ?: return false
-    return notaBaixa.lancamentoOrigem == EXPEDICAO
+    val notaFatura = keyNotaBaixa.mapNotNull {
+      Find.findSaida(it.storeno, it.numero)
+    }
+    return notaFatura.any {it.lancamentoOrigem == EXPEDICAO}
   }
 }

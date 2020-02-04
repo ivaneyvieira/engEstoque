@@ -8,9 +8,10 @@ class ETLEntregaFutura: ETL<EntregaFutura>() {
   override val sqlDelete = "DELETE FROM tEntrega_futura where id = :id"
   override val sqlInsert = """
     INSERT INTO t_entrega_futura(id, storenoVenda, numeroVenda, nfnoVenda, nfseVenda,
-                                 storenoEntrega, numeroEntrega, nfnoEntrega, nfseEntrega, nfekeyEntrega)
+                                 storenoEntrega, numeroEntrega, nfnoEntrega, nfseEntrega, nfekeyEntrega, dataVenda,
+                                 dataEntrega)
     VALUES(:id, :storenoVenda, :numeroVenda, :nfnoVenda, :nfseVenda,
-           :storenoEntrega, :numeroEntrega, :nfnoEntrega, :nfseEntrega, :nfekeyEntrega)
+           :storenoEntrega, :numeroEntrega, :nfnoEntrega, :nfseEntrega, :nfekeyEntrega, :dataVenda, :dataEntrega)
   """.trimIndent()
   override val sqlUpdate = """
     UPDATE t_entrega_futura
@@ -18,6 +19,7 @@ class ETLEntregaFutura: ETL<EntregaFutura>() {
          numeroEntrega=:numeroEntrega,
          nfnoEntrega=:nfnoEntrega, 
          nfseEntrega=:nfseEntrega,
+         dataEntrega=:dataEntrega,
          nfekeyEntrega=:nfekeyEntrega
     WHERE id = :id
   """.trimIndent()
