@@ -37,7 +37,7 @@ class EntregaFuturaFind(val view: IView) {
           item.save()
           item.nota?.let {nota ->
             if(nota.tipoNota == VENDAF) {
-              nota.numeroEntrega = nota.numeroBaixa()
+              nota.numeroEntrega = nota.notaBaixa().firstOrNull()?.numero ?: ""
               nota.save()
             }
           }
@@ -74,16 +74,16 @@ class EntregaFuturaFind(val view: IView) {
   
   private fun findItensNotaTransferencia(storeno: Int, numero: String): List<ItemNota> {
     val notaTransferencia = TransferenciaAutomatica.notaFatura(storeno, numero)
-    val storenoNota = notaTransferencia?.storeno
-    val numeroNota = notaTransferencia?.numero
-    return ItemNota.find(storenoNota, numeroNota)
+    return notaTransferencia.flatMap {
+      ItemNota.find(it.storeno, it.numero)
+    }
   }
   
   private fun findItensNotaFutura(storeno: Int, numero: String): List<ItemNota> {
     val notaFutura = EntregaFutura.notaFatura(storeno, numero)
-    val storenoNota = notaFutura?.storeno
-    val numeroNota = notaFutura?.numero
-    return ItemNota.find(storenoNota, numeroNota)
+    return notaFutura.flatMap {
+      ItemNota.find(it.storeno, it.numero)
+    }
   }
   
   fun notasConferidas(): MutableList<ItemNota> {

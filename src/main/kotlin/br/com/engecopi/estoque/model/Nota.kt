@@ -18,6 +18,7 @@ import br.com.engecopi.estoque.model.TipoNota.VENDA
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.dtos.EntregaFutura
 import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
+import br.com.engecopi.estoque.model.dtos.data
 import br.com.engecopi.estoque.model.envelopes.Printer
 import br.com.engecopi.estoque.model.finder.NotaFinder
 import br.com.engecopi.estoque.model.query.QItemNota
@@ -224,15 +225,13 @@ class Nota: BaseModel() {
     }
   
     fun notaBaixa(storeno: Int?, numero: String?) =
-      TransferenciaAutomatica.notaBaixa(storeno, numero) ?: EntregaFutura.notaBaixa(storeno, numero)
+      TransferenciaAutomatica.notaBaixa(storeno, numero).ifEmpty {EntregaFutura.notaBaixa(storeno, numero)}
   
     fun notaFatura(storeno: Int?, numero: String?) =
-      TransferenciaAutomatica.notaFatura(storeno, numero) ?: EntregaFutura.notaFatura(storeno, numero)
+      TransferenciaAutomatica.notaFatura(storeno, numero).ifEmpty {EntregaFutura.notaFatura(storeno, numero)}
   }
   
-  fun numeroBaixa(): String = notaBaixa()?.numero ?: ""
-  
-  fun dataBaixa(): LocalDate? = notaBaixa()?.data
+  fun dataBaixa(): LocalDate? = notaBaixa().data
   
   fun notaBaixa() = notaBaixa(loja?.numero, numero)
   

@@ -42,8 +42,8 @@ class ViewNotaFutura: BaseModel() {
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var usuario: Usuario? = null
   var abreviacao: String? = ""
-  val numeroBaixa: String?
-    get() = Nota.findNota(loja, numero, tipoMov)?.numeroBaixa()
+  val numeroBaixa
+    get() = Nota.findNota(loja, numero, tipoMov)?.notaBaixa() ?: emptyList()
   
   companion object Find: ViewNotaFuturaFinder() {
     fun findSaida(loja: Loja?, numero: String?, abreviacao: String?): ViewNotaFutura? {

@@ -1,9 +1,10 @@
 SELECT MD5(CAST(CONCAT(V.storeno, V.numero, E.storeno, E.numero) AS CHAR)) AS id,
        V.storeno AS storenoVenda, V.numero AS numeroVenda, V.nfno AS nfnoVenda, V.nfse AS nfseVenda,
-       E.store_from AS storenoEntrega, E.numero AS numeroEntrega, E.nfno AS nfnoEntrega,
-       E.nfse AS nfseEntrega, E.nfekey AS nfekeyEntrega
+       V.date AS dataVenda, E.storeno AS storenoEntrega, E.numero AS numeroEntrega,
+       E.nfno AS nfnoEntrega, E.nfse AS nfseEntrega, E.date AS dataEntrega,
+       E.nfekey AS nfekeyEntrega
 FROM (SELECT P.storeno, P.eordno AS ordno, cast(CONCAT(P.nfno, '/', P.nfse) AS CHAR) AS numero,
-             P.nfno, P.nfse, N.nfekey, P.store_from
+             P.nfno, P.nfse, N.nfekey, P.store_from, P.date
       FROM sqlpdv.pxa           AS P
         LEFT JOIN sqlpdv.pxanf2 AS N
                     USING (storeno, pdvno, xano)
@@ -11,7 +12,7 @@ FROM (SELECT P.storeno, P.eordno AS ordno, cast(CONCAT(P.nfno, '/', P.nfse) AS C
         AND date > :data_inicial)         AS V
   INNER JOIN (SELECT P.storeno, P.eordno AS ordno,
                      cast(CONCAT(P.nfno, '/', P.nfse) AS CHAR) AS numero, P.nfno, P.nfse, N.nfekey,
-                     P.store_from
+                     P.store_from, P.date
               FROM sqlpdv.pxa           AS P
                 LEFT JOIN sqlpdv.pxanf2 AS N
                             USING (storeno, pdvno, xano)
