@@ -8,11 +8,11 @@ import br.com.engecopi.estoque.model.etlSaci.ETLEntregaFutura
 import br.com.engecopi.estoque.model.etlSaci.ETLPedidos
 import br.com.engecopi.estoque.model.etlSaci.ETLTransferenciaAutomatica
 import br.com.engecopi.estoque.ui.views.EntregaFuturaEditorView
-import br.com.engecopi.estoque.ui.views.EntregaFuturaView
 import br.com.engecopi.estoque.ui.views.configuracao.AbreciacaoView
 import br.com.engecopi.estoque.ui.views.configuracao.EtiquetaView
 import br.com.engecopi.estoque.ui.views.configuracao.ProdutoView
 import br.com.engecopi.estoque.ui.views.configuracao.UsuarioView
+import br.com.engecopi.estoque.ui.views.entregaFutura.EntregaFuturaView
 import br.com.engecopi.estoque.ui.views.entregaFutura.NFVendaFuturaView
 import br.com.engecopi.estoque.ui.views.etiquetas.HistoricoView
 import br.com.engecopi.estoque.ui.views.etiquetas.LabelNotaView

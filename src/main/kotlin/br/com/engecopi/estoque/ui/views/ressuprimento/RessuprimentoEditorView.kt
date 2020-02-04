@@ -1,12 +1,12 @@
-package br.com.engecopi.estoque.ui.views.entregaFutura
+package br.com.engecopi.estoque.ui.views.ressuprimento
 
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.ui.views.movimentacao.NotaView
-import br.com.engecopi.estoque.viewmodel.entregaFutura.EntregaFututaEditorViewModel
 import br.com.engecopi.estoque.viewmodel.entregaFutura.EntregaFututaVo
-import br.com.engecopi.estoque.viewmodel.entregaFutura.IEntregaFututaEditorView
+import br.com.engecopi.estoque.viewmodel.ressuprimento.IRessuprimentoEditorView
+import br.com.engecopi.estoque.viewmodel.ressuprimento.RessuprimentoVo
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
 import br.com.engecopi.framework.ui.view.dateFormat
@@ -28,10 +28,10 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView("entrega_futura_editor")
-class EntregaFuturaEditorView: NotaView<EntregaFututaVo, EntregaFututaEditorViewModel, IEntregaFututaEditorView>(),
-                               IEntregaFututaEditorView {
+class RessuprimentoEditorView: NotaView<RessuprimentoVo, RessuprimentoEditorViewModel, IRessuprimentoEditorView>(),
+                               IRessuprimentoEditorView {
   init {
-    viewModel = EntregaFututaEditorViewModel(this)
+    viewModel = RessuprimentoEditorViewModel(this)
     layoutForm {
       if(operation == ADD) {
         binder.bean.lojaNF = lojaDeposito
@@ -41,7 +41,7 @@ class EntregaFuturaEditorView: NotaView<EntregaFututaVo, EntregaFututaEditorView
         w =
           (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
             .px
-  
+        
         grupo("Nota fiscal de saída") {
           verticalLayout {
             row {
@@ -73,7 +73,7 @@ class EntregaFuturaEditorView: NotaView<EntregaFututaVo, EntregaFututaEditorView
             }
           }
         }
-  
+        
         grupo("Produto") {
           produtoField(operation, binder, "Saída")
         }
@@ -161,7 +161,7 @@ class EntregaFuturaEditorView: NotaView<EntregaFututaVo, EntregaFututaEditorView
             .max()
         }
           .mapNotNull {it.key}
-  
+      
       grid.setStyleGenerator {saida ->
         if(saida.status == CONFERIDA) {
           val numero = saida.numeroNF
