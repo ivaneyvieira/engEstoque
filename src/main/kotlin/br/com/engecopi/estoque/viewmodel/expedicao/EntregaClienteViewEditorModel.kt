@@ -10,7 +10,7 @@ import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
 
 class EntregaClienteEditorViewModel(view: IEntregaClienteEditorView):
-  NotaViewModel<EntregaClienteVo, IEntregaClienteEditorView>(view, SAIDA, ENTREGUE, ENTREGUE, "") {
+  NotaViewModel<EntregaClienteVo, IEntregaClienteEditorView>(view, SAIDA, ENTREGUE, ENTREGUE) {
   override fun newBean(): EntregaClienteVo {
     return EntregaClienteVo()
   }

@@ -45,8 +45,7 @@ import java.time.LocalTime
 abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
                                                        val tipo: TipoMov,
                                                        private val statusDefault: StatusNota,
-                                                       private val statusImpressao: StatusNota,
-                                                       private val abreviacaoNota: String):
+                                                       private val statusImpressao: StatusNota):
   CrudViewModel<ItemNota, QItemNota, VO, V>(view) {
   private val print = NotaPrint()
   
@@ -202,10 +201,6 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
         .nota.loja.eq(lojaDeposito)
         .nota.tipoNota.eq(VENDAF)
         .endOr()
-        .let {query ->
-          if(abreviacaoNota == "") query
-          else query.localizacao.startsWith(abreviacaoNota)
-        }
     }
   
   abstract fun createVo(): VO

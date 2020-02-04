@@ -12,7 +12,7 @@ import br.com.engecopi.estoque.viewmodel.ENotaNaoEntregaFutura
 import br.com.engecopi.estoque.viewmodel.ENovaBaixaLancada
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 
-class RessuprimentoFind {
+class RessuprimentoFind(val view: IPedidoRessuprimentoView) {
   fun findNotaSaidaKey(key: String): List<NotaProdutoSaci> {
     val notaKey = KeyNota(key)
     val storeno = notaKey.storeno
@@ -44,15 +44,12 @@ class RessuprimentoFind {
       val gradeStr = notaSaci.grade ?: ""
       if(gradeStr.startsWith("***")) {
         Produto.findProdutos(notaSaci.codigo())
-          .mapNotNull {produto ->
+          .map {produto ->
             val quant = notaSaci.quant ?: 0
-            //if(produto.saldoTotal() >= quant) {
             notaSaci.copy(grade = produto.grade)
               .apply {
                 this.gradeGenerica = true
               }
-            // }
-            // else null
           }
       }
       else listOf(notaSaci.apply {
@@ -66,6 +63,10 @@ class RessuprimentoFind {
       val tipo = nota.tipoNota() ?: return@filter false
       return@filter usuarioDefault.isTipoCompativel(tipo)
     }
+  }
+  
+  fun findKey(key: String) {
+    view.updateGrid()
   }
 }
 

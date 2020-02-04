@@ -1,3 +1,3 @@
-select no as storeno, sname as sigla
-from sqldados.store
-order by no
+SELECT no AS storeno, sname AS sigla
+FROM sqldados.store
+ORDER BY no

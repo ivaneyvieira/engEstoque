@@ -3,11 +3,10 @@ package br.com.engecopi.estoque.ui.views.ressuprimento
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.TipoNota
-import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
 import br.com.engecopi.estoque.ui.views.movimentacao.NotaView
-import br.com.engecopi.estoque.viewmodel.ressuprimento.EntregaRessuprimentoViewModel
+import br.com.engecopi.estoque.viewmodel.ressuprimento.EntregaRessuprimentoEditorViewModel
 import br.com.engecopi.estoque.viewmodel.ressuprimento.EntregaRessuprimentoVo
-import br.com.engecopi.estoque.viewmodel.ressuprimento.IEntregaRessuprimentoView
+import br.com.engecopi.estoque.viewmodel.ressuprimento.IRessuprimentoEditorView
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
 import br.com.engecopi.framework.ui.view.dateFormat
@@ -25,23 +24,14 @@ import com.github.mvysny.karibudsl.v8.px
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.verticalLayout
 import com.github.mvysny.karibudsl.v8.w
-import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
-@AutoView("entrega_ressuprimento")
-class EntregaRessuprimentoView:
-  NotaView<EntregaRessuprimentoVo, EntregaRessuprimentoViewModel, IEntregaRessuprimentoView>(),
-  IEntregaRessuprimentoView {
-  var formCodBar: PnlCodigoBarras? = null
-  
-  override fun enter(event: ViewChangeEvent) {
-    super.enter(event)
-    formCodBar?.focusEdit()
-  }
-  
+@AutoView("entrega_ressuprimento_editor")
+class EntregaRessuprimentoEditorView: NotaView<EntregaRessuprimentoVo, EntregaRessuprimentoEditorViewModel,
+  IRessuprimentoEditorView>(), IRessuprimentoEditorView {
   init {
-    viewModel = EntregaRessuprimentoViewModel(this)
+    viewModel = EntregaRessuprimentoEditorViewModel(this)
     layoutForm {
       if(operation == ADD) {
         binder.bean.lojaNF = lojaDeposito
@@ -51,7 +41,7 @@ class EntregaRessuprimentoView:
         w =
           (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
             .px
-  
+        
         grupo("Ressuprimento") {
           verticalLayout {
             row {
@@ -83,19 +73,17 @@ class EntregaRessuprimentoView:
             }
           }
         }
-  
+        
         grupo("Produto") {
           produtoField(operation, binder, "Saída")
         }
       }
       if(!isAdmin && operation == UPDATE) binder.setReadOnly(true)
     }
-    form("Entrega Ressuprimento")
+    form("Editor de Ressuprimento")
     gridCrud {
-      formCodBar = formCodbar()
-      addCustomToolBarComponent(btnDesfazer())
-      addCustomFormComponent(formCodBar)
       reloadOnly = !isAdmin
+      addCustomToolBarComponent(btnDesfazer())
       column(EntregaRessuprimentoVo::numeroCodigo) {
         caption = "Número Conferencia"
         setSortProperty("codigo_barra_conferencia")
@@ -115,7 +103,7 @@ class EntregaRessuprimentoView:
       column(EntregaRessuprimentoVo::lancamento) {
         caption = "Lançamento"
         dateFormat()
-        setSortProperty("nota.lancamento", "data", "hora")
+        setSortProperty("nota.lancamento")
       }
       column(EntregaRessuprimentoVo::horaLacamento) {
         caption = "Hora"
@@ -134,6 +122,10 @@ class EntregaRessuprimentoView:
         caption = "Quantidade"
         intFormat()
       }
+      column(EntregaRessuprimentoVo::status) {
+        caption = "Situação"
+        setRenderer({it?.descricao ?: ""}, TextRenderer())
+      }
       column(EntregaRessuprimentoVo::codigo) {
         caption = "Código"
         setSortProperty("produto.codigo")
@@ -147,7 +139,7 @@ class EntregaRessuprimentoView:
       }
       column(EntregaRessuprimentoVo::localizacao) {
         caption = "Localização"
-        setRenderer({it?.toString()}, TextRenderer())
+        setRenderer({it?.abreviacao}, TextRenderer())
       }
       column(EntregaRessuprimentoVo::usuario) {
         caption = "Usuário"
@@ -179,12 +171,6 @@ class EntregaRessuprimentoView:
         }
         else null
       }
-    }
-  }
-  
-  private fun formCodbar(): PnlCodigoBarras {
-    return PnlCodigoBarras("Nota de transferencia") {key ->
-      viewModel.findKey(key)
     }
   }
 }

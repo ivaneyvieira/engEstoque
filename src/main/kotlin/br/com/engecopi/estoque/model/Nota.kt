@@ -269,6 +269,7 @@ enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2:
   DEV_FOR(SAIDA, "Dev Fornecedor", "Dev Fornecedor"),
   ACERTO_S(SAIDA, "Acerto", "Acerto Saida"),
   PEDIDO_S(SAIDA, "Pedido", "Pedido Saida"),
+  PEDIDO_R(SAIDA, "Ressuprimento", "Pedido de Ressuprimento"),
   OUTROS_S(SAIDA, "Outros", "Outras Saidas", true),
   OUTRAS_NFS(SAIDA, "Outras NFS", "Outras NF Saida", true),
   SP_REME(SAIDA, "Simples Remessa", "Simples Remessa", true),

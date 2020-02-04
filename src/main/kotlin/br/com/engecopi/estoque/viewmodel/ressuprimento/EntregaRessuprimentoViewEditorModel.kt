@@ -10,9 +10,9 @@ import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
 
 class EntregaRessuprimentoEditorViewModel(view: IRessuprimentoEditorView):
-  NotaViewModel<RessuprimentoVo, IRessuprimentoEditorView>(view, SAIDA, ENTREGUE, ENTREGUE, "") {
-  override fun newBean(): RessuprimentoVo {
-    return RessuprimentoVo()
+  NotaViewModel<EntregaRessuprimentoVo, IRessuprimentoEditorView>(view, SAIDA, ENTREGUE, ENTREGUE) {
+  override fun newBean(): EntregaRessuprimentoVo {
+    return EntregaRessuprimentoVo()
   }
   
   override fun QItemNota.filtroTipoNota(): QItemNota {
@@ -24,9 +24,9 @@ class EntregaRessuprimentoEditorViewModel(view: IRessuprimentoEditorView):
       .nota.usuario.isNotNull.nota.sequencia.ne(0)
   }
   
-  override fun createVo() = RessuprimentoVo()
+  override fun createVo() = EntregaRessuprimentoVo()
   
-  fun notasConferidas(): List<RessuprimentoVo> {
+  fun notasConferidas(): List<EntregaRessuprimentoVo> {
     return QItemNota().status.eq(CONFERIDA)
       .findList()
       .map {it.toVO()}

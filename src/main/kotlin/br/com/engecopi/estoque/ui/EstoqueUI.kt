@@ -7,11 +7,11 @@ import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.model.etlSaci.ETLEntregaFutura
 import br.com.engecopi.estoque.model.etlSaci.ETLPedidos
 import br.com.engecopi.estoque.model.etlSaci.ETLTransferenciaAutomatica
-import br.com.engecopi.estoque.ui.views.EntregaFuturaEditorView
 import br.com.engecopi.estoque.ui.views.configuracao.AbreciacaoView
 import br.com.engecopi.estoque.ui.views.configuracao.EtiquetaView
 import br.com.engecopi.estoque.ui.views.configuracao.ProdutoView
 import br.com.engecopi.estoque.ui.views.configuracao.UsuarioView
+import br.com.engecopi.estoque.ui.views.entregaFutura.EntregaFuturaEditorView
 import br.com.engecopi.estoque.ui.views.entregaFutura.EntregaFuturaView
 import br.com.engecopi.estoque.ui.views.entregaFutura.NFVendaFuturaView
 import br.com.engecopi.estoque.ui.views.etiquetas.HistoricoView
@@ -24,6 +24,9 @@ import br.com.engecopi.estoque.ui.views.movimentacao.EntradaView
 import br.com.engecopi.estoque.ui.views.movimentacao.SaidaView
 import br.com.engecopi.estoque.ui.views.paineis.PainelGeralView
 import br.com.engecopi.estoque.ui.views.paineis.PedidoTransferenciaView
+import br.com.engecopi.estoque.ui.views.ressuprimento.EntregaRessuprimentoEditorView
+import br.com.engecopi.estoque.ui.views.ressuprimento.EntregaRessuprimentoView
+import br.com.engecopi.estoque.ui.views.ressuprimento.PedidoRessuprimentoView
 import br.com.engecopi.framework.ui.view.toViewName
 import br.com.engecopi.utils.SystemUtils
 import com.github.mvysny.karibudsl.v8.MenuButton
@@ -124,17 +127,19 @@ class EstoqueUI: UI() {
     valoMenu {
       this.appTitle = title
       sectionLogin(user, info)
-      
+  
       if(user.rolePaineis()) sectionPaineis()
-      
+  
       if(user.roleExpedicao()) sectionExpedicao(user)
-      
+  
       if(user.roleFutura()) sectionFutura(user)
-      
+  
+      if(user.roleRessuprimento()) sectionRessuprimento(user)
+  
       if(user.roleMovimentacao()) sessionMovimentacao()
-      
+  
       if(user.roleConfiguracao()) sectionConfiguracao(user)
-      
+  
       if(user.roleEtiqueta()) sectionEtiqueta(user)
     }
     
@@ -198,6 +203,14 @@ class EstoqueUI: UI() {
     }
   }
   
+  private fun @VaadinDsl ValoMenu.sectionRessuprimento(user: Usuario) {
+    section("Ressuprimento") {
+      menuButton("Lançamento de Ressuprimento", NEWSPAPER, view = PedidoRessuprimentoView::class.java)
+      menuButton("Entrega de Ressuprimento", TRUCK, view = EntregaRessuprimentoView::class.java)
+      menuButton("Editor de Ressupmento", TRUCK, view = EntregaRessuprimentoEditorView::class.java)
+    }
+  }
+  
   private fun @VaadinDsl ValoMenu.sectionPaineis() {
     section("Paineis") {
       menuVisaoGeral = menuButton("Visão geral", CLUSTER, view = PainelGeralView::class.java)
@@ -232,6 +245,7 @@ class EstoqueUI: UI() {
   private fun Usuario.roleMovimentacao() = this.admin || this.estoque
   private fun Usuario.roleConfiguracao() = this.admin || this.configuracao
   private fun Usuario.roleEtiqueta() = this.admin || this.etiqueta
+  private fun Usuario.roleRessuprimento() = this.admin || this.ressuprimento
   
   private fun loginScreen() {
     content = LoginForm("$title <p align=\"right\">$versao</p>")

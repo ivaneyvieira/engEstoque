@@ -45,6 +45,7 @@ class QUsuario : TQRootBean<Usuario, QUsuario> {
   lateinit var configuracao: PBoolean<QUsuario>
   lateinit var entregaFutura: PBoolean<QUsuario>
   lateinit var etiqueta: PBoolean<QUsuario>
+  lateinit var ressuprimento: PBoolean<QUsuario>
 
 
   /**

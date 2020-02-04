@@ -9,12 +9,14 @@ import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaVo
 
-class EntregaRessuprimentoViewModel(view: IRessuprimentoView):
-  NotaViewModel<RessuprimentoVo, IRessuprimentoView>(view, SAIDA, ENTREGUE, CONFERIDA, "") {
+class EntregaRessuprimentoViewModel(view: IEntregaRessuprimentoView):
+  NotaViewModel<EntregaRessuprimentoVo, IEntregaRessuprimentoView>(view, SAIDA,
+                                                                   statusDefault = ENTREGUE,
+                                                                   statusImpressao = CONFERIDA) {
   private val find = EntregaRessuprimentoFind(view)
   
-  override fun newBean(): RessuprimentoVo {
-    return RessuprimentoVo()
+  override fun newBean(): EntregaRessuprimentoVo {
+    return EntregaRessuprimentoVo()
   }
   
   override fun QItemNota.filtroTipoNota(): QItemNota {
@@ -26,7 +28,7 @@ class EntregaRessuprimentoViewModel(view: IRessuprimentoView):
       .nota.usuario.isNotNull.nota.sequencia.ne(0)
   }
   
-  override fun createVo() = RessuprimentoVo()
+  override fun createVo() = EntregaRessuprimentoVo()
   
   fun findKey(key: String) = exec {
     find.findKey(key)
@@ -36,7 +38,7 @@ class EntregaRessuprimentoViewModel(view: IRessuprimentoView):
   fun notasConferidas() = find.notasConferidas().map {it.toVO()}
 }
 
-class RessuprimentoVo: NotaVo(SAIDA, "")
+class EntregaRessuprimentoVo: NotaVo(SAIDA, "")
 
-interface IRessuprimentoView: INotaView
+interface IEntregaRessuprimentoView: INotaView
 
