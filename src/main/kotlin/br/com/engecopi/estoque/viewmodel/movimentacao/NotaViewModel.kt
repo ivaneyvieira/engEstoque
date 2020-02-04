@@ -218,7 +218,7 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
       val nota = itemNota.nota
       this.numeroNF = nota?.numero
       this.numeroCodigo = itemNota.codigoBarraConferencia
-      this.numeroBaixa = itemNota.nota?.notaBaixa()
+      this.numeroBaixa = itemNota.numeroEntrega.joinToString(" ") {it.numero}
       this.dataBaixa = itemNota.nota?.dataBaixa()
       this.numeroCodigoReduzido = itemNota.codigoBarraCliente
       this.lojaNF = nota?.loja

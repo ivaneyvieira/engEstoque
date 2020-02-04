@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.model.dtos
 
 import br.com.engecopi.estoque.model.KeyNota
 import br.com.engecopi.estoque.model.Nota
+import br.com.engecopi.estoque.model.ViewProdutoLoc
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 import java.time.LocalDate
 
@@ -14,6 +15,13 @@ data class NotaBaixaFatura(val storeno: Int,
   }
   
   val produtos = ProdutoNota.produtos(storeno, numero)
+  val abreviacoes = produtos.flatMap {
+    ViewProdutoLoc.findByCodigoGrade(it.prdno, it.grade)
+      .map {produtoLoc ->
+        produtoLoc.abreviacao
+      }
+  }
+    .distinct()
 }
 
 val List<NotaBaixaFatura>.storeno
@@ -28,8 +36,8 @@ data class ProdutoNota(val prdno: String?, val grade: String?) {
   }
 }
 
-fun NotaProdutoSaci.toProdutoNota() = ProdutoNota(prdno, grade)
+fun NotaProdutoSaci.toProdutoNota() = ProdutoNota(prdno?.trim(), grade)
 
 fun List<NotaBaixaFatura>.filterProduto(prdno: String?, grade: String?): List<NotaBaixaFatura> {
-  return this.filter {it.produtos.contains(ProdutoNota(prdno, grade))}
+  return this.filter {it.produtos.contains(ProdutoNota(prdno?.trim(), grade))}
 }
