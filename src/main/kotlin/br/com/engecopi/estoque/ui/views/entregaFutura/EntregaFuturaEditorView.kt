@@ -4,7 +4,7 @@ import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.ui.views.movimentacao.NotaView
-import br.com.engecopi.estoque.viewmodel.entregaFutura.EntregaFututaEditorViewModel
+import br.com.engecopi.estoque.viewmodel.entregaFutura.EntregaFuturaEditorViewModel
 import br.com.engecopi.estoque.viewmodel.entregaFutura.EntregaFututaVo
 import br.com.engecopi.estoque.viewmodel.entregaFutura.IEntregaFututaEditorView
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
@@ -28,10 +28,10 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView("entrega_futura_editor")
-class EntregaFuturaEditorView: NotaView<EntregaFututaVo, EntregaFututaEditorViewModel, IEntregaFututaEditorView>(),
+class EntregaFuturaEditorView: NotaView<EntregaFututaVo, EntregaFuturaEditorViewModel, IEntregaFututaEditorView>(),
                                IEntregaFututaEditorView {
   init {
-    viewModel = EntregaFututaEditorViewModel(this)
+    viewModel = EntregaFuturaEditorViewModel(this)
     layoutForm {
       if(operation == ADD) {
         binder.bean.lojaNF = lojaDeposito

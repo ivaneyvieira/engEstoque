@@ -11,7 +11,7 @@ import br.com.engecopi.framework.viewmodel.EViewModelError
 import java.time.LocalDate
 import java.time.LocalTime
 
-class NFVendaFututraProcessamento() {
+class NFVendaFuturaProcessamento() {
   fun processaKey(notasSaci: List<ItemVendaFutura>): Nota {
     if(notasSaci.all {
         it.isSave()

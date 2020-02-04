@@ -1,7 +1,6 @@
 package br.com.engecopi.estoque.viewmodel.ressuprimento
 
 import br.com.engecopi.estoque.model.Nota
-import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.TipoNota.PEDIDO_R
@@ -13,8 +12,8 @@ import br.com.engecopi.saci.beans.NotaProdutoSaci
 class PedidoRessuprimentoViewModel(view: IPedidoRessuprimentoView):
   NotaViewModel<EntregaRessuprimentoVo, IPedidoRessuprimentoView>(view = view,
                                                                   tipo = SAIDA,
-                                                                  statusDefault = ENTREGUE,
-                                                                  statusImpressao = ENTREGUE) {
+                                                                  statusDefault = INCLUIDA,
+                                                                  statusImpressao = INCLUIDA) {
   private val processing = NFRessuprimentoProcessamento()
   private val print = NFRessuprimentoPrint()
   private val find = RessuprimentoFind(view)
