@@ -1,4 +1,4 @@
-SELECT MD5(CAST(CONCAT(V.storeno, V.numero, E.storeno, E.numero) AS CHAR)) AS id,
+SELECT CAST(MD5(CAST(CONCAT(V.storeno, V.numero, E.storeno, E.numero) AS CHAR)) AS CHAR) AS id,
        V.storeno AS storenoVenda, V.numero AS numeroVenda, V.nfno AS nfnoVenda, V.nfse AS nfseVenda,
        V.date AS dataVenda, E.storeno AS storenoEntrega, E.numero AS numeroEntrega,
        E.nfno AS nfnoEntrega, E.nfse AS nfseEntrega, E.date AS dataEntrega,
