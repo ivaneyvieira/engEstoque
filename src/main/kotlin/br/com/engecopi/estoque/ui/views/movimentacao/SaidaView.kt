@@ -4,6 +4,7 @@ import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.DEPOSITO
 import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
+import br.com.engecopi.estoque.model.LancamentoOrigem.RESSUPRI
 import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.NotaItens
 import br.com.engecopi.estoque.model.RegistryUserInfo
@@ -354,9 +355,13 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
                 val itensEntregaFutura = itens.filter {item ->
                   item.value?.nota?.lancamentoOrigem == ENTREGA_F
                 }
+                val itensRessuprimento = itens.filter {item ->
+                  item.value?.nota?.lancamentoOrigem == RESSUPRI
+                }
                 viewModel.confirmaProdutos(itensDeposito, ENTREGUE)
                 viewModel.confirmaProdutos(itensExpedicao, CONFERIDA)
                 viewModel.confirmaProdutos(itensEntregaFutura, CONFERIDA)
+                viewModel.confirmaProdutos(itensRessuprimento, CONFERIDA)
                 viewModel.confirmaProdutos(naoSelect, ENT_LOJA)
                 close()
               }
@@ -571,11 +576,11 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
     item.selecionado = true
     item.updateItem(true)
     when(item.value?.nota?.lancamentoOrigem) {
-      DEPOSITO             -> {
+      DEPOSITO                       -> {
         execPrint(viewModel.confirmaProdutos(listOf(item), ENTREGUE))
         gridProdutos.updateProdutosNota()
       }
-      EXPEDICAO, ENTREGA_F -> {
+      EXPEDICAO, ENTREGA_F, RESSUPRI -> {
         execPrint(viewModel.confirmaProdutos(listOf(item), CONFERIDA))
         gridProdutos.updateProdutosNota()
       }

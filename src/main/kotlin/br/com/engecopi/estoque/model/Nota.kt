@@ -319,5 +319,6 @@ data class NotaItens(val nota: Nota?, val itens: List<ItemNota>) {
 enum class LancamentoOrigem(val descricao: String, val printer: Printer) {
   EXPEDICAO("Expedição", Printer("EXP4")),
   DEPOSITO("Deposito", Printer("ENTREGA")),
-  ENTREGA_F("Entrega Futura", Printer(""));
+  ENTREGA_F("Entrega Futura", Printer("")),
+  RESSUPRI("Ressuprimento", Printer(""));
 }

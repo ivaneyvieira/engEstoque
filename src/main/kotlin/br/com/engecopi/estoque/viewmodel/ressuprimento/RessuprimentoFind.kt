@@ -64,10 +64,6 @@ class RessuprimentoFind(val view: IPedidoRessuprimentoView) {
       return@filter usuarioDefault.isTipoCompativel(tipo)
     }
   }
-  
-  fun findKey(key: String) {
-    view.updateGrid()
-  }
 }
 
 

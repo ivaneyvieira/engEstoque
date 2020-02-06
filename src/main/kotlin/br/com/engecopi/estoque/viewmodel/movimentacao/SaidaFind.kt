@@ -4,6 +4,7 @@ import br.com.engecopi.estoque.model.KeyNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.DEPOSITO
 import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
+import br.com.engecopi.estoque.model.LancamentoOrigem.RESSUPRI
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.NotaItens
@@ -63,7 +64,7 @@ class SaidaFind() {
       throw EViewModelError("Esta nota não pertence ao cd ${RegistryUserInfo.abreviacaoDefault}")
     }
     val nota = Nota.findSaida(item.storeno, item.numero) ?: return NotaItens.VAZIO
-    if(nota.lancamentoOrigem != EXPEDICAO && nota.lancamentoOrigem != ENTREGA_F) {
+    if(nota.lancamentoOrigem !in listOf(EXPEDICAO, ENTREGA_F, RESSUPRI)) {
       throw EViewModelError("Essa nota não foi lançada pela a expedição ou pela entrega futura")
     }
     return NotaItens(nota, nota.itensNota())

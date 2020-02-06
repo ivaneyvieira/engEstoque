@@ -7,4 +7,5 @@ FROM sqldados.ords         AS N
   LEFT JOIN  sqldados.vend AS V
                ON V.no = N.vendno
 WHERE N.storeno = 1 AND
-      N.no = :nfno
+      N.no = :ordno AND
+      N.no BETWEEN 100000000 AND 999999999

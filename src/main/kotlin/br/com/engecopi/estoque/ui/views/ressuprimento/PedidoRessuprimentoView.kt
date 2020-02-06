@@ -166,7 +166,7 @@ class PedidoRessuprimentoView:
   
   private fun formCodbar(): PnlCodigoBarras {
     return PnlCodigoBarras("Pedido de ressuprimento") {key ->
-      viewModel.findKey(key)
+      viewModel.processaKey(key)
     }
   }
   

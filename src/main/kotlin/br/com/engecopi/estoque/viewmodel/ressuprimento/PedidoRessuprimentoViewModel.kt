@@ -14,14 +14,10 @@ class PedidoRessuprimentoViewModel(view: IPedidoRessuprimentoView):
                                                                   tipo = SAIDA,
                                                                   statusDefault = INCLUIDA,
                                                                   statusImpressao = INCLUIDA) {
-  private val processing = NFRessuprimentoProcessamento()
+  private val processing = RessuprimentoProcessamento(view)
   private val print = NFRessuprimentoPrint()
   private val find = RessuprimentoFind(view)
   
-  fun processaKey(notasSaci: List<ItemRessuprimento>) = exec {
-    processing.processaKey(notasSaci)
-      .updateView()
-  }
   
   fun imprimeTudo() = execString {
     print.imprimeTudo()
@@ -62,8 +58,8 @@ class PedidoRessuprimentoViewModel(view: IPedidoRessuprimentoView):
     return EntregaRessuprimentoVo()
   }
   
-  fun findKey(key: String) = exec {
-    find.findKey(key)
+  fun processaKey(key: String) = exec {
+    processing.processaKey(key)
   }
 }
 
