@@ -1,22 +1,22 @@
-package br.com.engecopi.estoque.viewmodel.entregaFutura
+package br.com.engecopi.estoque.viewmodel.ressuprimento
 
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
-import br.com.engecopi.estoque.model.TipoNota.VENDAF
+import br.com.engecopi.estoque.model.TipoNota.PEDIDO_R
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
 
-class EntregaFututaEditorViewModel(view: IEntregaFututaEditorView):
-  NotaViewModel<EntregaFututaVo, IEntregaFututaEditorView>(view, SAIDA, ENTREGUE, ENTREGUE, "") {
-  override fun newBean(): EntregaFututaVo {
-    return EntregaFututaVo()
+class EntregaRessuprimentoEditorViewModel(view: IRessuprimentoEditorView):
+  NotaViewModel<EntregaRessuprimentoVo, IRessuprimentoEditorView>(view, SAIDA, ENTREGUE, ENTREGUE) {
+  override fun newBean(): EntregaRessuprimentoVo {
+    return EntregaRessuprimentoVo()
   }
   
   override fun QItemNota.filtroTipoNota(): QItemNota {
-    return this.nota.tipoNota.eq(VENDAF)
+    return this.nota.tipoNota.eq(PEDIDO_R)
   }
   
   override fun QItemNota.filtroStatus(): QItemNota {
@@ -24,13 +24,13 @@ class EntregaFututaEditorViewModel(view: IEntregaFututaEditorView):
       .nota.usuario.isNotNull.nota.sequencia.ne(0)
   }
   
-  override fun createVo() = EntregaFututaVo()
+  override fun createVo() = EntregaRessuprimentoVo()
   
-  fun notasConferidas(): List<EntregaFututaVo> {
+  fun notasConferidas(): List<EntregaRessuprimentoVo> {
     return QItemNota().status.eq(CONFERIDA)
       .findList()
       .map {it.toVO()}
   }
 }
 
-interface IEntregaFututaEditorView: INotaView
+interface IRessuprimentoEditorView: INotaView

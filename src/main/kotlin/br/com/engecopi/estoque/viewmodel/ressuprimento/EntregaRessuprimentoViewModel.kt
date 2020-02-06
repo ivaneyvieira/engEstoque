@@ -1,24 +1,26 @@
-package br.com.engecopi.estoque.viewmodel.entregaFutura
+package br.com.engecopi.estoque.viewmodel.ressuprimento
 
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
-import br.com.engecopi.estoque.model.TipoNota.VENDAF
+import br.com.engecopi.estoque.model.TipoNota.PEDIDO_R
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaVo
 
-class EntregaFututaViewModel(view: IEntregaFututaView):
-  NotaViewModel<EntregaFututaVo, IEntregaFututaView>(view, SAIDA, ENTREGUE, CONFERIDA) {
-  private val find = EntregaFuturaFind(view)
+class EntregaRessuprimentoViewModel(view: IEntregaRessuprimentoView):
+  NotaViewModel<EntregaRessuprimentoVo, IEntregaRessuprimentoView>(view, SAIDA,
+                                                                   statusDefault = ENTREGUE,
+                                                                   statusImpressao = CONFERIDA) {
+  private val find = EntregaRessuprimentoFind(view)
   
-  override fun newBean(): EntregaFututaVo {
-    return EntregaFututaVo()
+  override fun newBean(): EntregaRessuprimentoVo {
+    return EntregaRessuprimentoVo()
   }
   
   override fun QItemNota.filtroTipoNota(): QItemNota {
-    return this.nota.tipoNota.eq(VENDAF)
+    return this.nota.tipoNota.eq(PEDIDO_R)
   }
   
   override fun QItemNota.filtroStatus(): QItemNota {
@@ -26,7 +28,7 @@ class EntregaFututaViewModel(view: IEntregaFututaView):
       .nota.usuario.isNotNull.nota.sequencia.ne(0)
   }
   
-  override fun createVo() = EntregaFututaVo()
+  override fun createVo() = EntregaRessuprimentoVo()
   
   fun findKey(key: String) = exec {
     find.findKey(key)
@@ -36,7 +38,7 @@ class EntregaFututaViewModel(view: IEntregaFututaView):
   fun notasConferidas() = find.notasConferidas().map {it.toVO()}
 }
 
-class EntregaFututaVo: NotaVo(SAIDA, "")
+class EntregaRessuprimentoVo: NotaVo(SAIDA, "")
 
-interface IEntregaFututaView: INotaView
+interface IEntregaRessuprimentoView: INotaView
 

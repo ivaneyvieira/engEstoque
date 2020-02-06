@@ -1,24 +1,24 @@
-select distinct prdno, grade, barcode, 'PDV' as tipo
-from sqlpdv.prdstk
-where storeno = :storeno
-  and prdno = :prdno
-  and grade = :grade
-  and barcode <> ''
-union
-select distinct prdno, grade, barcode, 'GRADE' as tipo
-from sqldados.prdbar
-where prdno =  :prdno
-  and grade =  :grade
-  and barcode <> ''
-union
-select distinct no as prdno, '' as grade, barcode, 'PRD' as tipo
-from sqldados.prd
-where no     = :prdno
-  and :grade = ''
-  and barcode <> ''
-union
-select distinct prdno, '' as grade, auxString1 as barcode, 'PRD2' as tipo
-from sqldados.prd2
-where prdno  = :prdno
-  and :grade = ''
-  and auxString1 <> ''
+SELECT DISTINCT prdno, grade, barcode, 'PDV' AS tipo
+FROM sqlpdv.prdstk
+WHERE storeno = :storeno
+  AND prdno = :prdno
+  AND grade = :grade
+  AND barcode <> ''
+UNION
+SELECT DISTINCT prdno, grade, barcode, 'GRADE' AS tipo
+FROM sqldados.prdbar
+WHERE prdno = :prdno
+  AND grade = :grade
+  AND barcode <> ''
+UNION
+SELECT DISTINCT no AS prdno, '' AS grade, barcode, 'PRD' AS tipo
+FROM sqldados.prd
+WHERE no = :prdno
+  AND :grade = ''
+  AND barcode <> ''
+UNION
+SELECT DISTINCT prdno, '' AS grade, auxString1 AS barcode, 'PRD2' AS tipo
+FROM sqldados.prd2
+WHERE prdno = :prdno
+  AND :grade = ''
+  AND auxString1 <> ''

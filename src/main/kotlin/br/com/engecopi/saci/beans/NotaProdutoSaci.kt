@@ -24,7 +24,8 @@ data class NotaProdutoSaci(val rota: String?,
                            val vendName: String? = "",
                            val clienteName: String? = "",
                            val tipo: String?,
-                           val invno: Int?) {
+                           val invno: Int?,
+                           val abreviacao: String?) {
   var gradeGenerica: Boolean = false
   
   fun isSave(): Boolean {

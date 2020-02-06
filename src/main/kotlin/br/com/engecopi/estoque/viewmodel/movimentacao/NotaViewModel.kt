@@ -20,6 +20,7 @@ import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.model.TipoNota.OUTROS_E
 import br.com.engecopi.estoque.model.TipoNota.PEDIDO_E
+import br.com.engecopi.estoque.model.TipoNota.PEDIDO_R
 import br.com.engecopi.estoque.model.TipoNota.PEDIDO_S
 import br.com.engecopi.estoque.model.TipoNota.TRANSFERENCIA_E
 import br.com.engecopi.estoque.model.TipoNota.TRANSFERENCIA_S
@@ -45,8 +46,7 @@ import java.time.LocalTime
 abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
                                                        val tipo: TipoMov,
                                                        private val statusDefault: StatusNota,
-                                                       private val statusImpressao: StatusNota,
-                                                       private val abreviacaoNota: String):
+                                                       private val statusImpressao: StatusNota):
   CrudViewModel<ItemNota, QItemNota, VO, V>(view) {
   private val print = NotaPrint()
   
@@ -201,11 +201,8 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
         .or()
         .nota.loja.eq(lojaDeposito)
         .nota.tipoNota.eq(VENDAF)
+        .nota.tipoNota.eq(PEDIDO_R)
         .endOr()
-        .let {query ->
-          if(abreviacaoNota == "") query
-          else query.localizacao.startsWith(abreviacaoNota)
-        }
     }
   
   abstract fun createVo(): VO

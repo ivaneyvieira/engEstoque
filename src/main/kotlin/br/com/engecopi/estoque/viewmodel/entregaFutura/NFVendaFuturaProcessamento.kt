@@ -4,6 +4,7 @@ import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.viewmodel.EChaveNaoEncontrada
@@ -11,7 +12,7 @@ import br.com.engecopi.framework.viewmodel.EViewModelError
 import java.time.LocalDate
 import java.time.LocalTime
 
-class NFVendaFututraProcessamento() {
+class NFVendaFuturaProcessamento() {
   fun processaKey(notasSaci: List<ItemVendaFutura>): Nota {
     if(notasSaci.all {
         it.isSave()
@@ -31,7 +32,7 @@ class NFVendaFututraProcessamento() {
           if(it.existe()) Nota.findSaida(it.loja, it.numero)
           else {
             it.sequencia = Nota.maxSequencia() + 1
-            it.usuario = RegistryUserInfo.usuarioDefault
+            it.usuario = usuarioDefault
             it.lancamentoOrigem = ENTREGA_F
             it.save()
             it

@@ -26,7 +26,7 @@ import java.time.LocalTime
 
 class NFVendaFuturaViewModel(view: INFVendaFuturaView):
   CrudViewModel<ViewNotaFutura, QViewNotaFutura, NFVendaFuturaVo, INFVendaFuturaView>(view) {
-  private val processing = NFVendaFututraProcessamento()
+  private val processing = NFVendaFuturaProcessamento()
   private val print = NFVendaFuturaPrint()
   private val find = NotaFuturaFind()
   

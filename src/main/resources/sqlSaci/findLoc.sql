@@ -1,5 +1,5 @@
-select storeno, trim(prdno) as codigo, grade, L.localizacao
-from sqldados.prdloc
+SELECT storeno, trim(prdno) AS codigo, grade, L.localizacao
+FROM sqldados.prdloc
 WHERE (storeno = :storeno)
   AND (prdno = :prdno OR :prdno = '')
   AND (grade = :grade OR :grade = '')

@@ -9,13 +9,16 @@ import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.query.QItemNota
 
 class SaidaViewModel(view: ISaidaView):
-  NotaViewModel<SaidaVo, ISaidaView>(view, SAIDA, ENTREGUE, CONFERIDA, abreviacaoDefault) {
+  NotaViewModel<SaidaVo, ISaidaView>(view, SAIDA, ENTREGUE, CONFERIDA) {
   private val processing = SaidaProcessamento(view)
   private val find = SaidaFind()
   
   override fun newBean(): SaidaVo {
     return SaidaVo()
   }
+  
+  override val query: QItemNota
+    get() = super.query.localizacao.startsWith(abreviacaoDefault)
   
   override fun QItemNota.filtroTipoNota(): QItemNota {
     return this
