@@ -273,7 +273,7 @@ enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2:
   ACERTO_S(SAIDA, "Acerto", "Acerto Saida"),
   PEDIDO_S(SAIDA, "Pedido", "Pedido Saida"),
   OUTROS_S(SAIDA, "Outros", "Outras Saidas", true),
-  CHAVE_SAIDA(SAIDA, "Chave", "Chave Saída", true),
+  CHAVE_SAIDA(SAIDA, "Chave de Nota", "Chave de Nota", true),
   OUTRAS_NFS(SAIDA, "Outras NFS", "Outras NF Saida", true),
   SP_REME(SAIDA, "Simples Remessa", "Simples Remessa", true),
   CANCELADA_E(ENTRADA, "Nota Cancelada", "NF Entrada Cancelada"),
