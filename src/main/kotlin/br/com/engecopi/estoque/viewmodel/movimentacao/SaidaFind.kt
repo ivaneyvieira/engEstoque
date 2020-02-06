@@ -62,7 +62,7 @@ class SaidaFind() {
   }
   
   private fun processaKeyBarcodeConferencia(key: String): NotaItens {
-    if(usuarioDefault.isTipoCompativel(CHAVE_SAIDA))
+    if(!usuarioDefault.isTipoCompativel(CHAVE_SAIDA))
       return NotaItens.erro("O usuário não possui permissão para usar a chave")
     val item = ViewCodBarConferencia.findNota(key)
                ?: return NotaItens.erro("Nota não encontrada")
