@@ -9,6 +9,7 @@ import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.TipoNota.ACERTO_S
 import br.com.engecopi.estoque.model.TipoNota.CANCELADA_E
 import br.com.engecopi.estoque.model.TipoNota.CANCELADA_S
+import br.com.engecopi.estoque.model.TipoNota.CHAVE_SAIDA
 import br.com.engecopi.estoque.model.TipoNota.DEV_FOR
 import br.com.engecopi.estoque.model.TipoNota.ENT_RET
 import br.com.engecopi.estoque.model.TipoNota.OUTROS_S
@@ -95,7 +96,7 @@ class Nota: BaseModel() {
       val tn = TipoNota.value(notasaci.tipo) ?: return null
       val numero = notasaci.numeroSerie()
       val loja = notasaci.loja() ?: return null
-  
+      
       return findNota(loja, numero, tn.tipoMov) ?: Nota().apply {
         this.numero = notasaci.numeroSerie()
         this.tipoNota = tn
@@ -110,11 +111,13 @@ class Nota: BaseModel() {
     }
     
     fun createNotaItens(notasaci: List<NotaProdutoSaci>): NotaItens {
-      val notaSimples = notasaci.firstOrNull() ?: return NotaItens.VAZIO
+      val notaSimples = notasaci.firstOrNull() ?: return NotaItens.erro("Nota não encontrada")
       val numero = notaSimples.numeroSerie()
-      val tipoNota = notaSimples.tipoNota() ?: return NotaItens.VAZIO
-      val loja = notaSimples.loja() ?: return NotaItens.VAZIO
-      val nota = findNota(loja, numero, tipoNota.tipoMov) ?: createNota(notaSimples) ?: return NotaItens.VAZIO
+      val tipoNota = notaSimples.tipoNota() ?: return NotaItens.erro("Nota com tipo inválido")
+      val loja = notaSimples.loja() ?: return NotaItens.erro("Nota com loja inválido")
+      val nota = findNota(loja, numero, tipoNota.tipoMov)
+                 ?: createNota(notaSimples)
+                 ?: return NotaItens.erro("Erro ao criar a nota")
       nota.sequencia = maxSequencia() + 1
       nota.usuario = usuarioDefault
       val itens = notasaci.mapNotNull {item ->
@@ -127,27 +130,27 @@ class Nota: BaseModel() {
       }
       return NotaItens(nota, itens)
     }
-  
+    
     fun maxSequencia(): Int {
       return QNota().select(QNota._alias.maxSequencia).findList().firstOrNull()?.maxSequencia ?: 0
     }
-  
+    
     fun findEntrada(loja: Loja, numero: String?): Nota? {
       return if(numero.isNullOrBlank()) null
       else QNota().tipoMov.eq(ENTRADA).numero.eq(numero).loja.id.eq(loja.id).findList().firstOrNull()
     }
-  
+    
     fun findSaida(storeno: Int?, numero: String?): Nota? {
       storeno ?: return null
       return if(numero.isNullOrBlank()) null
       else QNota().tipoMov.eq(SAIDA).numero.eq(numero).loja.numero.eq(storeno).findList().firstOrNull()
     }
-  
+    
     fun findSaida(loja: Loja?, numero: String?): Nota? {
       val storeno = loja?.numero ?: return null
       return findSaida(storeno, numero)
     }
-  
+    
     fun findNota(loja: Loja?, numero: String?, tipoMov: TipoMov): Nota? {
       loja ?: return null
       return when(tipoMov) {
@@ -155,21 +158,21 @@ class Nota: BaseModel() {
         SAIDA   -> findSaida(loja, numero)
       }
     }
-  
+    
     fun novoNumero(): Int {
       val regex = "[0-9]+".toRegex()
       val max = QNota().findList().asSequence().map {it.numero}.filter {regex.matches(it)}.max() ?: "0"
       val numMax = max.toIntOrNull() ?: 0
       return numMax + 1
     }
-  
+    
     fun findNotaEntradaSaci(loja: Loja, numeroNF: String?): List<NotaProdutoSaci> {
       numeroNF ?: return emptyList()
       val numero = numeroNF.split("/").getOrNull(0) ?: return emptyList()
       val serie = numeroNF.split("/").getOrNull(1) ?: ""
       return saci.findNotaEntrada(loja.numero, numero, serie, usuarioDefault.admin)
     }
-  
+    
     fun findNotaSaidaSaci(loja: Loja, numeroNF: String?): List<NotaProdutoSaci> {
       return findNotaSaidaSaci(loja.numero, numeroNF)
     }
@@ -205,15 +208,15 @@ class Nota: BaseModel() {
           .findList()
       return saci.findNotasSaidaCancelada(lista)
     }
-  
+    
     fun notasSaidaSalva(loja: Loja): List<Nota> {
       return notasSalva(loja, SAIDA)
     }
-  
+    
     fun notasEntradaSalva(loja: Loja): List<Nota> {
       return notasSalva(loja, ENTRADA)
     }
-  
+    
     private fun notasSalva(loja: Loja, tipoNota: TipoMov): List<Nota> {
       val dtInicial =
         LocalDate.of(2020, 1, 1)
@@ -223,10 +226,10 @@ class Nota: BaseModel() {
         .data.after(dtInicial)
         .findList()
     }
-  
+    
     fun notaBaixa(storeno: Int?, numero: String?) =
       TransferenciaAutomatica.notaBaixa(storeno, numero).ifEmpty {EntregaFutura.notaBaixa(storeno, numero)}
-  
+    
     fun notaFatura(storeno: Int?, numero: String?) =
       TransferenciaAutomatica.notaFatura(storeno, numero).ifEmpty {EntregaFutura.notaFatura(storeno, numero)}
   }
@@ -270,6 +273,7 @@ enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2:
   ACERTO_S(SAIDA, "Acerto", "Acerto Saida"),
   PEDIDO_S(SAIDA, "Pedido", "Pedido Saida"),
   OUTROS_S(SAIDA, "Outros", "Outras Saidas", true),
+  CHAVE_SAIDA(SAIDA, "Chave", "Chave Saída", true),
   OUTRAS_NFS(SAIDA, "Outras NFS", "Outras NF Saida", true),
   SP_REME(SAIDA, "Simples Remessa", "Simples Remessa", true),
   CANCELADA_E(ENTRADA, "Nota Cancelada", "NF Entrada Cancelada"),
@@ -294,7 +298,7 @@ data class NotaSerie(val id: Long, val tipoNota: TipoNota) {
       tipo ?: return null
       return values.find {it.tipoNota == tipo}
     }
-  
+    
     val values =
       listOf(NotaSerie(1, VENDA),
              NotaSerie(2, ENT_RET),
@@ -303,15 +307,16 @@ data class NotaSerie(val id: Long, val tipoNota: TipoNota) {
              NotaSerie(5, PEDIDO_S),
              NotaSerie(6, DEV_FOR),
              NotaSerie(7, VENDAF),
-             NotaSerie(6, OUTROS_S))
+             NotaSerie(8, OUTROS_S),
+             NotaSerie(9, CHAVE_SAIDA))
   }
 }
 
-data class NotaItens(val nota: Nota?, val itens: List<ItemNota>) {
+data class NotaItens(val nota: Nota?, val itens: List<ItemNota>, val msgErro: String = "") {
   val vazio get() = nota == null || itens.isEmpty()
   
   companion object {
-    val VAZIO = NotaItens(null, emptyList())
+    fun erro(msgErro: String) = NotaItens(null, emptyList(), msgErro)
   }
 }
 

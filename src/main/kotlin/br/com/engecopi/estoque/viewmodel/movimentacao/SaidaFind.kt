@@ -9,7 +9,10 @@ import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.NotaItens
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
+import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
+import br.com.engecopi.estoque.model.TipoNota.CHAVE_SAIDA
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.ViewCodBarConferencia
 import br.com.engecopi.framework.viewmodel.EViewModelError
@@ -27,7 +30,7 @@ class SaidaFind() {
   }
   
   private fun processaKeyNumero(loja: Loja?, numeroNota: String): NotaItens {
-    loja ?: return NotaItens.VAZIO
+    loja ?: return NotaItens.erro("Loja inválida")
     val notaFutura = Nota.findSaida(loja, numeroNota)
     return if(notaFutura == null) {
       processaNotaSaci(loja, numeroNota)
@@ -45,24 +48,28 @@ class SaidaFind() {
       Nota.findNotaSaidaSaci(loja, numeroNota)
         .filter {loc ->
           loc.localizacaoes()
-            .any {it.abreviacao == RegistryUserInfo.abreviacaoDefault}
+            .any {it.abreviacao == abreviacaoDefault}
         }
-    val notaSaci = notasSaci.firstOrNull() ?: return NotaItens.VAZIO
-    return if(RegistryUserInfo.usuarioDefault.isTipoCompativel(notaSaci.tipoNota())) {
+    val notaSaci = notasSaci.firstOrNull()
+                   ?: return NotaItens.erro("Nota inválida")
+    return if(usuarioDefault.isTipoCompativel(notaSaci.tipoNota())) {
       Nota.createNotaItens(notasSaci)
         .apply {
           this.nota?.lancamentoOrigem = DEPOSITO
         }
     }
-    else NotaItens.VAZIO
+    else NotaItens.erro("O usuário não possui permissão para trabalha com nota do tipo ${notaSaci.tipoNota()}")
   }
   
   private fun processaKeyBarcodeConferencia(key: String): NotaItens {
-    val item = ViewCodBarConferencia.findNota(key) ?: return NotaItens.VAZIO
-    if(item.abreviacao != RegistryUserInfo.abreviacaoDefault) {
+    if(usuarioDefault.isTipoCompativel(CHAVE_SAIDA))
+      return NotaItens.erro("O usuário não possui permissão para usar a chave")
+    val item = ViewCodBarConferencia.findNota(key)
+               ?: return NotaItens.erro("Nota não encontrada")
+    if(item.abreviacao != abreviacaoDefault) {
       throw EViewModelError("Esta nota não pertence ao cd ${RegistryUserInfo.abreviacaoDefault}")
     }
-    val nota = Nota.findSaida(item.storeno, item.numero) ?: return NotaItens.VAZIO
+    val nota = Nota.findSaida(item.storeno, item.numero) ?: return NotaItens.erro("Nota não encontrada")
     if(nota.lancamentoOrigem != EXPEDICAO && nota.lancamentoOrigem != ENTREGA_F) {
       throw EViewModelError("Essa nota não foi lançada pela a expedição ou pela entrega futura")
     }
@@ -75,6 +82,6 @@ class SaidaFind() {
     return if(notaItem.nota?.tipoNota == VENDAF || keyNota.storeno == lojaDeposito.numero) {
       notaItem
     }
-    else NotaItens.VAZIO
+    else NotaItens.erro("A nota pertence a a loja ${lojaDeposito.numero} e não é nota de entrega futura")
   }
 }

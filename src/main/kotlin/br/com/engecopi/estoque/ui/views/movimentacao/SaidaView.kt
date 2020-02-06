@@ -129,7 +129,7 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
             }
           }
         }
-  
+        
         grupo("Produto") {
           produtoField(operation, binder, "Saída")
         }
@@ -234,7 +234,10 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
   private fun formCodbar(): PnlCodigoBarras {
     return PnlCodigoBarras("Código de barras") {key ->
       val nota = viewModel.findByKey(key)
-      if(nota == null || nota.vazio) showError("A nota não foi encontrada")
+      if(nota == null || nota.vazio) {
+        val msgErro = nota?.msgErro ?: "A nota não foi encontrada"
+        showError(msgErro.ifEmpty {"A nota não foi encontrada"})
+      }
       else {
         val dlg = DlgNotaSaida(nota, viewModel) {itens ->
           if(itens.isNotEmpty()) {
@@ -377,7 +380,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
             this.addGlobalShortcutListener(F2) {
               focusEditor()
             }
-  
+            
             if(!QuerySaci.test) {
               this.valueChangeMode = LAZY
               valueChangeTimeout = 200
