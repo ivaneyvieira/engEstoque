@@ -5,7 +5,7 @@ import br.com.engecopi.saci.saci
 import io.ebean.DB
 
 class ETLEntregaFutura: ETL<EntregaFutura>() {
-  override val sqlDelete = "DELETE FROM tEntrega_futura where id = :id"
+  override val sqlDelete = "DELETE FROM t_entrega_futura where id = :id"
   override val sqlInsert = """
     INSERT INTO t_entrega_futura(id, storenoVenda, numeroVenda, nfnoVenda, nfseVenda,
                                  storenoEntrega, numeroEntrega, nfnoEntrega, nfseEntrega, nfekeyEntrega, dataVenda,
