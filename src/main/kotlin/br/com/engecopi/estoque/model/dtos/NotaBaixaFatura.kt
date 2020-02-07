@@ -39,5 +39,7 @@ data class ProdutoNota(val prdno: String?, val grade: String?) {
 fun NotaProdutoSaci.toProdutoNota() = ProdutoNota(prdno?.trim(), grade)
 
 fun List<NotaBaixaFatura>.filterProduto(prdno: String?, grade: String?): List<NotaBaixaFatura> {
-  return this.filter {it.produtos.contains(ProdutoNota(prdno?.trim(), grade))}
+  return this.filter {
+    it.produtos.contains(ProdutoNota(prdno?.trim(), grade))
+  }
 }
