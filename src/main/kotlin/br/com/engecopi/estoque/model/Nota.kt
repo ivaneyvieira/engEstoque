@@ -12,7 +12,7 @@ import br.com.engecopi.estoque.model.TipoNota.CANCELADA_S
 import br.com.engecopi.estoque.model.TipoNota.CHAVE_SAIDA
 import br.com.engecopi.estoque.model.TipoNota.DEV_FOR
 import br.com.engecopi.estoque.model.TipoNota.ENT_RET
-import br.com.engecopi.estoque.model.TipoNota.OUTROS_S
+import br.com.engecopi.estoque.model.TipoNota.OUTRAS_NFS
 import br.com.engecopi.estoque.model.TipoNota.PEDIDO_S
 import br.com.engecopi.estoque.model.TipoNota.TRANSFERENCIA_S
 import br.com.engecopi.estoque.model.TipoNota.VENDA
@@ -255,15 +255,15 @@ enum class TipoMov(val descricao: String) {
   SAIDA("Saida")
 }
 
-enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2: String, val isFree: Boolean = false) {
+enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2: String) {
   //Entrada
   COMPRA(ENTRADA, "Compra", "Compra"),
   TRANSFERENCIA_E(ENTRADA, "Transferencia", "Transferencia Entrada"),
   DEV_CLI(ENTRADA, "Dev Cliente", "Dev Cliente"),
   ACERTO_E(ENTRADA, "Acerto", "Acerto Entrada"),
   PEDIDO_E(ENTRADA, "Pedido", "Pedido Entrada"),
-  OUTROS_E(ENTRADA, "Outros", "Outras Entradas", true),
-  NOTA_E(ENTRADA, "Entradas", "Entradas", true),
+  OUTROS_E(ENTRADA, "Outros", "Outras Entradas"),
+  NOTA_E(ENTRADA, "Entradas", "Entradas"),
   RECLASSIFICACAO_E(ENTRADA, "Reclassificação", "Reclassificação Entrada"),
   VENDAF(SAIDA, "Venda Futura", "Venda Fut"),
   VENDA(SAIDA, "Venda", "Venda"),
@@ -272,10 +272,10 @@ enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2:
   DEV_FOR(SAIDA, "Dev Fornecedor", "Dev Fornecedor"),
   ACERTO_S(SAIDA, "Acerto", "Acerto Saida"),
   PEDIDO_S(SAIDA, "Pedido", "Pedido Saida"),
-  OUTROS_S(SAIDA, "Outros", "Outras Saidas", true),
-  CHAVE_SAIDA(SAIDA, "Chave de Nota", "Chave de Nota", true),
-  OUTRAS_NFS(SAIDA, "Outras NFS", "Outras NF Saida", true),
-  SP_REME(SAIDA, "Simples Remessa", "Simples Remessa", true),
+  OUTROS_S(SAIDA, "Outros", "Outras Saidas"),
+  CHAVE_SAIDA(SAIDA, "Chave de Nota", "Chave de Nota"),
+  OUTRAS_NFS(SAIDA, "Outras NFS", "Outras NF Saida"),
+  SP_REME(SAIDA, "Simples Remessa", "Simples Remessa"),
   CANCELADA_E(ENTRADA, "Nota Cancelada", "NF Entrada Cancelada"),
   CANCELADA_S(SAIDA, "Nota Cancelada", "NF Saída Cancelada");
   
@@ -307,7 +307,7 @@ data class NotaSerie(val id: Long, val tipoNota: TipoNota) {
              NotaSerie(5, PEDIDO_S),
              NotaSerie(6, DEV_FOR),
              NotaSerie(7, VENDAF),
-             NotaSerie(8, OUTROS_S),
+             NotaSerie(8, OUTRAS_NFS),
              NotaSerie(9, CHAVE_SAIDA))
   }
 }
