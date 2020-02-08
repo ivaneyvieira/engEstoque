@@ -1,6 +1,6 @@
-select no as prdno, grade as grade, '' as barcode, '' as tipo
-from sqldados.prd AS P
-where groupno = :clno
-   OR deptno  = :clno
-   OR clno    = :clno
-order by no
+SELECT no AS prdno, grade AS grade, '' AS barcode, '' AS tipo
+FROM sqldados.prd AS P
+WHERE groupno = :clno
+   OR deptno = :clno
+   OR clno = :clno
+ORDER BY no

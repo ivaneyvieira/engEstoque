@@ -128,11 +128,11 @@ class ItemNota: BaseModel() {
     fun find(notaProdutoSaci: NotaProdutoSaci?): ItemNota? {
       notaProdutoSaci ?: return null
       val storeno = notaProdutoSaci.storeno ?: return null
-      val produtoSaci = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return null
+      val produto = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return null
       return QItemNota().nota.fetchQuery()
         .nota.numero.eq("${notaProdutoSaci.numero}/${notaProdutoSaci.serie}")
         .nota.loja.numero.eq(storeno)
-        .produto.equalTo(produtoSaci)
+        .produto.equalTo(produto)
         .findList()
         .firstOrNull()
     }

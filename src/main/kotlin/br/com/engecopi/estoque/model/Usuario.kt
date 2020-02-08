@@ -68,6 +68,7 @@ class Usuario: BaseModel() {
   var configuracao: Boolean = false
   var entregaFutura: Boolean = false
   var etiqueta: Boolean = true
+  var ressuprimento: Boolean = false
   val nome: String?
     @Transient get() = usuarioSaci()?.name
   

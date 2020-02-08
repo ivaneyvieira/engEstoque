@@ -37,6 +37,7 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
       usuario.painel = bean.painel
       usuario.configuracao = bean.configuracao
       usuario.entregaFutura = bean.entregaFutura
+      usuario.ressuprimento = bean.ressuprimento
       usuario.admin = bean.admin ?: false
       usuario.etiqueta = bean.etiqueta
       usuario.impressora = bean.impressora ?: ""
@@ -56,6 +57,7 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
       this.painel = bean.painel
       this.configuracao = bean.configuracao
       this.entregaFutura = bean.entregaFutura
+      this.ressuprimento = bean.ressuprimento
       this.admin = bean.admin ?: false
       this.etiqueta = bean.etiqueta
     }
@@ -79,6 +81,7 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
       this.painel = usuario.painel
       this.configuracao = usuario.configuracao
       this.entregaFutura = usuario.entregaFutura
+      this.ressuprimento = usuario.ressuprimento
       this.admin = usuario.admin
       this.etiqueta = usuario.etiqueta
     }
@@ -124,6 +127,7 @@ class UsuarioCrudVo: EntityVo<Usuario>() {
   var painel: Boolean = false
   var configuracao: Boolean = false
   var entregaFutura: Boolean = false
+  var ressuprimento: Boolean = false
   var admin: Boolean? = false
   var etiqueta = false
   val tipoUsuarioStr
@@ -138,6 +142,7 @@ class UsuarioCrudVo: EntityVo<Usuario>() {
       if(entregaFutura) tipos.add("Entrega Futura")
       if(painel) tipos.add("Painel")
       if(configuracao) tipos.add("Configuração")
+      if(ressuprimento) tipos.add("Ressuprimento")
       if(etiqueta) tipos.add("Etiqueta")
     }
 

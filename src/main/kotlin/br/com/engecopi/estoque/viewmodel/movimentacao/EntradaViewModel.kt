@@ -6,7 +6,7 @@ import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.query.QItemNota
 
 class EntradaViewModel(view: IEntradaView):
-  NotaViewModel<EntradaVo, IEntradaView>(view, ENTRADA, RECEBIDO, RECEBIDO, abreviacaoDefault) {
+  NotaViewModel<EntradaVo, IEntradaView>(view, ENTRADA, RECEBIDO, RECEBIDO) {
   override fun newBean(): EntradaVo {
     return EntradaVo()
   }
@@ -20,6 +20,9 @@ class EntradaViewModel(view: IEntradaView):
   }
   
   override fun createVo() = EntradaVo()
+  
+  override val query: QItemNota
+    get() = super.query.localizacao.startsWith(abreviacaoDefault)
 }
 
 class EntradaVo: NotaVo(ENTRADA, abreviacaoDefault)

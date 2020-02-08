@@ -1,8 +1,9 @@
-package br.com.engecopi.estoque.ui.views
+package br.com.engecopi.estoque.ui.views.entregaFutura
 
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.TipoNota
+import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
 import br.com.engecopi.estoque.ui.views.movimentacao.NotaView
 import br.com.engecopi.estoque.viewmodel.entregaFutura.EntregaFututaViewModel
 import br.com.engecopi.estoque.viewmodel.entregaFutura.EntregaFututaVo

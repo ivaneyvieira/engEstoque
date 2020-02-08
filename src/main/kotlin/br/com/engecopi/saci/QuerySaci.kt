@@ -3,6 +3,7 @@ package br.com.engecopi.saci
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.dtos.DadosProdutosSaci
 import br.com.engecopi.estoque.model.dtos.EntregaFutura
+import br.com.engecopi.estoque.model.dtos.PedidoNotaRessuprimento
 import br.com.engecopi.estoque.model.dtos.PedidoSaci
 import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
 import br.com.engecopi.estoque.model.dtos.VendasCaixa
@@ -35,13 +36,31 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   }
   
   fun findNotaSaida(storeno: Int, nfno: String, nfse: String, liberaNotasAntigas: Boolean): List<NotaProdutoSaci> {
-    return if(nfno == "") emptyList()
-    else if(nfse == "") findNotaSaidaOrd(storeno, nfno)
-    else {
-      val nfs = findNotaSaidaNF(storeno, nfno, nfse)
-      if(nfs.isNotEmpty()) nfs
-      else findNotaSaidaPxa(storeno, nfno, nfse)
-    }.filter {liberaNotasAntigas || filtroDataRecente(it)}
+    return when(nfno) {
+      ""   -> emptyList()
+      else -> when(nfse) {
+        ""   -> when(nfno.length) {
+          9    -> findPedidoRessuprimento(nfno.toIntOrNull())
+          else -> findNotaSaidaOrd(storeno, nfno)
+        }
+        else -> {
+          val nfs = findNotaSaidaNF(storeno, nfno, nfse)
+          when {
+            nfs.isNotEmpty() -> nfs
+            else             -> findNotaSaidaPxa(storeno, nfno, nfse)
+          }
+        }
+      }.filter {liberaNotasAntigas || filtroDataRecente(it)}
+    }
+  }
+  
+  fun findPedidoRessuprimento(ordno: Int?): List<NotaProdutoSaci> {
+    ordno ?: return emptyList()
+    val sql = "/sqlSaci/pedidosRessuprimento.sql"
+    return query(sql) {q ->
+      q.addParameter("ordno", ordno)
+        .executeAndFetch(NotaProdutoSaci::class.java)
+    }
   }
   
   private fun filtroDataRecente(notaProdutoSaci: NotaProdutoSaci): Boolean {
@@ -281,6 +300,18 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
+  fun findPedidoNota(): List<PedidoNotaRessuprimento> {
+    val sql = "/sqlSaci/pedidoNotaRessuprimento.sql"
+    val dataInicial =
+      LocalDate.now()
+        .minusMonths(6)
+        .toSaciDate()
+    return query(sql) {q ->
+      q.addParameter("data_inicial", "$dataInicial")
+        .executeAndFetch(PedidoNotaRessuprimento::class.java)
+    }
+  }
+  
   fun findDadosProdutosSaci(): List<DadosProdutosSaci> {
     val sql = "/sqlSaci/tab_produtos.sql"
     return query(sql) {q ->
@@ -302,6 +333,5 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   
   private data class KeyNota(val storeno: Int, val numero: String, val serie: String)
 }
-
 
 val saci = QuerySaci()
