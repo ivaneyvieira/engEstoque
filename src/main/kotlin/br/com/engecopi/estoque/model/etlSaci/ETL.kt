@@ -59,10 +59,12 @@ abstract class ETL<T: EntryID> {
     }
     listUpdate.forEach {bean ->
       updateTarget(bean)
-      val targetBean = target.firstOrNull {it.id == bean.id}
-      if(targetBean != null) listenerUpdate.values.forEach {exec ->
-        exec(bean, targetBean)
-      }
+      target.firstOrNull {it.id == bean.id}
+        ?.let {targetBean ->
+          listenerUpdate.values.forEach {exec ->
+            exec(bean, targetBean)
+          }
+        }
     }
     listInsert.forEach {bean ->
       insertTarget(bean)
