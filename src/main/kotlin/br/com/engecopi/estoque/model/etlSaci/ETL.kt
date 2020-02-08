@@ -50,15 +50,13 @@ abstract class ETL<T: EntryID> {
     }
     val listDelete = target.filter {it.id in idsDelete}
     val listInsert = source.filter {it.id in idsInsert}
-    
-    listDelete.forEach {bean ->
-      deleteTarget(bean)
+  
+    deleteTarget(listDelete).forEach {bean ->
       listenerDelete.values.forEach {exec ->
         exec(bean)
       }
     }
-    listUpdate.forEach {bean ->
-      updateTarget(bean)
+    updateTarget(listUpdate).forEach {bean ->
       target.firstOrNull {it.id == bean.id}
         ?.let {targetBean ->
           listenerUpdate.values.forEach {exec ->
@@ -66,8 +64,7 @@ abstract class ETL<T: EntryID> {
           }
         }
     }
-    listInsert.forEach {bean ->
-      insertTarget(bean)
+    insertTarget(listInsert).forEach {bean ->
       listenerInsert.values.forEach {exec ->
         exec(bean)
       }
@@ -79,22 +76,30 @@ abstract class ETL<T: EntryID> {
     return list.size
   }
   
-  private fun deleteTarget(bean: T) {
-    execUpdate(sqlDelete, bean)
+  private fun deleteTarget(listBean: List<T>): List<T> {
+    return execUpdate(sqlDelete, listBean)
   }
   
-  private fun insertTarget(bean: T) {
-    execUpdate(sqlInsert, bean)
+  private fun insertTarget(listBean: List<T>): List<T> {
+    return execUpdate(sqlInsert, listBean)
   }
   
-  private fun updateTarget(bean: T) {
-    execUpdate(sqlUpdate, bean)
+  private fun updateTarget(listBean: List<T>): List<T> {
+    return execUpdate(sqlUpdate, listBean)
   }
   
-  private fun execUpdate(sql: String, bean: T) {
-    DB.sqlUpdate(sql)
-      .setParameter(bean)
-      .execute()
+  private fun execUpdate(sql: String, listBean: List<T>): List<T> {
+    val sqlUpdate = DB.sqlUpdate(sql)
+    DB.beginTransaction()
+      .use {txn ->
+        listBean.forEach {bean ->
+          sqlUpdate
+            .setParameter(bean)
+            .addBatch()
+        }
+        txn.commit()
+      }
+    return listBean
   }
 }
 
