@@ -90,6 +90,7 @@ abstract class ETL<T: EntryID> {
   
   private fun execUpdate(sql: String, listBean: List<T>): List<T> {
     val sqlUpdate = DB.sqlUpdate(sql)
+  
     DB.beginTransaction()
       .use {txn ->
         listBean.forEach {bean ->
