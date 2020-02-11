@@ -13,10 +13,10 @@ import br.com.engecopi.estoque.model.envelopes.Printer
 import br.com.engecopi.estoque.viewmodel.etiquetas.ETipoEtiqueta.ENTREGA
 import br.com.engecopi.estoque.viewmodel.etiquetas.ETipoEtiqueta.LANCAMENTO
 import br.com.engecopi.estoque.viewmodel.expedicao.PacoteImpressao
+import br.com.engecopi.framework.model.PrinterInfo
 import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.framework.viewmodel.IView
 import br.com.engecopi.framework.viewmodel.ViewModel
-import br.com.engecopi.utils.PrinterInfo
 import java.time.LocalDate
 
 class LabelNotaViewModel(view: ILabelNotaView): ViewModel<ILabelNotaView>(view) {

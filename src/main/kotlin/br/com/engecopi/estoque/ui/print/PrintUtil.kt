@@ -10,10 +10,16 @@ import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.envelopes.Printer
+import br.com.engecopi.framework.model.AppPrinter
+import br.com.engecopi.framework.model.ECupsPrinter
 import br.com.engecopi.framework.ui.view.MessageDialog
 import br.com.engecopi.saci.QuerySaci
-import br.com.engecopi.utils.CupsUtils
 import br.com.engecopi.utils.ZPLPreview
+import com.vaadin.server.Page
+import com.vaadin.shared.Position.TOP_CENTER
+import com.vaadin.ui.Notification
+import com.vaadin.ui.Notification.Type.ERROR_MESSAGE
+import com.vaadin.ui.themes.ValoTheme
 
 object PrintUtil {
   fun imprimeNotaConcluida(nota: Nota?) {
@@ -34,7 +40,17 @@ object PrintUtil {
           val image = ZPLPreview.createPdf(text, "4x2")
           if(image != null) showImage("Preview", image)
         }
-        else           -> CupsUtils.printCups(impressora.nome, text)
+        else           -> try {
+          AppPrinter.printCups(impressora.nome, text)
+        } catch(e: ECupsPrinter) {
+          Notification("Erro",
+                       "\n" + e.message,
+                       ERROR_MESSAGE).apply {
+            styleName += " " + ValoTheme.NOTIFICATION_CLOSABLE
+            position = TOP_CENTER
+            show(Page.getCurrent())
+          }
+        }
       }
     }
   }

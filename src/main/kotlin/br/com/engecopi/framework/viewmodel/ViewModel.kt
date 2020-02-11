@@ -1,12 +1,13 @@
 package br.com.engecopi.framework.viewmodel
 
+import br.com.engecopi.framework.model.EModel
 import br.com.engecopi.framework.model.Transaction
 
 abstract class ViewModel<V: IView>(val view: V): IViewModel {
   private var inTransaction = false
   
-  private fun showException(exception: EViewModelError) {
-    view.showError(exception.msg)
+  private fun showException(exception: Exception) {
+    view.showError(exception.message ?: "Erro desconhecido")
   }
   
   @Throws(EViewModelError::class)
@@ -41,7 +42,10 @@ abstract class ViewModel<V: IView>(val view: V): IViewModel {
       } catch(e: EViewModelError) {
         showException(e)
         throw e
-      }catch(e : Throwable){
+      } catch(e: EModel) {
+        showException(e)
+        throw e
+      } catch(e: Throwable) {
         throw e
       } finally {
         inTransaction = false
@@ -61,10 +65,6 @@ abstract class ViewModel<V: IView>(val view: V): IViewModel {
     view.showWarning(msg)
   }
 }
-
-abstract class EViewModel(msg: String): Exception(msg)
-
-open class EViewModelError(val msg: String): EViewModel(msg)
 
 interface IView {
   fun showWarning(msg: String)

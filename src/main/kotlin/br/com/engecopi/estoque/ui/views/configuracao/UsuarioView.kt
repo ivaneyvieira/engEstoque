@@ -6,14 +6,14 @@ import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.viewmodel.configuracao.IUsuarioView
 import br.com.engecopi.estoque.viewmodel.configuracao.UsuarioCrudVo
 import br.com.engecopi.estoque.viewmodel.configuracao.UsuarioViewModel
+import br.com.engecopi.framework.model.AppPrinter
+import br.com.engecopi.framework.model.PrinterInfo
 import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
 import br.com.engecopi.framework.ui.view.bindItensSet
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.reloadBinderOnChange
 import br.com.engecopi.framework.ui.view.row
-import br.com.engecopi.utils.CupsUtils
-import br.com.engecopi.utils.PrinterInfo
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.alignment
 import com.github.mvysny.karibudsl.v8.bind
@@ -71,7 +71,7 @@ class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>(), IUsuarioVi
             
             comboBox<PrinterInfo>("Impressora") {
               expandRatio = 1f
-              val itens = CupsUtils.printersInfo
+              val itens = AppPrinter.printersInfo
               setItems(itens)
               setItemCaptionGenerator {it.description}
               
