@@ -12,7 +12,6 @@ import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
 import br.com.engecopi.framework.ui.view.dateFormat
 import br.com.engecopi.framework.ui.view.default
 import br.com.engecopi.framework.ui.view.grupo
-import br.com.engecopi.framework.ui.view.intFormat
 import br.com.engecopi.framework.ui.view.row
 import br.com.engecopi.framework.ui.view.timeFormat
 import com.github.mvysny.karibudsl.v8.AutoView
@@ -26,6 +25,7 @@ import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.verticalLayout
 import com.github.mvysny.karibudsl.v8.w
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
+import com.vaadin.ui.Button
 import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
@@ -92,36 +92,23 @@ class PedidoRessuprimentoView:
     }
     form("Pedido de Ressuprimento")
     gridCrud {
+      addCustomToolBarComponent(btnImprimeTudo())
       formCodBar = formCodbar()
-      addCustomToolBarComponent(btnDesfazer())
       addCustomFormComponent(formCodBar)
-      reloadOnly = !isAdmin
+      updateOperationVisible = false
+      addOperationVisible = false
+      deleteOperationVisible = false
+      readOperationVisible = false
+  
       column(EntregaRessuprimentoVo::numeroCodigo) {
         caption = "Número Conferencia"
         setSortProperty("codigo_barra_conferencia")
       }
-      column(EntregaRessuprimentoVo::dataEmissao) {
-        caption = "Emissao"
-        dateFormat()
-        setSortProperty("nota.dataEmissao", "data", "hora")
+      grid.addComponentColumn {item ->
+        Button().apply {
+        }
       }
-      column(EntregaRessuprimentoVo::numeroBaixa) {
-        caption = "NF Baixa"
-      }
-      column(EntregaRessuprimentoVo::dataBaixa) {
-        caption = "Data Baixa"
-        dateFormat()
-      }
-      column(EntregaRessuprimentoVo::lancamento) {
-        caption = "Lançamento"
-        dateFormat()
-        setSortProperty("nota.lancamento", "data", "hora")
-      }
-      column(EntregaRessuprimentoVo::horaLacamento) {
-        caption = "Hora"
-        timeFormat()
-        setSortProperty("nota.lancamento", "nota.hora")
-      }
+        .id = "btnPrint"
       column(EntregaRessuprimentoVo::lojaNF) {
         caption = "Loja NF"
         setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
@@ -130,36 +117,38 @@ class PedidoRessuprimentoView:
         caption = "TipoNota"
         setSortProperty("nota.tipo_nota")
       }
-      column(EntregaRessuprimentoVo::quantProduto) {
-        caption = "Quantidade"
-        intFormat()
+      column(EntregaRessuprimentoVo::lancamento) {
+        caption = "Data"
+        dateFormat()
+        setSortProperty("data", "hora")
       }
-      column(EntregaRessuprimentoVo::codigo) {
-        caption = "Código"
-        setSortProperty("produto.codigo")
+      column(EntregaRessuprimentoVo::horaLacamento) {
+        caption = "Hora"
+        timeFormat()
+        setSortProperty("data", "hora")
       }
-      column(EntregaRessuprimentoVo::descricaoProduto) {
-        caption = "Descrição"
+      column(EntregaRessuprimentoVo::dataEmissao) {
+        caption = "Emissao"
+        dateFormat()
+        setSortProperty("dataEmissao", "data", "hora")
       }
-      column(EntregaRessuprimentoVo::grade) {
-        caption = "Grade"
-        setSortProperty("produto.grade")
-      }
-      column(EntregaRessuprimentoVo::localizacao) {
+      column(EntregaRessuprimentoVo::abreviacao) {
         caption = "Localização"
-        setRenderer({it?.toString()}, TextRenderer())
+        setSortProperty("abreviacao")
       }
       column(EntregaRessuprimentoVo::usuario) {
         caption = "Usuário"
-        setRenderer({it?.loginName ?: ""}, TextRenderer())
+        setRenderer({
+                      it?.loginName ?: ""
+                    }, TextRenderer())
         setSortProperty("usuario.loginName")
       }
-      column(EntregaRessuprimentoVo::rotaDescricao) {
+      column(EntregaRessuprimentoVo::rota) {
         caption = "Rota"
       }
       column(EntregaRessuprimentoVo::cliente) {
         caption = "Cliente"
-        setSortProperty("nota.cliente")
+        setSortProperty("cliente")
       }
     }
   }

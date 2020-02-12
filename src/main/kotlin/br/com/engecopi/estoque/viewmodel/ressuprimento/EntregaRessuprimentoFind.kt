@@ -9,14 +9,14 @@ import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.dtos.EntregaFutura
-import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
+import br.com.engecopi.estoque.model.dtos.PedidoNotaRessuprimento
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.framework.viewmodel.IView
 
 class EntregaRessuprimentoFind(val view: IView) {
   fun findKey(key: String): List<ItemNota> {
-    val itens = findItensNotaTransferencia(key).filter {
+    val itens = findItensNotaRessuprimento(key).filter {
       val tipoNota = it.status
       tipoNota == CONFERIDA
     }
@@ -50,7 +50,7 @@ class EntregaRessuprimentoFind(val view: IView) {
     return itens
   }
   
-  private fun findItensNotaTransferencia(key: String): List<ItemNota> {
+  private fun findItensNotaRessuprimento(key: String): List<ItemNota> {
     val notaBaixa =
       Nota.findNotaSaidaKey(key)
         .firstOrNull()
@@ -67,13 +67,11 @@ class EntregaRessuprimentoFind(val view: IView) {
   
   private fun findBaixa(storeno: Int?, numero: String): List<ItemNota> {
     storeno ?: return emptyList()
-    val notaTransferencia = findItensNotaTransferencia(storeno, numero)
-    val notaFutura = findItensNotaFutura(storeno, numero)
-    return if(notaTransferencia.isEmpty()) notaFutura else notaTransferencia
+    return findItensNotaRessuprimento(storeno, numero)
   }
   
-  private fun findItensNotaTransferencia(storeno: Int, numero: String): List<ItemNota> {
-    val notaTransferencia = TransferenciaAutomatica.notaFatura(storeno, numero)
+  private fun findItensNotaRessuprimento(storeno: Int, numero: String): List<ItemNota> {
+    val notaTransferencia = PedidoNotaRessuprimento.pedidoRessuprimento(storeno, numero)
     return notaTransferencia.flatMap {
       ItemNota.find(it.storeno, it.numero)
     }

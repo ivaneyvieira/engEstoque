@@ -210,6 +210,11 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
     set(value) {
       findAllButton.isVisible = value
     }
+  var readOperationVisible
+    get() = readButton.isVisible
+    set(value) {
+      readButton.isVisible = value
+    }
   
   fun refreshGrid() {
     grid.dataProvider = dataLazyFilterProvider

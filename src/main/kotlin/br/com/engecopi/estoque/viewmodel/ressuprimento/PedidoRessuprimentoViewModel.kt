@@ -61,7 +61,25 @@ class PedidoRessuprimentoViewModel(view: IPedidoRessuprimentoView):
   fun processaKey(key: String) = exec {
     processing.processaKey(key)
   }
+  
+  override fun findQuery(): List<EntregaRessuprimentoVo> {
+    val list =
+      super.findQuery()
+        .groupBy {
+          ChaveGroup(it.nota, it.localizacao?.abreviacao ?: "")
+        }
+        .mapNotNull {entry ->
+          entry.value.firstOrNull()
+        }
+    return list
+  }
+  
+  override fun countQuery(): Int {
+    return findQuery().size
+  }
 }
+
+data class ChaveGroup(val nota: Nota?, val abreviacao: String?)
 
 data class ItemRessuprimento(val notaProdutoSaci: NotaProdutoSaci,
                              val saldo: Int,

@@ -462,6 +462,8 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   val saldo: Int
     get() = produto?.saldoLocalizacao(localizacao?.localizacao) ?: 0
   var localizacao: LocProduto? = null
+  val abreviacao: String
+    get() = localizacao?.abreviacao ?: ""
   val localizacaoProduto
     get() = produto?.localizacoes(abreviacaoNota)?.map {LocProduto(it)}.orEmpty()
   var status: StatusNota? = null
