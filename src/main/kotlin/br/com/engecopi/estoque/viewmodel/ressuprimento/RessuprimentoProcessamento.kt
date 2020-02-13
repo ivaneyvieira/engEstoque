@@ -4,6 +4,7 @@ import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
 import br.com.engecopi.estoque.model.LancamentoOrigem.RESSUPRI
 import br.com.engecopi.estoque.model.Nota
+import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
@@ -21,26 +22,28 @@ class RessuprimentoProcessamento(val view: IPedidoRessuprimentoView) {
         .ifEmpty {
           throw EViewModelError("Pedido não encontrado")
         }
+    if(pedidoItens.all {Produto.findProduto(it.prdno, it.grade) == null})
+      throw EViewModelError("Esse pedido não possui produtos cadastrado na localização")
     val pedidoSaci = pedidoItens.firstOrNull()
-    Nota.findSaida(pedidoSaci?.storeno, pedidoSaci?.numeroSerie())
-      ?.let {
-        throw EViewModelError("Esse pedido já foi lido")
-      }
+    val nota = Nota.findSaida(pedidoSaci?.storeno, pedidoSaci?.numeroSerie())
+    nota?.let {
+      throw EViewModelError("Esse pedido já foi lido")
+    }
     Nota.createNota(pedidoSaci)
-      ?.let {nota ->
-        nota.lancamentoOrigem = RESSUPRI
-        nota.sequencia = Nota.maxSequencia() + 1
-        nota.usuario = usuarioDefault
-        
-        nota.save()
-        
+      ?.let {novaNota ->
+        novaNota.lancamentoOrigem = RESSUPRI
+        novaNota.sequencia = Nota.maxSequencia() + 1
+        novaNota.usuario = usuarioDefault
+      
+        novaNota.save()
         pedidoItens.forEach {pedidoItem ->
-          ItemNota.find(pedidoItem)
-          ?: ItemNota.createItemNota(notaProdutoSaci = pedidoItem,
-                                     notaPrd = nota,
-                                     abreviacao = pedidoItem.abreviacao ?: "")?.let {item ->
-            item.status = INCLUIDA
-            item.save()
+          val itemNota = ItemNota.find(pedidoItem)
+                         ?: ItemNota.createItemNota(notaProdutoSaci = pedidoItem,
+                                                    notaPrd = novaNota,
+                                                    abreviacao = pedidoItem.abreviacao ?: "")
+          itemNota?.apply {
+            this.status = INCLUIDA
+            this.save()
           }
         }
       }
