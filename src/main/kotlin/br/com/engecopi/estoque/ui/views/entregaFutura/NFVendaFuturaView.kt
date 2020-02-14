@@ -34,11 +34,6 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
   private val isAdmin
     get() = RegistryUserInfo.userDefaultIsAdmin
   
-  override fun enter(event: ViewChangeEvent) {
-    super.enter(event)
-    formCodBar?.focusEdit()
-  }
-  
   init {
     viewModel = NFVendaFuturaViewModel(this)
     layoutForm {
@@ -167,6 +162,11 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
         setSortProperty("cliente")
       }
     }
+  }
+  
+  override fun enter(event: ViewChangeEvent) {
+    super.enter(event)
+    formCodBar?.focusEdit()
   }
   
   private fun impressora(): Printer {

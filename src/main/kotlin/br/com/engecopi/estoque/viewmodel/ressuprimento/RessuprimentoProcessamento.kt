@@ -1,20 +1,27 @@
 package br.com.engecopi.estoque.viewmodel.ressuprimento
 
 import br.com.engecopi.estoque.model.ItemNota
-import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
 import br.com.engecopi.estoque.model.LancamentoOrigem.RESSUPRI
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.Produto
-import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
+import br.com.engecopi.estoque.viewmodel.EChaveNaoEncontrada
 import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.saci.saci
 import java.time.LocalDate
 import java.time.LocalTime
 
 class RessuprimentoProcessamento(val view: IPedidoRessuprimentoView) {
+  fun processaKey(notasSaci: List<ItemRessuprimento>): Nota {
+    if(notasSaci.all {
+        it.isSave()
+      }) throw EViewModelError("Todos os itens dessa nota já estão lançados")
+    return if(notasSaci.isNotEmpty()) processaNota(notasSaci)
+    else throw EChaveNaoEncontrada()
+  }
+  
   fun processaKey(key: String) {
     val ordno = key.toIntOrNull() ?: throw EViewModelError("Chave inválida")
     val pedidoItens =
@@ -61,8 +68,8 @@ class RessuprimentoProcessamento(val view: IPedidoRessuprimentoView) {
         if(it.existe()) Nota.findSaida(it.loja, it.numero)
         else {
           it.sequencia = Nota.maxSequencia() + 1
-          it.usuario = RegistryUserInfo.usuarioDefault
-          it.lancamentoOrigem = ENTREGA_F
+          it.usuario = usuarioDefault
+          it.lancamentoOrigem = RESSUPRI
           it.save()
           it
         }
@@ -74,7 +81,7 @@ class RessuprimentoProcessamento(val view: IPedidoRessuprimentoView) {
       return@mapNotNull item?.apply {
         this.status = INCLUIDA
         this.impresso = false
-        this.usuario = RegistryUserInfo.usuarioDefault
+        this.usuario = usuarioDefault
         this.data = LocalDate.now()
         this.hora = LocalTime.now()
         this.save()
