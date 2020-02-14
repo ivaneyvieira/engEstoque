@@ -1,22 +1,19 @@
 package br.com.engecopi.estoque.ui.views.ressuprimento
 
 import br.com.engecopi.estoque.model.RegistryUserInfo
-import br.com.engecopi.estoque.model.TipoNota
+import br.com.engecopi.estoque.model.envelopes.Printer
+import br.com.engecopi.estoque.ui.print.PrintUtil
 import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
-import br.com.engecopi.estoque.ui.views.movimentacao.NotaView
-import br.com.engecopi.estoque.viewmodel.ressuprimento.EntregaRessuprimentoVo
 import br.com.engecopi.estoque.viewmodel.ressuprimento.IPedidoRessuprimentoView
 import br.com.engecopi.estoque.viewmodel.ressuprimento.PedidoRessuprimentoViewModel
-import br.com.engecopi.framework.ui.view.CrudOperation.ADD
-import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
+import br.com.engecopi.estoque.viewmodel.ressuprimento.PedidoRessuprimentoVo
+import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.dateFormat
-import br.com.engecopi.framework.ui.view.default
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.row
+import br.com.engecopi.framework.ui.view.showDialog
 import br.com.engecopi.framework.ui.view.timeFormat
 import com.github.mvysny.karibudsl.v8.AutoView
-import com.github.mvysny.karibudsl.v8.bind
-import com.github.mvysny.karibudsl.v8.comboBox
 import com.github.mvysny.karibudsl.v8.dateField
 import com.github.mvysny.karibudsl.v8.expandRatio
 import com.github.mvysny.karibudsl.v8.px
@@ -24,6 +21,7 @@ import com.github.mvysny.karibudsl.v8.refresh
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.verticalLayout
 import com.github.mvysny.karibudsl.v8.w
+import com.vaadin.icons.VaadinIcons.PRINT
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 import com.vaadin.ui.Button
 import com.vaadin.ui.UI
@@ -31,131 +29,176 @@ import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView("pedido_ressuprimento")
 class PedidoRessuprimentoView:
-  NotaView<EntregaRessuprimentoVo, PedidoRessuprimentoViewModel, IPedidoRessuprimentoView>(),
-  IPedidoRessuprimentoView {
+  CrudLayoutView<PedidoRessuprimentoVo, PedidoRessuprimentoViewModel>(), IPedidoRessuprimentoView {
   var formCodBar: PnlCodigoBarras? = null
-  
-  override fun enter(event: ViewChangeEvent) {
-    super.enter(event)
-    formCodBar?.focusEdit()
-  }
+  private val isAdmin
+    get() = RegistryUserInfo.userDefaultIsAdmin
   
   init {
     viewModel = PedidoRessuprimentoViewModel(this)
     layoutForm {
-      if(operation == ADD) {
-        binder.bean.lojaNF = RegistryUserInfo.lojaDeposito
-        binder.bean.usuario = usuario
-      }
       formLayout.apply {
         w =
           (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
             .px
-        
-        grupo("Nota fiscal de saída") {
+        val nota = binder.bean
+        grupo("Pedido de ressuprimento") {
           verticalLayout {
             row {
-              notaFiscalField(operation, binder)
-              lojaField(operation, binder)
-              comboBox<TipoNota>("Tipo") {
+              textField("Nota Fiscal") {
                 expandRatio = 2f
-                default {it.descricao}
                 isReadOnly = true
-                setItems(TipoNota.valuesSaida())
-                bind(binder).bind(EntregaRessuprimentoVo::tipoNota)
+                value = nota.numero
+              }
+              textField("Loja") {
+                expandRatio = 2f
+                isReadOnly = true
+                value = nota.loja?.sigla
+              }
+              textField("Tipo") {
+                expandRatio = 2f
+                isReadOnly = true
+                value = nota.tipoNota?.descricao
               }
               dateField("Data") {
                 expandRatio = 1f
                 isReadOnly = true
-                bind(binder).bind(EntregaRessuprimentoVo::dataNota.name)
+                value = nota.data
               }
               textField("Rota") {
                 expandRatio = 1f
                 isReadOnly = true
-                bind(binder).bind(EntregaRessuprimentoVo::rota)
+                value = nota.rota
               }
             }
             row {
               textField("Observação da nota fiscal") {
                 expandRatio = 1f
-                bind(binder).bind(EntregaRessuprimentoVo::observacaoNota)
+                isReadOnly = true
+                value = nota.observacao
               }
             }
           }
         }
-        
-        grupo("Produto") {
-          produtoField(operation, binder, "Saída")
-        }
       }
-      if(!isAdmin && operation == UPDATE) binder.setReadOnly(true)
     }
-    form("Pedido de Ressuprimento")
+    form("Ressuprimento")
     gridCrud {
       addCustomToolBarComponent(btnImprimeTudo())
       formCodBar = formCodbar()
       addCustomFormComponent(formCodBar)
       updateOperationVisible = false
       addOperationVisible = false
-      deleteOperationVisible = false
-      readOperationVisible = false
-  
-      column(EntregaRessuprimentoVo::numeroCodigo) {
-        caption = "Número Conferencia"
-        setSortProperty("codigo_barra_conferencia")
+      deleteOperationVisible = RegistryUserInfo.usuarioDefault.admin
+      column(PedidoRessuprimentoVo::numero) {
+        caption = "Número NF"
+        setSortProperty("numero")
+      }
+      column(PedidoRessuprimentoVo::numeroBaixa) {
+        caption = "NF Baixa"
+        setSortProperty("numero")
       }
       grid.addComponentColumn {item ->
         Button().apply {
+          //print {viewModel.imprimir(item)}.extend(this)
+          val impresso = item?.impresso ?: true
+          this.isEnabled = impresso == false || isAdmin
+          this.icon = PRINT
+          this.addClickListener {click ->
+            val text = viewModel.imprimir(item?.entityVo?.nota)
+            PrintUtil.printText(impressora(), text)
+            val print = item?.impresso ?: true
+            click.button.isEnabled = print == false || isAdmin
+            refreshGrid()
+          }
         }
       }
         .id = "btnPrint"
-      column(EntregaRessuprimentoVo::lojaNF) {
+      column(PedidoRessuprimentoVo::loja) {
         caption = "Loja NF"
-        setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
+        setRenderer({loja ->
+                      loja?.sigla ?: ""
+                    }, TextRenderer())
       }
-      column(EntregaRessuprimentoVo::tipoNotaDescricao) {
+      column(PedidoRessuprimentoVo::tipoNota) {
         caption = "TipoNota"
-        setSortProperty("nota.tipo_nota")
+        setRenderer({tipo ->
+                      tipo?.descricao ?: ""
+                    }, TextRenderer())
+        setSortProperty("tipo_nota")
       }
-      column(EntregaRessuprimentoVo::lancamento) {
+      column(PedidoRessuprimentoVo::lancamento) {
         caption = "Data"
         dateFormat()
         setSortProperty("data", "hora")
       }
-      column(EntregaRessuprimentoVo::horaLacamento) {
+      column(PedidoRessuprimentoVo::dataHoraLancamento) {
         caption = "Hora"
         timeFormat()
         setSortProperty("data", "hora")
       }
-      column(EntregaRessuprimentoVo::dataEmissao) {
+      
+      column(PedidoRessuprimentoVo::dataEmissao) {
         caption = "Emissao"
         dateFormat()
         setSortProperty("dataEmissao", "data", "hora")
       }
-      column(EntregaRessuprimentoVo::abreviacao) {
+      column(PedidoRessuprimentoVo::abreviacao) {
         caption = "Localização"
         setSortProperty("abreviacao")
       }
-      column(EntregaRessuprimentoVo::usuario) {
+      column(PedidoRessuprimentoVo::usuario) {
         caption = "Usuário"
         setRenderer({
                       it?.loginName ?: ""
                     }, TextRenderer())
         setSortProperty("usuario.loginName")
       }
-      column(EntregaRessuprimentoVo::rota) {
+      column(PedidoRessuprimentoVo::rota) {
         caption = "Rota"
       }
-      column(EntregaRessuprimentoVo::cliente) {
+      column(PedidoRessuprimentoVo::cliente) {
         caption = "Cliente"
         setSortProperty("cliente")
       }
     }
   }
   
+  override fun enter(event: ViewChangeEvent) {
+    super.enter(event)
+    formCodBar?.focusEdit()
+  }
+  
+  private fun impressora(): Printer {
+    val impressora = RegistryUserInfo.usuarioDefault.impressora.trim()
+    return Printer(if(impressora == "") "ENTREGA" else impressora)
+  }
+  
+  private fun btnImprimeTudo(): Button {
+    return Button("Imprime Etiquetas").apply {
+      icon = PRINT
+      addClickListener {
+        val text = viewModel.imprimeTudo()
+        PrintUtil.printText(impressora(), text)
+        //grid.refreshGrid()
+      }
+    }
+  }
+  
   private fun formCodbar(): PnlCodigoBarras {
-    return PnlCodigoBarras("Pedido de ressuprimento") {key ->
-      viewModel.processaKey(key)
+    return PnlCodigoBarras("Chave da Nota Fiscal") {key ->
+      val notaSaida = viewModel.findNotaSaidaKey(key)
+      
+      if(notaSaida.isNotEmpty()) {
+        val dialog = DlgRessuprimentoLoc(notaSaida, viewModel) {itens ->
+          val nota = viewModel.processaKey(itens)
+          val text = viewModel.imprimir(nota)
+          PrintUtil.imprimeNotaConcluida(nota)
+          PrintUtil.printText(impressora(), text)
+          updateView()
+        }
+        dialog.showDialog()
+      }
     }
   }
   

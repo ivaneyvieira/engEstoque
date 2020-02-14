@@ -4,6 +4,7 @@ import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
+import br.com.engecopi.estoque.model.LancamentoOrigem.RESSUPRI
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota
@@ -27,6 +28,10 @@ object PrintUtil {
     val impressoraNota = when(nota.lancamentoOrigem) {
       EXPEDICAO -> Printer("EXP4")
       ENTREGA_F -> Printer("ENTREGA")
+      RESSUPRI  -> {
+        val printerNota = nota.itensNota().firstOrNull()?.abreviacao?.printer ?: return
+        printerNota
+      }
       else      -> Printer("")
     }
     val textNota = imprimirNota(nota)

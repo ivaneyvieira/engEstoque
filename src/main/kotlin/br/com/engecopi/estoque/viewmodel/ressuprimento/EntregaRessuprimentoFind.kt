@@ -7,7 +7,7 @@ import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
-import br.com.engecopi.estoque.model.TipoNota.VENDAF
+import br.com.engecopi.estoque.model.TipoNota.PEDIDO_R
 import br.com.engecopi.estoque.model.dtos.EntregaFutura
 import br.com.engecopi.estoque.model.dtos.PedidoNotaRessuprimento
 import br.com.engecopi.estoque.model.query.QItemNota
@@ -36,7 +36,7 @@ class EntregaRessuprimentoFind(val view: IView) {
           item.status = ENTREGUE
           item.save()
           item.nota?.let {nota ->
-            if(nota.tipoNota == VENDAF) {
+            if(nota.tipoNota == PEDIDO_R) {
               nota.numeroEntrega = nota.notaBaixa().firstOrNull()?.numero ?: ""
               nota.save()
             }
