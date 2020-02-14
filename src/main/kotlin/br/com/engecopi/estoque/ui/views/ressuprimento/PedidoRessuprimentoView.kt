@@ -90,9 +90,9 @@ class PedidoRessuprimentoView:
       updateOperationVisible = false
       addOperationVisible = false
       deleteOperationVisible = RegistryUserInfo.usuarioDefault.admin
-      column(PedidoRessuprimentoVo::numero) {
-        caption = "Número NF"
-        setSortProperty("numero")
+      column(PedidoRessuprimentoVo::codigoBarraConferencia) {
+        caption = "Chave NF"
+        setSortProperty("codigoBarraConferencia")
       }
       column(PedidoRessuprimentoVo::numeroBaixa) {
         caption = "NF Baixa"

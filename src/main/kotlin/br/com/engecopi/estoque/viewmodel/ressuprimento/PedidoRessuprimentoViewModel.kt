@@ -2,7 +2,7 @@ package br.com.engecopi.estoque.viewmodel.ressuprimento
 
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
-import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.TipoMov
@@ -114,7 +114,7 @@ class PedidoRessuprimentoViewModel(view: IPedidoRessuprimentoView):
 
 class PedidoRessuprimentoVo: EntityVo<ViewPedidoRessuprimento>() {
   override fun findEntity(): ViewPedidoRessuprimento? {
-    return ViewPedidoRessuprimento.findSaida(RegistryUserInfo.lojaDeposito, numero, abreviacao)
+    return ViewPedidoRessuprimento.findSaida(lojaDeposito, numero, abreviacao)
   }
   
   var numero: String = ""
@@ -136,6 +136,8 @@ class PedidoRessuprimentoVo: EntityVo<ViewPedidoRessuprimento>() {
   var impresso: Boolean = false
   val dataHoraLancamento
     get() = LocalDateTime.of(data, hora)
+  val codigoBarraConferencia
+    get() = toEntity()?.codigoBarraConferencia
 }
 
 data class ChaveGroup(val nota: Nota?, val abreviacao: String?)

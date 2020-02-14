@@ -30,11 +30,12 @@ open class PrinterCups(val host: String, val port: Int, val userName: String, va
   
   fun findPrinter(printerName: String): CupsPrinter? {
     val remote = printerRemote
-    val urlHost =
+    val printInfoRemote =
       remote.firstOrNull {it.name == printerName}
-        ?.urlHost
+    val urlHost = printInfoRemote?.urlHost
+  
     return if(NetworkUtils.isHostReachable(urlHost))
-      printers.firstOrNull {it.name == urlHost}
+      printers.firstOrNull {it.name == printInfoRemote?.name}
     else {
       val local = printerLocal.firstOrNull()
       if(NetworkUtils.isHostReachable(local?.urlHost))

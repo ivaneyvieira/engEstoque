@@ -42,6 +42,7 @@ class ViewPedidoRessuprimento: BaseModel() {
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var usuario: Usuario? = null
   var abreviacao: String? = ""
+  var codigoBarraConferencia: String? = ""
   val numeroBaixa
     get() = Nota.findNota(loja, numero, tipoMov)?.notaBaixa() ?: emptyList()
   
