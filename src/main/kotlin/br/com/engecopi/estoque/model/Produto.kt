@@ -2,6 +2,7 @@ package br.com.engecopi.estoque.model
 
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
+import br.com.engecopi.estoque.model.TipoNota.PEDIDO_R
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.dtos.ProdutoGrade
 import br.com.engecopi.estoque.model.finder.ProdutoFinder
@@ -88,6 +89,7 @@ class Produto: BaseModel() {
         .or()
         .nota.loja.equalTo(loja)
         .nota.tipoNota.eq(VENDAF)
+        .nota.tipoNota.eq(PEDIDO_R)
         .endOr()
         .localizacao.like(if(localizacao == "") "%" else localizacao)
         .findList()

@@ -3,10 +3,12 @@ package br.com.engecopi.estoque.viewmodel.expedicao
 import br.com.engecopi.estoque.model.KeyNota
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
+import br.com.engecopi.estoque.model.TipoNota.PEDIDO_R
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.viewmodel.EChaveNaoEncontrada
 import br.com.engecopi.estoque.viewmodel.ENotaEntregaFutura
 import br.com.engecopi.estoque.viewmodel.ENovaFaturaLancada
+import br.com.engecopi.estoque.viewmodel.EPedidoRessuprimento
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 
 class NFExpedicaoFind() {
@@ -21,9 +23,10 @@ class NFExpedicaoFind() {
     val nota = notaSaci.firstOrNull() ?: throw EChaveNaoEncontrada()
     val numero = nota.numero ?: ""
     return when {
-      nota.isNotaFaturaLancada() -> throw ENovaFaturaLancada()
-      nota.tipoNota() == VENDAF  -> throw ENotaEntregaFutura(numero)
-      else                       -> notaSaci.filtroTipoCompativel()
+      nota.isNotaFaturaLancada()  -> throw ENovaFaturaLancada()
+      nota.tipoNota() == VENDAF   -> throw ENotaEntregaFutura(numero)
+      nota.tipoNota() == PEDIDO_R -> throw EPedidoRessuprimento(numero)
+      else                        -> notaSaci.filtroTipoCompativel()
     }
   }
   
@@ -33,5 +36,4 @@ class NFExpedicaoFind() {
       return@filter usuarioDefault.isTipoCompativel(tipo)
     }
   }
-  
 }

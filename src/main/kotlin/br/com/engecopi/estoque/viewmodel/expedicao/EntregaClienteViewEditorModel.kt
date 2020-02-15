@@ -4,6 +4,7 @@ import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
+import br.com.engecopi.estoque.model.TipoNota.PEDIDO_R
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
@@ -16,7 +17,7 @@ class EntregaClienteEditorViewModel(view: IEntregaClienteEditorView):
   }
   
   override fun QItemNota.filtroTipoNota(): QItemNota {
-    return this.nota.tipoNota.ne(VENDAF)
+    return this.nota.tipoNota.notIn(VENDAF, PEDIDO_R)
   }
   
   override fun QItemNota.filtroStatus(): QItemNota {
