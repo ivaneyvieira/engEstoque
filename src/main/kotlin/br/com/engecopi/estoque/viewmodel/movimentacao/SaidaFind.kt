@@ -9,7 +9,6 @@ import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.NotaItens
 import br.com.engecopi.estoque.model.Produto
-import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
@@ -68,7 +67,7 @@ class SaidaFind() {
     val item = ViewCodBarConferencia.findNota(key)
                ?: return NotaItens.erro("Nota não encontrada")
     if(item.abreviacao != abreviacaoDefault) {
-      throw EViewModelError("Esta nota não pertence ao cd ${RegistryUserInfo.abreviacaoDefault}")
+      throw EViewModelError("Esta nota não pertence ao cd ${abreviacaoDefault}")
     }
     val nota = Nota.findSaida(item.storeno, item.numero) ?: return NotaItens.erro("Nota não encontrada")
     if(nota.lancamentoOrigem !in listOf(EXPEDICAO, ENTREGA_F, RESSUPRI)) {

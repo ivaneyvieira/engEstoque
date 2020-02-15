@@ -3,7 +3,7 @@ package br.com.engecopi.estoque.ui.views.movimentacao
 import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Produto
-import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressoraUsuario
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
@@ -203,7 +203,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: 
         editor.addOpenListener {event ->
           event.bean.produto.let {produto ->
             val locSulfixos =
-              produto.localizacoes(RegistryUserInfo.abreviacaoDefault)
+              produto.localizacoes(abreviacaoDefault)
                 .map {LocProduto(it)}
             comboLoc.setItems(locSulfixos)
             comboLoc.setItemCaptionGenerator {it.localizacao}

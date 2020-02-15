@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.model
 
+import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.dtos.ProdutoGrade
@@ -203,9 +204,9 @@ class Produto: BaseModel() {
       .sumBy {it.quantidadeSaldo}
   }
   
-  fun saldoAbreviacao(abreviacao: String): Int {
+  fun saldoAbreviacao(abreviacao: String?): Int {
     return QItemNota().produto.id.eq(id)
-      .localizacao.startsWith(abreviacao)
+      .localizacao.startsWith(abreviacao ?: "")
       .findList()
       .sumBy {it.quantidadeSaldo}
   }
@@ -225,13 +226,16 @@ class Produto: BaseModel() {
       .findList()
   }
   
-  fun localizacoes(abreviacao: String): List<String> {
+  fun localizacoes(abreviacao: String?): List<String> {
     return ViewProdutoLoc.localizacoesProduto(produto = this)
-      .filter {it.startsWith(abreviacao)}
+      .let {list ->
+        if(abreviacao.isNullOrBlank()) list
+        else list.filter {it.startsWith(abreviacao ?: "")}
+      }
   }
   
   fun prefixoLocalizacoes(): String {
-    val localizacoes = localizacoes(RegistryUserInfo.abreviacaoDefault)
+    val localizacoes = localizacoes(abreviacaoDefault)
     if(localizacoes.size == 1) return localizacoes[0]
     val localizacoesSplit = localizacoes.map {it.split("[.\\-]".toRegex())}
     val ctParte = localizacoesSplit.asSequence().map {it.size - 1}.min() ?: 0
@@ -258,8 +262,8 @@ class Produto: BaseModel() {
 
 private fun List<Produto>.filtroCD(): List<Produto> {
   return this.filter {
-    it.localizacoes(RegistryUserInfo.abreviacaoDefault)
-      .any {loc -> loc.startsWith(RegistryUserInfo.abreviacaoDefault)}
+    it.localizacoes(abreviacaoDefault)
+      .isNotEmpty()
   }
 }
 

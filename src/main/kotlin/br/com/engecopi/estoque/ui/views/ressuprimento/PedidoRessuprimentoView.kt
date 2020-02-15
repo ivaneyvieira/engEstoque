@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.ui.views.ressuprimento
 
+import br.com.engecopi.estoque.model.Abreviacao
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.envelopes.Printer
 import br.com.engecopi.estoque.ui.print.PrintUtil
@@ -105,8 +106,10 @@ class PedidoRessuprimentoView:
           this.isEnabled = impresso == false || isAdmin
           this.icon = PRINT
           this.addClickListener {click ->
-            val text = viewModel.imprimir(item?.entityVo?.nota)
-            PrintUtil.printText(impressora(), text)
+            viewModel.imprimir(item?.entityVo?.nota)
+              .forEach {printEtiqueta ->
+                PrintUtil.printText(printEtiqueta.abreviacao.printer, printEtiqueta.text)
+              }
             val print = item?.impresso ?: true
             click.button.isEnabled = print == false || isAdmin
             refreshGrid()
@@ -169,18 +172,20 @@ class PedidoRessuprimentoView:
     formCodBar?.focusEdit()
   }
   
-  private fun impressora(): Printer {
-    val impressora = RegistryUserInfo.usuarioDefault.impressora.trim()
-    return Printer(if(impressora == "") "ENTREGA" else impressora)
+  private fun impressora(abreviacao: String?): Printer? {
+    abreviacao ?: return Printer("ENTRADA")
+    return Abreviacao.findByAbreviacao(abreviacao)
+      ?.printer
   }
   
   private fun btnImprimeTudo(): Button {
     return Button("Imprime Etiquetas").apply {
       icon = PRINT
       addClickListener {
-        val text = viewModel.imprimeTudo()
-        PrintUtil.printText(impressora(), text)
-        //grid.refreshGrid()
+        viewModel.imprimeTudo()
+          .forEach {printEtiqueta ->
+            PrintUtil.printText(printEtiqueta.abreviacao.printer, printEtiqueta.text)
+          }
       }
     }
   }
@@ -194,7 +199,10 @@ class PedidoRessuprimentoView:
           val nota = viewModel.processaKey(itens)
           val text = viewModel.imprimir(nota)
           PrintUtil.imprimeNotaConcluida(nota)
-          PrintUtil.printText(impressora(), text)
+          viewModel.imprimir(nota)
+            .forEach {printEtiqueta ->
+              PrintUtil.printText(printEtiqueta.abreviacao.printer, printEtiqueta.text)
+            }
           updateView()
         }
         dialog.showDialog()

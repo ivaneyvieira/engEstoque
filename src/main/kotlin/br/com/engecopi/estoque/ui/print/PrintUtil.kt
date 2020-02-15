@@ -38,12 +38,13 @@ object PrintUtil {
     printText(impressoraNota, textNota)
   }
   
-  fun printText(impressora: Printer, text: String?) {
+  fun printText(impressora: Printer?, text: String?) {
+    impressora ?: return
     if(!text.isNullOrBlank()) {
       when {
         QuerySaci.test -> {
           val image = ZPLPreview.createPdf(text, "4x2")
-          if(image != null) showImage("Preview", image)
+          if(image != null) showImage("Preview ${impressora.nome}", image)
         }
         else           -> try {
           AppPrinter.printCups(impressora.nome, text)

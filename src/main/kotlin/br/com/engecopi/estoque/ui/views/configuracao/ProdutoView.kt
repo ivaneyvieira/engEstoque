@@ -3,6 +3,7 @@ package br.com.engecopi.estoque.ui.views.configuracao
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.TipoNota
@@ -191,7 +192,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
               editor.addOpenListener {event ->
                 event.bean.produto?.let {produto ->
                   val locSulfixos =
-                    produto.localizacoes(RegistryUserInfo.abreviacaoDefault)
+                    produto.localizacoes(abreviacaoDefault)
                       .map {LocProduto(it)}
                   comboLoc.setItems(locSulfixos.map {it.localizacao})
                   comboLoc.value = event.bean.localizacao

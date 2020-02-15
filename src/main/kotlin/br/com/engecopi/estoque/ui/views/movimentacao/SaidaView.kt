@@ -8,6 +8,7 @@ import br.com.engecopi.estoque.model.LancamentoOrigem.RESSUPRI
 import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.NotaItens
 import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressoraUsuario
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
@@ -492,7 +493,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
             editor.addOpenListener {event ->
               event.bean.produto.let {produto ->
                 val locSulfixos =
-                  produto.localizacoes(RegistryUserInfo.abreviacaoDefault)
+                  produto.localizacoes(abreviacaoDefault)
                     .map {LocProduto(it)}
                 comboLoc.setItems(locSulfixos)
                 comboLoc.setItemCaptionGenerator {it.localizacao}
@@ -523,9 +524,9 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
   }
   
   private fun @VaadinDsl Grid<ProdutoVO>.updateProdutosNota() {
-    val abreviacao = RegistryUserInfo.abreviacaoDefault
+    val abreviacao = abreviacaoDefault
     //nota.refresh()
-    val itens = nota.itens.filter {it.localizacao.startsWith(abreviacao)}
+    val itens = nota.itens.filter {it.localizacao.startsWith(abreviacao ?: "")}
     val itensProvider = itens.mapNotNull {item ->
       val produto = item.produto
       val statusNota = item.status

@@ -27,12 +27,12 @@ class PedidoRessuprimentoViewModel(view: IPedidoRessuprimentoView):
   private val print = NFRessuprimentoPrint()
   private val find = RessuprimentoFind(view)
   
-  fun imprimeTudo() = execString {
+  fun imprimeTudo() = execList {
     print.imprimeTudo()
       .updateView()
   }
   
-  fun imprimir(nota: Nota?) = execString {
+  fun imprimir(nota: Nota?) = execList {
     print.imprimir(nota)
       .updateView()
   }

@@ -97,9 +97,9 @@ class ProdutoViewModel(view: IProdutoView): CrudViewModel<Produto, QProduto, Pro
   }
   
   fun localizacoes(bean: ProdutoVo?): List<LocProduto> {
-    return bean?.produto?.localizacoes(abreviacaoDefault)
+    return bean?.produto?.localizacoes("")
       .orEmpty()
-      .filter {it.startsWith(abreviacaoDefault) || userDefaultIsAdmin}
+      .filter {it.startsWith(abreviacaoDefault ?: "") || userDefaultIsAdmin}
       .map {LocProduto(it)}
   }
   
@@ -134,7 +134,7 @@ class ProdutoVo: EntityVo<Produto>() {
     get() = produto?.codebar ?: ""
   val localizacao
     get() = produto?.localizacoes(abreviacaoDefault).orEmpty().filter {
-      it.startsWith(abreviacaoDefault)
+      it.startsWith(abreviacaoDefault ?: "")
     }.asSequence().distinct().joinToString(" / ")
   val produto
     get() = toEntity()

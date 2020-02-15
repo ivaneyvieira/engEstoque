@@ -34,7 +34,8 @@ class LabelProdutoViewModel(view: ILabelProdutoView): ViewModel<ILabelProdutoVie
   fun addFaixaCodigoGrade(codigo: String?, grade: String?) = execUnit {
     val produto = Produto.findProduto(codigo, grade) ?: return@execUnit
     val localizacoes = produto.localizacoes(abreviacaoDefault)
-    if(localizacoes.any {it.startsWith(abreviacaoDefault)} && !view.listaProduto.contains(produto)) view.listaProduto += produto
+    if(localizacoes.isNotEmpty() && !view.listaProduto.contains(produto))
+      view.listaProduto += produto
   }
   
   fun clearProduto() = execUnit {
