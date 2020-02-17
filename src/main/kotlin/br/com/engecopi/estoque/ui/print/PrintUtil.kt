@@ -2,13 +2,12 @@ package br.com.engecopi.estoque.ui.print
 
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
-import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
-import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
-import br.com.engecopi.estoque.model.Nota
+
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
+import br.com.engecopi.estoque.model.TipoUsuario.EXPEDICAO
 import br.com.engecopi.estoque.model.envelopes.Printer
 import br.com.engecopi.framework.ui.view.MessageDialog
 import br.com.engecopi.saci.QuerySaci
