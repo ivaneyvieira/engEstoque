@@ -152,6 +152,9 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
               addColumnFor(ItemNota::numeroEntrega) {
                 this.isSortable = false
                 caption = "NF Baixa"
+                setRenderer({list ->
+                              list.joinToString(" ") {it.numero}
+                            }, TextRenderer())
               }
               addColumnFor(ItemNota::dataEntrega) {
                 caption = "Data Baixa"
