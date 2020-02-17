@@ -34,7 +34,7 @@ object PrintUtil {
       }
       else      -> Printer("")
     }
-    val textNota = imprimirNota(nota)
+    val textNota = this.imprimirNota(nota)
     printText(impressoraNota, textNota)
   }
   

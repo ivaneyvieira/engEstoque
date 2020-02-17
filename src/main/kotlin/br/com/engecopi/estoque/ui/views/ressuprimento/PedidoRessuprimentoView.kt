@@ -1,8 +1,6 @@
 package br.com.engecopi.estoque.ui.views.ressuprimento
 
-import br.com.engecopi.estoque.model.Abreviacao
 import br.com.engecopi.estoque.model.RegistryUserInfo
-import br.com.engecopi.estoque.model.envelopes.Printer
 import br.com.engecopi.estoque.ui.print.PrintUtil
 import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
 import br.com.engecopi.estoque.viewmodel.ressuprimento.IPedidoRessuprimentoView
@@ -170,12 +168,6 @@ class PedidoRessuprimentoView:
   override fun enter(event: ViewChangeEvent) {
     super.enter(event)
     formCodBar?.focusEdit()
-  }
-  
-  private fun impressora(abreviacao: String?): Printer? {
-    abreviacao ?: return Printer("ENTRADA")
-    return Abreviacao.findByAbreviacao(abreviacao)
-      ?.printer
   }
   
   private fun btnImprimeTudo(): Button {
