@@ -7,7 +7,6 @@ import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
 import br.com.engecopi.estoque.model.LancamentoOrigem.RESSUPRI
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
-import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.envelopes.Printer
@@ -61,8 +60,8 @@ object PrintUtil {
     }
   }
   
-  private fun imprimirNota(itens: List<ItemNota>, statusImpressao: StatusNota): String {
-    val etiquetas = Etiqueta.findByStatus(statusImpressao, "ETENT")
+  private fun imprimirNotaConferida(itens: List<ItemNota>): String {
+    val etiquetas = Etiqueta.findByStatus(CONFERIDA, "ETENT")
     return etiquetas.joinToString(separator = "\n") {etiqueta ->
       imprimir(itens, etiqueta)
     }
@@ -73,7 +72,7 @@ object PrintUtil {
     val itensIncluidos = itens.filter {it.status == INCLUIDA}
     val itensConferidos = itens.filter {it.status == CONFERIDA}
     return if(itensIncluidos.isEmpty()) {
-      imprimirNota(itensConferidos, CONFERIDA)
+      imprimirNotaConferida(itensConferidos)
     }
     else ""
   }
