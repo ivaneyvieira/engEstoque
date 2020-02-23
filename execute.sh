@@ -25,7 +25,7 @@ git pull
 gradle clean build
 
 docker-compose down
-echo "version: "3"
+echo "version: \"3\"
 services:
     engecopi:
         image: tomcat:8
