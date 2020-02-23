@@ -24,7 +24,8 @@ class Abreviacao(
   var loja: Loja, var expedicao: Boolean,
   @Length(15)
   var impressora: String): BaseModel() {
-  val printer get() = Printer(impressora)
+  val printer
+    get() = Printer(impressora)
   
   companion object Find: AbreviacaoFinder() {
     fun findByAbreviacao(abreviacao: String?): Abreviacao? {

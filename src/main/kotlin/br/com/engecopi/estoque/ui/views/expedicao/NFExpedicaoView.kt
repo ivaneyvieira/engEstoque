@@ -159,7 +159,6 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), IN
         timeFormat()
         setSortProperty("data", "hora")
       }
-
       column(NFExpedicaoVo::dataEmissao) {
         caption = "Emissao"
         dateFormat()

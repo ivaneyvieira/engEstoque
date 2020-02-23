@@ -189,26 +189,26 @@ class EstoqueUI: UI() {
   private fun @VaadinDsl ValoMenu.sectionExpedicao(user: Usuario) {
     section("Expedição") {
       if(!user.estoque || user.admin) {
-        menuButton("Nota Fiscal", NEWSPAPER, view = NFExpedicaoView::class.java)
+        menuButton("Chave", NEWSPAPER, view = NFExpedicaoView::class.java)
       }
-      menuButton("Entrega ao Cliente", TRUCK, view = EntregaClienteView::class.java)
-      menuButton("Editor de Entrega", TRUCK, view = EntregaClienteEditorView::class.java)
+      menuButton("Entrega", TRUCK, view = EntregaClienteView::class.java)
+      menuButton("Editor", TRUCK, view = EntregaClienteEditorView::class.java)
     }
   }
   
   private fun @VaadinDsl ValoMenu.sectionFutura(user: Usuario) {
     section("Entrega Futura") {
-      menuButton("Nota Fiscal", NEWSPAPER, view = NFVendaFuturaView::class.java)
-      menuButton("Entrega ao Cliente", TRUCK, view = EntregaFuturaView::class.java)
-      menuButton("Editor de Entrega", TRUCK, view = EntregaFuturaEditorView::class.java)
+      menuButton("Chave", NEWSPAPER, view = NFVendaFuturaView::class.java)
+      menuButton("Entrega", TRUCK, view = EntregaFuturaView::class.java)
+      menuButton("Editor", TRUCK, view = EntregaFuturaEditorView::class.java)
     }
   }
   
   private fun @VaadinDsl ValoMenu.sectionRessuprimento(user: Usuario) {
     section("Ressuprimento") {
-      menuButton("Lançamento de Ressuprimento", NEWSPAPER, view = PedidoRessuprimentoView::class.java)
-      menuButton("Entrega de Ressuprimento", TRUCK, view = EntregaRessuprimentoView::class.java)
-      menuButton("Editor de Ressupmento", TRUCK, view = EntregaRessuprimentoEditorView::class.java)
+      menuButton("Chave", NEWSPAPER, view = PedidoRessuprimentoView::class.java)
+      menuButton("Entrega", TRUCK, view = EntregaRessuprimentoView::class.java)
+      menuButton("Editor", TRUCK, view = EntregaRessuprimentoEditorView::class.java)
     }
   }
   

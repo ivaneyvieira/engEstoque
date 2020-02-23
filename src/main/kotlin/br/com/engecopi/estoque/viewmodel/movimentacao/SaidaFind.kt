@@ -9,11 +9,11 @@ import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.NotaItens
 import br.com.engecopi.estoque.model.Produto
-import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.TipoNota.CHAVE_SAIDA
+import br.com.engecopi.estoque.model.TipoNota.PEDIDO_R
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.ViewCodBarConferencia
 import br.com.engecopi.framework.viewmodel.EViewModelError
@@ -68,7 +68,7 @@ class SaidaFind() {
     val item = ViewCodBarConferencia.findNota(key)
                ?: return NotaItens.erro("Nota não encontrada")
     if(item.abreviacao != abreviacaoDefault) {
-      throw EViewModelError("Esta nota não pertence ao cd ${RegistryUserInfo.abreviacaoDefault}")
+      throw EViewModelError("Esta nota não pertence ao cd ${abreviacaoDefault}")
     }
     val nota = Nota.findSaida(item.storeno, item.numero) ?: return NotaItens.erro("Nota não encontrada")
     if(nota.lancamentoOrigem !in listOf(EXPEDICAO, ENTREGA_F, RESSUPRI)) {
@@ -80,7 +80,7 @@ class SaidaFind() {
   private fun processaKeyNumeroNota(key: String): NotaItens {
     val keyNota = KeyNota(key)
     val notaItem = processaKeyNumero(keyNota.loja, keyNota.numero)
-    return if(notaItem.nota?.tipoNota == VENDAF || keyNota.storeno == lojaDeposito.numero) {
+    return if(notaItem.nota?.tipoNota in listOf(VENDAF, PEDIDO_R) || keyNota.storeno == lojaDeposito.numero) {
       notaItem
     }
     else NotaItens.erro("A nota pertence a a loja ${lojaDeposito.numero} e não é nota de entrega futura")

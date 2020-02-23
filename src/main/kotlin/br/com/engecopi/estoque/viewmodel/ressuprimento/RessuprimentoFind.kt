@@ -1,30 +1,15 @@
 package br.com.engecopi.estoque.viewmodel.ressuprimento
 
-import br.com.engecopi.estoque.model.KeyNota
 import br.com.engecopi.estoque.model.Loja
-import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
-import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.ViewProdutoLoc
-import br.com.engecopi.estoque.viewmodel.EChaveNaoEncontrada
-import br.com.engecopi.estoque.viewmodel.ENotaNaoEntregaFutura
-import br.com.engecopi.estoque.viewmodel.ENovaBaixaLancada
 import br.com.engecopi.saci.beans.NotaProdutoSaci
+import br.com.engecopi.saci.saci
 
 class RessuprimentoFind(val view: IPedidoRessuprimentoView) {
   fun findNotaSaidaKey(key: String): List<NotaProdutoSaci> {
-    val notaKey = KeyNota(key)
-    val storeno = notaKey.storeno
-    val nfno = notaKey.numero
-    val notaSaci = Nota.findNotaSaidaSaci(storeno, nfno)
-    val nota = notaSaci.firstOrNull() ?: throw EChaveNaoEncontrada()
-    val numero = nota.numero ?: ""
-    return when {
-      nota.isNotaBaixaLancada() -> throw ENovaBaixaLancada()
-      nota.tipoNota() != VENDAF -> throw ENotaNaoEntregaFutura(numero)
-      else                      -> notaSaci
-    }.expandeGradeGenerica()
+    return saci.findPedidoRessuprimento(key.toIntOrNull())
   }
   
   fun findLoja(storeno: Int?): Loja? = Loja.findLoja(storeno)

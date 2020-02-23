@@ -21,8 +21,8 @@ class PedidoNotaRessuprimento(id: String,
       lojaTransferencia ?: return emptyList()
       numeroSerieTransferencia ?: return emptyList()
       val sql = """select * from t_pedido_nota_ressuprimento
-        |where nfno = :lojaTransferencia
-        |  AND nfse = :numeroSerieTransferencia
+        |where storenoNota = :lojaTransferencia
+        |  AND numero = :numeroSerieTransferencia
       """.trimMargin()
       return DB.findDto(PedidoNotaRessuprimento::class.java, sql)
         .setParameter("lojaTransferencia", lojaTransferencia)

@@ -32,7 +32,7 @@ object RegistryUserInfo {
   val usuarioDefault
     get() = info?.usuario ?: throw EUsuarioNaoInicializado()
   val abreviacaoDefault
-    get() = info?.abreviacao ?: throw EUsuarioNaoInicializado()
+    get() = info?.abreviacao ?: ""
   val lojaDeposito
     get() = Loja.findLoja(4) ?: throw EViewModelError("Loja depósito não cadastrada")
   val userDefaultIsAdmin

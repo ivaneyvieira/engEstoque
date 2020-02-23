@@ -8,6 +8,6 @@ FROM sqldados.eord           AS N
                ON E.prdno = P.prdno AND E.grade = P.grade AND E.storeno = 4
   LEFT JOIN  sqldados.custp  AS C
                ON C.no = N.custno
-WHERE N.paymno = 291 AND
+WHERE N.paymno IN (291, 292) AND
       N.storeno = :storeno AND
       (N.ordno = :nfno)

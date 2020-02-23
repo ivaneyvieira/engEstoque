@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.model
 
+import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.finder.ViewCodBarConferenciaFinder
 import br.com.engecopi.estoque.model.query.QViewCodBarCliente
 import br.com.engecopi.estoque.model.query.QViewCodBarConferencia
@@ -31,7 +32,7 @@ class ViewCodBarConferencia {
           QViewCodBarConferencia().storeno.eq(storeno)
             .numero.eq(numero)
             .sequencia.eq(sequencia)
-            .abreviacao.eq(RegistryUserInfo.abreviacaoDefault)
+            .abreviacao.eq(abreviacaoDefault)
             .findList()
             .firstOrNull()
         }

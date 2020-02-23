@@ -3,6 +3,7 @@ package br.com.engecopi.estoque.ui.views.configuracao
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LocProduto
 import br.com.engecopi.estoque.model.RegistryUserInfo
+import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.TipoNota
@@ -152,9 +153,11 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
               addColumnFor(ItemNota::numeroEntrega) {
                 this.isSortable = false
                 caption = "NF Baixa"
-                setRenderer({list ->
-                              list.joinToString(" ") {it.numero}
-                            }, TextRenderer())
+                this.setRenderer({lista ->
+                                   lista.joinToString(" ") {nota ->
+                                     nota.numero
+                                   }
+                                 }, TextRenderer())
               }
               addColumnFor(ItemNota::dataEntrega) {
                 caption = "Data Baixa"
@@ -194,7 +197,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
               editor.addOpenListener {event ->
                 event.bean.produto?.let {produto ->
                   val locSulfixos =
-                    produto.localizacoes(RegistryUserInfo.abreviacaoDefault)
+                    produto.localizacoes(abreviacaoDefault)
                       .map {LocProduto(it)}
                   comboLoc.setItems(locSulfixos.map {it.localizacao})
                   comboLoc.value = event.bean.localizacao

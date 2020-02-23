@@ -291,7 +291,7 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
   }
 }
 
-abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): EntityVo<ItemNota>() {
+abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?): EntityVo<ItemNota>() {
   override fun findEntity(): ItemNota? {
     return ItemNota.find(nota, produto)
   }
@@ -352,7 +352,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
         else listItensEntrada(notaSaci)
       }
       produtos.addAll(produtosVo.asSequence().filter {
-        it.quantidade != 0 && it.codigo != "" && it.localizacao?.localizacao?.startsWith(abreviacaoNota) ?: false
+        it.quantidade != 0 && it.codigo != "" && it.localizacao?.localizacao?.startsWith(abreviacaoNota ?: "") ?: false
       }.sortedWith(compareBy(ProdutoVO::isSave, ProdutoVO::codigo, ProdutoVO::grade, ProdutoVO::localizacao)).toList())
     }
   }
@@ -361,7 +361,6 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
     val prd = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return emptyList()
     val localizacoes =
       prd.localizacoes(abreviacaoNota)
-        .filter {it.startsWith(abreviacaoNota)}
         .sorted()
     val ultimaLocalizacao = localizacoes.max() ?: ""
     val produtoVo = ProdutoVO(prd, RECEBIDO, LocProduto(ultimaLocalizacao), notaProdutoSaci.isSave()).apply {
@@ -375,7 +374,6 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
     var quant = notaProdutoSaci.quant ?: return emptyList()
     val localizacoes =
       prd.localizacoes(abreviacaoNota)
-        .filter {it.startsWith(abreviacaoNota)}
         .sorted()
     val ultimaLocalizacao = localizacoes.max() ?: ""
     val produtosLocais = localizacoes.map {localizacao ->
@@ -462,6 +460,8 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String): En
   val saldo: Int
     get() = produto?.saldoLocalizacao(localizacao?.localizacao) ?: 0
   var localizacao: LocProduto? = null
+  val abreviacao: String
+    get() = localizacao?.abreviacao ?: ""
   val localizacaoProduto
     get() = produto?.localizacoes(abreviacaoNota)?.map {LocProduto(it)}.orEmpty()
   var status: StatusNota? = null

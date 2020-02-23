@@ -7,13 +7,13 @@ import br.com.engecopi.estoque.viewmodel.etiquetas.ETipoEtiqueta.LANCAMENTO
 import br.com.engecopi.estoque.viewmodel.etiquetas.ILabelNotaView
 import br.com.engecopi.estoque.viewmodel.etiquetas.LabelNotaViewModel
 import br.com.engecopi.estoque.viewmodel.etiquetas.NotaLabelVo
+import br.com.engecopi.framework.model.AppPrinter
+import br.com.engecopi.framework.model.PrinterInfo
 import br.com.engecopi.framework.ui.view.LayoutView
 import br.com.engecopi.framework.ui.view.dateFormat
 import br.com.engecopi.framework.ui.view.default
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.row
-import br.com.engecopi.utils.CupsUtils
-import br.com.engecopi.utils.PrinterInfo
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.addColumnFor
 import com.github.mvysny.karibudsl.v8.alignment
@@ -69,7 +69,7 @@ class LabelNotaView: LayoutView<LabelNotaViewModel>(), ILabelNotaView {
             }
             cmbImpressora = comboBox<PrinterInfo>("Impressora") {
               expandRatio = 2f
-              val itens = CupsUtils.printersInfo
+              val itens = AppPrinter.printersInfo
               setItems(itens)
               setItemCaptionGenerator {it.description}
     
