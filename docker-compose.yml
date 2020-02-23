@@ -1,25 +1,25 @@
-version: "3"
+version: 3
 services:
     engecopi:
         image: tomcat:8
-        container_name: eng_engecopi
+        container_name: eng_estoque
         ports:
-            - "8081:8080"
+            - "8012:8080"
         environment:
-            TZ: "America/Fortaleza"
+            TZ: America/Fortaleza
             EBEAN_PROPS: /etc/ebean.properties
         volumes:
-            - ./engEstoque.war:/usr/local/tomcat/webapps/engEstoque.war
+            - ./build/libs/engEstoque-1.0-SNAPSHOT.war:/usr/local/tomcat/webapps/engEstoque.war
             - ./logs:/usr/local/tomcat/logs
             - ./ebean.properties:/etc/ebean.properties
         restart: always
         networks:
-            rede_eng:
-                ipv4_address: 172.35.1.1
+            rede_eng_estoque:
+                ipv4_address: 10.201.01.1
 networks:
-    rede_eng:
+    rede_eng_estoque:
         ipam:
             driver: default
             config:
-                - subnet: 172.35.0.0/16
+                - subnet: 10.201.01.0/24
 

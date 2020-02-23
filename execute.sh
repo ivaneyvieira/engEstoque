@@ -44,11 +44,14 @@ networks:
                 - subnet: 10.201.$NUM.0/24
 " > docker-compose.yml
 
-#git pull
-#gradle clean build
+git fetch --all
+git reset --hard
+git pull
 
-#docker-compose down
-#docker-compose up -d
+gradle clean build
+
+docker-compose down
+docker-compose up -d
 
 echo "Acesse o aplicativo atraves do endereco:"
 echo "http://$IP:$PORT/$CONTAINER_NAME"
