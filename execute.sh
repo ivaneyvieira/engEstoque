@@ -25,7 +25,7 @@ git pull
 gradle clean build
 
 docker-compose down
-echo "version: \"3\"
+echo "version: \"2\"
 services:
     service_$CONTAINER_NAME:
         image: tomcat:8
