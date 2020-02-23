@@ -18,6 +18,13 @@ else
   exit
 fi
 
+git fetch --all
+git reset --hard
+git pull
+
+gradle clean build
+
+docker-compose down
 echo "version: "3"
 services:
     engecopi:
@@ -43,14 +50,6 @@ networks:
             config:
                 - subnet: 10.201.$NUM.0/24
 " > docker-compose.yml
-
-git fetch --all
-git reset --hard
-git pull
-
-gradle clean build
-
-docker-compose down
 docker-compose up -d
 
 echo "Acesse o aplicativo atraves do endereco:"
