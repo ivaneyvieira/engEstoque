@@ -9,6 +9,7 @@ import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
+import br.com.engecopi.estoque.model.TipoUsuario.EXPEDICAO
 import br.com.engecopi.estoque.model.envelopes.Printer
 import br.com.engecopi.framework.model.AppPrinter
 import br.com.engecopi.framework.model.ECupsPrinter
