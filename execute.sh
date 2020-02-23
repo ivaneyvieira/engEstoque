@@ -27,7 +27,7 @@ gradle clean build
 docker-compose down
 echo "version: \"3\"
 services:
-    engecopi:
+    service_$CONTAINER_NAME:
         image: tomcat:8
         container_name: $CONTAINER_NAME
         ports:
