@@ -4,31 +4,11 @@ import br.com.engecopi.estoque.model.dtos.PedidoSaci
 import br.com.engecopi.saci.saci
 import br.com.engecopi.utils.format
 import br.com.engecopi.utils.localDate
-import io.ebean.DB
 
 class ETLPedidos: ETL<PedidoSaci>() {
-  override val sqlDelete = "DELETE FROM t_pedido where id = :id"
-  override val sqlInsert = """
-      INSERT INTO t_pedido(id, rota, storeno, numero, date, clienteName, abreviacao, nfno, nfse, status)
-      VALUES(:id, :rota, :storeno, :numero, :date, :clienteName, :abreviacao, :nfno, :nfse, :status)
-    """.trimIndent()
-  override val sqlUpdate = """
-      UPDATE t_pedido 
-      SET  abreviacao=:abreviacao, 
-           status=:status
-      WHERE id = :id
-    """.trimIndent()
-
-  companion object: ETLThread<PedidoSaci>(ETLPedidos(), 60) {
-    val sql
-      get() = """select id, rota, storeno, numero, date, clienteName, abreviacao, nfno, nfse, status 
-      |from t_pedido
-      |""".trimMargin()
-  
-    override fun getSource() = saci.findPedidoTransferencia()
-  
-    override fun getTarget() = DB.findDto(PedidoSaci::class.java, sql).findList()
-  }
+ companion object: ETLThread<PedidoSaci>(ETLPedidos(), 60) {
+   override fun getSource() = saci.findPedidoTransferencia()
+ }
 }
 
 fun etiquetaPedido(pedido: PedidoSaci): String {

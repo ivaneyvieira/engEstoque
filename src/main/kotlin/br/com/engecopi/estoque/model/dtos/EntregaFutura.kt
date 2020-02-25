@@ -1,9 +1,11 @@
 package br.com.engecopi.estoque.model.dtos
 
 import br.com.engecopi.estoque.model.etlSaci.EntryID
+import br.com.engecopi.estoque.model.etlSaci.TableName
 import br.com.engecopi.utils.localDate
 import io.ebean.DB
 
+@TableName("t_entrega_futura")
 class EntregaFutura(id: String,
                     val storenoVenda: Int,
                     val numeroVenda: String,
@@ -38,7 +40,7 @@ class EntregaFutura(id: String,
         }
       return list;
     }
-  
+    
     fun notaFatura(storeno: Int?, numero: String?): List<NotaBaixaFatura> {
       numero ?: return emptyList()
       storeno ?: return emptyList()
