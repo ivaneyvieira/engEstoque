@@ -18,5 +18,5 @@ FROM t_produto_saci AS T
 CREATE OR REPLACE VIEW v_produtos_saci AS
 SELECT md5(concat(T.storeno, T.codigo)) AS id, T.codigo AS codigo, T.grade AS grade, '' AS codebar,
        T.nome AS nome, 0 AS custo, T.unidade AS unidade, '' AS tipo, T.localizacao AS localizacao
-FROM engEstoque.t_dados_produto_saci T
+FROM t_produto_saci T
 GROUP BY T.storeno, T.codigo
