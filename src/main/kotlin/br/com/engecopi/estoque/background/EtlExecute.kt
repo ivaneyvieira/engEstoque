@@ -1,6 +1,5 @@
 package br.com.engecopi.estoque.background
 
-import br.com.engecopi.estoque.model.etlSaci.ETLDadosProdutosSaci
 import br.com.engecopi.estoque.model.etlSaci.ETLEntregaFutura
 import br.com.engecopi.estoque.model.etlSaci.ETLPedidos
 import br.com.engecopi.estoque.model.etlSaci.ETLTransferenciaAutomatica
@@ -13,5 +12,4 @@ fun main() {
   ETLPedidos.start()
   ETLEntregaFutura.start()
   ETLTransferenciaAutomatica.start()
-  ETLDadosProdutosSaci.start()
 }

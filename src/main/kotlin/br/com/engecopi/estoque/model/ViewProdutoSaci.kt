@@ -10,7 +10,7 @@ import javax.persistence.Id
 
 @Cache(enableQueryCache = false)
 @Entity
-@View(name = "tab_produtos_saci")
+@View(name = "v_produtos_saci")
 class ViewProdutoSaci {
   @Id
   var id: String = ""

@@ -7,7 +7,9 @@ import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.model.etlSaci.ETLEntregaFutura
 import br.com.engecopi.estoque.model.etlSaci.ETLPedidoNotaRessuprimento
 import br.com.engecopi.estoque.model.etlSaci.ETLPedidos
+import br.com.engecopi.estoque.model.etlSaci.ETLTabProdutoSaci
 import br.com.engecopi.estoque.model.etlSaci.ETLTransferenciaAutomatica
+import br.com.engecopi.estoque.model.etlSaci.ETLVendasCaixa
 import br.com.engecopi.estoque.ui.views.configuracao.AbreciacaoView
 import br.com.engecopi.estoque.ui.views.configuracao.EtiquetaView
 import br.com.engecopi.estoque.ui.views.configuracao.ProdutoView
@@ -296,11 +298,12 @@ class MyUIServlet: VaadinServlet() {
       // Vaadin logs into java.util.logging. Redirect that, so that all logging goes through slf4j.
       SLF4JBridgeHandler.removeHandlersForRootLogger()
       SLF4JBridgeHandler.install()
-      //ETLVendasCaixa.start()
+      ETLVendasCaixa.start()
       ETLPedidos.start()
       ETLEntregaFutura.start()
       ETLTransferenciaAutomatica.start()
       ETLPedidoNotaRessuprimento.start()
+      ETLTabProdutoSaci.start()
     }
   }
 }
