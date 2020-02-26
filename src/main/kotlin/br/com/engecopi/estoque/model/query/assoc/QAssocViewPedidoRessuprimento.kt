@@ -43,6 +43,7 @@ class QAssocViewPedidoRessuprimento<R>(name: String, root: R) : TQAssocBean<View
   lateinit var sequencia: PInteger<R>
   lateinit var usuario: QAssocUsuario<R>
   lateinit var abreviacao: PString<R>
+  lateinit var codigoBarraConferencia: PString<R>
 
   /**
    * Eagerly fetch this association loading the specified properties.

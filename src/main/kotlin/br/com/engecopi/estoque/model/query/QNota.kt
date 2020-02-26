@@ -7,6 +7,9 @@ import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.model.query.assoc.QAssocItemNota
 import br.com.engecopi.estoque.model.query.assoc.QAssocLoja
 import br.com.engecopi.estoque.model.query.assoc.QAssocUsuario
+import br.com.engecopi.estoque.model.query.assoc.QAssocViewEntregaFuturaBaixa
+import br.com.engecopi.estoque.model.query.assoc.QAssocViewPedidoNotaRessuprimentoBaixa
+import br.com.engecopi.estoque.model.query.assoc.QAssocViewTransferenciaAutomaticaBaixa
 import io.ebean.Database
 import io.ebean.typequery.PEnum
 import io.ebean.typequery.PInteger
@@ -55,14 +58,16 @@ class QNota : TQRootBean<Nota, QNota> {
   lateinit var sequencia: PInteger<QNota>
   lateinit var usuario: QAssocUsuario<QNota>
   lateinit var maxSequencia: PInteger<QNota>
-  lateinit var lancamentoOrigem: PEnum<QNota,LancamentoOrigem>
-
-
+  lateinit var lancamentoOrigem: PEnum<QNota, LancamentoOrigem>
+  lateinit var transferenciaAutomatica: QAssocViewTransferenciaAutomaticaBaixa<QNota>
+  lateinit var pedidoRessuprimento: QAssocViewPedidoNotaRessuprimentoBaixa<QNota>
+  lateinit var entregaFutura: QAssocViewEntregaFuturaBaixa<QNota>
+  
   /**
    * Construct with a given Database.
    */
-  constructor(database: Database) : super(Nota::class.java, database)
-
+  constructor(database: Database): super(Nota::class.java, database)
+  
   /**
    * Construct using the default Database.
    */

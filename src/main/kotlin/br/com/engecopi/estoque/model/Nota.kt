@@ -18,6 +18,7 @@ import br.com.engecopi.estoque.model.TipoNota.TRANSFERENCIA_S
 import br.com.engecopi.estoque.model.TipoNota.VENDA
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.dtos.EntregaFutura
+import br.com.engecopi.estoque.model.dtos.NotaBaixaFatura
 import br.com.engecopi.estoque.model.dtos.PedidoNotaRessuprimento
 import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
 import br.com.engecopi.estoque.model.dtos.data
@@ -90,6 +91,12 @@ class Nota: BaseModel() {
   var lancamentoOrigem: LancamentoOrigem = EXPEDICAO
   val multipicadorCancelado
     get() = if(tipoNota == CANCELADA_E || tipoNota == CANCELADA_S) 0 else 1
+  @OneToMany(mappedBy = "nota")
+  val transferenciaAutomatica: List<ViewTransferenciaAutomaticaBaixa> = emptyList()
+  @OneToMany(mappedBy = "nota")
+  val pedidoRessuprimento: List<ViewPedidoNotaRessuprimentoBaixa> = emptyList()
+  @OneToMany(mappedBy = "nota")
+  val entregaFutura: List<ViewEntregaFuturaBaixa> = emptyList()
   
   companion object Find: NotaFinder() {
     fun createNota(notasaci: NotaProdutoSaci?): Nota? {
@@ -227,12 +234,12 @@ class Nota: BaseModel() {
         .data.after(dtInicial)
         .findList()
     }
-  
+    
     fun notaBaixa(storeno: Int?, numero: String?) =
       TransferenciaAutomatica.notaBaixa(storeno, numero)
         .ifEmpty {EntregaFutura.notaBaixa(storeno, numero)}
         .ifEmpty {PedidoNotaRessuprimento.notaBaixa(numero)}
-  
+    
     fun notaFatura(storeno: Int?, numero: String?) =
       TransferenciaAutomatica.notaFatura(storeno, numero)
         .ifEmpty {EntregaFutura.notaFatura(storeno, numero)}
@@ -241,7 +248,25 @@ class Nota: BaseModel() {
   
   fun dataBaixa(): LocalDate? = notaBaixa().data
   
-  fun notaBaixa() = notaBaixa(loja?.numero, numero)
+  //notaBaixa(loja?.numero, numero)
+  fun notaBaixa() = transferenciaAutomatica.map {nf ->
+    NotaBaixaFatura(nf.storenoTransf,
+                    nf.nftransf,
+                    nf.data.localDate())
+  }.ifEmpty {
+    pedidoRessuprimento.map {nf ->
+      NotaBaixaFatura(nf.storenoNota,
+                      nf.numero,
+                      nf.dataNota.localDate())
+    }
+      .ifEmpty {
+        entregaFutura.map {nf ->
+          NotaBaixaFatura(nf.storenoEntrega,
+                          nf.numeroEntrega,
+                          nf.dataEntrega.localDate())
+        }
+      }
+  }
   
   fun notaFatura() = notaFatura(loja?.numero, numero)
   
