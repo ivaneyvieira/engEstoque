@@ -10,8 +10,12 @@ class ENotaEntregaFutura(val numero: String): EViewModelError("A nota $numero é
 
 class EPedidoRessuprimento(val numero: String): EViewModelError("A nota $numero é um pedido de ressuprimento")
 
+class EPedidoAbastecimento(val numero: String): EViewModelError("A nota $numero é um pedido de abastecimento")
+
 class ENFKeyInvalido(val key: String): EViewModelError("'$key' não é uma chave de nota válida")
 
 class ENovaFaturaLancada(): EViewModelError("Não pode usar nota já faturada como entrega futura")
 
 class ENovaBaixaLancada(): EViewModelError("Não pode usar nota já faturada na expedição")
+
+class ENaoAbastecimento(val numero: String): EViewModelError("A chave $numero não é uma nota de abstecimento")

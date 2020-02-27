@@ -10,8 +10,6 @@ import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.TipoMov
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.TipoNota
-import br.com.engecopi.estoque.model.TipoNota.PEDIDO_R
-import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.model.ViewPedidoAbastecimento
 import br.com.engecopi.estoque.model.ViewProdutoLoc
@@ -59,7 +57,7 @@ class PedidoAbastecimentoViewModel(view: IPedidoAbastecimentoView):
   }
   
   override val query: QViewPedidoAbastecimento
-    get() = QViewPedidoAbastecimento().loja.eq(lojaDeposito).nota.tipoNota.notIn(VENDAF, PEDIDO_R)
+    get() = QViewPedidoAbastecimento().loja.eq(lojaDeposito).nota.tipoNota.notIn(TipoNota.lojasExternas)
   
   private fun QViewPedidoAbastecimento.filtroNotaSerie(): QViewPedidoAbastecimento {
     val tipos = usuarioDefault.series.map {it.tipoNota}

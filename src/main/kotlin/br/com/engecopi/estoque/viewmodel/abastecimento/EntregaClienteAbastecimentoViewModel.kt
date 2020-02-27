@@ -3,8 +3,7 @@ package br.com.engecopi.estoque.viewmodel.abastecimento
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
-import br.com.engecopi.estoque.model.TipoNota.PEDIDO_R
-import br.com.engecopi.estoque.model.TipoNota.VENDAF
+import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
@@ -19,7 +18,7 @@ class EntregaClienteAbastecimentoViewModel(view: IEntregaClienteAbastecimentoVie
   }
   
   override fun QItemNota.filtroTipoNota(): QItemNota {
-    return this.nota.tipoNota.notIn(VENDAF, PEDIDO_R)
+    return this.nota.tipoNota.notIn(TipoNota.lojasExternas)
   }
   
   override fun QItemNota.filtroStatus(): QItemNota {

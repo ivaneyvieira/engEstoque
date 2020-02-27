@@ -28,8 +28,8 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
-@AutoView("entrega_cliente")
-class EntregaClienteAbastecimentoView:
+@AutoView("entrega_abastecimento")
+class EntregaAbastecimentoView:
   NotaView<EntregaClienteAbastecimentoVo, EntregaClienteAbastecimentoViewModel, IEntregaClienteAbastecimentoView>(),
   IEntregaClienteAbastecimentoView {
   var formCodBar: PnlCodigoBarras? = null

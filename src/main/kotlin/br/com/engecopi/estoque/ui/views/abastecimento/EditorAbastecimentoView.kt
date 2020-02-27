@@ -27,8 +27,8 @@ import com.github.mvysny.karibudsl.v8.w
 import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
-@AutoView("entrega_cliente_editor")
-class EntregaClienteEditorAbastecimentoView:
+@AutoView("editor_abastecimento")
+class EditorAbastecimentoView:
   NotaView<EntregaClienteAbastecimentoVo, EntregaClienteEditorAbastecimentoViewModel, IEntregaClienteEditorAbastecimentoView>(),
   IEntregaClienteEditorAbastecimentoView {
   init {

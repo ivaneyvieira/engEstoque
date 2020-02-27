@@ -260,7 +260,8 @@ enum class TipoMov(val descricao: String) {
   SAIDA("Saida")
 }
 
-enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2: String) {
+enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2: String,
+                    val lojaDeposito: Boolean = true) {
   //Entrada
   COMPRA(ENTRADA, "Compra", "Compra"),
   TRANSFERENCIA_E(ENTRADA, "Transferencia", "Transferencia Entrada"),
@@ -270,7 +271,7 @@ enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2:
   OUTROS_E(ENTRADA, "Outros", "Outras Entradas"),
   NOTA_E(ENTRADA, "Entradas", "Entradas"),
   RECLASSIFICACAO_E(ENTRADA, "Reclassificação", "Reclassificação Entrada"),
-  VENDAF(SAIDA, "Venda Futura", "Venda Fut"),
+  VENDAF(SAIDA, "Venda Futura", "Venda Fut", false),
   VENDA(SAIDA, "Venda", "Venda"),
   TRANSFERENCIA_S(SAIDA, "Transferencia", "Transferencia Saida"),
   ENT_RET(SAIDA, "Ent/Ret", "Ent/Ret"),
@@ -278,7 +279,7 @@ enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2:
   ACERTO_S(SAIDA, "Acerto", "Acerto Saida"),
   PEDIDO_S(SAIDA, "Pedido", "Pedido Saida"),
   PEDIDO_A(SAIDA, "Abastecimento", "Pedido Abastecimento"),
-  PEDIDO_R(SAIDA, "Ressuprimento", "Pedido de Ressuprimento"),
+  PEDIDO_R(SAIDA, "Ressuprimento", "Pedido de Ressuprimento", false),
   OUTROS_S(SAIDA, "Outros", "Outras Saidas"),
   CHAVE_SAIDA(SAIDA, "Chave de Nota", "Chave de Nota"),
   OUTRAS_NFS(SAIDA, "Outras NFS", "Outras NF Saida"),
@@ -288,12 +289,15 @@ enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2:
   
   companion object {
     fun valuesEntrada(): List<TipoNota> = values().filter {it.tipoMov == ENTRADA}
-    
+  
     fun valuesSaida(): List<TipoNota> = values().filter {it.tipoMov == SAIDA}
-    
+  
     fun value(valueStr: String?) = valueStr?.let {v ->
       values().find {it.toString() == v}
     }
+  
+    val lojasExternas
+      get() = values().filter {!it.lojaDeposito}
   }
 }
 
