@@ -25,7 +25,8 @@ class EntregaRessuprimentoViewModel(view: IEntregaRessuprimentoView):
   
   override fun QItemNota.filtroStatus(): QItemNota {
     return status.`in`(CONFERIDA)
-      .nota.usuario.isNotNull.nota.sequencia.ne(0)
+      .nota.usuario.isNotNull
+      .nota.sequencia.ne(0)
   }
   
   override fun createVo() = EntregaRessuprimentoVo()

@@ -37,6 +37,7 @@ class QAssocUsuario<R>(name: String, root: R) : TQAssocBean<Usuario,R>(name, roo
   lateinit var entregaFutura: PBoolean<R>
   lateinit var etiqueta: PBoolean<R>
   lateinit var ressuprimento: PBoolean<R>
+  lateinit var abastecimento: PBoolean<R>
 
   /**
    * Eagerly fetch this association loading the specified properties.

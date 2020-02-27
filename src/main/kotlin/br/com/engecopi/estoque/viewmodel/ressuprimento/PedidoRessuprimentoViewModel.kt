@@ -58,10 +58,6 @@ class PedidoRessuprimentoViewModel(view: IPedidoRessuprimentoView):
       .updateView()
   }
   
-  override fun countQuery(): Int {
-    return findQuery().size
-  }
-  
   override fun update(bean: PedidoRessuprimentoVo) {
     log?.error("Atualização não permitida")
   }
