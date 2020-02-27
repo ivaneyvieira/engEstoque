@@ -6,7 +6,7 @@ import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
-import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
+import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.viewmodel.EChaveNaoEncontrada
 import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.saci.beans.NotaProdutoSaci
@@ -34,13 +34,12 @@ class PedidoAbastecimentoProcessamento() {
       val item = ItemNota.find(notaSaci) ?: ItemNota.createItemNota(notaSaci, nota, itemAbastecimento.abrevicao)
       
       return@mapNotNull item?.apply {
-        this.status = CONFERIDA
+        this.status = INCLUIDA
         this.impresso = false
         this.usuario = RegistryUserInfo.usuarioDefault
         this.data = LocalDate.now()
         this.hora = LocalTime.now()
         this.save()
-        if(this.status == CONFERIDA) this.recalculaSaldos()
       }
     }
     
