@@ -277,6 +277,7 @@ enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2:
   DEV_FOR(SAIDA, "Dev Fornecedor", "Dev Fornecedor"),
   ACERTO_S(SAIDA, "Acerto", "Acerto Saida"),
   PEDIDO_S(SAIDA, "Pedido", "Pedido Saida"),
+  PEDIDO_A(SAIDA, "Abastecimento", "Pedido Abastecimento"),
   PEDIDO_R(SAIDA, "Ressuprimento", "Pedido de Ressuprimento"),
   OUTROS_S(SAIDA, "Outros", "Outras Saidas"),
   CHAVE_SAIDA(SAIDA, "Chave de Nota", "Chave de Nota"),
@@ -330,5 +331,6 @@ enum class LancamentoOrigem(val descricao: String, val printer: Printer) {
   EXPEDICAO("Expedição", Printer("EXP4")),
   DEPOSITO("Deposito", Printer("ENTREGA")),
   ENTREGA_F("Entrega Futura", Printer("")),
-  RESSUPRI("Ressuprimento", Printer(""));
+  RESSUPRI("Ressuprimento", Printer("")),
+  ABASTECI("Abastecimento", Printer(""))
 }

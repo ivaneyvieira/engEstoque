@@ -21,7 +21,8 @@ class Abreviacao(
   @Length(6)
   var abreviacao: String,
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
-  var loja: Loja, var expedicao: Boolean,
+  var loja: Loja,
+  var expedicao: Boolean,
   @Length(15)
   var impressora: String): BaseModel() {
   val printer

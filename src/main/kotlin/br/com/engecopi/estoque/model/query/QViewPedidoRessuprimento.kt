@@ -53,6 +53,7 @@ class QViewPedidoRessuprimento : TQRootBean<ViewPedidoRessuprimento, QViewPedido
   lateinit var sequencia: PInteger<QViewPedidoRessuprimento>
   lateinit var usuario: QAssocUsuario<QViewPedidoRessuprimento>
   lateinit var abreviacao: PString<QViewPedidoRessuprimento>
+  lateinit var codigoBarraConferencia: PString<QViewPedidoRessuprimento>
 
 
   /**
