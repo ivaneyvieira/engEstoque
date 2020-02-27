@@ -28,7 +28,6 @@ repositories {
 defaultTasks("clean", "build")
 
 group = "engEstoque"
-//version = "1.0-SNAPSHOT"
 
 gretty {
   contextPath = "/"
