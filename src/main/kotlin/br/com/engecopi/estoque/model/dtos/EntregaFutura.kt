@@ -1,12 +1,9 @@
 package br.com.engecopi.estoque.model.dtos
 
 import br.com.engecopi.estoque.model.etlSaci.EntryID
-import br.com.engecopi.estoque.model.etlSaci.TableName
 import br.com.engecopi.utils.localDate
 import io.ebean.DB
-import io.ebean.DtoQuery
 
-@TableName("t_entrega_futura")
 class EntregaFutura(id: String,
                     val storenoVenda: Int,
                     val numeroVenda: String,
@@ -23,24 +20,14 @@ class EntregaFutura(id: String,
     get() = "$storenoEntrega$numeroEntrega$nfnoEntrega$nfseEntrega$nfekeyEntrega"
   
   companion object {
-    private val SQL_FATURA = """select * from t_entrega_futura
-        |where storenoEntrega = :storeno
-        |  AND numeroEntrega = :numero
-      """.trimMargin()
-    private val queryFatura: DtoQuery<EntregaFutura> =
-      DB.findDto(EntregaFutura::class.java, SQL_FATURA)
-    private val SQL_BAIXA = """select * from t_entrega_futura
-        |where storenoVenda = :storeno
-        |  AND numeroVenda = :numeroVenda
-      """.trimMargin()
-    private val queryBaixa: DtoQuery<EntregaFutura> =
-      DB.findDto(EntregaFutura::class.java, SQL_BAIXA)
-  
     fun notaBaixa(storeno: Int?, numeroVenda: String?): List<NotaBaixaFatura> {
       numeroVenda ?: return emptyList()
       storeno ?: return emptyList()
-    
-      return queryBaixa
+      val sql = """select * from t_entrega_futura
+        |where storenoVenda = :storeno
+        |  AND numeroVenda = :numeroVenda
+      """.trimMargin()
+      val list = DB.findDto(EntregaFutura::class.java, sql)
         .setParameter("storeno", storeno)
         .setParameter("numeroVenda", numeroVenda)
         .findList()
@@ -49,13 +36,17 @@ class EntregaFutura(id: String,
                           nf.numeroEntrega,
                           nf.dataEntrega.localDate())
         }
+      return list;
     }
-    
+  
     fun notaFatura(storeno: Int?, numero: String?): List<NotaBaixaFatura> {
       numero ?: return emptyList()
       storeno ?: return emptyList()
-  
-      return queryFatura
+      val sql = """select * from t_entrega_futura
+        |where storenoEntrega = :storeno
+        |  AND numeroEntrega = :numero
+      """.trimMargin()
+      return DB.findDto(EntregaFutura::class.java, sql)
         .setParameter("storeno", storeno)
         .setParameter("numero", numero)
         .findList()

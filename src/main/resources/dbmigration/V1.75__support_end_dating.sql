@@ -1,4 +1,0 @@
--- apply changes
--- alter table produtos drop foreign key fk_produtos_id;
--- alter table produtos add constraint fk_produtos_id foreign key (id) references view_produtos
---   (produto_id) on delete restrict on update restrict;

@@ -9,8 +9,6 @@ import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.userDefaultIsAdmin
 import br.com.engecopi.estoque.model.Repositories
 import br.com.engecopi.estoque.model.TipoNota
-import br.com.engecopi.estoque.model.TipoNota.PEDIDO_R
-import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.ViewProdutoSaci
 import br.com.engecopi.estoque.model.query.QProduto
 import br.com.engecopi.framework.viewmodel.CrudViewModel
@@ -193,7 +191,7 @@ class ProdutoVo: EntityVo<Produto>() {
   
   private fun filtroLoja(item: ItemNota): Boolean {
     return (lojaDefault?.let {lDef ->
-      item.nota?.loja?.id == lDef.id || item.nota?.tipoNota in listOf(VENDAF, PEDIDO_R)
+      item.nota?.loja?.id == lDef.id || item.nota?.tipoNota in TipoNota.lojasExternas
     } ?: true)
   }
 }

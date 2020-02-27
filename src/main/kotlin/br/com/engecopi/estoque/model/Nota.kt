@@ -18,7 +18,6 @@ import br.com.engecopi.estoque.model.TipoNota.TRANSFERENCIA_S
 import br.com.engecopi.estoque.model.TipoNota.VENDA
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.dtos.EntregaFutura
-import br.com.engecopi.estoque.model.dtos.NotaBaixaFatura
 import br.com.engecopi.estoque.model.dtos.PedidoNotaRessuprimento
 import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
 import br.com.engecopi.estoque.model.dtos.data
@@ -91,12 +90,6 @@ class Nota: BaseModel() {
   var lancamentoOrigem: LancamentoOrigem = EXPEDICAO
   val multipicadorCancelado
     get() = if(tipoNota == CANCELADA_E || tipoNota == CANCELADA_S) 0 else 1
-  @OneToMany(mappedBy = "nota")
-  val transferenciaAutomatica: List<ViewTransferenciaAutomaticaBaixa> = emptyList()
-  @OneToMany(mappedBy = "nota")
-  val pedidoRessuprimento: List<ViewPedidoNotaRessuprimentoBaixa> = emptyList()
-  @OneToMany(mappedBy = "nota")
-  val entregaFutura: List<ViewEntregaFuturaBaixa> = emptyList()
   
   companion object Find: NotaFinder() {
     fun createNota(notasaci: NotaProdutoSaci?): Nota? {
@@ -234,12 +227,12 @@ class Nota: BaseModel() {
         .data.after(dtInicial)
         .findList()
     }
-    
+  
     fun notaBaixa(storeno: Int?, numero: String?) =
       TransferenciaAutomatica.notaBaixa(storeno, numero)
         .ifEmpty {EntregaFutura.notaBaixa(storeno, numero)}
         .ifEmpty {PedidoNotaRessuprimento.notaBaixa(numero)}
-    
+  
     fun notaFatura(storeno: Int?, numero: String?) =
       TransferenciaAutomatica.notaFatura(storeno, numero)
         .ifEmpty {EntregaFutura.notaFatura(storeno, numero)}
@@ -248,25 +241,7 @@ class Nota: BaseModel() {
   
   fun dataBaixa(): LocalDate? = notaBaixa().data
   
-  //notaBaixa(loja?.numero, numero)
-  fun notaBaixa() = transferenciaAutomatica.map {nf ->
-    NotaBaixaFatura(nf.storenoTransf,
-                    nf.nftransf,
-                    nf.data.localDate())
-  }.ifEmpty {
-    pedidoRessuprimento.map {nf ->
-      NotaBaixaFatura(nf.storenoNota,
-                      nf.numero,
-                      nf.dataNota.localDate())
-    }
-      .ifEmpty {
-        entregaFutura.map {nf ->
-          NotaBaixaFatura(nf.storenoEntrega,
-                          nf.numeroEntrega,
-                          nf.dataEntrega.localDate())
-        }
-      }
-  }
+  fun notaBaixa() = notaBaixa(loja?.numero, numero)
   
   fun notaFatura() = notaFatura(loja?.numero, numero)
   
@@ -285,7 +260,8 @@ enum class TipoMov(val descricao: String) {
   SAIDA("Saida")
 }
 
-enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2: String) {
+enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2: String,
+                    val lojaDeposito: Boolean = true) {
   //Entrada
   COMPRA(ENTRADA, "Compra", "Compra"),
   TRANSFERENCIA_E(ENTRADA, "Transferencia", "Transferencia Entrada"),
@@ -295,14 +271,15 @@ enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2:
   OUTROS_E(ENTRADA, "Outros", "Outras Entradas"),
   NOTA_E(ENTRADA, "Entradas", "Entradas"),
   RECLASSIFICACAO_E(ENTRADA, "Reclassificação", "Reclassificação Entrada"),
-  VENDAF(SAIDA, "Venda Futura", "Venda Fut"),
+  VENDAF(SAIDA, "Venda Futura", "Venda Fut", false),
   VENDA(SAIDA, "Venda", "Venda"),
   TRANSFERENCIA_S(SAIDA, "Transferencia", "Transferencia Saida"),
   ENT_RET(SAIDA, "Ent/Ret", "Ent/Ret"),
   DEV_FOR(SAIDA, "Dev Fornecedor", "Dev Fornecedor"),
   ACERTO_S(SAIDA, "Acerto", "Acerto Saida"),
   PEDIDO_S(SAIDA, "Pedido", "Pedido Saida"),
-  PEDIDO_R(SAIDA, "Ressuprimento", "Pedido de Ressuprimento"),
+  PEDIDO_A(SAIDA, "Abastecimento", "Pedido Abastecimento"),
+  PEDIDO_R(SAIDA, "Ressuprimento", "Pedido de Ressuprimento", false),
   OUTROS_S(SAIDA, "Outros", "Outras Saidas"),
   CHAVE_SAIDA(SAIDA, "Chave de Nota", "Chave de Nota"),
   OUTRAS_NFS(SAIDA, "Outras NFS", "Outras NF Saida"),
@@ -312,12 +289,15 @@ enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2:
   
   companion object {
     fun valuesEntrada(): List<TipoNota> = values().filter {it.tipoMov == ENTRADA}
-    
+  
     fun valuesSaida(): List<TipoNota> = values().filter {it.tipoMov == SAIDA}
-    
+  
     fun value(valueStr: String?) = valueStr?.let {v ->
       values().find {it.toString() == v}
     }
+  
+    val lojasExternas
+      get() = values().filter {!it.lojaDeposito}
   }
 }
 
@@ -355,5 +335,6 @@ enum class LancamentoOrigem(val descricao: String, val printer: Printer) {
   EXPEDICAO("Expedição", Printer("EXP4")),
   DEPOSITO("Deposito", Printer("ENTREGA")),
   ENTREGA_F("Entrega Futura", Printer("")),
-  RESSUPRI("Ressuprimento", Printer(""));
+  RESSUPRI("Ressuprimento", Printer("")),
+  ABASTECI("Abastecimento", Printer(""))
 }

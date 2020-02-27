@@ -104,6 +104,10 @@ class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>(), IUsuarioVi
               bind(binder).bind(UsuarioCrudVo::ressuprimento)
               alignment = Alignment.BOTTOM_RIGHT
             }
+            checkBox("Abastecimento") {
+              bind(binder).bind(UsuarioCrudVo::abastecimento)
+              alignment = Alignment.BOTTOM_RIGHT
+            }
             checkBox("Movimentacao") {
               bind(binder).bind(UsuarioCrudVo::estoque)
               alignment = Alignment.BOTTOM_RIGHT

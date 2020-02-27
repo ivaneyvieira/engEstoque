@@ -12,9 +12,8 @@ import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
+import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.model.TipoNota.CHAVE_SAIDA
-import br.com.engecopi.estoque.model.TipoNota.PEDIDO_R
-import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.ViewCodBarConferencia
 import br.com.engecopi.framework.viewmodel.EViewModelError
 
@@ -80,7 +79,7 @@ class SaidaFind() {
   private fun processaKeyNumeroNota(key: String): NotaItens {
     val keyNota = KeyNota(key)
     val notaItem = processaKeyNumero(keyNota.loja, keyNota.numero)
-    return if(notaItem.nota?.tipoNota in listOf(VENDAF, PEDIDO_R) || keyNota.storeno == lojaDeposito.numero) {
+    return if(notaItem.nota?.tipoNota in TipoNota.lojasExternas || keyNota.storeno == lojaDeposito.numero) {
       notaItem
     }
     else NotaItens.erro("A nota pertence a a loja ${lojaDeposito.numero} e não é nota de entrega futura")

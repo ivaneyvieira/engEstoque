@@ -5,41 +5,16 @@ import br.com.engecopi.utils.parameterNames
 import br.com.engecopi.utils.readInstanceProperty
 import io.ebean.DB
 import io.ebean.SqlUpdate
-import java.lang.reflect.ParameterizedType
 
 typealias ListenerEventUpdate<T> = (source: T, target: T) -> Unit
 typealias ListenerEventInsert<T> = (source: T) -> Unit
 typealias ListenerEventDelete<T> = (source: T) -> Unit
 typealias  ListenerEvent<T> = (sources: List<T>) -> Unit
 
-open class ETL<T: EntryID> {
-  private val sqlDelete: String
-    get() {
-      val tableName = tableName()
-      return "DELETE FROM $tableName WHERE id = :id"
-    }
-  private val sqlInsert: String
-    get() {
-      val tableName = tableName()
-      val fieldsName = listProperty().joinToString(", ")
-      val fieldsParam = listProperty().joinToString(", ") {fieldName ->
-        ":$fieldName"
-      }
-      return """INSERT IGNORE INTO $tableName($fieldsName)
-        |VALUES($fieldsParam)
-      """.trimMargin()
-    }
-  private val sqlUpdate: String
-    get() {
-      val tableName = tableName()
-      val listSet = listProperty().joinToString(",\n    ") {fieldName ->
-        """$fieldName = :$fieldName"""
-      }
-      return """UPDATE $tableName
-        |SET $listSet
-        |WHERE id = :id
-      """.trimMargin()
-    }
+abstract class ETL<T: EntryID> {
+  protected abstract val sqlDelete: String
+  protected abstract val sqlInsert: String
+  protected abstract val sqlUpdate: String
   private val listenerInsert = mutableMapOf<String, ListenerEventInsert<T>>()
   private val listenerDelete = mutableMapOf<String, ListenerEventDelete<T>>()
   private val listenerUpdate = mutableMapOf<String, ListenerEventUpdate<T>>()
@@ -129,9 +104,6 @@ open class ETL<T: EntryID> {
   }
 }
 
-@Target(AnnotationTarget.CLASS)
-annotation class TableName(val name: String)
-
 abstract class EntryID(val id: String) {
   override fun hashCode(): Int = id.hashCode()
   override fun equals(other: Any?): Boolean = id.equals(other)
@@ -153,13 +125,7 @@ abstract class ETLThread<T: EntryID>(private val etl: ETL<T>, private val interv
   
   protected abstract fun getSource(): List<T>
   
-  protected fun getTarget(): List<T> {
-    val entityClass = etl.entityClass() ?: return emptyList()
-    val tableName = entityClass.tableName()
-    val sql = "SELECT * FROM $tableName"
-    return DB.findDto(entityClass, sql)
-      .findList()
-  }
+  protected abstract fun getTarget(): List<T>
   
   val listDados
     get() = if(isLogged) getTarget() else emptyList()
@@ -217,37 +183,4 @@ abstract class ETLThread<T: EntryID>(private val etl: ETL<T>, private val interv
   fun stop() {
     thread.interrupt()
   }
-}
-
-fun <T: EntryID> ETL<T>.listProperty(): List<String> {
-  val entityClass = entityClass()
-  return entityClass?.listProperty()
-    .orEmpty()
-}
-
-fun <T: EntryID> ETL<T>.entityClass(): Class<T>? {
-  val classe = javaClass.genericSuperclass as? ParameterizedType
-  return classe?.actualTypeArguments?.get(0) as? Class<T>
-}
-
-fun <T: EntryID> ETL<T>.tableName(): String {
-  val entityClass = this.entityClass()
-  return entityClass?.tableName() ?: ""
-}
-
-fun EntryID.listProperty(): List<String> {
-  return javaClass.listProperty()
-}
-
-fun Class<*>.listProperty(): List<String> {
-  return this.declaredFields?.toList()
-           .orEmpty()
-           .map {
-             it.name
-           } - listOf("Companion") + listOf("id")
-}
-
-fun Class<*>.tableName(): String {
-  val tableName = this.getAnnotation(TableName::class.java)
-  return tableName?.name ?: this.canonicalName
 }

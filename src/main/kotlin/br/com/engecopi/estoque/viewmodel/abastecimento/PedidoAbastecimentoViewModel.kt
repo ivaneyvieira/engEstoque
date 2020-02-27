@@ -1,4 +1,4 @@
-package br.com.engecopi.estoque.viewmodel.expedicao
+package br.com.engecopi.estoque.viewmodel.abastecimento
 
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
@@ -11,11 +11,11 @@ import br.com.engecopi.estoque.model.TipoMov
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.model.Usuario
-import br.com.engecopi.estoque.model.ViewNotaExpedicao
+import br.com.engecopi.estoque.model.ViewPedidoAbastecimento
 import br.com.engecopi.estoque.model.ViewProdutoLoc
 import br.com.engecopi.estoque.model.dtos.VendasCaixa
 import br.com.engecopi.estoque.model.query.QItemNota
-import br.com.engecopi.estoque.model.query.QViewNotaExpedicao
+import br.com.engecopi.estoque.model.query.QViewPedidoAbastecimento
 import br.com.engecopi.estoque.ui.log
 import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
@@ -25,41 +25,41 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class NFExpedicaoViewModel(view: INFExpedicaoView):
-  CrudViewModel<ViewNotaExpedicao, QViewNotaExpedicao, NFExpedicaoVo, INFExpedicaoView>(view) {
-  private val print = NFExpedicaoPrint()
-  private val processing = NFExpedicaoProcessamento()
-  private val find = NFExpedicaoFind()
+class PedidoAbastecimentoViewModel(view: IPedidoAbastecimentoView):
+  CrudViewModel<ViewPedidoAbastecimento, QViewPedidoAbastecimento, PedidoAbastecimentoVo, IPedidoAbastecimentoView>(view) {
+  private val print = PedidoAbastecimentoPrint()
+  private val processing = PedidoAbastecimentoProcessamento()
+  private val find = PedidoAbastecimentoFind()
   
-  override fun newBean(): NFExpedicaoVo {
-    return NFExpedicaoVo()
+  override fun newBean(): PedidoAbastecimentoVo {
+    return PedidoAbastecimentoVo()
   }
   
-  override fun update(bean: NFExpedicaoVo) {
+  override fun update(bean: PedidoAbastecimentoVo) {
     log?.error("Atualização não permitida")
   }
   
-  override fun add(bean: NFExpedicaoVo) {
+  override fun add(bean: PedidoAbastecimentoVo) {
     log?.error("Inserssão não permitida")
   }
   
-  override fun delete(bean: NFExpedicaoVo) {
+  override fun delete(bean: PedidoAbastecimentoVo) {
     val nota = bean.findEntity() ?: return
     val saida = Nota.findSaida(nota.loja, nota.numero) ?: return
-  
+    
     QItemNota().nota.equalTo(saida)
       .status.notIn(ENTREGUE, ENT_LOJA)
       .localizacao.startsWith(bean.abreviacao)
       .delete()
-  
+    
     if(saida.itensNota().isEmpty())
       saida.delete()
   }
   
-  override val query: QViewNotaExpedicao
-    get() = QViewNotaExpedicao().loja.eq(lojaDeposito).nota.tipoNota.notIn(TipoNota.lojasExternas)
+  override val query: QViewPedidoAbastecimento
+    get() = QViewPedidoAbastecimento().loja.eq(lojaDeposito).nota.tipoNota.notIn(TipoNota.lojasExternas)
   
-  private fun QViewNotaExpedicao.filtroNotaSerie(): QViewNotaExpedicao {
+  private fun QViewPedidoAbastecimento.filtroNotaSerie(): QViewPedidoAbastecimento {
     val tipos = usuarioDefault.series.map {it.tipoNota}
     val queryOr = or()
     val querySeries = tipos.fold(queryOr) {q, tipo ->
@@ -69,15 +69,15 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
     return querySeries.endOr()
   }
   
-  override fun QViewNotaExpedicao.orderQuery(): QViewNotaExpedicao {
+  override fun QViewPedidoAbastecimento.orderQuery(): QViewPedidoAbastecimento {
     return this.order()
       .lancamento.desc()
       .id.desc()
   }
   
-  override fun ViewNotaExpedicao.toVO(): NFExpedicaoVo {
+  override fun ViewPedidoAbastecimento.toVO(): PedidoAbastecimentoVo {
     val bean = this
-    return NFExpedicaoVo().apply {
+    return PedidoAbastecimentoVo().apply {
       numero = bean.numero
       tipoMov = bean.tipoMov
       tipoNota = bean.tipoNota
@@ -96,7 +96,7 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
     }
   }
   
-  fun processaKey(notasSaci: List<ItemExpedicao>) = exec {
+  fun processaKey(notasSaci: List<ItemAbastecimento>) = exec {
     processing.processaKey(notasSaci)
       .updateView()
   }
@@ -122,11 +122,11 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
     return ViewProdutoLoc.abreviacoesProduto(produto)
   }
   
-  override fun QViewNotaExpedicao.filterString(text: String): QViewNotaExpedicao {
+  override fun QViewPedidoAbastecimento.filterString(text: String): QViewPedidoAbastecimento {
     return nota.numero.startsWith(text)
   }
   
-  override fun QViewNotaExpedicao.filterDate(date: LocalDate): QViewNotaExpedicao {
+  override fun QViewPedidoAbastecimento.filterDate(date: LocalDate): QViewPedidoAbastecimento {
     return data.eq(date)
   }
   
@@ -142,9 +142,9 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
   }
 }
 
-class NFExpedicaoVo: EntityVo<ViewNotaExpedicao>() {
-  override fun findEntity(): ViewNotaExpedicao? {
-    return ViewNotaExpedicao.findSaida(lojaDeposito, numero, abreviacao)
+class PedidoAbastecimentoVo: EntityVo<ViewPedidoAbastecimento>() {
+  override fun findEntity(): ViewPedidoAbastecimento? {
+    return ViewPedidoAbastecimento.findSaida(lojaDeposito, numero, abreviacao)
   }
   
   var numero: String = ""
@@ -167,10 +167,10 @@ class NFExpedicaoVo: EntityVo<ViewNotaExpedicao>() {
     get() = LocalDateTime.of(data, hora)
 }
 
-data class ItemExpedicao(val notaProdutoSaci: NotaProdutoSaci,
-                         val saldo: Int,
-                         val abrevicao: String,
-                         var selecionado: Boolean = false) {
+data class ItemAbastecimento(val notaProdutoSaci: NotaProdutoSaci,
+                             val saldo: Int,
+                             val abrevicao: String,
+                             var selecionado: Boolean = false) {
   val prdno = notaProdutoSaci.prdno
   val grade = notaProdutoSaci.grade
   val nome = notaProdutoSaci.nome
@@ -180,5 +180,5 @@ data class ItemExpedicao(val notaProdutoSaci: NotaProdutoSaci,
   fun isSave() = notaProdutoSaci.isSave()
 }
 
-interface INFExpedicaoView: ICrudView
+interface IPedidoAbastecimentoView: ICrudView
 
