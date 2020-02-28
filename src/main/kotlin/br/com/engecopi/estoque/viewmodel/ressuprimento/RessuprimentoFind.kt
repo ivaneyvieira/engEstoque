@@ -2,7 +2,6 @@ package br.com.engecopi.estoque.viewmodel.ressuprimento
 
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Produto
-import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.ViewProdutoLoc
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.saci.saci
@@ -40,13 +39,6 @@ class RessuprimentoFind(val view: IPedidoRessuprimentoView) {
       else listOf(notaSaci.apply {
         this.gradeGenerica = false
       })
-    }
-  }
-  
-  private fun List<NotaProdutoSaci>.filtroTipoCompativel(): List<NotaProdutoSaci> {
-    return this.filter {nota ->
-      val tipo = nota.tipoNota() ?: return@filter false
-      return@filter usuarioDefault.isTipoCompativel(tipo)
     }
   }
 }

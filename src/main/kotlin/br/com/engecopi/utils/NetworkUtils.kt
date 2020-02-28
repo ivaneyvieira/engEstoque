@@ -9,8 +9,9 @@ import java.net.Socket
 
 object NetworkUtils {
   fun isHostReachable(hostname: String?): Boolean {
-    hostname ?: return false
-    return pingNet(hostname)
+    //hostname ?: return false
+    //return pingNet(hostname)
+    return true
   }
   
   private fun pingCmd(hostname: String?): Boolean {

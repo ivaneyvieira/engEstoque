@@ -14,6 +14,7 @@ import br.com.engecopi.saci.beans.NfsKey
 import br.com.engecopi.saci.beans.NotaProduto
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.saci.beans.NotaSaci
+import br.com.engecopi.saci.beans.NotaSaciInfo
 import br.com.engecopi.saci.beans.ProdutoSaci
 import br.com.engecopi.saci.beans.UserSaci
 import br.com.engecopi.saci.beans.findChave
@@ -63,6 +64,28 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
+  fun findNotaSaidaInfo(storeno: Int, nfno: String, nfse: String): NotaSaciInfo? {
+    val sql = "/sqlSaci/findNotaSaidaInfo.sql"
+    return query(sql) {q ->
+      q.addParameter("storeno", storeno)
+      q.addParameter("nfno", nfno.toIntOrNull())
+      q.addParameter("nfse", nfse)
+      q.executeAndFetch(NotaSaciInfo::class.java)
+        .firstOrNull()
+    }
+  }
+  
+  fun findNotaEntradaInfo(storeno: Int, nfno: String, nfse: String): NotaSaciInfo? {
+    val sql = "/sqlSaci/findNotaEntradaInfo.sql"
+    return query(sql) {q ->
+      q.addParameter("storeno", storeno)
+      q.addParameter("nfno", nfno)
+      q.addParameter("nfse", nfse)
+      q.executeAndFetch(NotaSaciInfo::class.java)
+        .firstOrNull()
+    }
+  }
+  
   private fun filtroDataRecente(notaProdutoSaci: NotaProdutoSaci): Boolean {
     val dtEmissao = notaProdutoSaci.dtEmissao?.localDate() ?: return false
     val date = notaProdutoSaci.date?.localDate() ?: return false
@@ -76,7 +99,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     val sql = "/sqlSaci/findNotaSaidaNF.sql"
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
-        .addParameter("nfno", nfno)
+        .addParameter("nfno", nfno.toIntOrNull())
         .addParameter("nfse", nfse)
         .executeAndFetch(NotaProdutoSaci::class.java)
     }
@@ -86,7 +109,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     val sql = "/sqlSaci/findNotaSaidaOrd.sql"
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
-        .addParameter("nfno", nfno)
+        .addParameter("nfno", nfno.toIntOrNull())
         .executeAndFetch(NotaProdutoSaci::class.java)
     }
   }
@@ -95,7 +118,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     val sql = "/sqlSaci/findNotaSaidaPXA.sql"
     val notas = query(sql) {q ->
       q.addParameter("storeno", storeno)
-        .addParameter("nfno", nfno)
+        .addParameter("nfno", nfno.toIntOrNull())
         .addParameter("nfse", nfse)
         .executeAndFetch(NotaProdutoSaci::class.java)
     }

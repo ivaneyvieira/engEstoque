@@ -4,7 +4,7 @@ SELECT DISTINCT cast(CONCAT(N.paymno) AS CHAR) AS rota, N.storeno, N.ordno AS nu
                                          WHEN 291
                                            THEN 'PEDIDO_S'
                                          WHEN 292
-                                           THEN 'PEDIDO_A'
+                                           THEN IF(N.bits13 & POW(2, 0) = 0, '', 'PEDIDO_A')
                                          ELSE ''
                                        END AS tipo, '' AS abreviacao
 FROM sqldados.eord           AS N

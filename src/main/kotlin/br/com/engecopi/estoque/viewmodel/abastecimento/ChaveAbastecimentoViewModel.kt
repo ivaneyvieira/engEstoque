@@ -25,25 +25,25 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class PedidoAbastecimentoViewModel(view: IPedidoAbastecimentoView):
-  CrudViewModel<ViewPedidoAbastecimento, QViewPedidoAbastecimento, PedidoAbastecimentoVo, IPedidoAbastecimentoView>(view) {
-  private val print = PedidoAbastecimentoPrint()
-  private val processing = PedidoAbastecimentoProcessamento()
-  private val find = PedidoAbastecimentoFind()
+class ChaveAbastecimentoViewModel(view: IAbastecimentoView):
+  CrudViewModel<ViewPedidoAbastecimento, QViewPedidoAbastecimento, AbastecimentoVo, IAbastecimentoView>(view) {
+  private val print = ChaveAbastecimentoPrint()
+  private val processing = ChaveAbastecimentoProcessamento()
+  private val find = ChaveAbastecimentoFind()
   
-  override fun newBean(): PedidoAbastecimentoVo {
-    return PedidoAbastecimentoVo()
+  override fun newBean(): AbastecimentoVo {
+    return AbastecimentoVo()
   }
   
-  override fun update(bean: PedidoAbastecimentoVo) {
+  override fun update(bean: AbastecimentoVo) {
     log?.error("Atualização não permitida")
   }
   
-  override fun add(bean: PedidoAbastecimentoVo) {
+  override fun add(bean: AbastecimentoVo) {
     log?.error("Inserssão não permitida")
   }
   
-  override fun delete(bean: PedidoAbastecimentoVo) {
+  override fun delete(bean: AbastecimentoVo) {
     val nota = bean.findEntity() ?: return
     val saida = Nota.findSaida(nota.loja, nota.numero) ?: return
     
@@ -75,9 +75,9 @@ class PedidoAbastecimentoViewModel(view: IPedidoAbastecimentoView):
       .id.desc()
   }
   
-  override fun ViewPedidoAbastecimento.toVO(): PedidoAbastecimentoVo {
+  override fun ViewPedidoAbastecimento.toVO(): AbastecimentoVo {
     val bean = this
-    return PedidoAbastecimentoVo().apply {
+    return AbastecimentoVo().apply {
       numero = bean.numero
       tipoMov = bean.tipoMov
       tipoNota = bean.tipoNota
@@ -142,7 +142,7 @@ class PedidoAbastecimentoViewModel(view: IPedidoAbastecimentoView):
   }
 }
 
-class PedidoAbastecimentoVo: EntityVo<ViewPedidoAbastecimento>() {
+class AbastecimentoVo: EntityVo<ViewPedidoAbastecimento>() {
   override fun findEntity(): ViewPedidoAbastecimento? {
     return ViewPedidoAbastecimento.findSaida(lojaDeposito, numero, abreviacao)
   }
@@ -180,5 +180,5 @@ data class ItemAbastecimento(val notaProdutoSaci: NotaProdutoSaci,
   fun isSave() = notaProdutoSaci.isSave()
 }
 
-interface IPedidoAbastecimentoView: ICrudView
+interface IAbastecimentoView: ICrudView
 

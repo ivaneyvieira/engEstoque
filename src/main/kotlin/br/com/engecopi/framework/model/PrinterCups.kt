@@ -29,19 +29,7 @@ open class PrinterCups(val host: String, val port: Int, val userName: String, va
   }
   
   fun findPrinter(printerName: String): CupsPrinter? {
-    val remote = printerRemote
-    val printInfoRemote =
-      remote.firstOrNull {it.name == printerName}
-    val urlHost = printInfoRemote?.urlHost
-  
-    return if(NetworkUtils.isHostReachable(urlHost))
-      printers.firstOrNull {it.name == printInfoRemote?.name}
-    else {
-      val local = printerLocal.firstOrNull()
-      if(NetworkUtils.isHostReachable(local?.urlHost))
-        printers.firstOrNull {it.name == local?.name}
-      else null
-    }
+    return printers.firstOrNull {it.name == printerName}
   }
   
   @Throws(ECupsPrinter::class)
