@@ -13,7 +13,7 @@ import br.com.engecopi.saci.beans.NotaProdutoSaci
 import java.time.LocalDate
 import java.time.LocalTime
 
-class PedidoAbastecimentoProcessamento() {
+class ChaveAbastecimentoProcessamento() {
   fun processaKey(notasSaci: List<ItemAbastecimento>): Nota {
     if(notasSaci.all {it.isSave()}) throw EViewModelError("Todos os itens dessa nota já estão lançados")
     return if(notasSaci.isNotEmpty()) processaNota(notasSaci)

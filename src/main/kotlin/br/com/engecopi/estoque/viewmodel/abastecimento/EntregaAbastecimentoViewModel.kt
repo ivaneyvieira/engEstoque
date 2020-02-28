@@ -9,12 +9,12 @@ import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaVo
 
-class EntregaClienteAbastecimentoViewModel(view: IEntregaClienteAbastecimentoView):
-  NotaViewModel<EntregaClienteAbastecimentoVo, IEntregaClienteAbastecimentoView>(view, SAIDA, ENTREGUE, CONFERIDA) {
-  private val find = EntregaClienteAbastecimentoFind(view)
+class EntregaAbastecimentoViewModel(view: IEntregaAbastecimentoView):
+  NotaViewModel<EntregaAbastecimentoVo, IEntregaAbastecimentoView>(view, SAIDA, ENTREGUE, CONFERIDA) {
+  private val find = EntregaAbastecimentoFind(view)
   
-  override fun newBean(): EntregaClienteAbastecimentoVo {
-    return EntregaClienteAbastecimentoVo()
+  override fun newBean(): EntregaAbastecimentoVo {
+    return EntregaAbastecimentoVo()
   }
   
   override fun QItemNota.filtroTipoNota(): QItemNota {
@@ -27,21 +27,21 @@ class EntregaClienteAbastecimentoViewModel(view: IEntregaClienteAbastecimentoVie
       .nota.sequencia.ne(0)
   }
   
-  override fun createVo() = EntregaClienteAbastecimentoVo()
+  override fun createVo() = EntregaAbastecimentoVo()
   
   fun findKey(key: String) = exec {
     find.findKey(key)
       .updateView()
   }
   
-  fun notasConferidas(): List<EntregaClienteAbastecimentoVo> {
+  fun notasConferidas(): List<EntregaAbastecimentoVo> {
     return QItemNota().status.eq(CONFERIDA)
       .findList()
       .map {it.toVO()}
   }
 }
 
-class EntregaClienteAbastecimentoVo: NotaVo(SAIDA, "")
+class EntregaAbastecimentoVo: NotaVo(SAIDA, "")
 
-interface IEntregaClienteAbastecimentoView: INotaView
+interface IEntregaAbastecimentoView: INotaView
 

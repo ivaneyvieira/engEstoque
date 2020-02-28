@@ -9,13 +9,13 @@ import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
 
-class EntregaClienteEditorAbastecimentoViewModel(view: IEntregaClienteEditorAbastecimentoView):
-  NotaViewModel<EntregaClienteAbastecimentoVo, IEntregaClienteEditorAbastecimentoView>(view,
-                                                                                       SAIDA,
-                                                                                       ENTREGUE,
-                                                                                       ENTREGUE) {
-  override fun newBean(): EntregaClienteAbastecimentoVo {
-    return EntregaClienteAbastecimentoVo()
+class EditorAbastecimentoViewModel(view: IEditorAbastecimentoView):
+  NotaViewModel<EntregaAbastecimentoVo, IEditorAbastecimentoView>(view,
+                                                                  SAIDA,
+                                                                  ENTREGUE,
+                                                                  ENTREGUE) {
+  override fun newBean(): EntregaAbastecimentoVo {
+    return EntregaAbastecimentoVo()
   }
   
   override fun QItemNota.filtroTipoNota(): QItemNota {
@@ -27,13 +27,13 @@ class EntregaClienteEditorAbastecimentoViewModel(view: IEntregaClienteEditorAbas
       .nota.usuario.isNotNull.nota.sequencia.ne(0)
   }
   
-  override fun createVo() = EntregaClienteAbastecimentoVo()
+  override fun createVo() = EntregaAbastecimentoVo()
   
-  fun notasConferidas(): List<EntregaClienteAbastecimentoVo> {
+  fun notasConferidas(): List<EntregaAbastecimentoVo> {
     return QItemNota().status.eq(CONFERIDA)
       .findList()
       .map {it.toVO()}
   }
 }
 
-interface IEntregaClienteEditorAbastecimentoView: INotaView
+interface IEditorAbastecimentoView: INotaView

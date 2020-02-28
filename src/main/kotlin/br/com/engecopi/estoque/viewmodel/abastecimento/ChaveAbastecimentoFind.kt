@@ -7,7 +7,7 @@ import br.com.engecopi.estoque.viewmodel.EChaveNaoEncontrada
 import br.com.engecopi.estoque.viewmodel.ENaoAbastecimento
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 
-class PedidoAbastecimentoFind() {
+class ChaveAbastecimentoFind() {
   fun findNotaSaidaKey(key: String): List<NotaProdutoSaci> {
     val keyNota = KeyNota(key)
     val notaSaci = Nota.findNotaSaidaSaci(keyNota.storeno, keyNota.numero)
