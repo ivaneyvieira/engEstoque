@@ -2,7 +2,6 @@ package br.com.engecopi.estoque.viewmodel.abastecimento
 
 import br.com.engecopi.estoque.model.KeyNota
 import br.com.engecopi.estoque.model.Nota
-import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.TipoNota.PEDIDO_A
 import br.com.engecopi.estoque.viewmodel.EChaveNaoEncontrada
 import br.com.engecopi.estoque.viewmodel.ENaoAbastecimento
@@ -21,14 +20,7 @@ class PedidoAbastecimentoFind() {
     val numero = nota.numero ?: ""
     return when {
       nota.tipoNota() != PEDIDO_A -> throw ENaoAbastecimento(numero)
-      else                        -> notaSaci.filtroTipoCompativel()
-    }
-  }
-  
-  private fun List<NotaProdutoSaci>.filtroTipoCompativel(): List<NotaProdutoSaci> {
-    return this.filter {nota ->
-      val tipo = nota.tipoNota() ?: return@filter false
-      return@filter usuarioDefault.isTipoCompativel(tipo)
+      else                        -> notaSaci
     }
   }
 }

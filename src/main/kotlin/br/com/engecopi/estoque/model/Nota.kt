@@ -88,8 +88,29 @@ class Nota: BaseModel() {
   var maxSequencia: Int? = 0
   @Enumerated(EnumType.STRING)
   var lancamentoOrigem: LancamentoOrigem = EXPEDICAO
+  val cancelado
+    get() = tipoNota == CANCELADA_E || tipoNota == CANCELADA_S
   val multipicadorCancelado
-    get() = if(tipoNota == CANCELADA_E || tipoNota == CANCELADA_S) 0 else 1
+    get() = if(cancelado) 0 else 1
+  val nfno get() = numero.split("/").getOrNull(0) ?: ""
+  val nfse get() = numero.split("/").getOrNull(1) ?: ""
+  
+  fun updateFromSaci() {
+    val storeno = loja?.numero ?: 0
+    val notaInfo = when(tipoMov) {
+                     ENTRADA -> saci.findNotaEntradaInfo(storeno, nfno, nfse)
+                     SAIDA   -> saci.findNotaSaidaInfo(storeno, nfno, nfse)
+                   } ?: return
+    tipoNota = if(notaInfo.cancelado)
+      when(tipoMov) {
+        ENTRADA -> CANCELADA_E
+        SAIDA   -> CANCELADA_S
+      }
+    else {
+      notaInfo.tipoNota
+    }
+    this.save()
+  }
   
   companion object Find: NotaFinder() {
     fun createNota(notasaci: NotaProdutoSaci?): Nota? {
@@ -227,12 +248,12 @@ class Nota: BaseModel() {
         .data.after(dtInicial)
         .findList()
     }
-  
+    
     fun notaBaixa(storeno: Int?, numero: String?) =
       TransferenciaAutomatica.notaBaixa(storeno, numero)
         .ifEmpty {EntregaFutura.notaBaixa(storeno, numero)}
         .ifEmpty {PedidoNotaRessuprimento.notaBaixa(numero)}
-  
+    
     fun notaFatura(storeno: Int?, numero: String?) =
       TransferenciaAutomatica.notaFatura(storeno, numero)
         .ifEmpty {EntregaFutura.notaFatura(storeno, numero)}
