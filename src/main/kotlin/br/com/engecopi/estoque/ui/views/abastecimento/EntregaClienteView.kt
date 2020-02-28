@@ -5,9 +5,9 @@ import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
 import br.com.engecopi.estoque.ui.views.movimentacao.NotaView
-import br.com.engecopi.estoque.viewmodel.abastecimento.EntregaClienteAbastecimentoViewModel
-import br.com.engecopi.estoque.viewmodel.abastecimento.EntregaClienteAbastecimentoVo
-import br.com.engecopi.estoque.viewmodel.abastecimento.IEntregaClienteAbastecimentoView
+import br.com.engecopi.estoque.viewmodel.abastecimento.EntregaAbastecimentoViewModel
+import br.com.engecopi.estoque.viewmodel.abastecimento.EntregaAbastecimentoVo
+import br.com.engecopi.estoque.viewmodel.abastecimento.IEntregaAbastecimentoView
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
 import br.com.engecopi.framework.ui.view.dateFormat
@@ -30,8 +30,8 @@ import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView("entrega_abastecimento")
 class EntregaAbastecimentoView:
-  NotaView<EntregaClienteAbastecimentoVo, EntregaClienteAbastecimentoViewModel, IEntregaClienteAbastecimentoView>(),
-  IEntregaClienteAbastecimentoView {
+  NotaView<EntregaAbastecimentoVo, EntregaAbastecimentoViewModel, IEntregaAbastecimentoView>(),
+  IEntregaAbastecimentoView {
   var formCodBar: PnlCodigoBarras? = null
   
   override fun enter(event: ViewChangeEvent) {
@@ -40,7 +40,7 @@ class EntregaAbastecimentoView:
   }
   
   init {
-    viewModel = EntregaClienteAbastecimentoViewModel(this)
+    viewModel = EntregaAbastecimentoViewModel(this)
     layoutForm {
       if(operation == ADD) {
         binder.bean.lojaNF = lojaDeposito
@@ -61,23 +61,23 @@ class EntregaAbastecimentoView:
                 default {it.descricao}
                 isReadOnly = true
                 setItems(TipoNota.valuesSaida())
-                bind(binder).bind(EntregaClienteAbastecimentoVo::tipoNota)
+                bind(binder).bind(EntregaAbastecimentoVo::tipoNota)
               }
               dateField("Data") {
                 expandRatio = 1f
                 isReadOnly = true
-                bind(binder).bind(EntregaClienteAbastecimentoVo::dataNota.name)
+                bind(binder).bind(EntregaAbastecimentoVo::dataNota.name)
               }
               textField("Rota") {
                 expandRatio = 1f
                 isReadOnly = true
-                bind(binder).bind(EntregaClienteAbastecimentoVo::rota)
+                bind(binder).bind(EntregaAbastecimentoVo::rota)
               }
             }
             row {
               textField("Observação da nota fiscal") {
                 expandRatio = 1f
-                bind(binder).bind(EntregaClienteAbastecimentoVo::observacaoNota)
+                bind(binder).bind(EntregaAbastecimentoVo::observacaoNota)
               }
             }
           }
@@ -95,56 +95,56 @@ class EntregaAbastecimentoView:
       addCustomToolBarComponent(btnDesfazer())
       addCustomFormComponent(formCodBar)
       reloadOnly = !isAdmin
-      column(EntregaClienteAbastecimentoVo::numeroCodigo) {
+      column(EntregaAbastecimentoVo::numeroCodigo) {
         caption = "Número Conferencia"
         setSortProperty("codigo_barra_conferencia")
       }
-      column(EntregaClienteAbastecimentoVo::lojaNF) {
+      column(EntregaAbastecimentoVo::lojaNF) {
         caption = "Loja NF"
         setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
       }
-      column(EntregaClienteAbastecimentoVo::tipoNotaDescricao) {
+      column(EntregaAbastecimentoVo::tipoNotaDescricao) {
         caption = "TipoNota"
         setSortProperty("nota.tipo_nota")
       }
-      column(EntregaClienteAbastecimentoVo::lancamento) {
+      column(EntregaAbastecimentoVo::lancamento) {
         caption = "Lançamento"
         dateFormat()
         setSortProperty("nota.lancamento", "data", "hora")
       }
-      column(EntregaClienteAbastecimentoVo::dataEmissao) {
+      column(EntregaAbastecimentoVo::dataEmissao) {
         caption = "Emissao"
         dateFormat()
         setSortProperty("nota.dataEmissao", "data", "hora")
       }
-      column(EntregaClienteAbastecimentoVo::quantProduto) {
+      column(EntregaAbastecimentoVo::quantProduto) {
         caption = "Quantidade"
         intFormat()
       }
-      column(EntregaClienteAbastecimentoVo::codigo) {
+      column(EntregaAbastecimentoVo::codigo) {
         caption = "Código"
         setSortProperty("produto.codigo")
       }
-      column(EntregaClienteAbastecimentoVo::descricaoProduto) {
+      column(EntregaAbastecimentoVo::descricaoProduto) {
         caption = "Descrição"
       }
-      column(EntregaClienteAbastecimentoVo::grade) {
+      column(EntregaAbastecimentoVo::grade) {
         caption = "Grade"
         setSortProperty("produto.grade")
       }
-      column(EntregaClienteAbastecimentoVo::localizacao) {
+      column(EntregaAbastecimentoVo::localizacao) {
         caption = "Localização"
         setRenderer({it?.toString()}, TextRenderer())
       }
-      column(EntregaClienteAbastecimentoVo::usuario) {
+      column(EntregaAbastecimentoVo::usuario) {
         caption = "Usuário"
         setRenderer({it?.loginName ?: ""}, TextRenderer())
         setSortProperty("usuario.loginName")
       }
-      column(EntregaClienteAbastecimentoVo::rotaDescricao) {
+      column(EntregaAbastecimentoVo::rotaDescricao) {
         caption = "Rota"
       }
-      column(EntregaClienteAbastecimentoVo::cliente) {
+      column(EntregaAbastecimentoVo::cliente) {
         caption = "Cliente"
         setSortProperty("nota.cliente")
       }

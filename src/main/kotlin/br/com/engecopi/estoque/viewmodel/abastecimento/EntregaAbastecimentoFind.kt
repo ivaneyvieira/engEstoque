@@ -13,7 +13,7 @@ import br.com.engecopi.estoque.model.ViewCodBarConferencia
 import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.framework.viewmodel.IView
 
-class EntregaClienteAbastecimentoFind(val view: IView) {
+class EntregaAbastecimentoFind(val view: IView) {
   fun findKey(key: String): List<ItemNota> {
     val itens = (findItensNumero(key) + findItensBarcode(key)).filter {it.status == CONFERIDA}
     if(itens.isEmpty()) throw EViewModelError("Produto não encontrado")

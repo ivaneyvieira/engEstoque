@@ -7,11 +7,11 @@ import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.ui.print.PrintUtil.imprimeNotaConcluida
 import br.com.engecopi.estoque.ui.print.PrintUtil.printText
 import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
-import br.com.engecopi.estoque.viewmodel.abastecimento.IPedidoAbastecimentoView
+import br.com.engecopi.estoque.viewmodel.abastecimento.AbastecimentoVo
+import br.com.engecopi.estoque.viewmodel.abastecimento.ChaveAbastecimentoViewModel
+import br.com.engecopi.estoque.viewmodel.abastecimento.IAbastecimentoView
 import br.com.engecopi.estoque.viewmodel.abastecimento.ItemAbastecimento
-import br.com.engecopi.estoque.viewmodel.abastecimento.LocalizacaoNota
-import br.com.engecopi.estoque.viewmodel.abastecimento.PedidoAbastecimentoViewModel
-import br.com.engecopi.estoque.viewmodel.abastecimento.PedidoAbastecimentoVo
+import br.com.engecopi.estoque.viewmodel.abastecimento.LocalizacaoAbestecimento
 import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.dateFormat
 import br.com.engecopi.framework.ui.view.grupo
@@ -51,8 +51,8 @@ import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
 
 @AutoView("pedido_abastecimento")
-class ChaveAbastecimentoView: CrudLayoutView<PedidoAbastecimentoVo, PedidoAbastecimentoViewModel>(),
-                              IPedidoAbastecimentoView {
+class ChaveAbastecimentoView: CrudLayoutView<AbastecimentoVo, ChaveAbastecimentoViewModel>(),
+                              IAbastecimentoView {
   var formCodBar: PnlCodigoBarras? = null
   private val isAdmin
     get() = userDefaultIsAdmin
@@ -63,7 +63,7 @@ class ChaveAbastecimentoView: CrudLayoutView<PedidoAbastecimentoVo, PedidoAbaste
   }
   
   init {
-    viewModel = PedidoAbastecimentoViewModel(this)
+    viewModel = ChaveAbastecimentoViewModel(this)
     layoutForm {
       formLayout.apply {
         w =
@@ -118,7 +118,7 @@ class ChaveAbastecimentoView: CrudLayoutView<PedidoAbastecimentoVo, PedidoAbaste
       updateOperationVisible = false
       addOperationVisible = false
       deleteOperationVisible = RegistryUserInfo.usuarioDefault.admin
-      column(PedidoAbastecimentoVo::numero) {
+      column(AbastecimentoVo::numero) {
         caption = "Número NF"
         setSortProperty("numero")
       }
@@ -140,49 +140,49 @@ class ChaveAbastecimentoView: CrudLayoutView<PedidoAbastecimentoVo, PedidoAbaste
         }
       }
         .id = "btnPrint"
-      column(PedidoAbastecimentoVo::loja) {
+      column(AbastecimentoVo::loja) {
         caption = "Loja NF"
         setRenderer({loja ->
                       loja?.sigla ?: ""
                     }, TextRenderer())
       }
-      column(PedidoAbastecimentoVo::tipoNota) {
+      column(AbastecimentoVo::tipoNota) {
         caption = "TipoNota"
         setRenderer({tipo ->
                       tipo?.descricao ?: ""
                     }, TextRenderer())
         setSortProperty("tipo_nota")
       }
-      column(PedidoAbastecimentoVo::lancamento) {
+      column(AbastecimentoVo::lancamento) {
         caption = "Data"
         dateFormat()
         setSortProperty("data", "hora")
       }
-      column(PedidoAbastecimentoVo::dataHoraLancamento) {
+      column(AbastecimentoVo::dataHoraLancamento) {
         caption = "Hora"
         timeFormat()
         setSortProperty("data", "hora")
       }
-      column(PedidoAbastecimentoVo::dataEmissao) {
+      column(AbastecimentoVo::dataEmissao) {
         caption = "Emissao"
         dateFormat()
         setSortProperty("dataEmissao", "data", "hora")
       }
-      column(PedidoAbastecimentoVo::abreviacao) {
+      column(AbastecimentoVo::abreviacao) {
         caption = "Localização"
         setSortProperty("abreviacao")
       }
-      column(PedidoAbastecimentoVo::usuario) {
+      column(AbastecimentoVo::usuario) {
         caption = "Usuário"
         setRenderer({
                       it?.loginName ?: ""
                     }, TextRenderer())
         setSortProperty("usuario.loginName")
       }
-      column(PedidoAbastecimentoVo::rota) {
+      column(AbastecimentoVo::rota) {
         caption = "Rota"
       }
-      column(PedidoAbastecimentoVo::cliente) {
+      column(AbastecimentoVo::cliente) {
         caption = "Cliente"
         setSortProperty("cliente")
       }
@@ -219,9 +219,9 @@ class ChaveAbastecimentoView: CrudLayoutView<PedidoAbastecimentoVo, PedidoAbaste
 }
 
 class DlgNotaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
-                 val viewModel: PedidoAbastecimentoViewModel,
+                 val viewModel: ChaveAbastecimentoViewModel,
                  val execConfirma: (itens: List<ItemAbastecimento>) -> Unit): Window("Nota de Saída") {
-  private lateinit var gridProdutos: Grid<LocalizacaoNota>
+  private lateinit var gridProdutos: Grid<LocalizacaoAbestecimento>
   
   init {
     val nota = notaProdutoSaida.firstOrNull()
@@ -290,7 +290,7 @@ class DlgNotaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
           }
         }
         row {
-          gridProdutos = grid(LocalizacaoNota::class) {
+          gridProdutos = grid(LocalizacaoAbestecimento::class) {
             val itens = notaProdutoSaida
             val abreviacaoItens = itens.groupBy {item ->
               val abreviacao =
@@ -312,7 +312,7 @@ class DlgNotaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
                         val saldo = viewModel.saldoProduto(notaSaci, abrev)
                         ItemAbastecimento(notaSaci, saldo, abrev)
                       }
-                  LocalizacaoNota(abrev, itensAbastecimento)
+                  LocalizacaoAbestecimento(abrev, itensAbastecimento)
                 }
                 .toList()
                 .sortedBy {it.abreviacao}
@@ -333,11 +333,11 @@ class DlgNotaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
                 }
               }
             }.id = "btnPrintItens"
-            addColumnFor(LocalizacaoNota::abreviacao) {
+            addColumnFor(LocalizacaoAbestecimento::abreviacao) {
               expandRatio = 1
               caption = "Código"
             }
-            addColumnFor(LocalizacaoNota::countSelecionado) {
+            addColumnFor(LocalizacaoAbestecimento::countSelecionado) {
               caption = "Selecionados"
               align = VAlign.Right
             }
@@ -348,8 +348,8 @@ class DlgNotaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
   }
 }
 
-class DlgNotaAbastecimento(val localizacaoNota: LocalizacaoNota,
-                           val viewModel: PedidoAbastecimentoViewModel,
+class DlgNotaAbastecimento(val localizacaoAbestecimento: LocalizacaoAbestecimento,
+                           val viewModel: ChaveAbastecimentoViewModel,
                            val update: () -> Unit): Window("Itens da expedição") {
   private lateinit var gridProdutos: Grid<ItemAbastecimento>
   
@@ -359,7 +359,7 @@ class DlgNotaAbastecimento(val localizacaoNota: LocalizacaoNota,
         (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
           .px
       
-      grupo("Expedição ${localizacaoNota.abreviacao}") {
+      grupo("Expedição ${localizacaoAbestecimento.abreviacao}") {
         row {
           horizontalLayout {
             alignment = Alignment.BOTTOM_LEFT
@@ -367,7 +367,7 @@ class DlgNotaAbastecimento(val localizacaoNota: LocalizacaoNota,
               alignment = Alignment.BOTTOM_RIGHT
               addStyleName(ValoTheme.BUTTON_PRIMARY)
               addClickListener {
-                localizacaoNota.itensAbastecimento.forEach {
+                localizacaoAbestecimento.itensAbastecimento.forEach {
                   it.selecionado = false
                 }
                 val itensSelecionado =
@@ -391,7 +391,7 @@ class DlgNotaAbastecimento(val localizacaoNota: LocalizacaoNota,
         }
         row {
           gridProdutos = grid(ItemAbastecimento::class) {
-            val itens = localizacaoNota.itensAbastecimento
+            val itens = localizacaoAbestecimento.itensAbastecimento
             
             this.dataProvider = ListDataProvider(itens)
             removeAllColumns()
@@ -449,7 +449,7 @@ class DlgNotaAbastecimento(val localizacaoNota: LocalizacaoNota,
               }
             }
           }
-          localizacaoNota.itensAbastecimento.forEach {item ->
+          localizacaoAbestecimento.itensAbastecimento.forEach {item ->
             if(item.selecionado) gridProdutos.select(item)
             else gridProdutos.deselect(item)
           }
