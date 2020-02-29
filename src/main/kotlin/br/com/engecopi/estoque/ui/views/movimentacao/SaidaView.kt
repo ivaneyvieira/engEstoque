@@ -384,7 +384,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
                       ABASTECI  -> confirmaProdutos(
                         produtosSelecionado = produtos intersect itensSelecionados,
                         produtosNaoSelecionado = emptySet(),
-                        statusSelecionado = CONFERIDA,
+                        statusSelecionado = ENTREGUE,
                         statusNaoSelecionado = ENT_LOJA
                                                    )
                     }
