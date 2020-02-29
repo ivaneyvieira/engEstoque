@@ -5,7 +5,6 @@ import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
-import br.com.engecopi.estoque.model.envelopes.Printer
 import br.com.engecopi.estoque.model.query.QItemNota
 
 class ChaveAbastecimentoPrint() {
@@ -27,10 +26,18 @@ class ChaveAbastecimentoPrint() {
       val notaRef = Nota.byId(id) ?: return emptyList()
       val listaItens = notaRef.itensNota()
       val itensAbreviacao = listaItens.groupBy {it.abreviacao}
+      /*
       val text = imprimeItens(INCLUIDA, listaItens)
       val impressaoEXP = listOf(PacoteImpressao(Printer("EXP4"), text))
       
       impressaoEXP
+  */
+      itensAbreviacao.mapNotNull {(abreviacao, itens) ->
+        if(abreviacao == null) return@mapNotNull null
+        val printer = abreviacao.printer
+        val text = imprimeItens(INCLUIDA, itens)
+        PacoteImpressao(printer, text)
+      }
     }
   }
   

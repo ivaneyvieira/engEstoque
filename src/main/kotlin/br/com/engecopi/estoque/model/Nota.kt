@@ -357,5 +357,5 @@ enum class LancamentoOrigem(val descricao: String, val printer: Printer) {
   DEPOSITO("Deposito", Printer("ENTREGA")),
   ENTREGA_F("Entrega Futura", Printer("")),
   RESSUPRI("Ressuprimento", Printer("")),
-  ABASTECI("Abastecimento", Printer(""))
+  ABASTECI("Abastecimento", Printer("EXP4"))
 }

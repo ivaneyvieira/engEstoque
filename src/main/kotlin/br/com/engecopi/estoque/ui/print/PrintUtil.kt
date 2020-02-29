@@ -4,12 +4,12 @@ import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.ABASTECI
 import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
+import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
 import br.com.engecopi.estoque.model.LancamentoOrigem.RESSUPRI
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
-import br.com.engecopi.estoque.model.TipoUsuario.EXPEDICAO
 import br.com.engecopi.estoque.model.envelopes.Printer
 import br.com.engecopi.framework.model.AppPrinter
 import br.com.engecopi.framework.model.ECupsPrinter
@@ -26,13 +26,14 @@ object PrintUtil {
   fun imprimeNotaConcluida(nota: Nota?) {
     nota ?: return
     val impressoraNota = when(nota.lancamentoOrigem) {
-      EXPEDICAO, ABASTECI -> Printer("EXP4")
-      ENTREGA_F           -> Printer("ENTREGA")
-      RESSUPRI            -> {
+      ABASTECI  -> Printer("EXP4")
+      EXPEDICAO -> Printer("EXP4")
+      ENTREGA_F -> Printer("ENTREGA")
+      RESSUPRI  -> {
         val printerNota = nota.itensNota().firstOrNull()?.abreviacao?.printer ?: return
         printerNota
       }
-      else                -> Printer("")
+      else      -> Printer("")
     }
     val textNota = this.imprimirNota(nota)
     printText(impressoraNota, textNota)
