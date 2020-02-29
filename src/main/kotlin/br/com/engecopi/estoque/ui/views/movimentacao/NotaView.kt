@@ -11,7 +11,7 @@ import br.com.engecopi.estoque.ui.print.PrintUtil.printText
 import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaVo
-import br.com.engecopi.estoque.viewmodel.movimentacao.ProdutoVO
+import br.com.engecopi.estoque.viewmodel.movimentacao.ProdutoNotaVo
 import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.CrudOperation
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
@@ -47,7 +47,7 @@ import com.vaadin.ui.VerticalLayout
 import org.vaadin.patrik.FastNavigation
 
 abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: CrudLayoutView<VO, MODEL>() {
-  lateinit var gridProduto: Grid<ProdutoVO>
+  lateinit var gridProduto: Grid<ProdutoNotaVo>
   val usuario get() = usuarioDefault
   val isAdmin get() = usuario.admin
   
@@ -140,7 +140,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: 
     }
     row {
       this.bindVisible(binder, NotaVo::temGrid.name)
-      gridProduto = grid(ProdutoVO::class) {
+      gridProduto = grid(ProdutoNotaVo::class) {
         expandRatio = 2f
         this.h = 200.px
         editor.isEnabled = true
@@ -166,35 +166,35 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: 
           isEmptySelectionAllowed = false
           isTextInputAllowed = false
         }
-  
-        addColumnFor(ProdutoVO::codigo) {
+    
+        addColumnFor(ProdutoNotaVo::codigo) {
           expandRatio = 1
           caption = "Código"
         }
-        addColumnFor(ProdutoVO::descricaoProduto) {
+        addColumnFor(ProdutoNotaVo::descricaoProduto) {
           expandRatio = 5
           caption = "Descrição"
         }
-        addColumnFor(ProdutoVO::localizacao) {
+        addColumnFor(ProdutoNotaVo::localizacao) {
           expandRatio = 4
           caption = "Localização"
           setEditorComponent(comboLoc)
         }
-        addColumnFor(ProdutoVO::grade) {
+        addColumnFor(ProdutoNotaVo::grade) {
           expandRatio = 1
           caption = "Grade"
         }
-        addColumnFor(ProdutoVO::saldo) {
+        addColumnFor(ProdutoNotaVo::saldo) {
           expandRatio = 1
           caption = "Saldo Atual"
           align = VAlign.Right
         }
-        addColumnFor(ProdutoVO::quantidade) {
+        addColumnFor(ProdutoNotaVo::quantidade) {
           expandRatio = 1
           caption = "Qtd $tipo"
           align = VAlign.Right
         }
-        addColumnFor(ProdutoVO::saldoFinal) {
+        addColumnFor(ProdutoNotaVo::saldoFinal) {
           expandRatio = 1
           caption = "Saldo Final"
           align = VAlign.Right
@@ -210,7 +210,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: 
             comboLoc.value = event.bean.localizacao
           }
         }
-        val nav = FastNavigation<ProdutoVO>(this, false, true)
+        val nav = FastNavigation<ProdutoNotaVo>(this, false, true)
         nav.changeColumnAfterLastRow = true
         nav.openEditorWithSingleClick = true
         nav.allowArrowToChangeRow = true
