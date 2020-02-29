@@ -1,6 +1,7 @@
 package br.com.engecopi.estoque.ui.views.movimentacao
 
 import br.com.engecopi.estoque.model.ItemNota
+import br.com.engecopi.estoque.model.LancamentoOrigem.ABASTECI
 import br.com.engecopi.estoque.model.LancamentoOrigem.DEPOSITO
 import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
@@ -11,6 +12,7 @@ import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressoraUsuario
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
+import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
@@ -344,29 +346,49 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
               addStyleName(ValoTheme.BUTTON_PRIMARY)
               addClickListener {
                 val allItens = gridProdutos.dataProvider.getAll()
-                val itens =
+                val itensGroupByOrigem = allItens.groupBy {it.value?.nota?.lancamentoOrigem}
+                val itensSelecionados =
                   gridProdutos.selectedItems.toList()
                     .filter {it.allowSelect()}
                 val naoSelect =
-                  allItens.minus(itens)
+                  allItens.minus(itensSelecionados)
                     .filter {it.allowSelect()}
-                val itensDeposito = itens.filter {item ->
-                  item.value?.nota?.lancamentoOrigem == DEPOSITO
+  
+                itensGroupByOrigem.forEach {(origem, produtos) ->
+                  if(origem != null)
+                    when(origem) {
+                      DEPOSITO  -> confirmaProdutos(
+                        produtosSelecionado = produtos intersect itensSelecionados,
+                        produtosNaoSelecionado = produtos intersect naoSelect,
+                        statusSelecionado = ENTREGUE,
+                        statusNaoSelecionado = ENT_LOJA
+                                                   )
+                      EXPEDICAO -> confirmaProdutos(
+                        produtosSelecionado = produtos intersect itensSelecionados,
+                        produtosNaoSelecionado = produtos intersect naoSelect,
+                        statusSelecionado = CONFERIDA,
+                        statusNaoSelecionado = ENT_LOJA
+                                                   )
+                      ENTREGA_F -> confirmaProdutos(
+                        produtosSelecionado = produtos intersect itensSelecionados,
+                        produtosNaoSelecionado = produtos intersect naoSelect,
+                        statusSelecionado = CONFERIDA,
+                        statusNaoSelecionado = ENT_LOJA
+                                                   )
+                      RESSUPRI  -> confirmaProdutos(
+                        produtosSelecionado = produtos intersect itensSelecionados,
+                        produtosNaoSelecionado = produtos intersect naoSelect,
+                        statusSelecionado = CONFERIDA,
+                        statusNaoSelecionado = ENT_LOJA
+                                                   )
+                      ABASTECI  -> confirmaProdutos(
+                        produtosSelecionado = produtos intersect itensSelecionados,
+                        produtosNaoSelecionado = emptySet(),
+                        statusSelecionado = CONFERIDA,
+                        statusNaoSelecionado = ENT_LOJA
+                                                   )
+                    }
                 }
-                val itensExpedicao = itens.filter {item ->
-                  item.value?.nota?.lancamentoOrigem == EXPEDICAO
-                }
-                val itensEntregaFutura = itens.filter {item ->
-                  item.value?.nota?.lancamentoOrigem == ENTREGA_F
-                }
-                val itensRessuprimento = itens.filter {item ->
-                  item.value?.nota?.lancamentoOrigem == RESSUPRI
-                }
-                viewModel.confirmaProdutos(itensDeposito, ENTREGUE)
-                viewModel.confirmaProdutos(itensExpedicao, CONFERIDA)
-                viewModel.confirmaProdutos(itensEntregaFutura, CONFERIDA)
-                viewModel.confirmaProdutos(itensRessuprimento, CONFERIDA)
-                viewModel.confirmaProdutos(naoSelect, ENT_LOJA)
                 close()
               }
             }
@@ -523,6 +545,12 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
     }
   }
   
+  private fun confirmaProdutos(produtosSelecionado: Set<ProdutoVO>, produtosNaoSelecionado: Set<ProdutoVO>,
+                               statusSelecionado: StatusNota, statusNaoSelecionado: StatusNota) {
+    viewModel.confirmaProdutos(produtosSelecionado.toList(), statusSelecionado)
+    viewModel.confirmaProdutos(produtosNaoSelecionado.toList(), statusNaoSelecionado)
+  }
+  
   private fun @VaadinDsl Grid<ProdutoVO>.updateProdutosNota() {
     val abreviacao = abreviacaoDefault
     //nota.refresh()
@@ -580,11 +608,11 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
     item.selecionado = true
     item.updateItem(true)
     when(item.value?.nota?.lancamentoOrigem) {
-      DEPOSITO                       -> {
+      DEPOSITO -> {
         execPrint(viewModel.confirmaProdutos(listOf(item), ENTREGUE))
         gridProdutos.updateProdutosNota()
       }
-      EXPEDICAO, ENTREGA_F, RESSUPRI -> {
+      else     -> {
         execPrint(viewModel.confirmaProdutos(listOf(item), CONFERIDA))
         gridProdutos.updateProdutosNota()
       }

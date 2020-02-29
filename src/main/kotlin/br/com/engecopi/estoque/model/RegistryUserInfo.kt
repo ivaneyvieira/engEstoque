@@ -47,11 +47,6 @@ object RegistryUserInfo {
 
 data class LoginInfo(val usuario: Usuario, val abreviacao: String)
 
-enum class TipoUsuario(val descricao: String) {
-  ESTOQUE("Estoque"),
-  EXPEDICAO("Expedição")
-}
-
 class EUsuarioNaoInicializado: EViewModelError("O usuário não está logado")
 
 interface LoginInfoProvider {
