@@ -10,6 +10,7 @@ import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.viewmodel.EChaveNaoEncontrada
 import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.saci.beans.NotaProdutoSaci
+import br.com.engecopi.saci.saci
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -44,7 +45,8 @@ class ChaveAbastecimentoProcessamento() {
     }
     
     if(itens.isEmpty()) throw EViewModelError("Essa nota não possui itens com localização")
-    
+  
+    saci.expiraPedidoVenda(nota.loja?.numero, nota?.numero?.toIntOrNull())
     return nota
   }
   
