@@ -6,9 +6,9 @@ import br.com.engecopi.estoque.model.envelopes.Printer
 import br.com.engecopi.estoque.ui.print.PrintUtil.imprimeNotaConcluida
 import br.com.engecopi.estoque.ui.print.PrintUtil.printText
 import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
-import br.com.engecopi.estoque.viewmodel.entregaFutura.INFVendaFuturaView
-import br.com.engecopi.estoque.viewmodel.entregaFutura.NFVendaFuturaViewModel
-import br.com.engecopi.estoque.viewmodel.entregaFutura.NFVendaFuturaVo
+import br.com.engecopi.estoque.viewmodel.entregaFutura.ChaveEntregaFuturaViewModel
+import br.com.engecopi.estoque.viewmodel.entregaFutura.EntregaFuturaVo
+import br.com.engecopi.estoque.viewmodel.entregaFutura.IChaveEntregaFuturaView
 import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.dateFormat
 import br.com.engecopi.framework.ui.view.grupo
@@ -29,13 +29,13 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView("nf_venda_futura")
-class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>(), INFVendaFuturaView {
+class NFVendaFuturaView: CrudLayoutView<EntregaFuturaVo, ChaveEntregaFuturaViewModel>(), IChaveEntregaFuturaView {
   var formCodBar: PnlCodigoBarras? = null
   private val isAdmin
     get() = RegistryUserInfo.userDefaultIsAdmin
   
   init {
-    viewModel = NFVendaFuturaViewModel(this)
+    viewModel = ChaveEntregaFuturaViewModel(this)
     layoutForm {
       formLayout.apply {
         w =
@@ -90,11 +90,11 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
       updateOperationVisible = false
       addOperationVisible = false
       deleteOperationVisible = usuarioDefault.admin
-      column(NFVendaFuturaVo::numero) {
+      column(EntregaFuturaVo::numero) {
         caption = "Número NF"
         setSortProperty("numero")
       }
-      column(NFVendaFuturaVo::numeroBaixa) {
+      column(EntregaFuturaVo::numeroBaixa) {
         caption = "NF Baixa"
         setSortProperty("numero")
       }
@@ -114,50 +114,50 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
         }
       }
         .id = "btnPrint"
-      column(NFVendaFuturaVo::loja) {
+      column(EntregaFuturaVo::loja) {
         caption = "Loja NF"
         setRenderer({loja ->
                       loja?.sigla ?: ""
                     }, TextRenderer())
       }
-      column(NFVendaFuturaVo::tipoNota) {
+      column(EntregaFuturaVo::tipoNota) {
         caption = "TipoNota"
         setRenderer({tipo ->
                       tipo?.descricao ?: ""
                     }, TextRenderer())
         setSortProperty("tipo_nota")
       }
-      column(NFVendaFuturaVo::lancamento) {
+      column(EntregaFuturaVo::lancamento) {
         caption = "Data"
         dateFormat()
         setSortProperty("data", "hora")
       }
-      column(NFVendaFuturaVo::dataHoraLancamento) {
+      column(EntregaFuturaVo::dataHoraLancamento) {
         caption = "Hora"
         timeFormat()
         setSortProperty("data", "hora")
       }
   
-      column(NFVendaFuturaVo::dataEmissao) {
+      column(EntregaFuturaVo::dataEmissao) {
         caption = "Emissao"
         dateFormat()
         setSortProperty("dataEmissao", "data", "hora")
       }
-      column(NFVendaFuturaVo::abreviacao) {
+      column(EntregaFuturaVo::abreviacao) {
         caption = "Localização"
         setSortProperty("abreviacao")
       }
-      column(NFVendaFuturaVo::usuario) {
+      column(EntregaFuturaVo::usuario) {
         caption = "Usuário"
         setRenderer({
                       it?.loginName ?: ""
                     }, TextRenderer())
         setSortProperty("usuario.loginName")
       }
-      column(NFVendaFuturaVo::rota) {
+      column(EntregaFuturaVo::rota) {
         caption = "Rota"
       }
-      column(NFVendaFuturaVo::cliente) {
+      column(EntregaFuturaVo::cliente) {
         caption = "Cliente"
         setSortProperty("cliente")
       }

@@ -1,6 +1,6 @@
 package br.com.engecopi.estoque.viewmodel.entregaFutura
 
-data class LocalizacaoVendaFutura(val abreviacao: String, val itensVendaFutura: List<ItemVendaFutura>) {
+data class LocalizacaoVendaFutura(val abreviacao: String, val itensEntregaFutura: List<ItemEntregaFutura>) {
   val countSelecionado
-    get() = itensVendaFutura.filter {it.selecionado || it.isSave()}.size
+    get() = itensEntregaFutura.filter {it.selecionado || it.isSave()}.size
 }

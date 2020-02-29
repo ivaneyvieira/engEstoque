@@ -1,9 +1,9 @@
 package br.com.engecopi.estoque.ui.views.entregaFutura
 
 import br.com.engecopi.estoque.model.TipoNota
-import br.com.engecopi.estoque.viewmodel.entregaFutura.ItemVendaFutura
+import br.com.engecopi.estoque.viewmodel.entregaFutura.ChaveEntregaFuturaViewModel
+import br.com.engecopi.estoque.viewmodel.entregaFutura.ItemEntregaFutura
 import br.com.engecopi.estoque.viewmodel.entregaFutura.LocalizacaoVendaFutura
-import br.com.engecopi.estoque.viewmodel.entregaFutura.NFVendaFuturaViewModel
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.row
 import br.com.engecopi.framework.ui.view.showDialog
@@ -34,8 +34,8 @@ import com.vaadin.ui.Window
 import com.vaadin.ui.themes.ValoTheme
 
 class DlgNotaFuturaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
-                       val viewModel: NFVendaFuturaViewModel,
-                       val execConfirma: (itens: List<ItemVendaFutura>) -> Unit): Window("Nota de Saída") {
+                       val viewModel: ChaveEntregaFuturaViewModel,
+                       val execConfirma: (itens: List<ItemEntregaFutura>) -> Unit): Window("Nota de Saída") {
   private lateinit var gridProdutos: Grid<LocalizacaoVendaFutura>
   
   init {
@@ -44,7 +44,7 @@ class DlgNotaFuturaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
       w =
         (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
           .px
-  
+      
       grupo("Nota fiscal de saída") {
         verticalLayout {
           row {
@@ -90,7 +90,7 @@ class DlgNotaFuturaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
                 val itens =
                   gridProdutos.dataProvider.getAll()
                     .flatMap {loc ->
-                      loc.itensVendaFutura.filter {it.selecionado}
+                      loc.itensEntregaFutura.filter {it.selecionado}
                     }
                 execConfirma(itens)
                 close()
@@ -124,7 +124,7 @@ class DlgNotaFuturaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
                       .distinct()
                       .map {notaSaci ->
                         val saldo = viewModel.saldoProduto(notaSaci, abrev)
-                        ItemVendaFutura(notaSaci, saldo, abrev)
+                        ItemEntregaFutura(notaSaci, saldo, abrev)
                       }
                   LocalizacaoVendaFutura(abrev, itensVendaFutura)
                 }

@@ -1,8 +1,8 @@
 package br.com.engecopi.estoque.ui.views.entregaFutura
 
-import br.com.engecopi.estoque.viewmodel.entregaFutura.ItemVendaFutura
+import br.com.engecopi.estoque.viewmodel.entregaFutura.ChaveEntregaFuturaViewModel
+import br.com.engecopi.estoque.viewmodel.entregaFutura.ItemEntregaFutura
 import br.com.engecopi.estoque.viewmodel.entregaFutura.LocalizacaoVendaFutura
-import br.com.engecopi.estoque.viewmodel.entregaFutura.NFVendaFuturaViewModel
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.row
 import com.github.mvysny.karibudsl.v8.VAlign.Right
@@ -25,9 +25,9 @@ import com.vaadin.ui.Window
 import com.vaadin.ui.themes.ValoTheme
 
 class DlgNotaVendaFutura(val localizacaoNota: LocalizacaoVendaFutura,
-                         val viewModel: NFVendaFuturaViewModel,
+                         val viewModel: ChaveEntregaFuturaViewModel,
                          val update: () -> Unit): Window("Itens da expedição") {
-  private lateinit var gridProdutos: Grid<ItemVendaFutura>
+  private lateinit var gridProdutos: Grid<ItemEntregaFutura>
 
   init {
     verticalLayout {
@@ -53,7 +53,7 @@ class DlgNotaVendaFutura(val localizacaoNota: LocalizacaoVendaFutura,
                   viewModel.view.showWarning("Foi selecionado mais uma grade do mesmo produto")
                 }
                 else {
-                  localizacaoNota.itensVendaFutura.forEach {
+                  localizacaoNota.itensEntregaFutura.forEach {
                     it.selecionado = false
                   }
                   val itensSelecionado =
@@ -77,9 +77,9 @@ class DlgNotaVendaFutura(val localizacaoNota: LocalizacaoVendaFutura,
           }
         }
         row {
-          gridProdutos = grid(ItemVendaFutura::class) {
-            val itens = localizacaoNota.itensVendaFutura
-
+          gridProdutos = grid(ItemEntregaFutura::class) {
+            val itens = localizacaoNota.itensEntregaFutura
+    
             this.dataProvider = ListDataProvider(itens)
             removeAllColumns()
             val selectionModel = setSelectionMode(MULTI)
@@ -99,30 +99,30 @@ class DlgNotaVendaFutura(val localizacaoNota: LocalizacaoVendaFutura,
             }
 
             setSizeFull()
-
-            addColumnFor(ItemVendaFutura::prdno) {
+    
+            addColumnFor(ItemEntregaFutura::prdno) {
               expandRatio = 1
               caption = "Código"
             }
-            addColumnFor(ItemVendaFutura::nome) {
+            addColumnFor(ItemEntregaFutura::nome) {
               expandRatio = 5
               caption = "Descrição"
             }
-            addColumnFor(ItemVendaFutura::grade) {
+            addColumnFor(ItemEntregaFutura::grade) {
               expandRatio = 1
               caption = "Grade"
             }
-            addColumnFor(ItemVendaFutura::saldo) {
+            addColumnFor(ItemEntregaFutura::saldo) {
               expandRatio = 1
               caption = "Saldo"
               align = Right
             }
-            addColumnFor(ItemVendaFutura::quant) {
+            addColumnFor(ItemEntregaFutura::quant) {
               expandRatio = 1
               caption = "Qtd Saida"
               align = Right
             }
-            addColumnFor(ItemVendaFutura::saldoFinal) {
+            addColumnFor(ItemEntregaFutura::saldoFinal) {
               expandRatio = 1
               caption = "Saldo Final"
               align = Right
@@ -136,7 +136,7 @@ class DlgNotaVendaFutura(val localizacaoNota: LocalizacaoVendaFutura,
               }
             }
           }
-          localizacaoNota.itensVendaFutura.forEach {item ->
+          localizacaoNota.itensEntregaFutura.forEach {item ->
             if(item.selecionado) gridProdutos.select(item)
             else gridProdutos.deselect(item)
           }
