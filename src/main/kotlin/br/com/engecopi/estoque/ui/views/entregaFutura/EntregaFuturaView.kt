@@ -7,7 +7,7 @@ import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
 import br.com.engecopi.estoque.ui.views.movimentacao.NotaView
 import br.com.engecopi.estoque.viewmodel.entregaFutura.EntregaFututaViewModel
 import br.com.engecopi.estoque.viewmodel.entregaFutura.EntregaFututaVo
-import br.com.engecopi.estoque.viewmodel.entregaFutura.IEntregaFututaView
+import br.com.engecopi.estoque.viewmodel.entregaFutura.IEntregaFuturaView
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
 import br.com.engecopi.framework.ui.view.dateFormat
@@ -30,14 +30,14 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView("entrega_futura")
-class EntregaFuturaView: NotaView<EntregaFututaVo, EntregaFututaViewModel, IEntregaFututaView>(), IEntregaFututaView {
+class EntregaFuturaView: NotaView<EntregaFututaVo, EntregaFututaViewModel, IEntregaFuturaView>(), IEntregaFuturaView {
   var formCodBar: PnlCodigoBarras? = null
-
+  
   override fun enter(event: ViewChangeEvent) {
     super.enter(event)
     formCodBar?.focusEdit()
   }
-
+  
   init {
     viewModel = EntregaFututaViewModel(this)
     layoutForm {
@@ -79,14 +79,14 @@ class EntregaFuturaView: NotaView<EntregaFututaVo, EntregaFututaViewModel, IEntr
             }
           }
         }
-
+  
         grupo("Produto") {
           produtoField(operation, binder, "Saída")
         }
       }
       if(!isAdmin && operation == UPDATE) binder.setReadOnly(true)
     }
-    form("Entrega ao Cliente")
+    form("Entrega Nota")
     gridCrud {
       formCodBar = formCodbar()
       addCustomToolBarComponent(btnDesfazer())

@@ -13,7 +13,7 @@ import br.com.engecopi.saci.saci
 import java.time.LocalDate
 import java.time.LocalTime
 
-class RessuprimentoProcessamento(val view: IPedidoRessuprimentoView) {
+class ChaveRessuprimentoProcessamento(val view: IChaveRessuprimentoView) {
   fun processaKey(notasSaci: List<ItemRessuprimento>): Nota {
     if(notasSaci.all {
         it.isSave()

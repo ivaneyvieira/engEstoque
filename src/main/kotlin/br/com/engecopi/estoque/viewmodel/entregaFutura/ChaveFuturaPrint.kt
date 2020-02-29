@@ -6,7 +6,7 @@ import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.query.QItemNota
 
-class NFVendaFuturaPrint() {
+class ChaveFuturaPrint() {
   fun imprimir(nota: Nota?): String {
     nota ?: return ""
     val id = nota.id

@@ -9,8 +9,8 @@ import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
 
-class EntregaRessuprimentoEditorViewModel(view: IRessuprimentoEditorView):
-  NotaViewModel<EntregaRessuprimentoVo, IRessuprimentoEditorView>(view, SAIDA, ENTREGUE, ENTREGUE) {
+class EditorRessuprimentoViewModel(ressuprimentoView: IEditorRessuprimentoView):
+  NotaViewModel<EntregaRessuprimentoVo, IEditorRessuprimentoView>(ressuprimentoView, SAIDA, ENTREGUE, ENTREGUE) {
   override fun newBean(): EntregaRessuprimentoVo {
     return EntregaRessuprimentoVo()
   }
@@ -33,4 +33,4 @@ class EntregaRessuprimentoEditorViewModel(view: IRessuprimentoEditorView):
   }
 }
 
-interface IRessuprimentoEditorView: INotaView
+interface IEditorRessuprimentoView: INotaView

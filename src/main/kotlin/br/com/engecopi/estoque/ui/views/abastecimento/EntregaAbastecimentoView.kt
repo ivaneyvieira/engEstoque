@@ -1,12 +1,13 @@
-package br.com.engecopi.estoque.ui.views.expedicao
+package br.com.engecopi.estoque.ui.views.abastecimento
 
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.TipoNota
+import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
 import br.com.engecopi.estoque.ui.views.movimentacao.NotaView
-import br.com.engecopi.estoque.viewmodel.expedicao.EntregaClienteEditorViewModel
-import br.com.engecopi.estoque.viewmodel.expedicao.EntregaClienteVo
-import br.com.engecopi.estoque.viewmodel.expedicao.IEntregaClienteEditorView
+import br.com.engecopi.estoque.viewmodel.abastecimento.EntregaAbastecimentoViewModel
+import br.com.engecopi.estoque.viewmodel.abastecimento.EntregaAbastecimentoVo
+import br.com.engecopi.estoque.viewmodel.abastecimento.IEntregaAbastecimentoView
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
 import br.com.engecopi.framework.ui.view.dateFormat
@@ -14,7 +15,6 @@ import br.com.engecopi.framework.ui.view.default
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.intFormat
 import br.com.engecopi.framework.ui.view.row
-import br.com.engecopi.framework.ui.view.timeFormat
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.bind
 import com.github.mvysny.karibudsl.v8.comboBox
@@ -24,22 +24,33 @@ import com.github.mvysny.karibudsl.v8.px
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.verticalLayout
 import com.github.mvysny.karibudsl.v8.w
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
-@AutoView("entrega_cliente_editor")
-class EntregaClienteEditorView: NotaView<EntregaClienteVo, EntregaClienteEditorViewModel, IEntregaClienteEditorView>(),
-                                IEntregaClienteEditorView {
+@AutoView("entrega_abastecimento")
+class EntregaAbastecimentoView:
+  NotaView<EntregaAbastecimentoVo, EntregaAbastecimentoViewModel, IEntregaAbastecimentoView>(),
+  IEntregaAbastecimentoView {
+  var formCodBar: PnlCodigoBarras? = null
+  
+  override fun enter(event: ViewChangeEvent) {
+    super.enter(event)
+    formCodBar?.focusEdit()
+  }
+  
   init {
-    viewModel = EntregaClienteEditorViewModel(this)
+    viewModel = EntregaAbastecimentoViewModel(this)
     layoutForm {
       if(operation == ADD) {
         binder.bean.lojaNF = lojaDeposito
         binder.bean.usuario = usuario
       }
       formLayout.apply {
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
-
+        w =
+          (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+            .px
+        
         grupo("Nota fiscal de saída") {
           verticalLayout {
             row {
@@ -50,104 +61,102 @@ class EntregaClienteEditorView: NotaView<EntregaClienteVo, EntregaClienteEditorV
                 default {it.descricao}
                 isReadOnly = true
                 setItems(TipoNota.valuesSaida())
-                bind(binder).bind(EntregaClienteVo::tipoNota)
+                bind(binder).bind(EntregaAbastecimentoVo::tipoNota)
               }
               dateField("Data") {
                 expandRatio = 1f
                 isReadOnly = true
-                bind(binder).bind(EntregaClienteVo::dataNota.name)
+                bind(binder).bind(EntregaAbastecimentoVo::dataNota.name)
               }
               textField("Rota") {
                 expandRatio = 1f
                 isReadOnly = true
-                bind(binder).bind(EntregaClienteVo::rota)
+                bind(binder).bind(EntregaAbastecimentoVo::rota)
               }
             }
             row {
               textField("Observação da nota fiscal") {
                 expandRatio = 1f
-                bind(binder).bind(EntregaClienteVo::observacaoNota)
+                bind(binder).bind(EntregaAbastecimentoVo::observacaoNota)
               }
             }
           }
         }
-
+  
         grupo("Produto") {
           produtoField(operation, binder, "Saída")
         }
       }
       if(!isAdmin && operation == UPDATE) binder.setReadOnly(true)
     }
-    form("Editor Entrega ao Cliente")
+    form("Entrega abastecimento")
     gridCrud {
-      reloadOnly = !isAdmin
+      formCodBar = formCodbar()
       addCustomToolBarComponent(btnDesfazer())
-      column(EntregaClienteVo::numeroCodigoReduzido) {
+      addCustomFormComponent(formCodBar)
+      reloadOnly = !isAdmin
+      column(EntregaAbastecimentoVo::numeroCodigo) {
         caption = "Número Conferencia"
         setSortProperty("codigo_barra_conferencia")
       }
-      column(EntregaClienteVo::lojaNF) {
+      column(EntregaAbastecimentoVo::lojaNF) {
         caption = "Loja NF"
         setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
       }
-      column(EntregaClienteVo::tipoNotaDescricao) {
+      column(EntregaAbastecimentoVo::tipoNotaDescricao) {
         caption = "TipoNota"
         setSortProperty("nota.tipo_nota")
       }
-      column(EntregaClienteVo::lancamento) {
+      column(EntregaAbastecimentoVo::lancamento) {
         caption = "Lançamento"
         dateFormat()
-        setSortProperty("nota.lancamento")
+        setSortProperty("nota.lancamento", "data", "hora")
       }
-      column(EntregaClienteVo::horaLacamento) {
-        caption = "Hora"
-        timeFormat()
-        setSortProperty("nota.lancamento", "nota.hora")
-      }
-      column(EntregaClienteVo::dataEmissao) {
+      column(EntregaAbastecimentoVo::dataEmissao) {
         caption = "Emissao"
         dateFormat()
         setSortProperty("nota.dataEmissao", "data", "hora")
       }
-      column(EntregaClienteVo::quantProduto) {
+      column(EntregaAbastecimentoVo::quantProduto) {
         caption = "Quantidade"
         intFormat()
       }
-      column(EntregaClienteVo::status) {
-        caption = "Situação"
-        setRenderer({it?.descricao ?: ""}, TextRenderer())
-      }
-      column(EntregaClienteVo::codigo) {
+      column(EntregaAbastecimentoVo::codigo) {
         caption = "Código"
         setSortProperty("produto.codigo")
       }
-      column(EntregaClienteVo::descricaoProduto) {
+      column(EntregaAbastecimentoVo::descricaoProduto) {
         caption = "Descrição"
       }
-      column(EntregaClienteVo::grade) {
+      column(EntregaAbastecimentoVo::grade) {
         caption = "Grade"
         setSortProperty("produto.grade")
       }
-      column(EntregaClienteVo::localizacao) {
+      column(EntregaAbastecimentoVo::localizacao) {
         caption = "Localização"
-        setRenderer({it?.abreviacao}, TextRenderer())
+        setRenderer({it?.toString()}, TextRenderer())
       }
-      column(EntregaClienteVo::usuario) {
+      column(EntregaAbastecimentoVo::usuario) {
         caption = "Usuário"
         setRenderer({it?.loginName ?: ""}, TextRenderer())
         setSortProperty("usuario.loginName")
       }
-      column(EntregaClienteVo::rotaDescricao) {
+      column(EntregaAbastecimentoVo::rotaDescricao) {
         caption = "Rota"
       }
-      column(EntregaClienteVo::cliente) {
+      column(EntregaAbastecimentoVo::cliente) {
         caption = "Cliente"
         setSortProperty("nota.cliente")
       }
-      val itens = viewModel.notasConferidas().groupBy {it.numeroNF}.entries.sortedBy {entry ->
-        entry.value.map {it.entityVo?.id ?: 0}.max()
-      }.mapNotNull {it.key}
-
+      val itens =
+        viewModel.notasConferidas()
+          .groupBy {it.numeroNF}
+          .entries.sortedBy {entry ->
+          entry.value.map {it.entityVo?.id ?: 0}
+            .max()
+        }
+          .mapNotNull {it.key}
+      
       grid.setStyleGenerator {saida ->
         if(saida.status == CONFERIDA) {
           val numero = saida.numeroNF
@@ -157,6 +166,13 @@ class EntregaClienteEditorView: NotaView<EntregaClienteVo, EntregaClienteEditorV
         }
         else null
       }
+    }
+  }
+  
+  private fun formCodbar(): PnlCodigoBarras {
+    return PnlCodigoBarras("Código de barras") {key ->
+      viewModel.findKey(key)
+      refreshGrid()
     }
   }
 }

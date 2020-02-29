@@ -6,7 +6,7 @@ import br.com.engecopi.estoque.model.ViewProdutoLoc
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.saci.saci
 
-class RessuprimentoFind(val view: IPedidoRessuprimentoView) {
+class ChaveRessuprimentoFind(val view: IChaveRessuprimentoView) {
   fun findNotaSaidaKey(key: String): List<NotaProdutoSaci> {
     return saci.findPedidoRessuprimento(key.toIntOrNull())
   }

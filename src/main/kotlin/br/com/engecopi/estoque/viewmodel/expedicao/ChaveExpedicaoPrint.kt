@@ -9,7 +9,7 @@ import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.envelopes.Printer
 import br.com.engecopi.estoque.model.query.QItemNota
 
-class NFExpedicaoPrint() {
+class ChaveExpedicaoPrint() {
   private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {
     itemNota ?: return ""
     val print = itemNota.printEtiqueta()
