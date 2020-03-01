@@ -5,6 +5,7 @@ import br.com.engecopi.estoque.model.dtos.DadosProdutosSaci
 import br.com.engecopi.estoque.model.dtos.EntregaFutura
 import br.com.engecopi.estoque.model.dtos.PedidoNotaRessuprimento
 import br.com.engecopi.estoque.model.dtos.PedidoSaci
+import br.com.engecopi.estoque.model.dtos.TabProdutoSaci
 import br.com.engecopi.estoque.model.dtos.TransferenciaAutomatica
 import br.com.engecopi.estoque.model.dtos.VendasCaixa
 import br.com.engecopi.saci.beans.ChaveProduto
@@ -350,6 +351,14 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addOptionalParameter("storeno", storeno)
       q.addOptionalParameter("ordno", ordno)
       q.executeUpdate()
+    }
+  }
+  
+  fun findProdutoSaci(): List<TabProdutoSaci> {
+    val sql = "/sqlSaci/produtoSaci.sql"
+    
+    return query(sql) {q ->
+      q.executeAndFetch(TabProdutoSaci::class.java)
     }
   }
   
