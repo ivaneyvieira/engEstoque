@@ -1,7 +1,9 @@
 package br.com.engecopi.estoque.model.dtos
 
 import br.com.engecopi.estoque.model.etlSaci.EntryID
+import br.com.engecopi.estoque.model.etlSaci.TableName
 
+@TableName("t_vendas_caixa")
 class VendasCaixa(id: String,
                   val storeno: Int,
                   val nfno: Int,

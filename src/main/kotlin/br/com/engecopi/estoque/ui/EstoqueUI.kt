@@ -136,11 +136,11 @@ class EstoqueUI: UI() {
   
       if(user.roleExpedicao()) sectionExpedicao(user)
   
-      if(user.roleFutura()) sectionFutura(user)
+      if(user.roleFutura()) sectionFutura()
   
-      if(user.roleRessuprimento()) sectionRessuprimento(user)
+      if(user.roleRessuprimento()) sectionRessuprimento()
   
-      if(user.roleAbastecimento()) sectionAbastecimento(user)
+      if(user.roleAbastecimento()) sectionAbastecimento()
   
       if(user.roleMovimentacao()) sessionMovimentacao()
   
@@ -201,7 +201,7 @@ class EstoqueUI: UI() {
     }
   }
   
-  private fun @VaadinDsl ValoMenu.sectionFutura(user: Usuario) {
+  private fun @VaadinDsl ValoMenu.sectionFutura() {
     section("Entrega Futura") {
       menuButton("Chave", NEWSPAPER, view = ChaveFuturaView::class.java)
       menuButton("Entrega", TRUCK, view = EntregaFuturaView::class.java)
@@ -209,7 +209,7 @@ class EstoqueUI: UI() {
     }
   }
   
-  private fun @VaadinDsl ValoMenu.sectionRessuprimento(user: Usuario) {
+  private fun @VaadinDsl ValoMenu.sectionRessuprimento() {
     section("Ressuprimento") {
       menuButton("Chave", NEWSPAPER, view = ChaveRessuprimentoView::class.java)
       menuButton("Entrega", TRUCK, view = EntregaRessuprimentoView::class.java)
@@ -217,7 +217,7 @@ class EstoqueUI: UI() {
     }
   }
   
-  private fun @VaadinDsl ValoMenu.sectionAbastecimento(user: Usuario) {
+  private fun @VaadinDsl ValoMenu.sectionAbastecimento() {
     section("Abastecimento") {
       menuButton("Chave", NEWSPAPER, view = ChaveAbastecimentoView::class.java)
       menuButton("Entrega", TRUCK, view = EntregaAbastecimentoView::class.java)
