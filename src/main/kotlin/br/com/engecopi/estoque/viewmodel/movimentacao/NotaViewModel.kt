@@ -350,23 +350,26 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?): E
       }
       produtos.addAll(produtosVo.asSequence().filter {
         it.quantidade != 0 && it.codigo != "" && it.localizacao?.localizacao?.startsWith(abreviacaoNota ?: "") ?: false
-      }.sortedWith(compareBy(ProdutoVO::isSave, ProdutoVO::codigo, ProdutoVO::grade, ProdutoVO::localizacao)).toList())
+      }.sortedWith(compareBy(ProdutoNotaVo::isSave,
+                             ProdutoNotaVo::codigo,
+                             ProdutoNotaVo::grade,
+                             ProdutoNotaVo::localizacao)).toList())
     }
   }
   
-  private fun listItensEntrada(notaProdutoSaci: NotaProdutoSaci): List<ProdutoVO> {
+  private fun listItensEntrada(notaProdutoSaci: NotaProdutoSaci): List<ProdutoNotaVo> {
     val prd = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return emptyList()
     val localizacoes =
       prd.localizacoes(abreviacaoNota)
         .sorted()
     val ultimaLocalizacao = localizacoes.max() ?: ""
-    val produtoVo = ProdutoVO(prd, RECEBIDO, LocProduto(ultimaLocalizacao), notaProdutoSaci.isSave()).apply {
+    val produtoVo = ProdutoNotaVo(prd, RECEBIDO, LocProduto(ultimaLocalizacao), notaProdutoSaci.isSave()).apply {
       quantidade = notaProdutoSaci.quant ?: 0
     }
     return listOf(produtoVo)
   }
   
-  private fun listItensSaida(notaProdutoSaci: NotaProdutoSaci): List<ProdutoVO> {
+  private fun listItensSaida(notaProdutoSaci: NotaProdutoSaci): List<ProdutoNotaVo> {
     val prd = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return emptyList()
     var quant = notaProdutoSaci.quant ?: return emptyList()
     val localizacoes =
@@ -374,7 +377,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?): E
         .sorted()
     val ultimaLocalizacao = localizacoes.max() ?: ""
     val produtosLocais = localizacoes.map {localizacao ->
-      ProdutoVO(prd, CONFERIDA, LocProduto(localizacao), notaProdutoSaci.isSave()).apply {
+      ProdutoNotaVo(prd, CONFERIDA, LocProduto(localizacao), notaProdutoSaci.isSave()).apply {
         if(quant > 0) if(quant > saldo) {
           if(localizacao == ultimaLocalizacao) {
             quantidade = quant
@@ -437,7 +440,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?): E
     get() = notaSaci != null
   val itemNota
     get() = toEntity()
-  val produtos = ArrayList<ProdutoVO>()
+  val produtos = ArrayList<ProdutoNotaVo>()
   var produto: Produto? = null
     set(value) {
       field = value
@@ -464,7 +467,10 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?): E
   var status: StatusNota? = null
 }
 
-class ProdutoVO(val produto: Produto, val statusNota: StatusNota, var localizacao: LocProduto?, var isSave: Boolean) {
+class ProdutoNotaVo(val produto: Produto,
+                    val statusNota: StatusNota,
+                    var localizacao: LocProduto?,
+                    var isSave: Boolean) {
   val codigo: String = produto.codigo
   val grade: String = produto.grade
   var quantidade: Int = 0

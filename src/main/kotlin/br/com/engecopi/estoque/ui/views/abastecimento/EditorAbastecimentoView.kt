@@ -74,14 +74,14 @@ class EditorAbastecimentoView:
             }
           }
         }
-        
+  
         grupo("Produto") {
           produtoField(operation, binder, "Saída")
         }
       }
       if(!isAdmin && operation == UPDATE) binder.setReadOnly(true)
     }
-    form("Editor Entrega ao Cliente")
+    form("Editor Abastecimento")
     gridCrud {
       reloadOnly = !isAdmin
       addCustomToolBarComponent(btnDesfazer())

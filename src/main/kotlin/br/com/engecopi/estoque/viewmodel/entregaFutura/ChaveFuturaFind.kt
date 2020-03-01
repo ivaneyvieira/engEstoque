@@ -12,7 +12,7 @@ import br.com.engecopi.estoque.viewmodel.ENotaNaoEntregaFutura
 import br.com.engecopi.estoque.viewmodel.ENovaBaixaLancada
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 
-class NotaFuturaFind {
+class ChaveFuturaFind {
   fun findNotaSaidaKey(key: String): List<NotaProdutoSaci> {
     val notaKey = KeyNota(key)
     val storeno = notaKey.storeno

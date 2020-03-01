@@ -24,25 +24,25 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class ChaveEntregaFuturaViewModel(view: IChaveEntregaFuturaView):
-  CrudViewModel<ViewNotaFutura, QViewNotaFutura, EntregaFuturaVo, IChaveEntregaFuturaView>(view) {
-  private val processing = NFVendaFuturaProcessamento()
-  private val print = NFVendaFuturaPrint()
-  private val find = NotaFuturaFind()
+class ChaveFuturaViewModel(view: IChaveFuturaView):
+  CrudViewModel<ViewNotaFutura, QViewNotaFutura, ChaveFuturaVo, IChaveFuturaView>(view) {
+  private val processing = ChaveFuturaProcessamento()
+  private val print = ChaveFuturaPrint()
+  private val find = ChaveFuturaFind()
   
-  override fun newBean(): EntregaFuturaVo {
-    return EntregaFuturaVo()
+  override fun newBean(): ChaveFuturaVo {
+    return ChaveFuturaVo()
   }
   
-  override fun update(bean: EntregaFuturaVo) {
+  override fun update(bean: ChaveFuturaVo) {
     log?.error("Atualização não permitida")
   }
   
-  override fun add(bean: EntregaFuturaVo) {
+  override fun add(bean: ChaveFuturaVo) {
     log?.error("Inserssão não permitida")
   }
   
-  override fun delete(bean: EntregaFuturaVo) {
+  override fun delete(bean: ChaveFuturaVo) {
     val nota = bean.findEntity() ?: return
     val saida = Nota.findSaida(nota.loja, nota.numero) ?: return
     
@@ -75,9 +75,9 @@ class ChaveEntregaFuturaViewModel(view: IChaveEntregaFuturaView):
       .id.desc()
   }
   
-  override fun ViewNotaFutura.toVO(): EntregaFuturaVo {
+  override fun ViewNotaFutura.toVO(): ChaveFuturaVo {
     val bean = this
-    return EntregaFuturaVo().apply {
+    return ChaveFuturaVo().apply {
       numero = bean.numero
       numeroBaixa = bean.numeroBaixa.filter {
         it.abreviacoes.contains(bean.abreviacao)
@@ -108,7 +108,7 @@ class ChaveEntregaFuturaViewModel(view: IChaveEntregaFuturaView):
     return data.eq(date)
   }
   
-  fun processaKey(notasSaci: List<ItemEntregaFutura>) = exec {
+  fun processaKey(notasSaci: List<ItemChaveFutura>) = exec {
     processing.processaKey(notasSaci)
       .updateView()
   }
@@ -142,7 +142,7 @@ class ChaveEntregaFuturaViewModel(view: IChaveEntregaFuturaView):
   }
 }
 
-class EntregaFuturaVo: EntityVo<ViewNotaFutura>() {
+class ChaveFuturaVo: EntityVo<ViewNotaFutura>() {
   override fun findEntity(): ViewNotaFutura? {
     return ViewNotaFutura.findSaida(loja, numero, abreviacao)
   }
@@ -168,10 +168,10 @@ class EntregaFuturaVo: EntityVo<ViewNotaFutura>() {
     get() = LocalDateTime.of(data, hora)
 }
 
-data class ItemEntregaFutura(val notaProdutoSaci: NotaProdutoSaci,
-                             val saldo: Int,
-                             val abrevicao: String,
-                             var selecionado: Boolean = false) {
+data class ItemChaveFutura(val notaProdutoSaci: NotaProdutoSaci,
+                           val saldo: Int,
+                           val abrevicao: String,
+                           var selecionado: Boolean = false) {
   val prdno = notaProdutoSaci.prdno
   val grade = notaProdutoSaci.grade
   val nome = notaProdutoSaci.nome
@@ -181,6 +181,6 @@ data class ItemEntregaFutura(val notaProdutoSaci: NotaProdutoSaci,
   fun isSave() = notaProdutoSaci.isSave()
 }
 
-interface IChaveEntregaFuturaView: ICrudView
+interface IChaveFuturaView: ICrudView
 
 

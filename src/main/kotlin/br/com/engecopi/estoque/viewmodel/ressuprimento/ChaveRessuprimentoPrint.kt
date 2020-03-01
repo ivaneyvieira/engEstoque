@@ -7,7 +7,7 @@ import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.query.QItemNota
 
-class NFRessuprimentoPrint() {
+class ChaveRessuprimentoPrint() {
   fun imprimir(nota: Nota?): List<EtiquetaRessuprimento> {
     nota ?: return return emptyList()
     val id = nota.id

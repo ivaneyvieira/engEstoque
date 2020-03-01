@@ -12,8 +12,8 @@ import br.com.engecopi.framework.viewmodel.EViewModelError
 import java.time.LocalDate
 import java.time.LocalTime
 
-class NFVendaFuturaProcessamento() {
-  fun processaKey(notasSaci: List<ItemEntregaFutura>): Nota {
+class ChaveFuturaProcessamento() {
+  fun processaKey(notasSaci: List<ItemChaveFutura>): Nota {
     if(notasSaci.all {
         it.isSave()
       }) throw EViewModelError("Todos os itens dessa nota já estão lançados")
@@ -21,9 +21,9 @@ class NFVendaFuturaProcessamento() {
     else throw EChaveNaoEncontrada()
   }
   
-  private fun processaNota(itensEntregaFutura: List<ItemEntregaFutura>): Nota {
+  private fun processaNota(itensChaveFutura: List<ItemChaveFutura>): Nota {
     val notaDoSaci =
-      itensEntregaFutura.firstOrNull()
+      itensChaveFutura.firstOrNull()
         ?.notaProdutoSaci
     notaDoSaci?.storeno ?: throw EViewModelError("Nota não encontrada")
     val nota: Nota? =
@@ -39,7 +39,7 @@ class NFVendaFuturaProcessamento() {
           }
         }
     nota ?: throw EViewModelError("Nota não encontrada")
-    val itens = itensEntregaFutura.mapNotNull {itemVendaFutura ->
+    val itens = itensChaveFutura.mapNotNull {itemVendaFutura ->
       val notaSaci = itemVendaFutura.notaProdutoSaci
       val item = ItemNota.find(notaSaci) ?: ItemNota.createItemNota(notaSaci, nota, itemVendaFutura.abrevicao)
       return@mapNotNull item?.apply {

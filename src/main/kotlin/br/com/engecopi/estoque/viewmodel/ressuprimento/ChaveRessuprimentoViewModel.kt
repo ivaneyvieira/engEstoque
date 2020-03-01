@@ -21,11 +21,11 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class PedidoRessuprimentoViewModel(view: IPedidoRessuprimentoView):
-  CrudViewModel<ViewPedidoRessuprimento, QViewPedidoRessuprimento, PedidoRessuprimentoVo, IPedidoRessuprimentoView>(view) {
-  private val processing = RessuprimentoProcessamento(view)
-  private val print = NFRessuprimentoPrint()
-  private val find = RessuprimentoFind(view)
+class ChaveRessuprimentoViewModel(view: IChaveRessuprimentoView):
+  CrudViewModel<ViewPedidoRessuprimento, QViewPedidoRessuprimento, ChaveRessuprimentoVo, IChaveRessuprimentoView>(view) {
+  private val processing = ChaveRessuprimentoProcessamento(view)
+  private val print = ChaveRessuprimentoPrint()
+  private val find = ChaveRessuprimentoFind(view)
   
   fun imprimeTudo() = execList {
     print.imprimeTudo()
@@ -49,8 +49,8 @@ class PedidoRessuprimentoViewModel(view: IPedidoRessuprimentoView):
   fun saldoProduto(notaProdutoSaci: NotaProdutoSaci, abreviacao: String) =
     find.saldoProduto(notaProdutoSaci, abreviacao)
   
-  override fun newBean(): PedidoRessuprimentoVo {
-    return PedidoRessuprimentoVo()
+  override fun newBean(): ChaveRessuprimentoVo {
+    return ChaveRessuprimentoVo()
   }
   
   fun processaKey(notasSaci: List<ItemRessuprimento>) = exec {
@@ -58,15 +58,15 @@ class PedidoRessuprimentoViewModel(view: IPedidoRessuprimentoView):
       .updateView()
   }
   
-  override fun update(bean: PedidoRessuprimentoVo) {
+  override fun update(bean: ChaveRessuprimentoVo) {
     log?.error("Atualização não permitida")
   }
   
-  override fun add(bean: PedidoRessuprimentoVo) {
+  override fun add(bean: ChaveRessuprimentoVo) {
     log?.error("Inserssão não permitida")
   }
   
-  override fun delete(bean: PedidoRessuprimentoVo) {
+  override fun delete(bean: ChaveRessuprimentoVo) {
     val nota = bean.findEntity() ?: return
     val saida = Nota.findSaida(nota.loja, nota.numero) ?: return
     
@@ -82,9 +82,9 @@ class PedidoRessuprimentoViewModel(view: IPedidoRessuprimentoView):
   override val query: QViewPedidoRessuprimento
     get() = QViewPedidoRessuprimento()
   
-  override fun ViewPedidoRessuprimento.toVO(): PedidoRessuprimentoVo {
+  override fun ViewPedidoRessuprimento.toVO(): ChaveRessuprimentoVo {
     val bean = this
-    return PedidoRessuprimentoVo().apply {
+    return ChaveRessuprimentoVo().apply {
       numero = bean.numero
       numeroBaixa = bean.numeroBaixa.filter {
         it.abreviacoes.contains(bean.abreviacao)
@@ -108,7 +108,7 @@ class PedidoRessuprimentoViewModel(view: IPedidoRessuprimentoView):
   }
 }
 
-class PedidoRessuprimentoVo: EntityVo<ViewPedidoRessuprimento>() {
+class ChaveRessuprimentoVo: EntityVo<ViewPedidoRessuprimento>() {
   override fun findEntity(): ViewPedidoRessuprimento? {
     return ViewPedidoRessuprimento.findSaida(lojaDeposito, numero, abreviacao)
   }
@@ -151,7 +151,7 @@ data class ItemRessuprimento(val notaProdutoSaci: NotaProdutoSaci,
   fun isSave() = notaProdutoSaci.isSave()
 }
 
-interface IPedidoRessuprimentoView: ICrudView {
+interface IChaveRessuprimentoView: ICrudView {
   fun updateGrid()
 }
 

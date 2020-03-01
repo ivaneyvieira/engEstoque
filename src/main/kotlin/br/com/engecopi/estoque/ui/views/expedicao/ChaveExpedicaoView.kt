@@ -7,11 +7,11 @@ import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.ui.print.PrintUtil.imprimeNotaConcluida
 import br.com.engecopi.estoque.ui.print.PrintUtil.printText
 import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
-import br.com.engecopi.estoque.viewmodel.expedicao.INFExpedicaoView
+import br.com.engecopi.estoque.viewmodel.expedicao.ChaveExpedicaoViewModel
+import br.com.engecopi.estoque.viewmodel.expedicao.ChaveExpedicaoVo
+import br.com.engecopi.estoque.viewmodel.expedicao.IChaveExpedicaoView
 import br.com.engecopi.estoque.viewmodel.expedicao.ItemExpedicao
-import br.com.engecopi.estoque.viewmodel.expedicao.LocalizacaoNota
-import br.com.engecopi.estoque.viewmodel.expedicao.NFExpedicaoViewModel
-import br.com.engecopi.estoque.viewmodel.expedicao.NFExpedicaoVo
+import br.com.engecopi.estoque.viewmodel.expedicao.LocalizacaoExpedicao
 import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.dateFormat
 import br.com.engecopi.framework.ui.view.grupo
@@ -50,8 +50,8 @@ import com.vaadin.ui.Window
 import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
 
-@AutoView("nf_expedicao")
-class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), INFExpedicaoView {
+@AutoView("chave_expedicao")
+class ChaveExpedicaoView: CrudLayoutView<ChaveExpedicaoVo, ChaveExpedicaoViewModel>(), IChaveExpedicaoView {
   var formCodBar: PnlCodigoBarras? = null
   private val isAdmin
     get() = userDefaultIsAdmin
@@ -62,7 +62,7 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), IN
   }
   
   init {
-    viewModel = NFExpedicaoViewModel(this)
+    viewModel = ChaveExpedicaoViewModel(this)
     layoutForm {
       formLayout.apply {
         w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
@@ -107,7 +107,7 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), IN
         }
       }
     }
-    form("Nota Fiscal (Expedição)")
+    form("Chave Expedição")
     gridCrud {
       addCustomToolBarComponent(btnImprimeTudo())
       formCodBar = formCodbar()
@@ -115,7 +115,7 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), IN
       updateOperationVisible = false
       addOperationVisible = false
       deleteOperationVisible = RegistryUserInfo.usuarioDefault.admin
-      column(NFExpedicaoVo::numero) {
+      column(ChaveExpedicaoVo::numero) {
         caption = "Número NF"
         setSortProperty("numero")
       }
@@ -136,49 +136,49 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), IN
           }
         }
       }.id = "btnPrint"
-      column(NFExpedicaoVo::loja) {
+      column(ChaveExpedicaoVo::loja) {
         caption = "Loja NF"
         setRenderer({loja ->
                       loja?.sigla ?: ""
                     }, TextRenderer())
       }
-      column(NFExpedicaoVo::tipoNota) {
+      column(ChaveExpedicaoVo::tipoNota) {
         caption = "TipoNota"
         setRenderer({tipo ->
                       tipo?.descricao ?: ""
                     }, TextRenderer())
         setSortProperty("tipo_nota")
       }
-      column(NFExpedicaoVo::lancamento) {
+      column(ChaveExpedicaoVo::lancamento) {
         caption = "Data"
         dateFormat()
         setSortProperty("data", "hora")
       }
-      column(NFExpedicaoVo::dataHoraLancamento) {
+      column(ChaveExpedicaoVo::dataHoraLancamento) {
         caption = "Hora"
         timeFormat()
         setSortProperty("data", "hora")
       }
-      column(NFExpedicaoVo::dataEmissao) {
+      column(ChaveExpedicaoVo::dataEmissao) {
         caption = "Emissao"
         dateFormat()
         setSortProperty("dataEmissao", "data", "hora")
       }
-      column(NFExpedicaoVo::abreviacao) {
+      column(ChaveExpedicaoVo::abreviacao) {
         caption = "Localização"
         setSortProperty("abreviacao")
       }
-      column(NFExpedicaoVo::usuario) {
+      column(ChaveExpedicaoVo::usuario) {
         caption = "Usuário"
         setRenderer({
                       it?.loginName ?: ""
                     }, TextRenderer())
         setSortProperty("usuario.loginName")
       }
-      column(NFExpedicaoVo::rota) {
+      column(ChaveExpedicaoVo::rota) {
         caption = "Rota"
       }
-      column(NFExpedicaoVo::cliente) {
+      column(ChaveExpedicaoVo::cliente) {
         caption = "Cliente"
         setSortProperty("cliente")
       }
@@ -189,7 +189,7 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), IN
     return PnlCodigoBarras("Chave da Nota Fiscal") {key ->
       val notaSaida = viewModel.findNotaSaidaKey(key)
       if(notaSaida.isNotEmpty()) {
-        val dialog = DlgNotaLoc(notaSaida, viewModel) {itens ->
+        val dialog = DlgExpedicaoLoc(notaSaida, viewModel) {itens ->
           val nota = viewModel.processaKey(itens)
           val pacotes = viewModel.imprimir(nota)
           pacotes.forEach {
@@ -214,16 +214,18 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), IN
   }
 }
 
-class DlgNotaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
-                 val viewModel: NFExpedicaoViewModel,
-                 val execConfirma: (itens: List<ItemExpedicao>) -> Unit): Window("Nota de Saída") {
-  private lateinit var gridProdutos: Grid<LocalizacaoNota>
-
+class DlgExpedicaoLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
+                      val viewModel: ChaveExpedicaoViewModel,
+                      val execConfirma: (itens: List<ItemExpedicao>) -> Unit): Window("Localizações") {
+  private lateinit var gridProdutos: Grid<LocalizacaoExpedicao>
+  
   init {
     val nota = notaProdutoSaida.firstOrNull()
     verticalLayout {
-      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
-
+      w =
+        (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+          .px
+      
       grupo("Nota fiscal de saída") {
         verticalLayout {
           row {
@@ -278,19 +280,29 @@ class DlgNotaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
           }
         }
         row {
-          gridProdutos = grid(LocalizacaoNota::class) {
+          gridProdutos = grid(LocalizacaoExpedicao::class) {
             val itens = notaProdutoSaida
             val abreviacaoItens = itens.groupBy {item ->
-              val abreviacao = viewModel.abreviacoes(item.prdno, item.grade).sorted()
+              val abreviacao =
+                viewModel.abreviacoes(item.prdno, item.grade)
+                  .sorted()
               abreviacao
             }
-            val abreviacoes = abreviacaoItens.keys.asSequence().flatten().distinct().map {abrev ->
-              val itensExpedicao =
-                abreviacaoItens.filter {it.key.contains(abrev)}.map {it.value}.flatten().distinct().map {notaSaci ->
-                  val saldo = viewModel.saldoProduto(notaSaci, abrev)
-                  ItemExpedicao(notaSaci, saldo, abrev)
+            val abreviacoes =
+              abreviacaoItens.keys.asSequence()
+                .flatten()
+                .distinct()
+                .map {abrev ->
+                  val itensExpedicao =
+                    abreviacaoItens.filter {it.key.contains(abrev)}
+                      .map {it.value}
+                      .flatten()
+                      .distinct()
+                      .map {notaSaci ->
+                        val saldo = viewModel.saldoProduto(notaSaci, abrev)
+                        ItemExpedicao(notaSaci, saldo, abrev)
                 }
-              LocalizacaoNota(abrev, itensExpedicao)
+                  LocalizacaoExpedicao(abrev, itensExpedicao)
             }.toList().sortedBy {it.abreviacao}.toList()
 
             this.dataProvider = ListDataProvider(abreviacoes)
@@ -301,18 +313,18 @@ class DlgNotaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
               Button().apply {
                 this.icon = VaadinIcons.CHECK
                 this.addClickListener {
-                  val dlg = DlgNotaExpedicao(item, viewModel) {
+                  val dlg = DlgExpedicao(item, viewModel) {
                     gridProdutos.refresh()
                   }
                   dlg.showDialog()
                 }
               }
             }.id = "btnPrintItens"
-            addColumnFor(LocalizacaoNota::abreviacao) {
+            addColumnFor(LocalizacaoExpedicao::abreviacao) {
               expandRatio = 1
               caption = "Código"
             }
-            addColumnFor(LocalizacaoNota::countSelecionado) {
+            addColumnFor(LocalizacaoExpedicao::countSelecionado) {
               caption = "Selecionados"
               align = VAlign.Right
             }
@@ -323,16 +335,18 @@ class DlgNotaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
   }
 }
 
-class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
-                       val viewModel: NFExpedicaoViewModel,
-                       val update: () -> Unit): Window("Itens da expedição") {
+class DlgExpedicao(val localizacaoExpedicao: LocalizacaoExpedicao,
+                   val viewModel: ChaveExpedicaoViewModel,
+                   val update: () -> Unit): Window("Itens da Nota") {
   private lateinit var gridProdutos: Grid<ItemExpedicao>
-
+  
   init {
     verticalLayout {
-      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
-
-      grupo("Expedição ${localizacaoNota.abreviacao}") {
+      w =
+        (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+          .px
+      
+      grupo("Expedição ${localizacaoExpedicao.abreviacao}") {
         row {
           horizontalLayout {
             alignment = Alignment.BOTTOM_LEFT
@@ -340,7 +354,7 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
               alignment = Alignment.BOTTOM_RIGHT
               addStyleName(ValoTheme.BUTTON_PRIMARY)
               addClickListener {
-                localizacaoNota.itensExpedicao.forEach {
+                localizacaoExpedicao.itensExpedicao.forEach {
                   it.selecionado = false
                 }
                 val itensSelecionado = gridProdutos.selectedItems.toList().filter {!it.isSave()}
@@ -362,7 +376,7 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
         }
         row {
           gridProdutos = grid(ItemExpedicao::class) {
-            val itens = localizacaoNota.itensExpedicao
+            val itens = localizacaoExpedicao.itensExpedicao
 
             this.dataProvider = ListDataProvider(itens)
             removeAllColumns()
@@ -420,7 +434,7 @@ class DlgNotaExpedicao(val localizacaoNota: LocalizacaoNota,
               }
             }
           }
-          localizacaoNota.itensExpedicao.forEach {item ->
+          localizacaoExpedicao.itensExpedicao.forEach {item ->
             if(item.selecionado) gridProdutos.select(item)
             else gridProdutos.deselect(item)
           }

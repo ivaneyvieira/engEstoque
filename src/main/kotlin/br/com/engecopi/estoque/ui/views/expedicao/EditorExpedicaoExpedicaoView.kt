@@ -1,12 +1,12 @@
-package br.com.engecopi.estoque.ui.views.ressuprimento
+package br.com.engecopi.estoque.ui.views.expedicao
 
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.ui.views.movimentacao.NotaView
-import br.com.engecopi.estoque.viewmodel.ressuprimento.EntregaRessuprimentoEditorViewModel
-import br.com.engecopi.estoque.viewmodel.ressuprimento.EntregaRessuprimentoVo
-import br.com.engecopi.estoque.viewmodel.ressuprimento.IRessuprimentoEditorView
+import br.com.engecopi.estoque.viewmodel.expedicao.EditorExpedicaoViewModel
+import br.com.engecopi.estoque.viewmodel.expedicao.EntregaExpedicaoVo
+import br.com.engecopi.estoque.viewmodel.expedicao.IEditorExpedicaoView
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
 import br.com.engecopi.framework.ui.view.dateFormat
@@ -27,11 +27,11 @@ import com.github.mvysny.karibudsl.v8.w
 import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
-@AutoView("entrega_ressuprimento_editor")
-class EntregaRessuprimentoEditorView: NotaView<EntregaRessuprimentoVo, EntregaRessuprimentoEditorViewModel,
-  IRessuprimentoEditorView>(), IRessuprimentoEditorView {
+@AutoView("editor_expedicao")
+class EditorExpedicaoExpedicaoView: NotaView<EntregaExpedicaoVo, EditorExpedicaoViewModel, IEditorExpedicaoView>(),
+                                    IEditorExpedicaoView {
   init {
-    viewModel = EntregaRessuprimentoEditorViewModel(this)
+    viewModel = EditorExpedicaoViewModel(this)
     layoutForm {
       if(operation == ADD) {
         binder.bean.lojaNF = lojaDeposito
@@ -41,8 +41,8 @@ class EntregaRessuprimentoEditorView: NotaView<EntregaRessuprimentoVo, EntregaRe
         w =
           (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
             .px
-        
-        grupo("Ressuprimento") {
+
+        grupo("Nota fiscal de saída") {
           verticalLayout {
             row {
               notaFiscalField(operation, binder)
@@ -52,23 +52,23 @@ class EntregaRessuprimentoEditorView: NotaView<EntregaRessuprimentoVo, EntregaRe
                 default {it.descricao}
                 isReadOnly = true
                 setItems(TipoNota.valuesSaida())
-                bind(binder).bind(EntregaRessuprimentoVo::tipoNota)
+                bind(binder).bind(EntregaExpedicaoVo::tipoNota)
               }
               dateField("Data") {
                 expandRatio = 1f
                 isReadOnly = true
-                bind(binder).bind(EntregaRessuprimentoVo::dataNota.name)
+                bind(binder).bind(EntregaExpedicaoVo::dataNota.name)
               }
               textField("Rota") {
                 expandRatio = 1f
                 isReadOnly = true
-                bind(binder).bind(EntregaRessuprimentoVo::rota)
+                bind(binder).bind(EntregaExpedicaoVo::rota)
               }
             }
             row {
               textField("Observação da nota fiscal") {
                 expandRatio = 1f
-                bind(binder).bind(EntregaRessuprimentoVo::observacaoNota)
+                bind(binder).bind(EntregaExpedicaoVo::observacaoNota)
               }
             }
           }
@@ -80,88 +80,76 @@ class EntregaRessuprimentoEditorView: NotaView<EntregaRessuprimentoVo, EntregaRe
       }
       if(!isAdmin && operation == UPDATE) binder.setReadOnly(true)
     }
-    form("Editor de Ressuprimento")
+    form("Editor Expedição")
     gridCrud {
       reloadOnly = !isAdmin
       addCustomToolBarComponent(btnDesfazer())
-      column(EntregaRessuprimentoVo::numeroCodigo) {
+      column(EntregaExpedicaoVo::numeroCodigoReduzido) {
         caption = "Número Conferencia"
         setSortProperty("codigo_barra_conferencia")
       }
-      column(EntregaRessuprimentoVo::dataEmissao) {
-        caption = "Emissao"
-        dateFormat()
-        setSortProperty("nota.dataEmissao", "data", "hora")
+      column(EntregaExpedicaoVo::lojaNF) {
+        caption = "Loja NF"
+        setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
       }
-      column(EntregaRessuprimentoVo::numeroBaixa) {
-        caption = "NF Baixa"
+      column(EntregaExpedicaoVo::tipoNotaDescricao) {
+        caption = "TipoNota"
+        setSortProperty("nota.tipo_nota")
       }
-      column(EntregaRessuprimentoVo::dataBaixa) {
-        caption = "Data Baixa"
-        dateFormat()
-      }
-      column(EntregaRessuprimentoVo::lancamento) {
+      column(EntregaExpedicaoVo::lancamento) {
         caption = "Lançamento"
         dateFormat()
         setSortProperty("nota.lancamento")
       }
-      column(EntregaRessuprimentoVo::horaLacamento) {
+      column(EntregaExpedicaoVo::horaLacamento) {
         caption = "Hora"
         timeFormat()
         setSortProperty("nota.lancamento", "nota.hora")
       }
-      column(EntregaRessuprimentoVo::lojaNF) {
-        caption = "Loja NF"
-        setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
+      column(EntregaExpedicaoVo::dataEmissao) {
+        caption = "Emissao"
+        dateFormat()
+        setSortProperty("nota.dataEmissao", "data", "hora")
       }
-      column(EntregaRessuprimentoVo::tipoNotaDescricao) {
-        caption = "TipoNota"
-        setSortProperty("nota.tipo_nota")
-      }
-      column(EntregaRessuprimentoVo::quantProduto) {
+      column(EntregaExpedicaoVo::quantProduto) {
         caption = "Quantidade"
         intFormat()
       }
-      column(EntregaRessuprimentoVo::status) {
+      column(EntregaExpedicaoVo::status) {
         caption = "Situação"
         setRenderer({it?.descricao ?: ""}, TextRenderer())
       }
-      column(EntregaRessuprimentoVo::codigo) {
+      column(EntregaExpedicaoVo::codigo) {
         caption = "Código"
         setSortProperty("produto.codigo")
       }
-      column(EntregaRessuprimentoVo::descricaoProduto) {
+      column(EntregaExpedicaoVo::descricaoProduto) {
         caption = "Descrição"
       }
-      column(EntregaRessuprimentoVo::grade) {
+      column(EntregaExpedicaoVo::grade) {
         caption = "Grade"
         setSortProperty("produto.grade")
       }
-      column(EntregaRessuprimentoVo::localizacao) {
+      column(EntregaExpedicaoVo::localizacao) {
         caption = "Localização"
         setRenderer({it?.abreviacao}, TextRenderer())
       }
-      column(EntregaRessuprimentoVo::usuario) {
+      column(EntregaExpedicaoVo::usuario) {
         caption = "Usuário"
         setRenderer({it?.loginName ?: ""}, TextRenderer())
         setSortProperty("usuario.loginName")
       }
-      column(EntregaRessuprimentoVo::rotaDescricao) {
+      column(EntregaExpedicaoVo::rotaDescricao) {
         caption = "Rota"
       }
-      column(EntregaRessuprimentoVo::cliente) {
+      column(EntregaExpedicaoVo::cliente) {
         caption = "Cliente"
         setSortProperty("nota.cliente")
       }
-      val itens =
-        viewModel.notasConferidas()
-          .groupBy {it.numeroNF}
-          .entries.sortedBy {entry ->
-          entry.value.map {it.entityVo?.id ?: 0}
-            .max()
-        }
-          .mapNotNull {it.key}
-      
+      val itens = viewModel.notasConferidas().groupBy {it.numeroNF}.entries.sortedBy {entry ->
+        entry.value.map {it.entityVo?.id ?: 0}.max()
+      }.mapNotNull {it.key}
+
       grid.setStyleGenerator {saida ->
         if(saida.status == CONFERIDA) {
           val numero = saida.numeroNF

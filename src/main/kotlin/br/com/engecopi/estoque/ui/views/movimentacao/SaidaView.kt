@@ -21,7 +21,7 @@ import br.com.engecopi.estoque.ui.print.PrintUtil.imprimeNotaConcluida
 import br.com.engecopi.estoque.ui.print.PrintUtil.printText
 import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
 import br.com.engecopi.estoque.viewmodel.movimentacao.ISaidaView
-import br.com.engecopi.estoque.viewmodel.movimentacao.ProdutoVO
+import br.com.engecopi.estoque.viewmodel.movimentacao.ProdutoNotaVo
 import br.com.engecopi.estoque.viewmodel.movimentacao.SaidaViewModel
 import br.com.engecopi.estoque.viewmodel.movimentacao.SaidaVo
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
@@ -277,9 +277,9 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
 
 class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execPrint: (List<ItemNota>) -> Unit):
   Window("Nota de Saída") {
-  private lateinit var grupoSelecaoCol: Column<ProdutoVO, Int>
-  private lateinit var dateUpdateCol: Column<ProdutoVO, LocalDateTime>
-  private lateinit var gridProdutos: Grid<ProdutoVO>
+  private lateinit var grupoSelecaoCol: Column<ProdutoNotaVo, Int>
+  private lateinit var dateUpdateCol: Column<ProdutoNotaVo, LocalDateTime>
+  private lateinit var gridProdutos: Grid<ProdutoNotaVo>
   private val edtBarcode = TextField()
   
   fun focusEditor() {
@@ -418,7 +418,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
           this.addComponentsAndExpand(edtBarcode)
         }
         row(expand = true) {
-          gridProdutos = grid(ProdutoVO::class) {
+          gridProdutos = grid(ProdutoNotaVo::class) {
             isExpanded = true
             GridEditorColumnFix(this)
             setSizeFull()
@@ -469,45 +469,45 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
               addStyleName(ValoTheme.TEXTFIELD_ALIGN_RIGHT)
             }
             setSizeFull()
-            dateUpdateCol = addColumnFor(ProdutoVO::dateUpdate) {
+            dateUpdateCol = addColumnFor(ProdutoNotaVo::dateUpdate) {
               this.isHidden = true
             }
-            grupoSelecaoCol = addColumnFor(ProdutoVO::ordermSelecao) {
+            grupoSelecaoCol = addColumnFor(ProdutoNotaVo::ordermSelecao) {
               this.isHidden = true
             }
-            addColumnFor(ProdutoVO::codigo) {
+            addColumnFor(ProdutoNotaVo::codigo) {
               expandRatio = 1
               caption = "Código"
             }
-            addColumnFor(ProdutoVO::gtin) {
+            addColumnFor(ProdutoNotaVo::gtin) {
               expandRatio = 1
               caption = "Gtin"
             }
-            addColumnFor(ProdutoVO::descricaoProduto) {
+            addColumnFor(ProdutoNotaVo::descricaoProduto) {
               expandRatio = 5
               caption = "Descrição"
             }
-            addColumnFor(ProdutoVO::localizacao) {
+            addColumnFor(ProdutoNotaVo::localizacao) {
               expandRatio = 4
               caption = "Localização"
               setEditorComponent(comboLoc)
             }
-            addColumnFor(ProdutoVO::grade) {
+            addColumnFor(ProdutoNotaVo::grade) {
               expandRatio = 1
               caption = "Grade"
             }
-            addColumnFor(ProdutoVO::saldo) {
+            addColumnFor(ProdutoNotaVo::saldo) {
               expandRatio = 1
               caption = "Saldo"
               align = VAlign.Right
             }
-            addColumnFor(ProdutoVO::quantidade) {
+            addColumnFor(ProdutoNotaVo::quantidade) {
               expandRatio = 1
               caption = "Qtd Saida"
               align = VAlign.Right
               setEditorComponent(edtQuant)
             }
-            addColumnFor(ProdutoVO::saldoFinal) {
+            addColumnFor(ProdutoNotaVo::saldoFinal) {
               expandRatio = 1
               caption = "Saldo Final"
               align = VAlign.Right
@@ -545,13 +545,13 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
     }
   }
   
-  private fun confirmaProdutos(produtosSelecionado: Set<ProdutoVO>, produtosNaoSelecionado: Set<ProdutoVO>,
+  private fun confirmaProdutos(produtosSelecionado: Set<ProdutoNotaVo>, produtosNaoSelecionado: Set<ProdutoNotaVo>,
                                statusSelecionado: StatusNota, statusNaoSelecionado: StatusNota) {
     viewModel.confirmaProdutos(produtosSelecionado.toList(), statusSelecionado)
     viewModel.confirmaProdutos(produtosNaoSelecionado.toList(), statusNaoSelecionado)
   }
   
-  private fun @VaadinDsl Grid<ProdutoVO>.updateProdutosNota() {
+  private fun @VaadinDsl Grid<ProdutoNotaVo>.updateProdutosNota() {
     val abreviacao = abreviacaoDefault
     //nota.refresh()
     val itens = nota.itens.filter {it.localizacao.startsWith(abreviacao ?: "")}
@@ -559,7 +559,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
       val produto = item.produto
       val statusNota = item.status
       val isSave = item.id != 0L
-      if(produto != null) ProdutoVO(produto, statusNota, LocProduto(item.localizacao), isSave).apply {
+      if(produto != null) ProdutoNotaVo(produto, statusNota, LocProduto(item.localizacao), isSave).apply {
         this.quantidade = item.quantidade
         this.value = item
         this.updateItem(false)
@@ -571,7 +571,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
     this.dataProvider = ListDataProvider(itensProvider)
   }
   
-  private fun Grid<ProdutoVO>.sortDefault() {
+  private fun Grid<ProdutoNotaVo>.sortDefault() {
     clearSortOrder()
     sortOrder = listOf(GridSortOrder(grupoSelecaoCol, ASCENDING), GridSortOrder(dateUpdateCol, DESCENDING))
   }
@@ -603,7 +603,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
     }
   }
   
-  private fun selecionaProduto(item: ProdutoVO) {
+  private fun selecionaProduto(item: ProdutoNotaVo) {
     gridProdutos.select(item)
     item.selecionado = true
     item.updateItem(true)
