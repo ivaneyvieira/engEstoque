@@ -15,22 +15,22 @@ import br.com.engecopi.estoque.ui.views.configuracao.AbreciacaoView
 import br.com.engecopi.estoque.ui.views.configuracao.EtiquetaView
 import br.com.engecopi.estoque.ui.views.configuracao.ProdutoView
 import br.com.engecopi.estoque.ui.views.configuracao.UsuarioView
-import br.com.engecopi.estoque.ui.views.entregaFutura.EntregaFuturaEditorView
+import br.com.engecopi.estoque.ui.views.entregaFutura.ChaveFuturaView
+import br.com.engecopi.estoque.ui.views.entregaFutura.EditorFuturaView
 import br.com.engecopi.estoque.ui.views.entregaFutura.EntregaFuturaView
-import br.com.engecopi.estoque.ui.views.entregaFutura.NFVendaFuturaView
 import br.com.engecopi.estoque.ui.views.etiquetas.HistoricoView
 import br.com.engecopi.estoque.ui.views.etiquetas.LabelNotaView
 import br.com.engecopi.estoque.ui.views.etiquetas.LabelProdutoView
-import br.com.engecopi.estoque.ui.views.expedicao.EntregaClienteEditorView
-import br.com.engecopi.estoque.ui.views.expedicao.EntregaClienteView
-import br.com.engecopi.estoque.ui.views.expedicao.NFExpedicaoView
+import br.com.engecopi.estoque.ui.views.expedicao.ChaveExpedicaoView
+import br.com.engecopi.estoque.ui.views.expedicao.EditorExpedicaoExpedicaoView
+import br.com.engecopi.estoque.ui.views.expedicao.EntregaExpedicaoView
 import br.com.engecopi.estoque.ui.views.movimentacao.EntradaView
 import br.com.engecopi.estoque.ui.views.movimentacao.SaidaView
 import br.com.engecopi.estoque.ui.views.paineis.PainelGeralView
 import br.com.engecopi.estoque.ui.views.paineis.PedidoTransferenciaView
-import br.com.engecopi.estoque.ui.views.ressuprimento.EntregaRessuprimentoEditorView
+import br.com.engecopi.estoque.ui.views.ressuprimento.ChaveRessuprimentoView
+import br.com.engecopi.estoque.ui.views.ressuprimento.EditorRessuprimento
 import br.com.engecopi.estoque.ui.views.ressuprimento.EntregaRessuprimentoView
-import br.com.engecopi.estoque.ui.views.ressuprimento.PedidoRessuprimentoView
 import br.com.engecopi.framework.ui.view.toViewName
 import br.com.engecopi.utils.SystemUtils
 import com.github.mvysny.karibudsl.v8.MenuButton
@@ -153,8 +153,8 @@ class EstoqueUI: UI() {
     navigator.addProvider(autoViewProvider)
     setErrorHandler {e -> errorHandler(e)}
     val contextPathDeafualt = when {
-      user.roleExpedicao() && contextPath == "" -> NFExpedicaoView::class.java.toViewName()
-      user.roleFutura() && contextPath == ""    -> NFVendaFuturaView::class.java.toViewName()
+      user.roleExpedicao() && contextPath == "" -> ChaveExpedicaoView::class.java.toViewName()
+      user.roleFutura() && contextPath == ""    -> ChaveFuturaView::class.java.toViewName()
       else                                      -> contextPath
     }
     
@@ -194,26 +194,26 @@ class EstoqueUI: UI() {
   private fun @VaadinDsl ValoMenu.sectionExpedicao(user: Usuario) {
     section("Expedição") {
       if(!user.estoque || user.admin) {
-        menuButton("Chave", NEWSPAPER, view = NFExpedicaoView::class.java)
+        menuButton("Chave", NEWSPAPER, view = ChaveExpedicaoView::class.java)
       }
-      menuButton("Entrega", TRUCK, view = EntregaClienteView::class.java)
-      menuButton("Editor", TRUCK, view = EntregaClienteEditorView::class.java)
+      menuButton("Entrega", TRUCK, view = EntregaExpedicaoView::class.java)
+      menuButton("Editor", TRUCK, view = EditorExpedicaoExpedicaoView::class.java)
     }
   }
   
   private fun @VaadinDsl ValoMenu.sectionFutura(user: Usuario) {
     section("Entrega Futura") {
-      menuButton("Chave", NEWSPAPER, view = NFVendaFuturaView::class.java)
+      menuButton("Chave", NEWSPAPER, view = ChaveFuturaView::class.java)
       menuButton("Entrega", TRUCK, view = EntregaFuturaView::class.java)
-      menuButton("Editor", TRUCK, view = EntregaFuturaEditorView::class.java)
+      menuButton("Editor", TRUCK, view = EditorFuturaView::class.java)
     }
   }
   
   private fun @VaadinDsl ValoMenu.sectionRessuprimento(user: Usuario) {
     section("Ressuprimento") {
-      menuButton("Chave", NEWSPAPER, view = PedidoRessuprimentoView::class.java)
+      menuButton("Chave", NEWSPAPER, view = ChaveRessuprimentoView::class.java)
       menuButton("Entrega", TRUCK, view = EntregaRessuprimentoView::class.java)
-      menuButton("Editor", TRUCK, view = EntregaRessuprimentoEditorView::class.java)
+      menuButton("Editor", TRUCK, view = EditorRessuprimento::class.java)
     }
   }
   

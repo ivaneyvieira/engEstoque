@@ -8,14 +8,14 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 class SaidaProcessamento(val view: IView) {
-  fun confirmaProdutos(itens: List<ProdutoVO>, situacao: StatusNota): List<ItemNota> {
+  fun confirmaProdutos(itens: List<ProdutoNotaVo>, situacao: StatusNota): List<ItemNota> {
     itens.firstOrNull()
       ?.value?.nota?.save()
     val listMultable = mutableListOf<ItemNota>()
     itens.forEach {produtoVO ->
       produtoVO.value?.run {
         if(this.id != 0L) refresh()
-        
+      
         this.status = situacao
         this.impresso = false
         this.usuario = RegistryUserInfo.usuarioDefault

@@ -25,33 +25,33 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class NFExpedicaoViewModel(view: INFExpedicaoView):
-  CrudViewModel<ViewNotaExpedicao, QViewNotaExpedicao, NFExpedicaoVo, INFExpedicaoView>(view) {
-  private val print = NFExpedicaoPrint()
-  private val processing = NFExpedicaoProcessamento()
-  private val find = NFExpedicaoFind()
+class ChaveExpedicaoViewModel(view: IChaveExpedicaoView):
+  CrudViewModel<ViewNotaExpedicao, QViewNotaExpedicao, ChaveExpedicaoVo, IChaveExpedicaoView>(view) {
+  private val print = ChaveExpedicaoPrint()
+  private val processing = ChaveExpedicaoProcessamento()
+  private val find = ChaveExpedicaoFind()
   
-  override fun newBean(): NFExpedicaoVo {
-    return NFExpedicaoVo()
+  override fun newBean(): ChaveExpedicaoVo {
+    return ChaveExpedicaoVo()
   }
   
-  override fun update(bean: NFExpedicaoVo) {
+  override fun update(bean: ChaveExpedicaoVo) {
     log?.error("Atualização não permitida")
   }
   
-  override fun add(bean: NFExpedicaoVo) {
+  override fun add(bean: ChaveExpedicaoVo) {
     log?.error("Inserssão não permitida")
   }
   
-  override fun delete(bean: NFExpedicaoVo) {
+  override fun delete(bean: ChaveExpedicaoVo) {
     val nota = bean.findEntity() ?: return
     val saida = Nota.findSaida(nota.loja, nota.numero) ?: return
-  
+    
     QItemNota().nota.equalTo(saida)
       .status.notIn(ENTREGUE, ENT_LOJA)
       .localizacao.startsWith(bean.abreviacao)
       .delete()
-  
+    
     if(saida.itensNota().isEmpty())
       saida.delete()
   }
@@ -75,9 +75,9 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
       .id.desc()
   }
   
-  override fun ViewNotaExpedicao.toVO(): NFExpedicaoVo {
+  override fun ViewNotaExpedicao.toVO(): ChaveExpedicaoVo {
     val bean = this
-    return NFExpedicaoVo().apply {
+    return ChaveExpedicaoVo().apply {
       numero = bean.numero
       tipoMov = bean.tipoMov
       tipoNota = bean.tipoNota
@@ -142,7 +142,7 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
   }
 }
 
-class NFExpedicaoVo: EntityVo<ViewNotaExpedicao>() {
+class ChaveExpedicaoVo: EntityVo<ViewNotaExpedicao>() {
   override fun findEntity(): ViewNotaExpedicao? {
     return ViewNotaExpedicao.findSaida(lojaDeposito, numero, abreviacao)
   }
@@ -180,5 +180,5 @@ data class ItemExpedicao(val notaProdutoSaci: NotaProdutoSaci,
   fun isSave() = notaProdutoSaci.isSave()
 }
 
-interface INFExpedicaoView: ICrudView
+interface IChaveExpedicaoView: ICrudView
 

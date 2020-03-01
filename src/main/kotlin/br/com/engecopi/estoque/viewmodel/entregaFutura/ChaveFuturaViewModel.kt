@@ -24,33 +24,33 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class NFVendaFuturaViewModel(view: INFVendaFuturaView):
-  CrudViewModel<ViewNotaFutura, QViewNotaFutura, NFVendaFuturaVo, INFVendaFuturaView>(view) {
-  private val processing = NFVendaFuturaProcessamento()
-  private val print = NFVendaFuturaPrint()
-  private val find = NotaFuturaFind()
+class ChaveFuturaViewModel(view: IChaveFuturaView):
+  CrudViewModel<ViewNotaFutura, QViewNotaFutura, ChaveFuturaVo, IChaveFuturaView>(view) {
+  private val processing = ChaveFuturaProcessamento()
+  private val print = ChaveFuturaPrint()
+  private val find = ChaveFuturaFind()
   
-  override fun newBean(): NFVendaFuturaVo {
-    return NFVendaFuturaVo()
+  override fun newBean(): ChaveFuturaVo {
+    return ChaveFuturaVo()
   }
   
-  override fun update(bean: NFVendaFuturaVo) {
+  override fun update(bean: ChaveFuturaVo) {
     log?.error("Atualização não permitida")
   }
   
-  override fun add(bean: NFVendaFuturaVo) {
+  override fun add(bean: ChaveFuturaVo) {
     log?.error("Inserssão não permitida")
   }
   
-  override fun delete(bean: NFVendaFuturaVo) {
+  override fun delete(bean: ChaveFuturaVo) {
     val nota = bean.findEntity() ?: return
     val saida = Nota.findSaida(nota.loja, nota.numero) ?: return
-  
+    
     QItemNota().nota.equalTo(saida)
       .status.notIn(ENTREGUE, ENT_LOJA)
       .localizacao.startsWith(bean.abreviacao)
       .delete()
-  
+    
     if(saida.itensNota().isEmpty())
       saida.delete()
   }
@@ -75,9 +75,9 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
       .id.desc()
   }
   
-  override fun ViewNotaFutura.toVO(): NFVendaFuturaVo {
+  override fun ViewNotaFutura.toVO(): ChaveFuturaVo {
     val bean = this
-    return NFVendaFuturaVo().apply {
+    return ChaveFuturaVo().apply {
       numero = bean.numero
       numeroBaixa = bean.numeroBaixa.filter {
         it.abreviacoes.contains(bean.abreviacao)
@@ -108,7 +108,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
     return data.eq(date)
   }
   
-  fun processaKey(notasSaci: List<ItemVendaFutura>) = exec {
+  fun processaKey(notasSaci: List<ItemChaveFutura>) = exec {
     processing.processaKey(notasSaci)
       .updateView()
   }
@@ -142,7 +142,7 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
   }
 }
 
-class NFVendaFuturaVo: EntityVo<ViewNotaFutura>() {
+class ChaveFuturaVo: EntityVo<ViewNotaFutura>() {
   override fun findEntity(): ViewNotaFutura? {
     return ViewNotaFutura.findSaida(loja, numero, abreviacao)
   }
@@ -168,7 +168,7 @@ class NFVendaFuturaVo: EntityVo<ViewNotaFutura>() {
     get() = LocalDateTime.of(data, hora)
 }
 
-data class ItemVendaFutura(val notaProdutoSaci: NotaProdutoSaci,
+data class ItemChaveFutura(val notaProdutoSaci: NotaProdutoSaci,
                            val saldo: Int,
                            val abrevicao: String,
                            var selecionado: Boolean = false) {
@@ -181,6 +181,6 @@ data class ItemVendaFutura(val notaProdutoSaci: NotaProdutoSaci,
   fun isSave() = notaProdutoSaci.isSave()
 }
 
-interface INFVendaFuturaView: ICrudView
+interface IChaveFuturaView: ICrudView
 
 

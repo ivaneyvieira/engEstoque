@@ -1,12 +1,13 @@
-package br.com.engecopi.estoque.ui.views.entregaFutura
+package br.com.engecopi.estoque.ui.views.expedicao
 
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.TipoNota
+import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
 import br.com.engecopi.estoque.ui.views.movimentacao.NotaView
-import br.com.engecopi.estoque.viewmodel.entregaFutura.EntregaFuturaEditorViewModel
-import br.com.engecopi.estoque.viewmodel.entregaFutura.EntregaFututaVo
-import br.com.engecopi.estoque.viewmodel.entregaFutura.IEntregaFututaEditorView
+import br.com.engecopi.estoque.viewmodel.expedicao.EntregaExpedicaoViewModel
+import br.com.engecopi.estoque.viewmodel.expedicao.EntregaExpedicaoVo
+import br.com.engecopi.estoque.viewmodel.expedicao.IEntregaExpedicaoView
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
 import br.com.engecopi.framework.ui.view.dateFormat
@@ -14,7 +15,6 @@ import br.com.engecopi.framework.ui.view.default
 import br.com.engecopi.framework.ui.view.grupo
 import br.com.engecopi.framework.ui.view.intFormat
 import br.com.engecopi.framework.ui.view.row
-import br.com.engecopi.framework.ui.view.timeFormat
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.github.mvysny.karibudsl.v8.bind
 import com.github.mvysny.karibudsl.v8.comboBox
@@ -24,24 +24,30 @@ import com.github.mvysny.karibudsl.v8.px
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.verticalLayout
 import com.github.mvysny.karibudsl.v8.w
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
-@AutoView("entrega_futura_editor")
-class EntregaFuturaEditorView: NotaView<EntregaFututaVo, EntregaFuturaEditorViewModel, IEntregaFututaEditorView>(),
-                               IEntregaFututaEditorView {
+@AutoView("entrega_expedicao")
+class EntregaExpedicaoView: NotaView<EntregaExpedicaoVo, EntregaExpedicaoViewModel, IEntregaExpedicaoView>(),
+                            IEntregaExpedicaoView {
+  var formCodBar: PnlCodigoBarras? = null
+  
+  override fun enter(event: ViewChangeEvent) {
+    super.enter(event)
+    formCodBar?.focusEdit()
+  }
+  
   init {
-    viewModel = EntregaFuturaEditorViewModel(this)
+    viewModel = EntregaExpedicaoViewModel(this)
     layoutForm {
       if(operation == ADD) {
         binder.bean.lojaNF = lojaDeposito
         binder.bean.usuario = usuario
       }
       formLayout.apply {
-        w =
-          (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-            .px
-  
+        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
+
         grupo("Nota fiscal de saída") {
           verticalLayout {
             row {
@@ -52,23 +58,23 @@ class EntregaFuturaEditorView: NotaView<EntregaFututaVo, EntregaFuturaEditorView
                 default {it.descricao}
                 isReadOnly = true
                 setItems(TipoNota.valuesSaida())
-                bind(binder).bind(EntregaFututaVo::tipoNota)
+                bind(binder).bind(EntregaExpedicaoVo::tipoNota)
               }
               dateField("Data") {
                 expandRatio = 1f
                 isReadOnly = true
-                bind(binder).bind(EntregaFututaVo::dataNota.name)
+                bind(binder).bind(EntregaExpedicaoVo::dataNota.name)
               }
               textField("Rota") {
                 expandRatio = 1f
                 isReadOnly = true
-                bind(binder).bind(EntregaFututaVo::rota)
+                bind(binder).bind(EntregaExpedicaoVo::rota)
               }
             }
             row {
               textField("Observação da nota fiscal") {
                 expandRatio = 1f
-                bind(binder).bind(EntregaFututaVo::observacaoNota)
+                bind(binder).bind(EntregaExpedicaoVo::observacaoNota)
               }
             }
           }
@@ -80,88 +86,69 @@ class EntregaFuturaEditorView: NotaView<EntregaFututaVo, EntregaFuturaEditorView
       }
       if(!isAdmin && operation == UPDATE) binder.setReadOnly(true)
     }
-    form("Editor Entrega ao Cliente")
+    form("Entrega Expedição")
     gridCrud {
-      reloadOnly = !isAdmin
+      formCodBar = formCodbar()
       addCustomToolBarComponent(btnDesfazer())
-      column(EntregaFututaVo::numeroCodigo) {
+      addCustomFormComponent(formCodBar)
+      reloadOnly = !isAdmin
+      column(EntregaExpedicaoVo::numeroCodigo) {
         caption = "Número Conferencia"
         setSortProperty("codigo_barra_conferencia")
       }
-      column(EntregaFututaVo::dataEmissao) {
+      column(EntregaExpedicaoVo::lojaNF) {
+        caption = "Loja NF"
+        setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
+      }
+      column(EntregaExpedicaoVo::tipoNotaDescricao) {
+        caption = "TipoNota"
+        setSortProperty("nota.tipo_nota")
+      }
+      column(EntregaExpedicaoVo::lancamento) {
+        caption = "Lançamento"
+        dateFormat()
+        setSortProperty("nota.lancamento", "data", "hora")
+      }
+      column(EntregaExpedicaoVo::dataEmissao) {
         caption = "Emissao"
         dateFormat()
         setSortProperty("nota.dataEmissao", "data", "hora")
       }
-      column(EntregaFututaVo::numeroBaixa) {
-        caption = "NF Baixa"
-      }
-      column(EntregaFututaVo::dataBaixa) {
-        caption = "Data Baixa"
-        dateFormat()
-      }
-      column(EntregaFututaVo::lancamento) {
-        caption = "Lançamento"
-        dateFormat()
-        setSortProperty("nota.lancamento")
-      }
-      column(EntregaFututaVo::horaLacamento) {
-        caption = "Hora"
-        timeFormat()
-        setSortProperty("nota.lancamento", "nota.hora")
-      }
-      column(EntregaFututaVo::lojaNF) {
-        caption = "Loja NF"
-        setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
-      }
-      column(EntregaFututaVo::tipoNotaDescricao) {
-        caption = "TipoNota"
-        setSortProperty("nota.tipo_nota")
-      }
-      column(EntregaFututaVo::quantProduto) {
+      column(EntregaExpedicaoVo::quantProduto) {
         caption = "Quantidade"
         intFormat()
       }
-      column(EntregaFututaVo::status) {
-        caption = "Situação"
-        setRenderer({it?.descricao ?: ""}, TextRenderer())
-      }
-      column(EntregaFututaVo::codigo) {
+      column(EntregaExpedicaoVo::codigo) {
         caption = "Código"
         setSortProperty("produto.codigo")
       }
-      column(EntregaFututaVo::descricaoProduto) {
+      column(EntregaExpedicaoVo::descricaoProduto) {
         caption = "Descrição"
       }
-      column(EntregaFututaVo::grade) {
+      column(EntregaExpedicaoVo::grade) {
         caption = "Grade"
         setSortProperty("produto.grade")
       }
-      column(EntregaFututaVo::localizacao) {
+      column(EntregaExpedicaoVo::localizacao) {
         caption = "Localização"
-        setRenderer({it?.abreviacao}, TextRenderer())
+        setRenderer({it?.toString()}, TextRenderer())
       }
-      column(EntregaFututaVo::usuario) {
+      column(EntregaExpedicaoVo::usuario) {
         caption = "Usuário"
         setRenderer({it?.loginName ?: ""}, TextRenderer())
         setSortProperty("usuario.loginName")
       }
-      column(EntregaFututaVo::rotaDescricao) {
+      column(EntregaExpedicaoVo::rotaDescricao) {
         caption = "Rota"
       }
-      column(EntregaFututaVo::cliente) {
+      column(EntregaExpedicaoVo::cliente) {
         caption = "Cliente"
         setSortProperty("nota.cliente")
       }
-      val itens =
-        viewModel.notasConferidas()
-          .groupBy {it.numeroNF}
-          .entries.sortedBy {entry ->
-          entry.value.map {it.entityVo?.id ?: 0}
-            .max()
-        }
-          .mapNotNull {it.key}
-  
+      val itens = viewModel.notasConferidas().groupBy {it.numeroNF}.entries.sortedBy {entry ->
+        entry.value.map {it.entityVo?.id ?: 0}.max()
+      }.mapNotNull {it.key}
+
       grid.setStyleGenerator {saida ->
         if(saida.status == CONFERIDA) {
           val numero = saida.numeroNF
@@ -171,6 +158,13 @@ class EntregaFuturaEditorView: NotaView<EntregaFututaVo, EntregaFuturaEditorView
         }
         else null
       }
+    }
+  }
+
+  private fun formCodbar(): PnlCodigoBarras {
+    return PnlCodigoBarras("Código de barras") {key ->
+      viewModel.findKey(key)
+      refreshGrid()
     }
   }
 }
