@@ -9,7 +9,7 @@ import br.com.engecopi.estoque.model.query.QItemNota
 
 class ChaveRessuprimentoPrint() {
   fun imprimir(nota: Nota?): List<EtiquetaRessuprimento> {
-    nota ?: return return emptyList()
+    nota ?: return emptyList()
     val id = nota.id
     val notaRef = Nota.byId(id) ?: return emptyList()
     val listaItens = notaRef.itensNota()
@@ -21,7 +21,7 @@ class ChaveRessuprimentoPrint() {
       Etiqueta.findByStatus(INCLUIDA, "ETDEP")
     val prints = etiquetas.flatMap {etiqueta ->
       itens.mapNotNull {item ->
-        val text = imprimir(item, etiqueta) ?: return@mapNotNull null
+        val text = imprimir(item, etiqueta)
         val nota = item.nota ?: return@mapNotNull null
         val abreviacao = item.abreviacao ?: return@mapNotNull null
         EtiquetaRessuprimento(nota, abreviacao, text)

@@ -29,7 +29,7 @@ class ChaveRessuprimentoFind(val view: IChaveRessuprimentoView) {
       if(gradeStr.startsWith("***")) {
         Produto.findProdutos(notaSaci.codigo())
           .map {produto ->
-            val quant = notaSaci.quant ?: 0
+            //val quant = notaSaci.quant ?: 0
             notaSaci.copy(grade = produto.grade)
               .apply {
                 this.gradeGenerica = true

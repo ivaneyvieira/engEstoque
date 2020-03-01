@@ -554,7 +554,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
   private fun @VaadinDsl Grid<ProdutoNotaVo>.updateProdutosNota() {
     val abreviacao = abreviacaoDefault
     //nota.refresh()
-    val itens = nota.itens.filter {it.localizacao.startsWith(abreviacao ?: "")}
+    val itens = nota.itens.filter {it.localizacao.startsWith(abreviacao)}
     val itensProvider = itens.mapNotNull {item ->
       val produto = item.produto
       val statusNota = item.status
