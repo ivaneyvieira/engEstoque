@@ -67,8 +67,7 @@ class PedidoRessuprimentoViewModel(view: IPedidoRessuprimentoView):
   }
   
   override fun delete(bean: PedidoRessuprimentoVo) {
-    val nota = bean.findEntity() ?: return
-    val saida = Nota.findSaida(nota.loja, nota.numero) ?: return
+    val saida = Nota.findSaida(bean.loja, bean.numero) ?: return
     
     QItemNota().nota.equalTo(saida)
       .status.notIn(ENTREGUE, ENT_LOJA)
