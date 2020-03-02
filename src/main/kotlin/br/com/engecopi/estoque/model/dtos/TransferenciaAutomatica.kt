@@ -17,14 +17,14 @@ class TransferenciaAutomatica(id: String,
                               val storenoTransf: Int,
                               val nftransf: String): EntryID(id) {
   override val chave: String
-    get() = "$storenoFat$nffat$storenoTransf$nftransf"
+    get() = "$xano$storenoFat$nffat$storenoTransf$nftransf"
   
   companion object {
-    private val SQL_BAIXA = """select * from t_transferencia_automatica
+    val SQL_BAIXA = """select * from t_transferencia_automatica
         |where storenoFat = :lojaFatura
         |  AND nffat = :numeroSerieFatura
       """.trimMargin()
-    private val SQL_FATURA = """select * from t_transferencia_automatica
+    val SQL_FATURA = """select * from t_transferencia_automatica
         |where storenoTransf = :lojaTransferencia
         |  AND nftransf = :numeroSerieTransferencia
       """.trimMargin()

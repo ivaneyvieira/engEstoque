@@ -7,6 +7,7 @@ import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.model.etlSaci.ETLEntregaFutura
 import br.com.engecopi.estoque.model.etlSaci.ETLPedidoNotaRessuprimento
 import br.com.engecopi.estoque.model.etlSaci.ETLPedidos
+import br.com.engecopi.estoque.model.etlSaci.ETLTabProdutoSaci
 import br.com.engecopi.estoque.model.etlSaci.ETLTransferenciaAutomatica
 import br.com.engecopi.estoque.ui.views.abastecimento.ChaveAbastecimentoView
 import br.com.engecopi.estoque.ui.views.abastecimento.EditorAbastecimentoView
@@ -315,6 +316,7 @@ class MyUIServlet: VaadinServlet() {
       ETLEntregaFutura.start()
       ETLTransferenciaAutomatica.start()
       ETLPedidoNotaRessuprimento.start()
+      ETLTabProdutoSaci.start()
     }
   }
 }

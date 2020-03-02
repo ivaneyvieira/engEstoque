@@ -1,7 +1,7 @@
 SELECT CAST(MD5(CONCAT(L.storeno, P.no, L.grade, L.localizacao)) AS CHAR) AS id, L.storeno,
-       P.no AS codigo, TRIM(MID(P.name, 1, 37)) AS nome, L.grade, L.localizacao,
-       MID(L.localizacao, 1, 4) AS abreviacao, (0 / 10000) AS custo,
-       substr(P.name, 38, 3) AS unidade,
+       P.no AS codigo, IFNULL(TRIM(MID(P.name, 1, 37)), '') AS nome, L.grade, L.localizacao,
+       IFNULL(MID(L.localizacao, 1, 4), '') AS abreviacao, 0.0000 AS custo,
+       IFNULL(TRIM(MID(P.name, 38, 3)), '') AS unidade,
        (CASE
           WHEN (P.clno BETWEEN 10000 AND 19999)
             THEN 'CAIXA'

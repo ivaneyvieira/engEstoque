@@ -2,12 +2,13 @@ package br.com.engecopi.estoque.model.dtos
 
 import br.com.engecopi.estoque.model.etlSaci.EntryID
 import br.com.engecopi.estoque.model.etlSaci.TableName
+import br.com.engecopi.utils.lpad
 
 @TableName("t_produto_saci")
 class TabProdutoSaci(
   id: String,
   val storeno: Int,
-  val codigo: String,
+  var codigo: String,
   val nome: String,
   val grade: String,
   val localizacao: String,
@@ -20,5 +21,11 @@ class TabProdutoSaci(
   val alt: Double
                     ): EntryID(id) {
   override val chave: String
-    get() = "$nome$custo$unidade$tipo$comp$larg$alt"
+    get() = "$codigo$nome$custo$unidade$tipo$comp$larg$alt"
+  
+  fun updateProduto(): TabProdutoSaci {
+    if(codigo.length < 16)
+      codigo = codigo.lpad(16, " ")
+    return this
+  }
 }

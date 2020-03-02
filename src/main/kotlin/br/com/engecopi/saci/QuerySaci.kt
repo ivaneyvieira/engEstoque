@@ -359,6 +359,9 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     
     return query(sql) {q ->
       q.executeAndFetch(TabProdutoSaci::class.java)
+        .map {
+          it.updateProduto()
+        }
     }
   }
   

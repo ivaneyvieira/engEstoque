@@ -11,8 +11,8 @@ class PedidoNotaRessuprimento(id: String,
                               val ordno: Int,
                               val dataPedido: Int,
                               val storenoNota: Int,
-                              val nfno: Int,
-                              val nfse: String,
+                              val nfno: Int?,
+                              val nfse: String?,
                               val numero: String,
                               val dataNota: Int): EntryID(id) {
   override val chave: String

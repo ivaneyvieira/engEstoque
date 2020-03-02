@@ -1,7 +1,7 @@
 SELECT DISTINCT cast(MD5(
-        CONCAT(N.storeno, N.ordno, SUBSTRING_INDEX(L.localizacao, '.', 1))) AS CHAR) AS id,
+        CONCAT(N.storeno, N.ordno, IFNULL(MID(L.localizacao, 1, 4), ''))) AS CHAR) AS id,
                 R.no AS rota, N.storeno, N.ordno AS numero, N.date, C.name AS clienteName,
-                SUBSTRING_INDEX(L.localizacao, '.', 1) AS abreviacao, nf.nfno, nf.nfse, N.status
+                IFNULL(MID(L.localizacao, 1, 4), '') AS abreviacao, nf.nfno, nf.nfse, N.status
 FROM sqldados.eord           AS N
   INNER JOIN sqldados.eoprd  AS P
                USING (storeno, ordno)
@@ -15,8 +15,5 @@ FROM sqldados.eord           AS N
                ON R.storenoFrom = N.storeno AND R.storenoTo = S.no
   LEFT JOIN  sqldados.nf
                ON N.storeno = nf.storeno AND N.ordno = nf.eordno
-WHERE (N.storeno = 4) AND
-      (N.status = 2 OR nf.nfno IS NOT NULL) AND
-      (localizacao <> '') AND
+WHERE (N.storeno = 4) AND (N.status = 2 OR nf.nfno IS NOT NULL) AND (localizacao <> '') AND
       N.date > :data_inicial
-ORDER BY N.date DESC

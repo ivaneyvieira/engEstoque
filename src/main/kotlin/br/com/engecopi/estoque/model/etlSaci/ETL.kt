@@ -5,6 +5,7 @@ import br.com.engecopi.utils.parameterNames
 import br.com.engecopi.utils.readInstanceProperty
 import io.ebean.DB
 import io.ebean.SqlUpdate
+import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType
 
 typealias ListenerEventUpdate<T> = (source: T, target: T) -> Unit
@@ -240,11 +241,16 @@ fun EntryID.listProperty(): List<String> {
 }
 
 fun Class<*>.listProperty(): List<String> {
-  return this.declaredFields?.toList()
-           .orEmpty()
-           .map {
-             it.name
-           } - listOf("Companion") + listOf("id")
+  val fields = this.declaredFields?.toList()
+    .orEmpty()
+    .filter {
+      val mod = it.modifiers
+      !Modifier.isStatic(mod)
+    }
+    .map {
+      it.name
+    }
+  return fields - listOf("Companion") + listOf("id")
 }
 
 fun Class<*>.tableName(): String {
