@@ -4,12 +4,10 @@ import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
-import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
-import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
+import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.TipoNota
-import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.estoque.model.ViewNotaFutura
 import br.com.engecopi.estoque.model.dtos.VendasCaixa
@@ -43,11 +41,10 @@ class ChaveFuturaViewModel(view: IChaveFuturaView):
   }
   
   override fun delete(bean: ChaveFuturaVo) {
-    val nota = bean.findEntity() ?: return
-    val saida = Nota.findSaida(nota.loja, nota.numero) ?: return
-    
+    val saida = Nota.findSaida(bean.loja, bean.numero) ?: return
+  
     QItemNota().nota.equalTo(saida)
-      .status.notIn(ENTREGUE, ENT_LOJA)
+      .status.eq(INCLUIDA)
       .localizacao.startsWith(bean.abreviacao)
       .delete()
     
@@ -56,7 +53,7 @@ class ChaveFuturaViewModel(view: IChaveFuturaView):
   }
   
   override val query: QViewNotaFutura
-    get() = QViewNotaFutura().nota.tipoNota.eq(VENDAF)
+    get() = QViewNotaFutura()
   
   private fun QViewNotaFutura.filtroNotaSerie(): QViewNotaFutura {
     val tipos = usuarioDefault.series.map {
