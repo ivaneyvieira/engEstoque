@@ -31,7 +31,7 @@ class EntregaRessuprimentoViewModel(view: IEntregaRessuprimentoView):
   
   override fun createVo() = EntregaRessuprimentoVo()
   
-  fun findKey(key: String) = exec {
+  fun findKey(key: String) = execList {
     find.findKey(key)
       .updateView()
   }

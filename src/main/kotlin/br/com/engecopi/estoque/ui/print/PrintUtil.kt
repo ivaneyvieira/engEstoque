@@ -29,14 +29,11 @@ object PrintUtil {
       ABASTECI  -> Printer("EXP4")
       EXPEDICAO -> Printer("EXP4")
       ENTREGA_F -> Printer("ENTREGA")
-      RESSUPRI  -> {
-        val printerNota = nota.itensNota().firstOrNull()?.abreviacao?.printer ?: return
-        printerNota
-      }
       else      -> Printer("")
     }
     val textNota = this.imprimirNota(nota)
-    printText(impressoraNota, textNota)
+    if(nota.lancamentoOrigem != RESSUPRI)
+      printText(impressoraNota, textNota)
   }
   
   fun printText(impressora: Printer?, text: String?) {
@@ -67,6 +64,10 @@ object PrintUtil {
     return etiquetas.joinToString(separator = "\n") {etiqueta ->
       imprimir(itens, etiqueta)
     }
+  }
+  
+  fun imprimirPedidoRessuprimentoEntregue(itens: List<ItemNota>): String {
+    return imprimirNotaConferida(itens)
   }
   
   private fun imprimirNota(nota: Nota): String {
