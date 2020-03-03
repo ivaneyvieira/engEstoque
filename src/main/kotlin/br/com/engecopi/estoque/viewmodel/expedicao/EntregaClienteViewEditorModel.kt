@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.viewmodel.expedicao
 
+import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
@@ -22,6 +23,7 @@ class EntregaClienteEditorViewModel(view: IEntregaClienteEditorView):
   override fun QItemNota.filtroStatus(): QItemNota {
     return status.`in`(ENTREGUE, ENT_LOJA)
       .nota.usuario.isNotNull.nota.sequencia.ne(0)
+      .nota.lancamentoOrigem.eq(EXPEDICAO)
   }
   
   override fun createVo() = EntregaClienteVo()
