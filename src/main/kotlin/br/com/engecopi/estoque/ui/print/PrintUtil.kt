@@ -2,10 +2,8 @@ package br.com.engecopi.estoque.ui.print
 
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
-import br.com.engecopi.estoque.model.LancamentoOrigem.ABASTECI
 import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
-import br.com.engecopi.estoque.model.LancamentoOrigem.RESSUPRI
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
@@ -26,13 +24,12 @@ object PrintUtil {
   fun imprimeNotaConcluida(nota: Nota?) {
     nota ?: return
     val impressoraNota = when(nota.lancamentoOrigem) {
-      ABASTECI  -> Printer("EXP4")
       EXPEDICAO -> Printer("EXP4")
       ENTREGA_F -> Printer("ENTREGA")
       else      -> Printer("")
     }
     val textNota = this.imprimirNota(nota)
-    if(nota.lancamentoOrigem != RESSUPRI)
+    if(impressoraNota.nome != "")
       printText(impressoraNota, textNota)
   }
   
