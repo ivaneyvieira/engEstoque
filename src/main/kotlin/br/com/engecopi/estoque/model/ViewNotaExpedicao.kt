@@ -47,7 +47,7 @@ class ViewNotaExpedicao: BaseModel() {
   var usuario: Usuario? = null
   var abreviacao: String? = ""
   val chave
-    get() = "${loja?.numero} $numero $sequencia"
+    get() = "${loja?.numero} ${numero.replace('/', ' ')} $sequencia"
   
   companion object Find: ViewNotaExpedicaoFinder() {
     fun findSaida(loja: Loja, numero: String?, abreviacao: String?): ViewNotaExpedicao? {

@@ -50,7 +50,7 @@ class ViewNotaFutura: BaseModel() {
     get() = Nota.findNota(loja, numero, tipoMov)
               ?.notaBaixa() ?: emptyList()
   val chave
-    get() = "${loja?.numero} $numero $sequencia"
+    get() = "${loja?.numero} ${numero.replace('/', ' ')} $sequencia"
   
   companion object Find: ViewNotaFuturaFinder() {
     fun findSaida(loja: Loja?, numero: String?, abreviacao: String?): ViewNotaFutura? {
