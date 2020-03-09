@@ -115,8 +115,8 @@ class NFExpedicaoView: CrudLayoutView<NFExpedicaoVo, NFExpedicaoViewModel>(), IN
       updateOperationVisible = false
       addOperationVisible = false
       deleteOperationVisible = RegistryUserInfo.usuarioDefault.admin
-      column(NFExpedicaoVo::numero) {
-        caption = "Número NF"
+      column(NFExpedicaoVo::chave) {
+        caption = "Chave"
         setSortProperty("numero")
       }
       grid.addComponentColumn {item ->

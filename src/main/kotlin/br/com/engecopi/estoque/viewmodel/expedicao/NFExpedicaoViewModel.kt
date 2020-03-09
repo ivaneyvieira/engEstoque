@@ -53,7 +53,9 @@ class NFExpedicaoViewModel(view: INFExpedicaoView):
       .localizacao.startsWith(bean.abreviacao)
       .delete()
   
-    if(saida.itensNota().isEmpty())
+    if(saida.itensNota()
+        .isEmpty()
+    )
       saida.delete()
   }
   
@@ -151,6 +153,8 @@ class NFExpedicaoVo: EntityVo<ViewNotaExpedicao>() {
   }
   
   var numero: String = ""
+  val chave
+    get() = toEntity()?.chave
   var tipoMov: TipoMov = ENTRADA
   var tipoNota: TipoNota? = null
   var rota: String = ""

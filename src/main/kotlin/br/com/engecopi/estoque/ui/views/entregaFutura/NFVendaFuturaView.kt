@@ -90,8 +90,8 @@ class NFVendaFuturaView: CrudLayoutView<NFVendaFuturaVo, NFVendaFuturaViewModel>
       updateOperationVisible = false
       addOperationVisible = false
       deleteOperationVisible = usuarioDefault.admin
-      column(NFVendaFuturaVo::numero) {
-        caption = "Número NF"
+      column(NFVendaFuturaVo::chave) {
+        caption = "Chave"
         setSortProperty("numero")
       }
       column(NFVendaFuturaVo::numeroBaixa) {

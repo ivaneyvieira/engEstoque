@@ -149,6 +149,8 @@ class AbastecimentoVo: EntityVo<ViewPedidoAbastecimento>() {
   }
   
   var numero: String = ""
+  val chave
+    get() = toEntity()?.chave
   var tipoMov: TipoMov = ENTRADA
   var tipoNota: TipoNota? = null
   var rota: String = ""

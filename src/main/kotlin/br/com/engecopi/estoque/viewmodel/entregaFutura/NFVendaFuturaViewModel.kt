@@ -51,7 +51,9 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
       .localizacao.startsWith(bean.abreviacao)
       .delete()
   
-    if(saida.itensNota().isEmpty())
+    if(saida.itensNota()
+        .isEmpty()
+    )
       saida.delete()
   }
   
@@ -80,8 +82,8 @@ class NFVendaFuturaViewModel(view: INFVendaFuturaView):
     return NFVendaFuturaVo().apply {
       numero = bean.numero
       numeroBaixa = bean.numeroBaixa.filter {
-        it.abreviacoes.contains(bean.abreviacao)
-      }
+          it.abreviacoes.contains(bean.abreviacao)
+        }
         .joinToString(" ") {it.numero}
       tipoMov = bean.tipoMov
       tipoNota = bean.tipoNota
@@ -148,6 +150,8 @@ class NFVendaFuturaVo: EntityVo<ViewNotaFutura>() {
   }
   
   var numero: String = ""
+  val chave
+    get() = toEntity()?.chave
   var numeroBaixa: String = ""
   var tipoMov: TipoMov = ENTRADA
   var tipoNota: TipoNota? = null
