@@ -5,8 +5,7 @@ import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
-import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
-import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
+import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
 import br.com.engecopi.estoque.model.TipoMov
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.TipoNota
@@ -44,11 +43,10 @@ class ChaveAbastecimentoViewModel(view: IAbastecimentoView):
   }
   
   override fun delete(bean: AbastecimentoVo) {
-    val nota = bean.findEntity() ?: return
-    val saida = Nota.findSaida(nota.loja, nota.numero) ?: return
-    
+    val saida = Nota.findSaida(bean.loja, bean.numero) ?: return
+  
     QItemNota().nota.equalTo(saida)
-      .status.notIn(ENTREGUE, ENT_LOJA)
+      .status.eq(INCLUIDA)
       .localizacao.startsWith(bean.abreviacao)
       .delete()
     
@@ -57,7 +55,7 @@ class ChaveAbastecimentoViewModel(view: IAbastecimentoView):
   }
   
   override val query: QViewPedidoAbastecimento
-    get() = QViewPedidoAbastecimento().loja.eq(lojaDeposito).nota.tipoNota.notIn(TipoNota.lojasExternas)
+    get() = QViewPedidoAbastecimento()
   
   private fun QViewPedidoAbastecimento.filtroNotaSerie(): QViewPedidoAbastecimento {
     val tipos = usuarioDefault.series.map {it.tipoNota}
