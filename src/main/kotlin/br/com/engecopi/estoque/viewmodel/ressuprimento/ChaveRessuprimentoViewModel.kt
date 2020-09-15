@@ -65,9 +65,9 @@ class ChaveRessuprimentoViewModel(view: IChaveRessuprimentoView):
     log?.error("Inserssão não permitida")
   }
   
-  override fun delete(bean: ChaveRessuprimentoVo) {
+  override fun delete(bean: PedidoRessuprimentoVo) {
     val saida = Nota.findSaida(bean.loja, bean.numero) ?: return
-  
+    
     QItemNota().nota.equalTo(saida)
       .status.eq(INCLUIDA)
       .localizacao.startsWith(bean.abreviacao)

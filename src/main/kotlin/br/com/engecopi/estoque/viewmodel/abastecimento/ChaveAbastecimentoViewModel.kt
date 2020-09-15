@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.viewmodel.abastecimento
 
+import br.com.engecopi.estoque.model.LancamentoOrigem.ABASTECI
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.Produto
@@ -55,7 +56,7 @@ class ChaveAbastecimentoViewModel(view: IAbastecimentoView):
   }
   
   override val query: QViewPedidoAbastecimento
-    get() = QViewPedidoAbastecimento()
+    get() = QViewPedidoAbastecimento().loja.eq(lojaDeposito).nota.lancamentoOrigem.eq(ABASTECI)
   
   private fun QViewPedidoAbastecimento.filtroNotaSerie(): QViewPedidoAbastecimento {
     val tipos = usuarioDefault.series.map {it.tipoNota}
@@ -146,6 +147,8 @@ class AbastecimentoVo: EntityVo<ViewPedidoAbastecimento>() {
   }
   
   var numero: String = ""
+  val chave
+    get() = toEntity()?.chave
   var tipoMov: TipoMov = ENTRADA
   var tipoNota: TipoNota? = null
   var rota: String = ""

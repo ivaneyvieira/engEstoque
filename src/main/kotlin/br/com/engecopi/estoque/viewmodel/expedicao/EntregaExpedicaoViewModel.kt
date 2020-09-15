@@ -24,6 +24,7 @@ class EntregaExpedicaoViewModel(view: IEntregaExpedicaoView):
   override fun QItemNota.filtroStatus(): QItemNota {
     return status.`in`(CONFERIDA)
       .nota.usuario.isNotNull.nota.sequencia.ne(0)
+      .nota.lancamentoOrigem.eq(EXPEDICAO)
   }
   
   override fun createVo() = EntregaExpedicaoVo()

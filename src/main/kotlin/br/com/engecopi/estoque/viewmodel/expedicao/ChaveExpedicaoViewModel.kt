@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.viewmodel.expedicao
 
+import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.Produto
@@ -49,13 +50,17 @@ class ChaveExpedicaoViewModel(view: IChaveExpedicaoView):
       .status.eq(INCLUIDA)
       .localizacao.startsWith(bean.abreviacao)
       .delete()
-    
-    if(saida.itensNota().isEmpty())
+  
+    if(saida.itensNota()
+        .isEmpty()
+    )
       saida.delete()
   }
   
   override val query: QViewNotaExpedicao
     get() = QViewNotaExpedicao()
+      .loja.eq(lojaDeposito)
+      .nota.lancamentoOrigem.eq(EXPEDICAO)
   
   private fun QViewNotaExpedicao.filtroNotaSerie(): QViewNotaExpedicao {
     val tipos = usuarioDefault.series.map {it.tipoNota}
@@ -146,6 +151,8 @@ class ChaveExpedicaoVo: EntityVo<ViewNotaExpedicao>() {
   }
   
   var numero: String = ""
+  val chave
+    get() = toEntity()?.chave
   var tipoMov: TipoMov = ENTRADA
   var tipoNota: TipoNota? = null
   var rota: String = ""

@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.viewmodel.entregaFutura
 
+import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.Produto
@@ -47,13 +48,15 @@ class ChaveFuturaViewModel(view: IChaveFuturaView):
       .status.eq(INCLUIDA)
       .localizacao.startsWith(bean.abreviacao)
       .delete()
-    
-    if(saida.itensNota().isEmpty())
+  
+    if(saida.itensNota()
+        .isEmpty()
+    )
       saida.delete()
   }
   
   override val query: QViewNotaFutura
-    get() = QViewNotaFutura()
+    get() = QViewNotaFutura().nota.lancamentoOrigem.eq(ENTREGA_F)
   
   private fun QViewNotaFutura.filtroNotaSerie(): QViewNotaFutura {
     val tipos = usuarioDefault.series.map {
@@ -77,8 +80,8 @@ class ChaveFuturaViewModel(view: IChaveFuturaView):
     return ChaveFuturaVo().apply {
       numero = bean.numero
       numeroBaixa = bean.numeroBaixa.filter {
-        it.abreviacoes.contains(bean.abreviacao)
-      }
+          it.abreviacoes.contains(bean.abreviacao)
+        }
         .joinToString(" ") {it.numero}
       tipoMov = bean.tipoMov
       tipoNota = bean.tipoNota
@@ -145,6 +148,8 @@ class ChaveFuturaVo: EntityVo<ViewNotaFutura>() {
   }
   
   var numero: String = ""
+  val chave
+    get() = toEntity()?.chave
   var numeroBaixa: String = ""
   var tipoMov: TipoMov = ENTRADA
   var tipoNota: TipoNota? = null

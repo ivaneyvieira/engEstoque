@@ -22,6 +22,7 @@ class EditorExpedicaoViewModel(expedicaoView: IEditorExpedicaoView):
   override fun QItemNota.filtroStatus(): QItemNota {
     return status.`in`(ENTREGUE, ENT_LOJA)
       .nota.usuario.isNotNull.nota.sequencia.ne(0)
+      .nota.lancamentoOrigem.eq(EXPEDICAO)
   }
   
   override fun createVo() = EntregaExpedicaoVo()
