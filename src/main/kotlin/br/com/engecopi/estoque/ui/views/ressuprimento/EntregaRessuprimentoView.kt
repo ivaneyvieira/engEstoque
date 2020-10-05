@@ -3,7 +3,6 @@ package br.com.engecopi.estoque.ui.views.ressuprimento
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.TipoNota
-import br.com.engecopi.estoque.ui.print.PrintUtil
 import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
 import br.com.engecopi.estoque.ui.views.movimentacao.NotaView
 import br.com.engecopi.estoque.viewmodel.ressuprimento.EntregaRessuprimentoViewModel
@@ -162,14 +161,9 @@ class EntregaRessuprimentoView:
         caption = "Cliente"
         setSortProperty("nota.cliente")
       }
-      val itens =
-        viewModel.notasConferidas()
-          .groupBy {it.numeroNF}
-          .entries.sortedBy {entry ->
-          entry.value.map {it.entityVo?.id ?: 0}
-            .max()
-        }
-          .mapNotNull {it.key}
+      val itens = viewModel.notasConferidas().groupBy {it.nota?.numero}.entries.sortedBy {entry ->
+        entry.value.map {it.id ?: 0}.max()
+      }.mapNotNull {it.key}
       
       grid.setStyleGenerator {saida ->
         if(saida.status == CONFERIDA) {
@@ -185,15 +179,7 @@ class EntregaRessuprimentoView:
   
   private fun formCodbar(): PnlCodigoBarras {
     return PnlCodigoBarras("Nota de transferencia") {key ->
-      val itens = viewModel.findKey(key)
-      val itensGroupByAbreviacao = itens.groupBy {it.abreviacao}
-      itensGroupByAbreviacao.forEach {(abreviacao, itensAbreviacao) ->
-        if(abreviacao != null) {
-          val text = PrintUtil.imprimirPedidoRessuprimentoEntregue(itensAbreviacao)
-          val printer = abreviacao.printer
-          PrintUtil.printText(printer, text)
-        }
-      }
+      viewModel.findKey(key)
     }
   }
 }

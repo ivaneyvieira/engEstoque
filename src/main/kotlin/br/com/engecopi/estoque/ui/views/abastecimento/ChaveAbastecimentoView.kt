@@ -118,8 +118,8 @@ class ChaveAbastecimentoView: CrudLayoutView<AbastecimentoVo, ChaveAbastecimento
       updateOperationVisible = false
       addOperationVisible = false
       deleteOperationVisible = RegistryUserInfo.usuarioDefault.admin
-      column(AbastecimentoVo::chave) {
-        caption = "Chave"
+      column(AbastecimentoVo::numero) {
+        caption = "Número NF"
         setSortProperty("numero")
       }
       grid.addComponentColumn {item ->

@@ -3,7 +3,8 @@ package br.com.engecopi.estoque.viewmodel.ressuprimento
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
-import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
+import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
+import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.TipoMov
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.TipoNota
@@ -65,11 +66,12 @@ class ChaveRessuprimentoViewModel(view: IChaveRessuprimentoView):
     log?.error("Inserssão não permitida")
   }
   
-  override fun delete(bean: PedidoRessuprimentoVo) {
-    val saida = Nota.findSaida(bean.loja, bean.numero) ?: return
+  override fun delete(bean: ChaveRessuprimentoVo) {
+    val nota = bean.findEntity() ?: return
+    val saida = Nota.findSaida(nota.loja, nota.numero) ?: return
     
     QItemNota().nota.equalTo(saida)
-      .status.eq(INCLUIDA)
+      .status.notIn(ENTREGUE, ENT_LOJA)
       .localizacao.startsWith(bean.abreviacao)
       .delete()
     

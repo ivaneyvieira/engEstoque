@@ -229,7 +229,7 @@ class Produto: BaseModel() {
     return ViewProdutoLoc.localizacoesProduto(produto = this)
       .let {list ->
         if(abreviacao.isNullOrBlank()) list
-        else list.filter {it.startsWith(abreviacao)}
+        else list.filter {it.startsWith(abreviacao ?: "")}
       }
   }
   

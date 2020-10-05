@@ -3,6 +3,7 @@ package br.com.engecopi.estoque.viewmodel.abastecimento
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.LancamentoOrigem.ABASTECI
 import br.com.engecopi.estoque.model.Nota
+import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
@@ -36,7 +37,7 @@ class ChaveAbastecimentoProcessamento() {
       return@mapNotNull item?.apply {
         this.status = INCLUIDA
         this.impresso = false
-        this.usuario = usuarioDefault
+        this.usuario = RegistryUserInfo.usuarioDefault
         this.data = LocalDate.now()
         this.hora = LocalTime.now()
         this.save()
@@ -45,7 +46,7 @@ class ChaveAbastecimentoProcessamento() {
     
     if(itens.isEmpty()) throw EViewModelError("Essa nota não possui itens com localização")
   
-    saci.expiraPedidoVenda(nota.loja?.numero, nota.numero.toIntOrNull())
+    saci.expiraPedidoVenda(nota.loja?.numero, nota?.numero?.toIntOrNull())
     return nota
   }
   

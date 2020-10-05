@@ -210,7 +210,7 @@ class ChaveRessuprimentoView:
       if(notaSaida.isNotEmpty()) {
         val dialog = DlgRessuprimentoLoc(notaSaida, viewModel) {itens ->
           val nota = viewModel.processaKey(itens)
-  
+          val text = viewModel.imprimir(nota)
           PrintUtil.imprimeNotaConcluida(nota)
           viewModel.imprimir(nota)
             .forEach {printEtiqueta ->

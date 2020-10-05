@@ -145,8 +145,8 @@ class EntregaExpedicaoView: NotaView<EntregaExpedicaoVo, EntregaExpedicaoViewMod
         caption = "Cliente"
         setSortProperty("nota.cliente")
       }
-      val itens = viewModel.notasConferidas().groupBy {it.numeroNF}.entries.sortedBy {entry ->
-        entry.value.map {it.entityVo?.id ?: 0}.max()
+      val itens = viewModel.notasConferidas().groupBy {it.nota?.numero}.entries.sortedBy {entry ->
+        entry.value.map {it.id ?: 0}.max()
       }.mapNotNull {it.key}
 
       grid.setStyleGenerator {saida ->

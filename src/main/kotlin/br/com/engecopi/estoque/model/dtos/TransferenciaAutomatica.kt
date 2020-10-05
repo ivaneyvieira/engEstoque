@@ -1,12 +1,9 @@
 package br.com.engecopi.estoque.model.dtos
 
 import br.com.engecopi.estoque.model.etlSaci.EntryID
-import br.com.engecopi.estoque.model.etlSaci.TableName
 import br.com.engecopi.utils.localDate
 import io.ebean.DB
-import io.ebean.DtoQuery
 
-@TableName("t_transferencia_automatica")
 class TransferenciaAutomatica(id: String,
                               val storeno: Int,
                               val pdvno: Int,
@@ -20,24 +17,14 @@ class TransferenciaAutomatica(id: String,
     get() = "$storenoFat$nffat$storenoTransf$nftransf"
   
   companion object {
-    private val SQL_BAIXA = """select * from t_transferencia_automatica
-        |where storenoFat = :lojaFatura
-        |  AND nffat = :numeroSerieFatura
-      """.trimMargin()
-    private val SQL_FATURA = """select * from t_transferencia_automatica
-        |where storenoTransf = :lojaTransferencia
-        |  AND nftransf = :numeroSerieTransferencia
-      """.trimMargin()
-    private val queryBaixa: DtoQuery<TransferenciaAutomatica> =
-      DB.findDto(TransferenciaAutomatica::class.java, SQL_BAIXA)
-    private val queryfatura: DtoQuery<TransferenciaAutomatica> =
-      DB.findDto(TransferenciaAutomatica::class.java, SQL_FATURA)
-  
     fun notaFatura(lojaTransferencia: Int?, numeroSerieTransferencia: String?): List<NotaBaixaFatura> {
       lojaTransferencia ?: return emptyList()
       numeroSerieTransferencia ?: return emptyList()
-    
-      return queryfatura
+      val sql = """select * from t_transferencia_automatica
+        |where storenoTransf = :lojaTransferencia
+        |  AND nftransf = :numeroSerieTransferencia
+      """.trimMargin()
+      return DB.findDto(TransferenciaAutomatica::class.java, sql)
         .setParameter("lojaTransferencia", lojaTransferencia)
         .setParameter("numeroSerieTransferencia", numeroSerieTransferencia)
         .findList()
@@ -47,12 +34,15 @@ class TransferenciaAutomatica(id: String,
                           nf.data.localDate())
         }
     }
-    
+  
     fun notaBaixa(lojaFatura: Int?, numeroSerieFatura: String?): List<NotaBaixaFatura> {
       lojaFatura ?: return emptyList()
       numeroSerieFatura ?: return emptyList()
-  
-      return queryBaixa
+      val sql = """select * from t_transferencia_automatica
+        |where storenoFat = :lojaFatura
+        |  AND nffat = :numeroSerieFatura
+      """.trimMargin()
+      return DB.findDto(TransferenciaAutomatica::class.java, sql)
         .setParameter("lojaFatura", lojaFatura)
         .setParameter("numeroSerieFatura", numeroSerieFatura)
         .findList()
