@@ -64,7 +64,7 @@ data class NotaProdutoSaci(val rota: String?,
   }
   
   fun isNotaBaixaLancada(): Boolean {
-    val keyNotaBaixa = Nota.notaBaixa(storeno, numeroSerie())
+    val keyNotaBaixa = Nota.notaBaixa(storeno, numeroSerie()) ?: return false
     val notaFatura = keyNotaBaixa.mapNotNull {
       Find.findSaida(it.storeno, it.numero)
     }

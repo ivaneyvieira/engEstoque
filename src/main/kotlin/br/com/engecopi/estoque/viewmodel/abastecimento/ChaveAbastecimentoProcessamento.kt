@@ -46,7 +46,7 @@ class ChaveAbastecimentoProcessamento() {
     
     if(itens.isEmpty()) throw EViewModelError("Essa nota não possui itens com localização")
   
-    saci.expiraPedidoVenda(nota.loja?.numero, nota.numero.toIntOrNull())
+    saci.expiraPedidoVenda(nota.loja?.numero, nota?.numero?.toIntOrNull())
     return nota
   }
   

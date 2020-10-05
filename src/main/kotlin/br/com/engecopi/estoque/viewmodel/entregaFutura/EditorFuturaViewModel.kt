@@ -1,10 +1,11 @@
 package br.com.engecopi.estoque.viewmodel.entregaFutura
 
-import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
+import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
+import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
@@ -16,7 +17,7 @@ class EditorFuturaViewModel(view: IEditorFuturaView):
   }
   
   override fun QItemNota.filtroTipoNota(): QItemNota {
-    return this.nota.lancamentoOrigem.eq(ENTREGA_F)
+    return this.nota.tipoNota.eq(VENDAF)
   }
   
   override fun QItemNota.filtroStatus(): QItemNota {
@@ -26,10 +27,9 @@ class EditorFuturaViewModel(view: IEditorFuturaView):
   
   override fun createVo() = EntregaFututaVo()
   
-  fun notasConferidas(): List<EntregaFututaVo> {
+  fun notasConferidas(): List<ItemNota> {
     return QItemNota().status.eq(CONFERIDA)
       .findList()
-      .map {it.toVO()}
   }
 }
 

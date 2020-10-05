@@ -5,7 +5,8 @@ import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
-import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
+import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
+import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.TipoMov
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.TipoNota
@@ -43,10 +44,11 @@ class ChaveExpedicaoViewModel(view: IChaveExpedicaoView):
   }
   
   override fun delete(bean: ChaveExpedicaoVo) {
-    val saida = Nota.findSaida(bean.loja, bean.numero) ?: return
-  
+    val nota = bean.findEntity() ?: return
+    val saida = Nota.findSaida(nota.loja, nota.numero) ?: return
+    
     QItemNota().nota.equalTo(saida)
-      .status.eq(INCLUIDA)
+      .status.notIn(ENTREGUE, ENT_LOJA)
       .localizacao.startsWith(bean.abreviacao)
       .delete()
     
@@ -55,7 +57,7 @@ class ChaveExpedicaoViewModel(view: IChaveExpedicaoView):
   }
   
   override val query: QViewNotaExpedicao
-    get() = QViewNotaExpedicao()
+    get() = QViewNotaExpedicao().loja.eq(lojaDeposito).nota.tipoNota.notIn(TipoNota.lojasExternas)
   
   private fun QViewNotaExpedicao.filtroNotaSerie(): QViewNotaExpedicao {
     val tipos = usuarioDefault.series.map {it.tipoNota}
