@@ -33,6 +33,7 @@ import io.ebean.annotation.Aggregation
 import io.ebean.annotation.Cache
 import io.ebean.annotation.CacheQueryTuning
 import io.ebean.annotation.Index
+import io.ebean.annotation.Indices
 import io.ebean.annotation.Length
 import java.time.LocalDate
 import java.time.LocalTime
@@ -49,62 +50,82 @@ import javax.persistence.Table
 import javax.validation.constraints.Size
 
 @Entity
+@Indices(
+  Index(columnNames = ["tipo_mov", "tipo_nota", "sequencia"]),
+  Index(columnNames = ["loja_id", "tipo_mov", "numero"], unique = true)
+        )
 @Cache(enableQueryCache = true)
 @CacheQueryTuning(maxSecsToLive = 30)
 @Table(name = "notas")
-@Index(columnNames = ["loja_id", "tipo_mov", "numero"], unique = true)
 class Nota: BaseModel() {
   @Size(max = 40)
   @Index(unique = false)
   var numero: String = ""
+  
   @Size(max = 40)
   @Index(unique = false)
   var numeroEntrega: String = ""
+  
   @Enumerated(EnumType.STRING)
   var tipoMov: TipoMov = ENTRADA
+  
   @Enumerated(EnumType.STRING)
   var tipoNota: TipoNota? = null
+  
   @Size(max = 6)
   var rota: String = ""
+  
   @Length(60)
   var fornecedor: String = ""
+  
   @Length(60)
   var cliente: String = ""
   var lancamento: LocalDate = LocalDate.now()
   var data: LocalDate = LocalDate.now()
   var dataEmissao: LocalDate = LocalDate.now()
   var hora: LocalTime = LocalTime.now()
+  
   @Size(max = 100)
   var observacao: String = ""
+  
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var loja: Loja? = null
+  
   @OneToMany(mappedBy = "nota", cascade = [PERSIST, MERGE, REFRESH])
   val itensNota: List<ItemNota>? = null
+  
   @Column(name = "sequencia", columnDefinition = "int(11) default 0")
   var sequencia: Int = 0
+  
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var usuario: Usuario? = null
+  
   @Aggregation("max(sequencia)")
   var maxSequencia: Int? = 0
+  
   @Enumerated(EnumType.STRING)
   var lancamentoOrigem: LancamentoOrigem = EXPEDICAO
   val cancelado
     get() = tipoNota == CANCELADA_E || tipoNota == CANCELADA_S
   val multipicadorCancelado
     get() = if(cancelado) 0 else 1
-  val nfno get() = numero.split("/").getOrNull(0) ?: ""
-  val nfse get() = numero.split("/").getOrNull(1) ?: ""
+  val nfno
+    get() = numero.split("/")
+              .getOrNull(0) ?: ""
+  val nfse
+    get() = numero.split("/")
+              .getOrNull(1) ?: ""
   
   fun updateFromSaci() {
     val storeno = loja?.numero ?: 0
     val notaInfo = when(tipoMov) {
                      ENTRADA -> saci.findNotaEntradaInfo(storeno, nfno, nfse)
-                     SAIDA   -> saci.findNotaSaidaInfo(storeno, nfno, nfse)
+                     SAIDA -> saci.findNotaSaidaInfo(storeno, nfno, nfse)
                    } ?: return
     tipoNota = if(notaInfo.cancelado)
       when(tipoMov) {
         ENTRADA -> CANCELADA_E
-        SAIDA   -> CANCELADA_S
+        SAIDA -> CANCELADA_S
       }
     else {
       notaInfo.tipoNota
@@ -144,28 +165,35 @@ class Nota: BaseModel() {
       nota.usuario = usuarioDefault
       val itens = notasaci.mapNotNull {item ->
         val produto = Produto.findProduto(item.prdno, item.grade)
-        ItemNota.find(nota, produto) ?: ItemNota.createItemNota(item, nota, abreviacaoDefault)?.let {itemNota ->
-          itemNota.status = INCLUIDA
-          itemNota.usuario = usuarioDefault
-          itemNota
-        }
+        ItemNota.find(nota, produto) ?: ItemNota.createItemNota(item, nota, abreviacaoDefault)
+          ?.let {itemNota ->
+            itemNota.status = INCLUIDA
+            itemNota.usuario = usuarioDefault
+            itemNota
+          }
       }
       return NotaItens(nota, itens)
     }
     
     fun maxSequencia(): Int {
-      return QNota().select(QNota._alias.maxSequencia).findList().firstOrNull()?.maxSequencia ?: 0
+      return QNota().select(QNota._alias.maxSequencia)
+               .findList()
+               .firstOrNull()?.maxSequencia ?: 0
     }
     
     fun findEntrada(loja: Loja, numero: String?): Nota? {
       return if(numero.isNullOrBlank()) null
-      else QNota().tipoMov.eq(ENTRADA).numero.eq(numero).loja.id.eq(loja.id).findList().firstOrNull()
+      else QNota().tipoMov.eq(ENTRADA).numero.eq(numero).loja.id.eq(loja.id)
+        .findList()
+        .firstOrNull()
     }
     
     fun findSaida(storeno: Int?, numero: String?): Nota? {
       storeno ?: return null
       return if(numero.isNullOrBlank()) null
-      else QNota().tipoMov.eq(SAIDA).numero.eq(numero).loja.numero.eq(storeno).findList().firstOrNull()
+      else QNota().tipoMov.eq(SAIDA).numero.eq(numero).loja.numero.eq(storeno)
+        .findList()
+        .firstOrNull()
     }
     
     fun findSaida(loja: Loja?, numero: String?): Nota? {
@@ -177,21 +205,30 @@ class Nota: BaseModel() {
       loja ?: return null
       return when(tipoMov) {
         ENTRADA -> findEntrada(loja, numero)
-        SAIDA   -> findSaida(loja, numero)
+        SAIDA -> findSaida(loja, numero)
       }
     }
     
     fun novoNumero(): Int {
       val regex = "[0-9]+".toRegex()
-      val max = QNota().findList().asSequence().map {it.numero}.filter {regex.matches(it)}.max() ?: "0"
+      val max =
+        QNota().findList()
+          .asSequence()
+          .map {it.numero}
+          .filter {regex.matches(it)}
+          .max() ?: "0"
       val numMax = max.toIntOrNull() ?: 0
       return numMax + 1
     }
     
     fun findNotaEntradaSaci(loja: Loja, numeroNF: String?): List<NotaProdutoSaci> {
       numeroNF ?: return emptyList()
-      val numero = numeroNF.split("/").getOrNull(0) ?: return emptyList()
-      val serie = numeroNF.split("/").getOrNull(1) ?: ""
+      val numero =
+        numeroNF.split("/")
+          .getOrNull(0) ?: return emptyList()
+      val serie =
+        numeroNF.split("/")
+          .getOrNull(1) ?: ""
       return saci.findNotaEntrada(loja.numero, numero, serie, usuarioDefault.admin)
     }
     
@@ -202,8 +239,12 @@ class Nota: BaseModel() {
     fun findNotaSaidaSaci(storeno: Int?, numeroNF: String?): List<NotaProdutoSaci> {
       numeroNF ?: return emptyList()
       storeno ?: return emptyList()
-      val numero = numeroNF.split("/").getOrNull(0) ?: return emptyList()
-      val serie = numeroNF.split("/").getOrNull(1) ?: ""
+      val numero =
+        numeroNF.split("/")
+          .getOrNull(0) ?: return emptyList()
+      val serie =
+        numeroNF.split("/")
+          .getOrNull(1) ?: ""
       return saci.findNotaSaida(storeno, numero, serie, usuarioDefault.admin)
     }
     
@@ -212,7 +253,8 @@ class Nota: BaseModel() {
       val numero = nota.numero
       val tipoMov = nota.tipoMov
       val produtoId = produto?.id ?: return false
-      return QItemNota().nota.loja.id.eq(lojaId).nota.numero.eq(numero).nota.tipoMov.eq(tipoMov).produto.id.eq(produtoId).findCount() > 0
+      return QItemNota().nota.loja.id.eq(lojaId).nota.numero.eq(numero).nota.tipoMov.eq(tipoMov).produto.id.eq(produtoId)
+               .findCount() > 0
     }
     
     fun findNotaSaidaKey(nfeKey: String): List<NotaProdutoSaci> {
@@ -267,7 +309,8 @@ class Nota: BaseModel() {
   fun notaFatura() = notaFatura(loja?.numero, numero)
   
   fun existe(): Boolean {
-    return QNota().loja.equalTo(loja).tipoMov.eq(tipoMov).numero.eq(numero).findCount() > 0
+    return QNota().loja.equalTo(loja).tipoMov.eq(tipoMov).numero.eq(numero)
+             .findCount() > 0
   }
   
   fun itensNota(): List<ItemNota> {
@@ -310,13 +353,13 @@ enum class TipoNota(val tipoMov: TipoMov, val descricao: String, val descricao2:
   
   companion object {
     fun valuesEntrada(): List<TipoNota> = values().filter {it.tipoMov == ENTRADA}
-  
+    
     fun valuesSaida(): List<TipoNota> = values().filter {it.tipoMov == SAIDA}
-  
+    
     fun value(valueStr: String?) = valueStr?.let {v ->
       values().find {it.toString() == v}
     }
-  
+    
     val lojasExternas
       get() = values().filter {!it.lojaDeposito}
   }
