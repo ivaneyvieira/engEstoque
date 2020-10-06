@@ -22,7 +22,8 @@ class EditorRessuprimentoViewModel(ressuprimentoView: IEditorRessuprimentoView):
   
   override fun QItemNota.filtroStatus(): QItemNota {
     return status.`in`(ENTREGUE, ENT_LOJA)
-      .nota.usuario.isNotNull.nota.sequencia.ne(0)
+      .nota.usuario.isNotNull
+      .nota.sequencia.ne(0)
   }
   
   override fun createVo() = EntregaRessuprimentoVo()

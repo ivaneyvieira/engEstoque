@@ -14,7 +14,6 @@ import javax.persistence.Entity
 import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
 import javax.persistence.Table
-import javax.persistence.Transient
 import javax.validation.constraints.Size
 
 @Entity
@@ -23,18 +22,27 @@ class Usuario: BaseModel() {
   @Size(max = 8)
   @Index(unique = true)
   var loginName: String = ""
+  
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var loja: Loja? = null
+  
   @Length(4000)
   var localizacaoes: String = ""
+  
   @Length(4000)
   var notaSeries: String = ""
+  
   @Length(40)
   var impressora: String = ""
+  
   @OneToMany(mappedBy = "usuario", cascade = [PERSIST, MERGE, REFRESH])
   val itensNota: List<ItemNota>? = null
   var locais: List<String>
-    get() = localizacaoes.split(",").asSequence().filter {it.isNotBlank()}.map {it.trim()}.toList()
+    get() = localizacaoes.split(",")
+      .asSequence()
+      .filter {it.isNotBlank()}
+      .map {it.trim()}
+      .toList()
     set(value) {
       localizacaoes =
         value.asSequence()
@@ -42,7 +50,10 @@ class Usuario: BaseModel() {
           .joinToString()
     }
   var series: List<NotaSerie>
-    get() = notaSeries.split(",").filter {it.isNotBlank()}.mapNotNull {mapNotaSerie(it)}.toList()
+    get() = notaSeries.split(",")
+      .filter {it.isNotBlank()}
+      .mapNotNull {mapNotaSerie(it)}
+      .toList()
     set(value) {
       notaSeries =
         value.map {it.id.toString()}
@@ -55,7 +66,9 @@ class Usuario: BaseModel() {
     get() = !admin && entregaFutura
   
   private fun mapNotaSerie(idStr: String): NotaSerie? {
-    val id = idStr.trim().toLongOrNull() ?: return null
+    val id =
+      idStr.trim()
+        .toLongOrNull() ?: return null
     return NotaSerie.values.find {it.id == id}
   }
   
@@ -71,7 +84,7 @@ class Usuario: BaseModel() {
   var ressuprimento: Boolean = false
   var abastecimento: Boolean = false
   val nome: String?
-    @Transient get() = usuarioSaci()?.name
+    get() = usuarioSaci()?.name
   
   fun temProduto(produto: Produto?): Boolean {
     produto ?: return false

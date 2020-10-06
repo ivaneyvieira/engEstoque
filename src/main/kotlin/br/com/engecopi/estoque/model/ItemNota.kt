@@ -28,7 +28,6 @@ import javax.persistence.EnumType
 import javax.persistence.Enumerated
 import javax.persistence.ManyToOne
 import javax.persistence.Table
-import javax.persistence.Transient
 import javax.validation.constraints.Size
 import kotlin.reflect.full.memberProperties
 
@@ -42,66 +41,80 @@ class ItemNota: BaseModel() {
   var hora: LocalTime = LocalTime.now()
   var quantidade: Int = 0
   var quantidadeSaci: Int? = null
+  
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var produto: Produto? = null
+  
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var nota: Nota? = null
+  
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var etiqueta: Etiqueta? = null
+  
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var usuario: Usuario? = null
   var saldo: Int? = 0
   var impresso: Boolean = false
+  
   @Length(60)
   var localizacao: String = ""
+  
   @Enumerated(EnumType.STRING)
+  @Index
   var status: StatusNota = ENTREGUE
+  
   @Size(max = 60)
   var codigoBarraCliente: String? = ""
+  
   @Size(max = 60)
   var codigoBarraConferencia: String? = ""
+  
   @Size(max = 60)
   var codigoBarraConferenciaBaixa: String? = ""
+  
   @Size(max = 60)
   var codigoBarraEntrega: String? = ""
   val quantidadeSaldo: Int
     get() = (status.multiplicador) * quantidade * (nota?.multipicadorCancelado ?: 0)
   val viewCodigoBarraConferencia: ViewCodBarConferencia?
-    @Transient get() = ViewCodBarConferencia.byId(id)
+    get() = ViewCodBarConferencia.byId(id)
   val viewCodigoBarraCliente: ViewCodBarCliente?
-    @Transient get() = ViewCodBarCliente.byId(nota?.id)
+    get() = ViewCodBarCliente.byId(nota?.id)
   val viewCodigoBarraEntrega: ViewCodBarEntrega?
-    @Transient get() = ViewCodBarEntrega.byId(id)
+    get() = ViewCodBarEntrega.byId(id)
   val descricao: String?
-    @Transient get() = produto?.descricao
+    get() = produto?.descricao
   val codigo: String?
-    @Transient get() = produto?.codigo
+    get() = produto?.codigo
   val grade: String?
-    @Transient get() = produto?.grade
+    get() = produto?.grade
   val numeroNota: String?
-    @Transient get() = nota?.numero
+    get() = nota?.numero
   val rota: String?
-    @Transient get() = nota?.rota
+    get() = nota?.rota
   val tipoMov: TipoMov?
-    @Transient get() = nota?.tipoMov
+    get() = nota?.tipoMov
   val tipoNota: TipoNota?
-    @Transient get() = nota?.tipoNota
+    get() = nota?.tipoNota
   val dataNota: LocalDate?
-    @Transient get() = nota?.data
+    get() = nota?.data
   val ultilmaMovimentacao: Boolean
-    @Transient get() {
-      return produto?.ultimaNota()?.let {
-        it.id == this.id
-      } ?: true
+    get() {
+      return produto?.ultimaNota()
+               ?.let {
+                 it.id == this.id
+               } ?: true
     }
   private val abrev: String
-    @Transient get() = localizacao.split('.').getOrNull(0) ?: ""
+    get() = localizacao.split('.')
+              .getOrNull(0) ?: ""
   val loja: Loja?
-    @Transient get() = nota?.loja
+    get() = nota?.loja
   val abreviacao: Abreviacao?
-    @Transient get() = Abreviacao.findByAbreviacao(abrev)
+    get() = Abreviacao.findByAbreviacao(abrev)
   val numeroEntrega
-    get() = nota?.notaBaixa()?.filterProduto(codigo, grade) ?: emptyList()
+    get() = nota?.notaBaixa()
+              ?.filterProduto(codigo, grade) ?: emptyList()
   val dataEntrega
     get() = nota?.dataBaixa()
   
@@ -140,11 +153,13 @@ class ItemNota: BaseModel() {
     fun createItemNota(notaProdutoSaci: NotaProdutoSaci, notaPrd: Nota?, abreviacao: String?): ItemNota? {
       notaPrd ?: return null
       val produtoSaci = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return null
-      val locProduto = ViewProdutoLoc.localizacoesProduto(produtoSaci).firstOrNull {
-        it.startsWith(abreviacao ?: "")
-      } ?: ""
+      val locProduto =
+        ViewProdutoLoc.localizacoesProduto(produtoSaci)
+          .firstOrNull {
+            it.startsWith(abreviacao ?: "")
+          } ?: ""
       val item = find(notaPrd, produtoSaci)
-  
+      
       return item ?: ItemNota().apply {
         quantidade = notaProdutoSaci.quant ?: 0
         quantidadeSaci = quantidade
@@ -154,7 +169,7 @@ class ItemNota: BaseModel() {
         localizacao = locProduto
       }
     }
-  
+    
     fun isSave(notaProdutoSaci: NotaProdutoSaci): Boolean {
       val numeroSerie = notaProdutoSaci.numeroSerie()
       val tipoMov = notaProdutoSaci.tipoNota()?.tipoMov ?: return false
@@ -165,7 +180,7 @@ class ItemNota: BaseModel() {
         .nota.eq(nota)
         .exists()
     }
-  
+    
     fun findItensBarcodeCliente(barcode: String): List<ItemNota> {
       return QItemNota().codigoBarraCliente.eq(barcode)
         .findList()
@@ -209,7 +224,7 @@ class ItemNota: BaseModel() {
     if(codigoBarraEntrega.isNullOrEmpty()) {
       codigoBarraEntrega = viewCodigoBarraEntrega?.codbar ?: ""
     }
-  
+    
     super.save()
   }
   
@@ -225,11 +240,13 @@ class NotaPrint(val item: ItemNota) {
   val notaSaci = item.nota
   val rota = notaSaci?.rota ?: ""
   val nota = notaSaci?.numero ?: ""
-  val tipoObservacao = notaSaci?.observacao?.split(" ")?.get(0) ?: ""
+  val tipoObservacao =
+    notaSaci?.observacao?.split(" ")
+      ?.get(0) ?: ""
   val isNotaSaci = when(notaSaci?.tipoNota) {
     TipoNota.OUTROS_E -> false
     TipoNota.OUTROS_S -> false
-    null              -> false
+    null -> false
     else              -> true
   }
   val tipoNota = if(isNotaSaci) notaSaci?.tipoNota?.descricao ?: ""

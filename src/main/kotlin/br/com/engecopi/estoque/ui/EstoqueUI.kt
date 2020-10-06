@@ -131,9 +131,10 @@ class EstoqueUI: UI() {
     valoMenu {
       this.appTitle = title
       sectionLogin(user, info)
+      if(user.roleMovimentacao()) sessionMovimentacao()
   
-      if(user.rolePaineis()) sectionPaineis()
-  
+      if(user.roleConfiguracao()) sectionConfiguracao(user)
+      
       if(user.roleExpedicao()) sectionExpedicao(user)
   
       if(user.roleFutura()) sectionFutura(user)
@@ -141,12 +142,10 @@ class EstoqueUI: UI() {
       if(user.roleRessuprimento()) sectionRessuprimento(user)
   
       if(user.roleAbastecimento()) sectionAbastecimento(user)
-  
-      if(user.roleMovimentacao()) sessionMovimentacao()
-  
-      if(user.roleConfiguracao()) sectionConfiguracao(user)
-  
+      
       if(user.roleEtiqueta()) sectionEtiqueta(user)
+
+      if(user.rolePaineis()) sectionPaineis()
     }
     
     navigator = Navigator(this, content as ViewDisplay)
