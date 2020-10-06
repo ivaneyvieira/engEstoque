@@ -13,6 +13,7 @@ import io.ebean.annotation.Cache
 import io.ebean.annotation.CacheQueryTuning
 import io.ebean.annotation.Formula
 import io.ebean.annotation.Index
+import io.ebean.annotation.Indices
 import io.ebean.annotation.Transactional
 import java.time.LocalDate
 import javax.persistence.CascadeType.REFRESH
@@ -21,35 +22,43 @@ import javax.persistence.JoinColumn
 import javax.persistence.OneToMany
 import javax.persistence.OneToOne
 import javax.persistence.Table
-import javax.persistence.Transient
 import javax.validation.constraints.Size
 
 @Cache(enableQueryCache = true)
 @CacheQueryTuning(maxSecsToLive = 30)
 @Entity
 @Table(name = "produtos")
-@Index(unique = true, columnNames = ["codigo", "grade"])
+@Indices(
+  Index(unique = true, columnNames = ["codigo", "grade"]), Index(columnNames = ["id", "loja_id"])
+        )
 class Produto: BaseModel() {
   @Size(max = 16)
   var codigo: String = ""
+  
   @Size(max = 8)
   var grade: String = ""
+  
   @Size(max = 16)
   @Index(unique = false)
   var codebar: String = ""
   var dataCadastro: LocalDate = LocalDate.now()
+  
   @OneToMany(mappedBy = "produto", cascade = [REFRESH])
   val itensNota: List<ItemNota>? = null
+  
   @OneToOne(cascade = [])
   //  @FetchPreference(1)
   @JoinColumn(name = "id")
   var vproduto: ViewProduto? = null
+  
   //@FetchPreference(2)
   @OneToMany(mappedBy = "produto", cascade = [REFRESH])
   var viewProdutoLoc: List<ViewProdutoLoc>? = null
+  
   @Formula(select = "LOC.localizacao",
            join = "LEFT join (select produto_id, GROUP_CONCAT(DISTINCT localizacao ORDER BY localizacao SEPARATOR ' -" + " ') as localizacao from t_loc_produtos FORCE INDEX(i2) where storeno = @LOJA_FIELD group by " + "produto_id) AS LOC ON LOC.produto_id = \${ta}.id")
   var localizacao: String? = ""
+  
   @Formula(select = "SAL.saldo_total",
            join = "LEFT JOIN (select produto_id, SUM(quantidade*IF(tipo_mov = 'ENTRADA', 1, -1)*IF(tipo_mov in " + "('INCLUIDA', 'ENTREGUE_LOJA') || tipo_nota IN ('CANCELADA_E', 'CANCELADA_S'), 0, 1)) AS " + "saldo_total from itens_nota AS I inner join notas AS N ON N.id = I.nota_id inner join lojas AS L " + "   ON L.id = N.loja_id WHERE L.numero = @LOJA_FIELD group by produto_id) AS SAL ON SAL.produto_id" + " = \${ta}.id")
   var saldo_total: Int? = 0
@@ -103,7 +112,8 @@ class Produto: BaseModel() {
   companion object Find: ProdutoFinder() {
     fun findProduto(codigo: String?, grade: String?): Produto? {
       codigo ?: return null
-      return QProduto().codigo.eq(codigo.trim().lpad(16, " "))
+      return QProduto().codigo.eq(codigo.trim()
+                                    .lpad(16, " "))
         .grade.eq(grade ?: "")
         .findList()
         .firstOrNull()
@@ -180,7 +190,7 @@ class Produto: BaseModel() {
         }
         .filtroCD()
     }
-  
+    
     fun findTipoProduto(typeno: Int?): List<Produto> {
       typeno ?: return emptyList()
       return saci.findTipoProduto(typeno)
@@ -189,7 +199,7 @@ class Produto: BaseModel() {
         }
         .filtroCD()
     }
-  
+    
     fun delete(idDelete: Long?) {
       QProduto().id.eq(idDelete)
         .delete()
@@ -237,7 +247,10 @@ class Produto: BaseModel() {
     val localizacoes = localizacoes(abreviacaoDefault)
     if(localizacoes.size == 1) return localizacoes[0]
     val localizacoesSplit = localizacoes.map {it.split("[.\\-]".toRegex())}
-    val ctParte = localizacoesSplit.asSequence().map {it.size - 1}.min() ?: 0
+    val ctParte =
+      localizacoesSplit.asSequence()
+        .map {it.size - 1}
+        .min() ?: 0
     for(i in ctParte downTo 0) {
       val prefix =
         localizacoesSplit.asSequence()
@@ -267,8 +280,12 @@ private fun List<Produto>.filtroCD(): List<Produto> {
 }
 
 data class LocProduto(val localizacao: String): Comparable<LocProduto> {
-  val prefixo = localizacao.split("-").getOrNull(0) ?: localizacao
-  val abreviacao = localizacao.split('.').getOrNull(0) ?: ""
+  val prefixo =
+    localizacao.split("-")
+      .getOrNull(0) ?: localizacao
+  val abreviacao =
+    localizacao.split('.')
+      .getOrNull(0) ?: ""
   
   override fun compareTo(other: LocProduto): Int {
     return localizacao.compareTo(other.localizacao)
