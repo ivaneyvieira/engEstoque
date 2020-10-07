@@ -26,6 +26,7 @@ import com.github.mvysny.karibudsl.v8.VAlign
 import com.github.mvysny.karibudsl.v8.addColumnFor
 import com.github.mvysny.karibudsl.v8.align
 import com.github.mvysny.karibudsl.v8.bind
+import com.github.mvysny.karibudsl.v8.button
 import com.github.mvysny.karibudsl.v8.checkBoxGroup
 import com.github.mvysny.karibudsl.v8.comboBox
 import com.github.mvysny.karibudsl.v8.dateField
@@ -33,6 +34,7 @@ import com.github.mvysny.karibudsl.v8.em
 import com.github.mvysny.karibudsl.v8.expandRatio
 import com.github.mvysny.karibudsl.v8.grid
 import com.github.mvysny.karibudsl.v8.h
+import com.github.mvysny.karibudsl.v8.onLeftClick
 import com.github.mvysny.karibudsl.v8.px
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.w
@@ -81,6 +83,17 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
           }
           if(operation == ADD) {
             row {
+              button("Todas as grade") {
+                //expandRatio = 1f
+                //addStyleName(ValoTheme.)
+                onLeftClick {event ->
+                  val produto = binder.bean
+                  produto.gradesProduto = produto.grades.toSet()
+                  binder.bean = produto
+                }
+              }
+            }
+            row {
               checkBoxGroup<String> {
                 expandRatio = 1f
                 caption = "Grades"
@@ -111,7 +124,8 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
               expandRatio = 1f
               default {it.descricao2}
               id = "filtro"
-              setItems(TipoNota.values().toList())
+              setItems(TipoNota.values()
+                         .toList())
               isEmptySelectionAllowed = true
               emptySelectionCaption = "Todos"
               value = null
@@ -208,7 +222,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
                 viewModel.saveItem(item)
                 binder.reload()
               }
-  
+              
               editor.cancelCaption = "Cancelar"
               editor.saveCaption = "Salvar"
               editor.isBuffered = true
