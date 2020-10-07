@@ -29,7 +29,7 @@ import javax.validation.constraints.Size
 @Entity
 @Table(name = "produtos")
 @Indices(
-  Index(unique = true, columnNames = ["codigo", "grade"]), Index(columnNames = ["id", "loja_id"])
+  Index(unique = true, columnNames = ["codigo", "grade"])
         )
 class Produto: BaseModel() {
   @Size(max = 16)

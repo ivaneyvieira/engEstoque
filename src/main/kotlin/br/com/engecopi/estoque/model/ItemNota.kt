@@ -16,6 +16,7 @@ import br.com.engecopi.utils.format
 import io.ebean.annotation.Cache
 import io.ebean.annotation.CacheQueryTuning
 import io.ebean.annotation.Index
+import io.ebean.annotation.Indices
 import io.ebean.annotation.Length
 import java.time.LocalDate
 import java.time.LocalTime
@@ -35,7 +36,10 @@ import kotlin.reflect.full.memberProperties
 @Cache(enableQueryCache = true)
 @CacheQueryTuning(maxSecsToLive = 30)
 @Table(name = "itens_nota")
-@Index(unique = true, columnNames = ["nota_id", "produto_id", "localizacao"])
+@Indices(
+  Index(unique = true, columnNames = ["nota_id", "produto_id", "localizacao"]),
+  Index(columnNames = ["produto_id", "nota_id"])
+        )
 class ItemNota: BaseModel() {
   var data: LocalDate = LocalDate.now()
   var hora: LocalTime = LocalTime.now()
