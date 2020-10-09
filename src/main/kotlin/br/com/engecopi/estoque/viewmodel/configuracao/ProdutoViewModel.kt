@@ -44,12 +44,13 @@ class ProdutoViewModel(view: IProdutoView): CrudViewModel<Produto, QProduto, Pro
       if(ViewProdutoSaci.temGrade(bean.codigoProduto)) {
         val gradesProduto = bean.gradesProduto.filter {it != ""}
         if(gradesProduto.isEmpty()) throw EViewModelError("Este produto deveria tem grade")
-        else gradesProduto.filter {grade -> !gradesSalvas.contains(grade)}.forEach {grade ->
-          this.codigo = bean.codigoProduto.lpad(16, " ")
-          this.grade = grade
-          this.codebar = bean.codebar ?: ""
-          this.save()
-        }
+        else gradesProduto.filter {grade -> !gradesSalvas.contains(grade)}
+          .forEach {grade ->
+            this.codigo = bean.codigoProduto.lpad(16, " ")
+            this.grade = grade
+            this.codebar = bean.codebar ?: ""
+            this.save()
+          }
       }
       else {
         this.codigo = bean.codigoProduto.lpad(16, " ")
@@ -125,16 +126,27 @@ class ProdutoVo: EntityVo<Produto>() {
   val descricaoProduto: String?
     get() = produto?.descricao
   val descricaoProdutoSaci: String?
-    get() = if(entityVo == null) ViewProdutoSaci.find(codigoProduto).firstOrNull()?.nome else entityVo?.descricao
+    get() = if(entityVo == null) ViewProdutoSaci.find(codigoProduto)
+      .firstOrNull()?.nome
+    else entityVo?.descricao
+  
+  fun findGradesSaci() = ViewProdutoSaci.find(codigoProduto)
+    .mapNotNull {it.grade}
+  
   val grades
-    get() = if(entityVo == null) ViewProdutoSaci.find(codigoProduto).mapNotNull {it.grade}
+    get() = if(entityVo == null) findGradesSaci()
     else listOf(entityVo?.grade ?: "")
   val codebar: String?
     get() = produto?.codebar ?: ""
   val localizacao
-    get() = produto?.localizacoes(abreviacaoDefault).orEmpty().filter {
-      it.startsWith(abreviacaoDefault ?: "")
-    }.asSequence().distinct().joinToString(" / ")
+    get() = produto?.localizacoes(abreviacaoDefault)
+      .orEmpty()
+      .filter {
+        it.startsWith(abreviacaoDefault ?: "")
+      }
+      .asSequence()
+      .distinct()
+      .joinToString(" / ")
   val produto
     get() = toEntity()
   val temGrade get() = toEntity()?.temGrade
