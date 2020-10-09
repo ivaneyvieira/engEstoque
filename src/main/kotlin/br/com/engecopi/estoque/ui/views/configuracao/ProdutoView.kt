@@ -88,7 +88,8 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
                 //addStyleName(ValoTheme.)
                 onLeftClick {event ->
                   val produto = binder.bean
-                  produto.gradesProduto = produto.grades.toSet()
+                  val grades = produto.findGradesSaci().toSet()
+                  produto.gradesProduto = grades
                   binder.bean = produto
                 }
               }
