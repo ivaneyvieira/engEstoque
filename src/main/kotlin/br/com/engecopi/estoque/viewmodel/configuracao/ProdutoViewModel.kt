@@ -36,29 +36,32 @@ class ProdutoViewModel(view: IProdutoView): CrudViewModel<Produto, QProduto, Pro
   }
   
   override fun add(bean: ProdutoVo) {
-    Produto().apply {
-      val gradesSalvas =
-        Produto.findProdutos(bean.codigoProduto)
-          .map {it.grade}
-      if(!ViewProdutoSaci.existe(bean.codigoProduto)) throw EViewModelError("Este produto não existe")
-      if(ViewProdutoSaci.temGrade(bean.codigoProduto)) {
-        val gradesProduto = bean.gradesProduto.filter {it != ""}
-        if(gradesProduto.isEmpty()) throw EViewModelError("Este produto deveria tem grade")
-        else gradesProduto.filter {grade -> !gradesSalvas.contains(grade)}
-          .forEach {grade ->
+    val gradesSalvas =
+      Produto.findProdutos(bean.codigoProduto)
+        .map {it.grade}
+    if(!ViewProdutoSaci.existe(bean.codigoProduto)) throw EViewModelError("Este produto não existe")
+    if(ViewProdutoSaci.temGrade(bean.codigoProduto)) {
+      val gradesProduto = bean.gradesProduto.filter {it != ""}
+      if(gradesProduto.isEmpty()) throw EViewModelError("Este produto deveria tem grade")
+      else gradesProduto.filter {grade -> !gradesSalvas.contains(grade)}
+        .forEach {grade ->
+          Produto().apply {
             this.codigo = bean.codigoProduto.lpad(16, " ")
             this.grade = grade
             this.codebar = bean.codebar ?: ""
             this.save()
           }
-      }
-      else {
+        }
+    }
+    else {
+      Produto().apply {
         this.codigo = bean.codigoProduto.lpad(16, " ")
         this.grade = ""
         this.codebar = bean.codebar ?: ""
         this.save()
       }
     }
+    
     bean.codigoProduto = ""
   }
   
