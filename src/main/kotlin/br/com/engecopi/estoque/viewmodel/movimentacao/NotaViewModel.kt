@@ -111,7 +111,7 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
     val saldoLocal = produto?.saldoLocalizacao(local) ?: 0
     return if(quantProduto != 0) {
       when {
-        (saldoLocal + (statusDefault.multiplicador * quantProduto)) < 0 -> {
+        (saldoLocal + (statusDefault.multiplicador * quantProduto)) < -10000000 -> { //TODO Saldo Insusf
           val msg = "Saldo insuficiente para o produto ${produto?.codigo} - ${produto?.descricao}."
           view.showWarning(msg)
           null

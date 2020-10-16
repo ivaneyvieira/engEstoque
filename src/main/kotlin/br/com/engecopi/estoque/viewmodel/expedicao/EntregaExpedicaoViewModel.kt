@@ -34,8 +34,6 @@ class EntregaExpedicaoViewModel(view: IEntregaExpedicaoView):
       .updateView()
   }
   
-  
-  
   fun notasConferidas(): List<ItemNota> {
     return QItemNota().status.eq(CONFERIDA)
       .findList()
