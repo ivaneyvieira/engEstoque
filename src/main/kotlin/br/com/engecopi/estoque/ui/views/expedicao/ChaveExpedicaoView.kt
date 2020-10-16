@@ -388,7 +388,7 @@ class DlgExpedicao(val localizacaoExpedicao: LocalizacaoExpedicao,
                     Notification.show("Não pode ser selecionado. Já está salvo")
                     selectionModel.deselect(it)
                   }
-                  else if(it.saldoFinal < 0) {
+                  else if(it.saldoFinal < -100000000) { //TODO Saldo insuficiente
                     Notification.show("Não pode ser selecionado. Saldo insuficiente.")
                     selectionModel.deselect(it)
                   }

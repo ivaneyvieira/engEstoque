@@ -434,7 +434,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
                     it.updateItem(false)
                   }
                 select.allSelectedItems.forEach {
-                  if(it.saldoFinal < 0) {
+                  if(it.saldoFinal < -100000000) { //TODO Saldo insuficiente
                     Notification.show("Saldo insuficiente")
                     selectionModel.deselect(it)
                     it.selecionado = false
@@ -590,7 +590,8 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
           itemVO.forEach {item ->
             val codigo = item.value?.codigo?.trim()
             when {
-              item.saldoFinal < 0 -> viewModel.view.showWarning("O saldo final do produto '$codigo' está negativo")
+              //TODO Saldo Negativo
+             // item.saldoFinal < 0 -> viewModel.view.showWarning("O saldo final do produto '$codigo' está negativo")
               item.allowSelect()  -> selecionaProduto(item)
               else                -> viewModel.view.showWarning("O produto '$codigo' não é selecionavel")
             }
