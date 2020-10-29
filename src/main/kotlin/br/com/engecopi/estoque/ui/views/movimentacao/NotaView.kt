@@ -46,7 +46,7 @@ import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
 import org.vaadin.patrik.FastNavigation
 
-abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>: CrudLayoutView<VO, MODEL>() {
+abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>(customFooterLayout : Boolean = false): CrudLayoutView<VO, MODEL>(customFooterLayout) {
   lateinit var gridProduto: Grid<ProdutoNotaVo>
   val usuario get() = usuarioDefault
   val isAdmin get() = usuario.admin

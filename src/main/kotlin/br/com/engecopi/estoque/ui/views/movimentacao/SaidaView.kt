@@ -83,7 +83,7 @@ import org.vaadin.viritin.fields.IntegerField
 import java.time.LocalDateTime
 
 @AutoView("")
-class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(), ISaidaView {
+class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(customFooterLayout = false), ISaidaView {
   var formCodBar: PnlCodigoBarras? = null
   override fun enter(event: ViewChangeEvent) {
     super.enter(event)

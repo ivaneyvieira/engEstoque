@@ -47,7 +47,8 @@ import kotlin.collections.set
 import kotlin.reflect.KProperty1
 import kotlin.streams.toList
 
-abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: LayoutView<V>(), ICrudView {
+abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>(val customFooterLayout: Boolean = false):
+  LayoutView<V>(), ICrudView {
   var isAddClose = true
   var isStillShow = false
   val headerLayout = HorizontalLayout()
@@ -90,7 +91,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
   var queryOnly: Boolean = false
     set(value) {
       field = value
-  
+      
       findAllButton.isVisible = true
       addButton.isVisible = !value
       updateButton.isVisible = !value
@@ -100,7 +101,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
   var addOnly: Boolean = false
     set(value) {
       field = value
-  
+      
       findAllButton.isVisible = true
       addButton.isVisible = true
       updateButton.isVisible = !value
@@ -110,13 +111,14 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
   var reloadOnly: Boolean = false
     set(value) {
       field = value
-  
+      
       findAllButton.isVisible = true
       addButton.isVisible = !value
       updateButton.isVisible = !value
       readButton.isVisible = value
       deleteButton.isVisible = !value
     }
+  
   //val domainType get() = viewModel.crudClass
   var layoutForm: (CrudForm<C>) -> Unit = {}
   val find = CallbackDataProvider.FetchCallback<C, String> {query ->
@@ -160,10 +162,10 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
     super.form(titleForm) {
       headerLayout.isSpacing = true
       headerLayout.defaultComponentAlignment = BOTTOM_LEFT
-  
+      
       toolbarLayout.addStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP)
       headerLayout.addComponent(toolbarLayout)
-  
+      
       filterLayout.isSpacing = true
       headerLayout.addComponent(filterLayout)
       addFilterComponent(filtroEdt)
@@ -234,6 +236,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
   fun buildNewForm(operation: CrudOperation,
                    domainObject: C,
                    readOnly: Boolean,
+                   customFooterLayout: Boolean,
                    cancelButtonClickListener: (CrudForm<C>) -> Unit,
                    operationButtonClickListener: (CrudForm<C>) -> Unit): CrudForm<C> {
     return CrudForm(operation,
@@ -241,6 +244,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
                     readOnly,
                     cancelButtonClickListener,
                     operationButtonClickListener,
+                    customFooterLayout,
                     layoutForm)
   }
   
@@ -260,7 +264,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
   
   private fun readButtonClicked() {
     val domainObject = grid.asSingleSelect()?.value ?: return
-    showForm(READ, domainObject, true, savedMessage) {
+    showForm(READ, domainObject, true, savedMessage, customFooterLayout) {
       viewModel.crudBean = domainObject
       viewModel.read()
     }
@@ -273,7 +277,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
   private fun addButtonClicked() {
     viewModel.cleanBean()
     val domainObject = viewModel.crudBean ?: return
-    showForm(ADD, domainObject, false, savedMessage) {
+    showForm(ADD, domainObject, false, savedMessage, customFooterLayout) {
       viewModel.crudBean = domainObject
       viewModel.add()
       processAdd(domainObject)
@@ -282,7 +286,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
   
   fun updateButtonClicked() {
     val domainObject = grid.asSingleSelect()?.value ?: return
-    showForm(UPDATE, domainObject, false, savedMessage) {
+    showForm(UPDATE, domainObject, false, savedMessage, customFooterLayout) {
       viewModel.crudBean = domainObject
       viewModel.update()
     }
@@ -290,7 +294,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
   
   fun deleteButtonClicked() {
     val domainObject = grid.asSingleSelect()?.value ?: return
-    showForm(DELETE, domainObject, true, deletedMessage) {
+    showForm(DELETE, domainObject, true, deletedMessage, customFooterLayout) {
       viewModel.crudBean = domainObject
       viewModel.delete()
     }
@@ -304,6 +308,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
                domainObject: C,
                readOnly: Boolean,
                successMessage: String,
+               customFooterLayout: Boolean,
                buttonClickListener: () -> Unit) {
     fun operation(form: CrudForm<C>) {
       buttonClickListener()
@@ -332,7 +337,7 @@ abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>: Lay
         ?.value = selected
     }
     
-    val form = buildNewForm(operation, domainObject, readOnly, ::cancel, ::operation)
+    val form = buildNewForm(operation, domainObject, readOnly, customFooterLayout, ::cancel, ::operation)
     
     showForm(operation, form)
   }
@@ -438,6 +443,7 @@ class CrudForm<C: EntityVo<*>>(val operation: CrudOperation,
                                val readOnly: Boolean,
                                cancelButtonClickListener: (CrudForm<C>) -> Unit,
                                operationButtonClickListener: (CrudForm<C>) -> Unit,
+                               val customFooterLayout: Boolean,
                                layoutForm: (CrudForm<C>) -> Unit): VerticalLayout() {
   private val domainClass = domainObject.javaClass
   val binder: Binder<C> = BeanValidationBinder<C>(domainClass).apply {
@@ -448,22 +454,26 @@ class CrudForm<C: EntityVo<*>>(val operation: CrudOperation,
   val buttonStyleNames = HashMap<CrudOperation, String?>()
   val formLayout = VerticalLayout()
   var operationButton: Button? = null
+  var footerLayout: Layout?
   
   init {
     updateButtons()
-    val footerLayout = buildFooter(operation, cancelButtonClickListener, operationButtonClickListener)
+    footerLayout = buildFooter(operation, cancelButtonClickListener, operationButtonClickListener)
     
     layoutForm(this)
     formLayout.setSizeFull()
     addComponentsAndExpand(formLayout)
-    
-    addComponent(footerLayout)
-    setComponentAlignment(footerLayout, BOTTOM_RIGHT)
+    if(!customFooterLayout) {
+      addComponent(footerLayout)
+      setComponentAlignment(footerLayout, BOTTOM_RIGHT)
+    }
     setMargin(true)
   }
   
   fun focusFirst() {
-    val field = binder.fields.toList().firstOrNull {it is Component.Focusable} as? Component.Focusable
+    val field =
+      binder.fields.toList()
+        .firstOrNull {it is Component.Focusable} as? Component.Focusable
     field?.focus()
   }
   
@@ -492,10 +502,9 @@ class CrudForm<C: EntityVo<*>>(val operation: CrudOperation,
     val footerLayout = HorizontalLayout()
     footerLayout.setSizeUndefined()
     footerLayout.isSpacing = true
-    
-    footerLayout.addComponent(cancelButton)
-    
+
     footerLayout.addComponent(operationButton)
+    footerLayout.addComponent(cancelButton)
     
     return footerLayout
   }
