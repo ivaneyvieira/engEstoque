@@ -22,18 +22,23 @@ import com.github.mvysny.karibudsl.v8.bind
 import com.github.mvysny.karibudsl.v8.comboBox
 import com.github.mvysny.karibudsl.v8.dateField
 import com.github.mvysny.karibudsl.v8.expandRatio
+import com.github.mvysny.karibudsl.v8.label
 import com.github.mvysny.karibudsl.v8.px
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.w
 import com.vaadin.data.Binder
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.shared.ui.ContentMode.HTML
+import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
+import com.vaadin.ui.Label
 import com.vaadin.ui.TextField
 import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
+import javax.ws.rs.client.Entity.html
 
 @AutoView
-open class EntradaView: NotaView<EntradaVo, EntradaViewModel, IEntradaView>(), IEntradaView {
+open class EntradaView: NotaView<EntradaVo, EntradaViewModel, IEntradaView>(customFooterLayout = true), IEntradaView {
   private lateinit var formBinder: Binder<EntradaVo>
   private lateinit var fieldNotaFiscal: TextField
   
@@ -50,7 +55,7 @@ open class EntradaView: NotaView<EntradaVo, EntradaViewModel, IEntradaView>(), I
         w =
           (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
             .px
-  
+        
         grupo("Nota fiscal de entrada") {
           row {
             fieldNotaFiscal = notaFiscalField(operation, binder)
@@ -93,8 +98,16 @@ open class EntradaView: NotaView<EntradaVo, EntradaViewModel, IEntradaView>(), I
             }
           }
         }
-  
-        grupo("Produto") {
+        row {
+          label("<b>Produto</b>"){
+            contentMode = HTML
+          }
+          
+          addComponent(footerLayout)
+          setComponentAlignment(footerLayout, Alignment.BOTTOM_LEFT)
+          addComponentsAndExpand(Label(""))
+        }
+        grupo {
           produtoField(operation, binder, "Entrada")
         }
       }
@@ -126,7 +139,7 @@ open class EntradaView: NotaView<EntradaVo, EntradaViewModel, IEntradaView>(), I
             }
           })
         }
-  
+        
         button
       }
         .id = "btnPrint"
@@ -170,7 +183,7 @@ open class EntradaView: NotaView<EntradaVo, EntradaViewModel, IEntradaView>(), I
       }
       column(EntradaVo::localizacao) {
         caption = "Local"
-  
+        
         setRenderer({it?.localizacao}, TextRenderer())
       }
       column(EntradaVo::usuario) {
