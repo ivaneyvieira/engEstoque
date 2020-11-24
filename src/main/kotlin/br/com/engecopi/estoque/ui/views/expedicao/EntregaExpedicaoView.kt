@@ -20,16 +20,20 @@ import com.github.mvysny.karibudsl.v8.bind
 import com.github.mvysny.karibudsl.v8.comboBox
 import com.github.mvysny.karibudsl.v8.dateField
 import com.github.mvysny.karibudsl.v8.expandRatio
+import com.github.mvysny.karibudsl.v8.label
 import com.github.mvysny.karibudsl.v8.px
 import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.verticalLayout
 import com.github.mvysny.karibudsl.v8.w
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
+import com.vaadin.shared.ui.ContentMode.HTML
+import com.vaadin.ui.Alignment
+import com.vaadin.ui.Label
 import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView("entrega_expedicao")
-class EntregaExpedicaoView: NotaView<EntregaExpedicaoVo, EntregaExpedicaoViewModel, IEntregaExpedicaoView>(),
+class EntregaExpedicaoView: NotaView<EntregaExpedicaoVo, EntregaExpedicaoViewModel, IEntregaExpedicaoView>(true),
                             IEntregaExpedicaoView {
   var formCodBar: PnlCodigoBarras? = null
   
@@ -79,8 +83,16 @@ class EntregaExpedicaoView: NotaView<EntregaExpedicaoVo, EntregaExpedicaoViewMod
             }
           }
         }
-  
-        grupo("Produto") {
+        row {
+          label("<b>Produto</b>"){
+            contentMode = HTML
+          }
+    
+          addComponent(footerLayout)
+          setComponentAlignment(footerLayout, Alignment.BOTTOM_LEFT)
+          addComponentsAndExpand(Label(""))
+        }
+        grupo {
           produtoField(operation, binder, "Saída")
         }
       }

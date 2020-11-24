@@ -40,7 +40,9 @@ import com.github.mvysny.karibudsl.v8.textField
 import com.github.mvysny.karibudsl.v8.w
 import com.vaadin.data.Binder
 import com.vaadin.data.HasValue
+import com.vaadin.ui.Alignment
 import com.vaadin.ui.ComboBox
+import com.vaadin.ui.Label
 import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.renderers.TextRenderer
@@ -48,7 +50,7 @@ import com.vaadin.ui.themes.ValoTheme
 import java.text.DecimalFormat
 
 @AutoView
-class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
+class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoView {
   init {
     viewModel = ProdutoViewModel(this)
     isAddClose = false
@@ -81,19 +83,27 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
               }
             }
           }
-          if(operation == ADD) {
-            row {
+  
+          row {
+            if(operation == ADD) {
               button("Todas as grade") {
                 //expandRatio = 1f
                 //addStyleName(ValoTheme.)
-                onLeftClick {event ->
+                onLeftClick {_ ->
                   val produto = binder.bean
-                  val grades = produto.findGradesSaci().toSet()
+                  val grades =
+                    produto.findGradesSaci()
+                      .toSet()
                   produto.gradesProduto = grades
                   binder.bean = produto
                 }
               }
             }
+            addComponent(footerLayout)
+            setComponentAlignment(footerLayout, Alignment.BOTTOM_LEFT)
+            addComponentsAndExpand(Label(""))
+          }
+          if(operation == ADD) {
             row {
               checkBoxGroup<String> {
                 expandRatio = 1f
@@ -105,6 +115,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(), IProdutoView {
             }
           }
         }
+        
         grupo("Notas") {
           row {
             dateField("Data Inicial") {
