@@ -49,7 +49,7 @@ import com.vaadin.ui.themes.ValoTheme
 
 @AutoView("chave_ressuprimento")
 class ChaveRessuprimentoView:
-  CrudLayoutView<ChaveRessuprimentoVo, ChaveRessuprimentoViewModel>(), IChaveRessuprimentoView {
+  CrudLayoutView<ChaveRessuprimentoVo, ChaveRessuprimentoViewModel>(false), IChaveRessuprimentoView {
   var formCodBar: PnlCodigoBarras? = null
   private val isAdmin
     get() = RegistryUserInfo.userDefaultIsAdmin

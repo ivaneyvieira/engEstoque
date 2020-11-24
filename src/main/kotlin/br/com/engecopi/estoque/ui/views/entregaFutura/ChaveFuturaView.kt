@@ -51,7 +51,7 @@ import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
 
 @AutoView("chave_futura")
-class ChaveFuturaView: CrudLayoutView<ChaveFuturaVo, ChaveFuturaViewModel>(), IChaveFuturaView {
+class ChaveFuturaView: CrudLayoutView<ChaveFuturaVo, ChaveFuturaViewModel>(false), IChaveFuturaView {
   var formCodBar: PnlCodigoBarras? = null
   private val isAdmin
     get() = RegistryUserInfo.userDefaultIsAdmin

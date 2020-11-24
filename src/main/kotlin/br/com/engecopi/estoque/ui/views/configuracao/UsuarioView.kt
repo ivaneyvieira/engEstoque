@@ -31,7 +31,7 @@ import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
 
 @AutoView
-class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>(), IUsuarioView {
+class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>(false), IUsuarioView {
   private val isAdmin = RegistryUserInfo.usuarioDefault.admin
   
   init {

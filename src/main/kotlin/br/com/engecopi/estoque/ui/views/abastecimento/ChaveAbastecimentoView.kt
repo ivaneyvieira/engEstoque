@@ -51,7 +51,7 @@ import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
 
 @AutoView("chave_abastecimento")
-class ChaveAbastecimentoView: CrudLayoutView<AbastecimentoVo, ChaveAbastecimentoViewModel>(),
+class ChaveAbastecimentoView: CrudLayoutView<AbastecimentoVo, ChaveAbastecimentoViewModel>(customFooterLayout = false),
                               IAbastecimentoView {
   var formCodBar: PnlCodigoBarras? = null
   private val isAdmin

@@ -28,7 +28,7 @@ import com.vaadin.ui.TextArea
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView
-class EtiquetaView: CrudLayoutView<EtiquetaVo, EtiquetaViewModel>(), IEtiquetaView {
+class EtiquetaView: CrudLayoutView<EtiquetaVo, EtiquetaViewModel>(false), IEtiquetaView {
   private lateinit var template: TextArea
   
   init {

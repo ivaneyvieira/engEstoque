@@ -64,13 +64,16 @@ import com.vaadin.icons.VaadinIcons
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 import com.vaadin.shared.data.sort.SortDirection.ASCENDING
 import com.vaadin.shared.data.sort.SortDirection.DESCENDING
+import com.vaadin.shared.ui.ContentMode.HTML
 import com.vaadin.shared.ui.ValueChangeMode.LAZY
 import com.vaadin.shared.ui.window.WindowMode
+import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.Grid
 import com.vaadin.ui.Grid.Column
 import com.vaadin.ui.Grid.SelectionMode.MULTI
+import com.vaadin.ui.Label
 import com.vaadin.ui.Notification
 import com.vaadin.ui.TextField
 import com.vaadin.ui.UI
@@ -83,7 +86,7 @@ import org.vaadin.viritin.fields.IntegerField
 import java.time.LocalDateTime
 
 @AutoView("")
-class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(customFooterLayout = false), ISaidaView {
+class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(customFooterLayout = true), ISaidaView {
   var formCodBar: PnlCodigoBarras? = null
   override fun enter(event: ViewChangeEvent) {
     super.enter(event)
@@ -133,8 +136,16 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(customFooterLayou
             }
           }
         }
-        
-        grupo("Produto") {
+        row {
+          label("<b>Produto</b>") {
+            contentMode = HTML
+          }
+          
+          addComponent(footerLayout)
+          setComponentAlignment(footerLayout, Alignment.BOTTOM_LEFT)
+          addComponentsAndExpand(Label(""))
+        }
+        grupo {
           produtoField(operation, binder, "Saída")
         }
       }
@@ -251,8 +262,8 @@ class SaidaView: NotaView<SaidaVo, SaidaViewModel, ISaidaView>(customFooterLayou
             //Imprime nota
             itens.firstOrNull()
               ?.nota?.let {nota ->
-              imprimeNotaConcluida(nota)
-            }
+                imprimeNotaConcluida(nota)
+              }
           }
         }
         dlg.showDialog()
@@ -353,16 +364,16 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
                 val naoSelect =
                   allItens.minus(itensSelecionados)
                     .filter {it.allowSelect()}
-  
+                
                 itensGroupByOrigem.forEach {(origem, produtos) ->
                   if(origem != null)
                     when(origem) {
-                      DEPOSITO  -> confirmaProdutos(
+                      DEPOSITO -> confirmaProdutos(
                         produtosSelecionado = produtos intersect itensSelecionados,
                         produtosNaoSelecionado = produtos intersect naoSelect,
                         statusSelecionado = ENTREGUE,
                         statusNaoSelecionado = ENT_LOJA
-                                                   )
+                                                  )
                       EXPEDICAO -> confirmaProdutos(
                         produtosSelecionado = produtos intersect itensSelecionados,
                         produtosNaoSelecionado = produtos intersect naoSelect,
@@ -375,18 +386,18 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
                         statusSelecionado = CONFERIDA,
                         statusNaoSelecionado = ENT_LOJA
                                                    )
-                      RESSUPRI  -> confirmaProdutos(
+                      RESSUPRI -> confirmaProdutos(
                         produtosSelecionado = produtos intersect itensSelecionados,
                         produtosNaoSelecionado = produtos intersect naoSelect,
                         statusSelecionado = CONFERIDA,
                         statusNaoSelecionado = ENT_LOJA
-                                                   )
-                      ABASTECI  -> confirmaProdutos(
+                                                  )
+                      ABASTECI -> confirmaProdutos(
                         produtosSelecionado = produtos intersect itensSelecionados,
                         produtosNaoSelecionado = emptySet(),
                         statusSelecionado = ENTREGUE,
                         statusNaoSelecionado = ENT_LOJA
-                                                   )
+                                                  )
                     }
                 }
                 close()
@@ -554,7 +565,7 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
   private fun @VaadinDsl Grid<ProdutoNotaVo>.updateProdutosNota() {
     val abreviacao = abreviacaoDefault
     //nota.refresh()
-    val itens = nota.itens.filter {it.localizacao.startsWith(abreviacao ?: "")}
+    val itens = nota.itens.filter {it.localizacao.startsWith(abreviacao)}
     val itensProvider = itens.mapNotNull {item ->
       val produto = item.produto
       val statusNota = item.status
@@ -591,9 +602,9 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
             val codigo = item.value?.codigo?.trim()
             when {
               //TODO Saldo Negativo
-             // item.saldoFinal < 0 -> viewModel.view.showWarning("O saldo final do produto '$codigo' está negativo")
-              item.allowSelect()  -> selecionaProduto(item)
-              else                -> viewModel.view.showWarning("O produto '$codigo' não é selecionavel")
+              // item.saldoFinal < 0 -> viewModel.view.showWarning("O saldo final do produto '$codigo' está negativo")
+              item.allowSelect() -> selecionaProduto(item)
+              else               -> viewModel.view.showWarning("O produto '$codigo' não é selecionavel")
             }
           }
         }
@@ -618,7 +629,9 @@ class DlgNotaSaida(val nota: NotaItens, val viewModel: SaidaViewModel, val execP
         gridProdutos.updateProdutosNota()
       }
     }
-    if(gridProdutos.dataProvider.getAll().all {!it.allowSelect()}) close()
+    if(gridProdutos.dataProvider.getAll()
+        .all {!it.allowSelect()}
+    ) close()
   }
 }
 

@@ -168,8 +168,9 @@ abstract class NotaViewModel<VO: NotaVo, V: INotaView>(view: V,
   private fun saveNota(bean: VO): Nota {
     val nota: Nota = bean.nota ?: Nota()
     nota.apply {
-      this.numero = if(bean.numeroNF.isNullOrBlank()) "${Nota.novoNumero()}"
-      else bean.numeroNF ?: ""
+      val numeroNota = bean.notaSaci?.numeroSerie()
+      this.numero = if(numeroNota.isNullOrBlank()) "${Nota.novoNumero()}"
+      else numeroNota
       this.tipoMov = tipo
       this.tipoNota = bean.tipoNota
       this.loja = bean.lojaNF

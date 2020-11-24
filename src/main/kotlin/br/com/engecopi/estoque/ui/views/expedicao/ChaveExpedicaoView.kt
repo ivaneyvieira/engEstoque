@@ -51,7 +51,7 @@ import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
 
 @AutoView("chave_expedicao")
-class ChaveExpedicaoView: CrudLayoutView<ChaveExpedicaoVo, ChaveExpedicaoViewModel>(), IChaveExpedicaoView {
+class ChaveExpedicaoView: CrudLayoutView<ChaveExpedicaoVo, ChaveExpedicaoViewModel>(false), IChaveExpedicaoView {
   var formCodBar: PnlCodigoBarras? = null
   private val isAdmin
     get() = userDefaultIsAdmin

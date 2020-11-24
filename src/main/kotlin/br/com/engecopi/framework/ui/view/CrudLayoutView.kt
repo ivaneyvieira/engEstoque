@@ -47,7 +47,7 @@ import kotlin.collections.set
 import kotlin.reflect.KProperty1
 import kotlin.streams.toList
 
-abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>(val customFooterLayout: Boolean = false):
+abstract class CrudLayoutView<C: EntityVo<*>, V: CrudViewModel<*, *, C, *>>(val customFooterLayout: Boolean):
   LayoutView<V>(), ICrudView {
   var isAddClose = true
   var isStillShow = false
@@ -502,7 +502,7 @@ class CrudForm<C: EntityVo<*>>(val operation: CrudOperation,
     val footerLayout = HorizontalLayout()
     footerLayout.setSizeUndefined()
     footerLayout.isSpacing = true
-
+    
     footerLayout.addComponent(operationButton)
     footerLayout.addComponent(cancelButton)
     
