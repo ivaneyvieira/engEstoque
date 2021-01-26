@@ -7,6 +7,7 @@ import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
 import br.com.engecopi.estoque.model.LancamentoOrigem.RESSUPRI
 import br.com.engecopi.estoque.model.Nota
+import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
@@ -25,9 +26,10 @@ import com.vaadin.ui.themes.ValoTheme
 object PrintUtil {
   fun imprimeNotaConcluida(nota: Nota?) {
     nota ?: return
+    val printer = RegistryUserInfo.usuarioDefault.impressoraExpedicao()
     val impressoraNota = when(nota.lancamentoOrigem) {
-      ABASTECI  -> Printer("EXP4")
-      EXPEDICAO -> Printer("EXP4")
+      ABASTECI  -> Printer(printer)
+      EXPEDICAO -> Printer(printer)
       ENTREGA_F -> Printer("ENTREGA")
       RESSUPRI  -> {
         val printerNota = nota.itensNota().firstOrNull()?.abreviacao?.printer ?: return
