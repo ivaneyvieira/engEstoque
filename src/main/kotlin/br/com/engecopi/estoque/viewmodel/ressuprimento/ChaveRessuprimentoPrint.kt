@@ -21,7 +21,7 @@ class ChaveRessuprimentoPrint() {
       Etiqueta.findByStatus(INCLUIDA, "ETDEP")
     val prints = etiquetas.flatMap {etiqueta ->
       itens.mapNotNull {item ->
-        val text = imprimir(item, etiqueta) ?: return@mapNotNull null
+        val text = imprimir(item, etiqueta)
         val nota = item.nota ?: return@mapNotNull null
         val abreviacao = item.abreviacao ?: return@mapNotNull null
         EtiquetaRessuprimento(nota, abreviacao, text)
