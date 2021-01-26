@@ -395,10 +395,22 @@ data class NotaItens(val nota: Nota?, val itens: List<ItemNota>, val msgErro: St
   }
 }
 
-enum class LancamentoOrigem(val descricao: String, val printer: Printer) {
-  EXPEDICAO("Expedição", Printer(usuarioDefault.impressoraExpedicao())),
-  DEPOSITO("Deposito", Printer("ENTREGA")),
-  ENTREGA_F("Entrega Futura", Printer("")),
-  RESSUPRI("Ressuprimento", Printer("")),
-  ABASTECI("Abastecimento", Printer(usuarioDefault.impressoraExpedicao()))
+enum class LancamentoOrigem(val descricao: String) {
+  EXPEDICAO("Expedição" ) {
+    override fun printer(): Printer =      Printer(usuarioDefault.impressoraExpedicao())
+  },
+  DEPOSITO("Deposito"){
+    override fun printer(): Printer =       Printer("ENTREGA")
+  },
+  ENTREGA_F("Entrega Futura" ){
+    override fun printer(): Printer =       Printer("")
+  },
+  RESSUPRI("Ressuprimento" ){
+    override fun printer(): Printer = Printer("")
+  },
+  ABASTECI("Abastecimento", ) {
+    override fun printer(): Printer = Printer(usuarioDefault.impressoraExpedicao())
+  };
+  
+  abstract fun printer() : Printer
 }

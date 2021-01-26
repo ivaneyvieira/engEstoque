@@ -38,8 +38,8 @@ object MessageDialog {
 
   fun question(caption: String = "Questão", message: String, execYes: () -> Unit = {}, execNo: () -> Unit = {}) {
     MessageBox.createQuestion().withCaption(caption).withHtmlMessage(message)
-      .withYesButton(execYes, arrayOf(ButtonOption.caption("Sim")))
-      .withNoButton(execNo, arrayOf(ButtonOption.caption("Não"))).asModal(true).open()
+      .withYesButton(execYes, *arrayOf(ButtonOption.caption("Sim")))
+      .withNoButton(execNo, *arrayOf(ButtonOption.caption("Não"))).asModal(true).open()
   }
 
   fun question(caption: String = "Questão",
@@ -47,8 +47,8 @@ object MessageDialog {
                execYes: (Component) -> Unit = {},
                execNo: (Component) -> Unit = {}) {
     MessageBox.createQuestion().withCaption(caption).withMessage(message)
-      .withYesButton({execYes(message)}, arrayOf(ButtonOption.caption("Sim")))
-      .withNoButton({execNo(message)}, arrayOf(ButtonOption.caption("Não"))).asModal(true).open()
+      .withYesButton({execYes(message)}, *arrayOf(ButtonOption.caption("Sim")))
+      .withNoButton({execNo(message)}, *arrayOf(ButtonOption.caption("Não"))).asModal(true).open()
   }
 
   fun image(title: String, image: ByteArray) {

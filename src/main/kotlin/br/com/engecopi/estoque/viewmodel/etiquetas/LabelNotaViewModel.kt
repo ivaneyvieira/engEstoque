@@ -45,7 +45,7 @@ class LabelNotaViewModel(view: ILabelNotaView): ViewModel<ILabelNotaView>(view) 
     val groupOrigem = itensNota.groupBy {it.nota?.lancamentoOrigem}
     
     return groupOrigem.mapNotNull {(origem, itens) ->
-      val impressora = origem?.printer ?: return@mapNotNull null
+      val impressora = origem?.printer() ?: return@mapNotNull null
       val text = imprimir(itens, etiqueta)
       PacoteImpressao(impressora, text)
     }
