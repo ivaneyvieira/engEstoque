@@ -91,6 +91,8 @@ class Usuario: BaseModel() {
     return ViewProdutoLoc.existsCache(produto)
   }
   
+  fun impressoraExpedicao() = if(loginName == "CD5A") "CD5A" else "EXP4"
+  
   fun localizacoesProduto(produto: Produto): List<String> {
     return QViewProdutoLoc().produto.equalTo(produto)
       .or()

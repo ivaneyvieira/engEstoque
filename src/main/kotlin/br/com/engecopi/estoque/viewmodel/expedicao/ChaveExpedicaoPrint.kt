@@ -3,6 +3,7 @@ package br.com.engecopi.estoque.viewmodel.expedicao
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.Nota
+import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.StatusNota
 import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
@@ -40,7 +41,8 @@ class ChaveExpedicaoPrint() {
         else emptyList()
       }
       val text = imprimeItens(INCLUIDA, listaItens)
-      val impressaoEXP = listOf(PacoteImpressao(Printer("EXP4"), text))
+      val printer = RegistryUserInfo.usuarioDefault.impressoraExpedicao()
+      val impressaoEXP = listOf(PacoteImpressao(Printer(printer), text))
       
       impressaoCD + impressaoEXP
     }

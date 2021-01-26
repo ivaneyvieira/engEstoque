@@ -396,9 +396,9 @@ data class NotaItens(val nota: Nota?, val itens: List<ItemNota>, val msgErro: St
 }
 
 enum class LancamentoOrigem(val descricao: String, val printer: Printer) {
-  EXPEDICAO("Expedição", Printer("EXP4")),
+  EXPEDICAO("Expedição", Printer(usuarioDefault.impressoraExpedicao())),
   DEPOSITO("Deposito", Printer("ENTREGA")),
   ENTREGA_F("Entrega Futura", Printer("")),
   RESSUPRI("Ressuprimento", Printer("")),
-  ABASTECI("Abastecimento", Printer("EXP4"))
+  ABASTECI("Abastecimento", Printer(usuarioDefault.impressoraExpedicao()))
 }

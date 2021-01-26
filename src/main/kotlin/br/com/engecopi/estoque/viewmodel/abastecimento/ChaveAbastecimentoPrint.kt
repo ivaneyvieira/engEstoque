@@ -26,12 +26,7 @@ class ChaveAbastecimentoPrint() {
       val notaRef = Nota.byId(id) ?: return emptyList()
       val listaItens = notaRef.itensNota()
       val itensAbreviacao = listaItens.groupBy {it.abreviacao}
-      /*
-      val text = imprimeItens(INCLUIDA, listaItens)
-      val impressaoEXP = listOf(PacoteImpressao(Printer("EXP4"), text))
-      
-      impressaoEXP
-  */
+ 
       itensAbreviacao.mapNotNull {(abreviacao, itens) ->
         if(abreviacao == null) return@mapNotNull null
         val printer = abreviacao.printer
