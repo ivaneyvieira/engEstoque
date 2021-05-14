@@ -50,10 +50,8 @@ import javax.persistence.Table
 import javax.validation.constraints.Size
 
 @Entity
-@Indices(
-  Index(columnNames = ["tipo_mov", "tipo_nota", "sequencia"]),
-  Index(columnNames = ["loja_id", "tipo_mov", "numero"], unique = true)
-        )
+@Indices(Index(columnNames = ["tipo_mov", "tipo_nota", "sequencia"]),
+         Index(columnNames = ["loja_id", "tipo_mov", "numero"], unique = true))
 @Cache(enableQueryCache = true)
 @CacheQueryTuning(maxSecsToLive = 30)
 @Table(name = "notas")
@@ -110,23 +108,20 @@ class Nota: BaseModel() {
   val multipicadorCancelado
     get() = if(cancelado) 0 else 1
   val nfno
-    get() = numero.split("/")
-              .getOrNull(0) ?: ""
+    get() = numero.split("/").getOrNull(0) ?: ""
   val nfse
-    get() = numero.split("/")
-              .getOrNull(1) ?: ""
+    get() = numero.split("/").getOrNull(1) ?: ""
   
   fun updateFromSaci() {
     val storeno = loja?.numero ?: 0
     val notaInfo = when(tipoMov) {
                      ENTRADA -> saci.findNotaEntradaInfo(storeno, nfno, nfse)
-                     SAIDA -> saci.findNotaSaidaInfo(storeno, nfno, nfse)
+                     SAIDA   -> saci.findNotaSaidaInfo(storeno, nfno, nfse)
                    } ?: return
-    tipoNota = if(notaInfo.cancelado)
-      when(tipoMov) {
-        ENTRADA -> CANCELADA_E
-        SAIDA -> CANCELADA_S
-      }
+    tipoNota = if(notaInfo.cancelado) when(tipoMov) {
+      ENTRADA -> CANCELADA_E
+      SAIDA   -> CANCELADA_S
+    }
     else {
       notaInfo.tipoNota
     }
@@ -158,15 +153,14 @@ class Nota: BaseModel() {
       val numero = notaSimples.numeroSerie()
       val tipoNota = notaSimples.tipoNota() ?: return NotaItens.erro("Nota com tipo inválido")
       val loja = notaSimples.loja() ?: return NotaItens.erro("Nota com loja inválido")
-      val nota = findNota(loja, numero, tipoNota.tipoMov)
-                 ?: createNota(notaSimples)
-                 ?: return NotaItens.erro("Erro ao criar a nota")
+      val nota =
+        findNota(loja, numero, tipoNota.tipoMov) ?: createNota(notaSimples)
+        ?: return NotaItens.erro("Erro ao criar a nota")
       nota.sequencia = maxSequencia() + 1
       nota.usuario = usuarioDefault
       val itens = notasaci.mapNotNull {item ->
         val produto = Produto.findProduto(item.prdno, item.grade)
-        ItemNota.find(nota, produto) ?: ItemNota.createItemNota(item, nota, abreviacaoDefault)
-          ?.let {itemNota ->
+        ItemNota.find(nota, produto) ?: ItemNota.createItemNota(item, nota, abreviacaoDefault)?.let {itemNota ->
             itemNota.status = INCLUIDA
             itemNota.usuario = usuarioDefault
             itemNota
@@ -176,24 +170,18 @@ class Nota: BaseModel() {
     }
     
     fun maxSequencia(): Int {
-      return QNota().select(QNota._alias.maxSequencia)
-               .findList()
-               .firstOrNull()?.maxSequencia ?: 0
+      return QNota().select(QNota._alias.maxSequencia).findList().firstOrNull()?.maxSequencia ?: 0
     }
     
     fun findEntrada(loja: Loja, numero: String?): Nota? {
       return if(numero.isNullOrBlank()) null
-      else QNota().tipoMov.eq(ENTRADA).numero.eq(numero).loja.id.eq(loja.id)
-        .findList()
-        .firstOrNull()
+      else QNota().tipoMov.eq(ENTRADA).numero.eq(numero).loja.id.eq(loja.id).findList().firstOrNull()
     }
     
     fun findSaida(storeno: Int?, numero: String?): Nota? {
       storeno ?: return null
       return if(numero.isNullOrBlank()) null
-      else QNota().tipoMov.eq(SAIDA).numero.eq(numero).loja.numero.eq(storeno)
-        .findList()
-        .firstOrNull()
+      else QNota().tipoMov.eq(SAIDA).numero.eq(numero).loja.numero.eq(storeno).findList().firstOrNull()
     }
     
     fun findSaida(loja: Loja?, numero: String?): Nota? {
@@ -205,30 +193,21 @@ class Nota: BaseModel() {
       loja ?: return null
       return when(tipoMov) {
         ENTRADA -> findEntrada(loja, numero)
-        SAIDA -> findSaida(loja, numero)
+        SAIDA   -> findSaida(loja, numero)
       }
     }
     
     fun novoNumero(): Int {
       val regex = "[0-9]+".toRegex()
-      val max =
-        QNota().findList()
-          .asSequence()
-          .map {it.numero}
-          .filter {regex.matches(it)}
-          .max() ?: "0"
+      val max = QNota().findList().asSequence().map {it.numero}.filter {regex.matches(it)}.max() ?: "0"
       val numMax = max.toIntOrNull() ?: 0
       return numMax + 1
     }
     
     fun findNotaEntradaSaci(loja: Loja, numeroNF: String?): List<NotaProdutoSaci> {
       numeroNF ?: return emptyList()
-      val numero =
-        numeroNF.split("/")
-          .getOrNull(0) ?: return emptyList()
-      val serie =
-        numeroNF.split("/")
-          .getOrNull(1) ?: ""
+      val numero = numeroNF.split("/").getOrNull(0) ?: return emptyList()
+      val serie = numeroNF.split("/").getOrNull(1) ?: ""
       return saci.findNotaEntrada(loja.numero, numero, serie, usuarioDefault.admin)
     }
     
@@ -239,12 +218,8 @@ class Nota: BaseModel() {
     fun findNotaSaidaSaci(storeno: Int?, numeroNF: String?): List<NotaProdutoSaci> {
       numeroNF ?: return emptyList()
       storeno ?: return emptyList()
-      val numero =
-        numeroNF.split("/")
-          .getOrNull(0) ?: return emptyList()
-      val serie =
-        numeroNF.split("/")
-          .getOrNull(1) ?: ""
+      val numero = numeroNF.split("/").getOrNull(0) ?: return emptyList()
+      val serie = numeroNF.split("/").getOrNull(1) ?: ""
       return saci.findNotaSaida(storeno, numero, serie, usuarioDefault.admin)
     }
     
@@ -262,14 +237,8 @@ class Nota: BaseModel() {
     }
     
     fun listSaidaCancel(): List<Nota> {
-      val data =
-        LocalDate.now()
-          .minusDays(10)
-      val lista =
-        QNota().tipoMov.eq(SAIDA)
-          .data.ge(data)
-          .tipoNota.notEqualTo(PEDIDO_S)
-          .findList()
+      val data = LocalDate.now().minusDays(10)
+      val lista = QNota().tipoMov.eq(SAIDA).data.ge(data).tipoNota.notEqualTo(PEDIDO_S).findList()
       return saci.findNotasSaidaCancelada(lista)
     }
     
@@ -282,23 +251,17 @@ class Nota: BaseModel() {
     }
     
     private fun notasSalva(loja: Loja, tipoNota: TipoMov): List<Nota> {
-      val dtInicial =
-        LocalDate.of(2020, 1, 1)
-      return QNota().tipoMov.eq(tipoNota)
-        .loja.equalTo(loja)
-        .itensNota.localizacao.startsWith(abreviacaoDefault)
-        .data.after(dtInicial)
-        .findList()
+      val dtInicial = LocalDate.of(2020, 1, 1)
+      return QNota().tipoMov.eq(tipoNota).loja.equalTo(loja).itensNota.localizacao.startsWith(abreviacaoDefault).data.after(
+          dtInicial).findList()
     }
     
     fun notaBaixa(storeno: Int?, numero: String?) =
-      TransferenciaAutomatica.notaBaixa(storeno, numero)
-        .ifEmpty {EntregaFutura.notaBaixa(storeno, numero)}
+      TransferenciaAutomatica.notaBaixa(storeno, numero).ifEmpty {EntregaFutura.notaBaixa(storeno, numero)}
         .ifEmpty {PedidoNotaRessuprimento.notaBaixa(numero)}
     
     fun notaFatura(storeno: Int?, numero: String?) =
-      TransferenciaAutomatica.notaFatura(storeno, numero)
-        .ifEmpty {EntregaFutura.notaFatura(storeno, numero)}
+      TransferenciaAutomatica.notaFatura(storeno, numero).ifEmpty {EntregaFutura.notaFatura(storeno, numero)}
         .ifEmpty {PedidoNotaRessuprimento.pedidoRessuprimento(storeno, numero)}
   }
   
@@ -309,13 +272,11 @@ class Nota: BaseModel() {
   fun notaFatura() = notaFatura(loja?.numero, numero)
   
   fun existe(): Boolean {
-    return QNota().loja.equalTo(loja).tipoMov.eq(tipoMov).numero.eq(numero)
-             .findCount() > 0
+    return QNota().loja.equalTo(loja).tipoMov.eq(tipoMov).numero.eq(numero).findCount() > 0
   }
   
   fun itensNota(): List<ItemNota> {
-    return QItemNota().nota.equalTo(this)
-      .findList()
+    return QItemNota().nota.equalTo(this).findList()
   }
 }
 
@@ -396,21 +357,21 @@ data class NotaItens(val nota: Nota?, val itens: List<ItemNota>, val msgErro: St
 }
 
 enum class LancamentoOrigem(val descricao: String) {
-  EXPEDICAO("Expedição" ) {
-    override fun printer(): Printer =      Printer(usuarioDefault.impressoraExpedicao())
+  EXPEDICAO("Expedição") {
+    override fun printer(): Printer = Printer(usuarioDefault.impressoraExpedicao())
   },
-  DEPOSITO("Deposito"){
-    override fun printer(): Printer =       Printer("ENTREGA")
+  DEPOSITO("Deposito") {
+    override fun printer(): Printer = Printer("ENTREGA")
   },
-  ENTREGA_F("Entrega Futura" ){
-    override fun printer(): Printer =       Printer("")
-  },
-  RESSUPRI("Ressuprimento" ){
+  ENTREGA_F("Entrega Futura") {
     override fun printer(): Printer = Printer("")
   },
-  ABASTECI("Abastecimento", ) {
+  RESSUPRI("Ressuprimento") {
+    override fun printer(): Printer = Printer("")
+  },
+  ABASTECI("Abastecimento") {
     override fun printer(): Printer = Printer(usuarioDefault.impressoraExpedicao())
   };
   
-  abstract fun printer() : Printer
+  abstract fun printer(): Printer
 }
