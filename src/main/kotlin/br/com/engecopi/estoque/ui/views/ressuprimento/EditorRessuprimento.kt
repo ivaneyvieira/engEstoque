@@ -7,24 +7,10 @@ import br.com.engecopi.estoque.ui.views.movimentacao.NotaView
 import br.com.engecopi.estoque.viewmodel.ressuprimento.EditorRessuprimentoViewModel
 import br.com.engecopi.estoque.viewmodel.ressuprimento.EntregaRessuprimentoVo
 import br.com.engecopi.estoque.viewmodel.ressuprimento.IEditorRessuprimentoView
+import br.com.engecopi.framework.ui.view.*
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
-import br.com.engecopi.framework.ui.view.dateFormat
-import br.com.engecopi.framework.ui.view.default
-import br.com.engecopi.framework.ui.view.grupo
-import br.com.engecopi.framework.ui.view.intFormat
-import br.com.engecopi.framework.ui.view.row
-import br.com.engecopi.framework.ui.view.timeFormat
-import com.github.mvysny.karibudsl.v8.AutoView
-import com.github.mvysny.karibudsl.v8.bind
-import com.github.mvysny.karibudsl.v8.comboBox
-import com.github.mvysny.karibudsl.v8.dateField
-import com.github.mvysny.karibudsl.v8.expandRatio
-import com.github.mvysny.karibudsl.v8.label
-import com.github.mvysny.karibudsl.v8.px
-import com.github.mvysny.karibudsl.v8.textField
-import com.github.mvysny.karibudsl.v8.verticalLayout
-import com.github.mvysny.karibudsl.v8.w
+import com.github.mvysny.karibudsl.v8.*
 import com.vaadin.shared.ui.ContentMode.HTML
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Label
@@ -32,20 +18,18 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView("editor_ressuprimento")
-class EditorRessuprimento: NotaView<EntregaRessuprimentoVo, EditorRessuprimentoViewModel,
-  IEditorRessuprimentoView>(true), IEditorRessuprimentoView {
+class EditorRessuprimento : NotaView<EntregaRessuprimentoVo, EditorRessuprimentoViewModel, IEditorRessuprimentoView>(
+  true), IEditorRessuprimentoView {
   init {
     viewModel = EditorRessuprimentoViewModel(this)
     layoutForm {
-      if(operation == ADD) {
+      if (operation == ADD) {
         binder.bean.lojaNF = lojaDeposito
         binder.bean.usuario = usuario
       }
       formLayout.apply {
-        w =
-          (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-            .px
-        
+        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
+
         grupo("Ressuprimento") {
           verticalLayout {
             row {
@@ -53,7 +37,7 @@ class EditorRessuprimento: NotaView<EntregaRessuprimentoVo, EditorRessuprimentoV
               lojaField(operation, binder)
               comboBox<TipoNota>("Tipo") {
                 expandRatio = 2f
-                default {it.descricao}
+                default { it.descricao }
                 isReadOnly = true
                 setItems(TipoNota.valuesSaida())
                 bind(binder).bind(EntregaRessuprimentoVo::tipoNota)
@@ -78,10 +62,10 @@ class EditorRessuprimento: NotaView<EntregaRessuprimentoVo, EditorRessuprimentoV
           }
         }
         row {
-          label("<b>Produto</b>"){
+          label("<b>Produto</b>") {
             contentMode = HTML
           }
-    
+
           addComponent(footerLayout)
           setComponentAlignment(footerLayout, Alignment.BOTTOM_LEFT)
           addComponentsAndExpand(Label(""))
@@ -90,7 +74,7 @@ class EditorRessuprimento: NotaView<EntregaRessuprimentoVo, EditorRessuprimentoV
           produtoField(operation, binder, "Saída")
         }
       }
-      if(!isAdmin && operation == UPDATE) binder.setReadOnly(true)
+      if (!isAdmin && operation == UPDATE) binder.setReadOnly(true)
     }
     form("Editor de Ressuprimento")
     gridCrud {
@@ -124,7 +108,7 @@ class EditorRessuprimento: NotaView<EntregaRessuprimentoVo, EditorRessuprimentoV
       }
       column(EntregaRessuprimentoVo::lojaNF) {
         caption = "Loja NF"
-        setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
+        setRenderer({ loja -> loja?.sigla ?: "" }, TextRenderer())
       }
       column(EntregaRessuprimentoVo::tipoNotaDescricao) {
         caption = "TipoNota"
@@ -136,7 +120,7 @@ class EditorRessuprimento: NotaView<EntregaRessuprimentoVo, EditorRessuprimentoV
       }
       column(EntregaRessuprimentoVo::status) {
         caption = "Situação"
-        setRenderer({it?.descricao ?: ""}, TextRenderer())
+        setRenderer({ it?.descricao ?: "" }, TextRenderer())
       }
       column(EntregaRessuprimentoVo::codigo) {
         caption = "Código"
@@ -151,11 +135,11 @@ class EditorRessuprimento: NotaView<EntregaRessuprimentoVo, EditorRessuprimentoV
       }
       column(EntregaRessuprimentoVo::localizacao) {
         caption = "Localização"
-        setRenderer({it?.abreviacao}, TextRenderer())
+        setRenderer({ it?.abreviacao }, TextRenderer())
       }
       column(EntregaRessuprimentoVo::usuario) {
         caption = "Usuário"
-        setRenderer({it?.loginName ?: ""}, TextRenderer())
+        setRenderer({ it?.loginName ?: "" }, TextRenderer())
         setSortProperty("usuario.loginName")
       }
       column(EntregaRessuprimentoVo::rotaDescricao) {
@@ -165,15 +149,15 @@ class EditorRessuprimento: NotaView<EntregaRessuprimentoVo, EditorRessuprimentoV
         caption = "Cliente"
         setSortProperty("nota.cliente")
       }
-      val itens = viewModel.notasConferidas().groupBy {it.nota?.numero}.entries.sortedBy {entry ->
-        entry.value.map {it.id ?: 0}.max()
-      }.mapNotNull {it.key}
-      
-      grid.setStyleGenerator {saida ->
-        if(saida.status == CONFERIDA) {
+      val itens = viewModel.notasConferidas().groupBy { it.nota?.numero }.entries.sortedBy { entry ->
+        entry.value.map { it.id }.maxOrNull()
+      }.mapNotNull { it.key }
+
+      grid.setStyleGenerator { saida ->
+        if (saida.status == CONFERIDA) {
           val numero = saida.numeroNF
           val index = itens.indexOf(numero)
-          if(index % 2 == 0) "pendente"
+          if (index % 2 == 0) "pendente"
           else "pendente2"
         }
         else null

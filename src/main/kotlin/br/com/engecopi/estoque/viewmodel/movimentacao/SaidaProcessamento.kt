@@ -9,20 +9,19 @@ import java.time.LocalTime
 
 class SaidaProcessamento(val view: IView) {
   fun confirmaProdutos(itens: List<ProdutoNotaVo>, situacao: StatusNota): List<ItemNota> {
-    itens.firstOrNull()
-      ?.value?.nota?.save()
+    itens.firstOrNull()?.value?.nota?.save()
     val listMultable = mutableListOf<ItemNota>()
-    itens.forEach {produtoVO ->
+    itens.forEach { produtoVO ->
       produtoVO.value?.run {
-        if(this.id != 0L) refresh()
-      
+        if (this.id != 0L) refresh()
+
         this.status = situacao
         this.impresso = false
         this.usuario = RegistryUserInfo.usuarioDefault
         this.data = LocalDate.now()
         this.hora = LocalTime.now()
         this.localizacao = produtoVO.localizacao?.localizacao ?: ""
-        if(this.quantidade >= produtoVO.quantidade) {
+        if (this.quantidade >= produtoVO.quantidade) {
           this.quantidade = produtoVO.quantidade
           this.save()
           produtoVO.isSave = true

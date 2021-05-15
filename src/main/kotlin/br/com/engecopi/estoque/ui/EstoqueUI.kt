@@ -33,39 +33,13 @@ import br.com.engecopi.estoque.ui.views.ressuprimento.EditorRessuprimento
 import br.com.engecopi.estoque.ui.views.ressuprimento.EntregaRessuprimentoView
 import br.com.engecopi.framework.ui.view.toViewName
 import br.com.engecopi.utils.SystemUtils
-import com.github.mvysny.karibudsl.v8.MenuButton
-import com.github.mvysny.karibudsl.v8.VaadinDsl
-import com.github.mvysny.karibudsl.v8.ValoMenu
-import com.github.mvysny.karibudsl.v8.autoViewProvider
-import com.github.mvysny.karibudsl.v8.onLeftClick
-import com.github.mvysny.karibudsl.v8.valoMenu
-import com.vaadin.annotations.JavaScript
-import com.vaadin.annotations.PreserveOnRefresh
-import com.vaadin.annotations.Push
-import com.vaadin.annotations.Theme
-import com.vaadin.annotations.Title
-import com.vaadin.annotations.VaadinServletConfiguration
-import com.vaadin.annotations.Viewport
-import com.vaadin.icons.VaadinIcons.BARCODE
-import com.vaadin.icons.VaadinIcons.CART_O
-import com.vaadin.icons.VaadinIcons.CLUSTER
-import com.vaadin.icons.VaadinIcons.INBOX
-import com.vaadin.icons.VaadinIcons.LINES_LIST
-import com.vaadin.icons.VaadinIcons.NEWSPAPER
-import com.vaadin.icons.VaadinIcons.OUT
-import com.vaadin.icons.VaadinIcons.OUTBOX
-import com.vaadin.icons.VaadinIcons.PACKAGE
-import com.vaadin.icons.VaadinIcons.PAPERCLIP
-import com.vaadin.icons.VaadinIcons.TRUCK
-import com.vaadin.icons.VaadinIcons.USER
+import com.github.mvysny.karibudsl.v8.*
+import com.vaadin.annotations.*
+import com.vaadin.icons.VaadinIcons.*
 import com.vaadin.navigator.Navigator
 import com.vaadin.navigator.PushStateNavigation
 import com.vaadin.navigator.ViewDisplay
-import com.vaadin.server.ErrorEvent
-import com.vaadin.server.Page
-import com.vaadin.server.VaadinRequest
-import com.vaadin.server.VaadinService
-import com.vaadin.server.VaadinServlet
+import com.vaadin.server.*
 import com.vaadin.shared.Position.TOP_CENTER
 import com.vaadin.shared.communication.PushMode
 import com.vaadin.ui.Notification
@@ -87,27 +61,26 @@ import javax.servlet.http.Cookie
 @JavaScript("https://code.jquery.com/jquery-2.1.4.min.js", "https://code.responsivevoice.org/responsivevoice.js")
 @PushStateNavigation
 @PreserveOnRefresh
-@Push(PushMode.MANUAL)
-class EstoqueUI: UI() {
+@Push(PushMode.MANUAL) class EstoqueUI : UI() {
   private lateinit var menuVisaoGeral: MenuButton
   val title = "<h3>Estoque <strong>Engecopi</strong></h3>"
   private val versao = SystemUtils.readFile("/versao.txt")
   var loginInfo: LoginInfo? = null
-  
+
   fun updateLogin() {
     updateContent("")
   }
-  
+
   override fun init(request: VaadinRequest?) {
     isResponsive = true
     updateContent(request?.contextPath ?: "")
   }
-  
+
   private fun updateBag(repo: RepositoryAvisoNotas) {
     access {
-      if(loginInfo != null) {
+      if (loginInfo != null) {
         val qtWarnings = repo.qtWarning()
-        if(qtWarnings == 0) {
+        if (qtWarnings == 0) {
           menuVisaoGeral.badge = ""
         }
         else {
@@ -116,71 +89,71 @@ class EstoqueUI: UI() {
       }
     }
   }
-  
+
   private fun updateContent(contextPath: String) {
-    when(val info = loginInfo) {
+    when (val info = loginInfo) {
       null -> loginScreen()
       else -> appScreen(info, contextPath)
     }
   }
-  
+
   private fun appScreen(info: LoginInfo, contextPath: String) {
     content = null
     val user = info.usuario
-    
+
     valoMenu {
       this.appTitle = title
       sectionLogin(user, info)
-      if(user.roleMovimentacao()) sessionMovimentacao()
-  
-      if(user.roleConfiguracao()) sectionConfiguracao(user)
-      
-      if(user.roleExpedicao()) sectionExpedicao(user)
-  
-      if(user.roleFutura()) sectionFutura(user)
-  
-      if(user.roleRessuprimento()) sectionRessuprimento(user)
-  
-      if(user.roleAbastecimento()) sectionAbastecimento(user)
-      
-      if(user.roleEtiqueta()) sectionEtiqueta(user)
+      if (user.roleMovimentacao()) sessionMovimentacao()
 
-      if(user.rolePaineis()) sectionPaineis()
+      if (user.roleConfiguracao()) sectionConfiguracao(user)
+
+      if (user.roleExpedicao()) sectionExpedicao(user)
+
+      if (user.roleFutura()) sectionFutura(user)
+
+      if (user.roleRessuprimento()) sectionRessuprimento(user)
+
+      if (user.roleAbastecimento()) sectionAbastecimento(user)
+
+      if (user.roleEtiqueta()) sectionEtiqueta(user)
+
+      if (user.rolePaineis()) sectionPaineis()
     }
-    
+
     navigator = Navigator(this, content as ViewDisplay)
     navigator.addProvider(autoViewProvider)
-    setErrorHandler {e -> errorHandler(e)}
+    setErrorHandler { e -> errorHandler(e) }
     val contextPathDeafualt = when {
       user.roleExpedicao() && contextPath == "" -> ChaveExpedicaoView::class.java.toViewName()
       user.roleFutura() && contextPath == ""    -> ChaveFuturaView::class.java.toViewName()
       else                                      -> contextPath
     }
-    
+
     navigator.navigateTo(contextPathDeafualt)
   }
-  
+
   private fun @VaadinDsl ValoMenu.sectionEtiqueta(user: Usuario) {
     section("Etiquetas") {
       menuButton("Imprimir Produto", BARCODE, view = LabelProdutoView::class.java)
-      if(user.admin) {
+      if (user.admin) {
         menuButton("Imprimir Nota", BARCODE, view = LabelNotaView::class.java)
         menuButton("Histórico", BARCODE, view = HistoricoView::class.java)
       }
     }
   }
-  
+
   private fun @VaadinDsl ValoMenu.sectionConfiguracao(user: Usuario) {
     section("Configuração") {
       menuButton("Produtos", PACKAGE, view = ProdutoView::class.java)
-      if(user.admin) {
+      if (user.admin) {
         menuButton("Usuários", USER, view = UsuarioView::class.java)
         menuButton("Etiquetas", PAPERCLIP, view = EtiquetaView::class.java)
         menuButton("Localizações", CART_O, view = AbreciacaoView::class.java)
       }
     }
   }
-  
+
   private fun @VaadinDsl ValoMenu.sessionMovimentacao() {
     section("Movimentação") {
       menuButton("Entrada", INBOX, view = EntradaView::class.java) {
@@ -189,17 +162,17 @@ class EstoqueUI: UI() {
       menuButton("Saída", OUTBOX, view = SaidaView::class.java)
     }
   }
-  
+
   private fun @VaadinDsl ValoMenu.sectionExpedicao(user: Usuario) {
     section("Expedição") {
-      if(!user.estoque || user.admin) {
+      if (!user.estoque || user.admin) {
         menuButton("Chave", NEWSPAPER, view = ChaveExpedicaoView::class.java)
       }
       menuButton("Entrega", TRUCK, view = EntregaExpedicaoView::class.java)
       menuButton("Editor", TRUCK, view = EditorExpedicaoExpedicaoView::class.java)
     }
   }
-  
+
   private fun @VaadinDsl ValoMenu.sectionFutura(user: Usuario) {
     section("Entrega Futura") {
       menuButton("Chave", NEWSPAPER, view = ChaveFuturaView::class.java)
@@ -207,7 +180,7 @@ class EstoqueUI: UI() {
       menuButton("Editor", TRUCK, view = EditorFuturaView::class.java)
     }
   }
-  
+
   private fun @VaadinDsl ValoMenu.sectionRessuprimento(user: Usuario) {
     section("Ressuprimento") {
       menuButton("Chave", NEWSPAPER, view = ChaveRessuprimentoView::class.java)
@@ -215,7 +188,7 @@ class EstoqueUI: UI() {
       menuButton("Editor", TRUCK, view = EditorRessuprimento::class.java)
     }
   }
-  
+
   private fun @VaadinDsl ValoMenu.sectionAbastecimento(user: Usuario) {
     section("Abastecimento") {
       menuButton("Chave", NEWSPAPER, view = ChaveAbastecimentoView::class.java)
@@ -223,24 +196,24 @@ class EstoqueUI: UI() {
       menuButton("Editor", TRUCK, view = EditorAbastecimentoView::class.java)
     }
   }
-  
+
   private fun @VaadinDsl ValoMenu.sectionPaineis() {
     section("Paineis") {
       menuVisaoGeral = menuButton("Visão geral", CLUSTER, view = PainelGeralView::class.java)
-      RepositoryAvisoNotas.addEvent {repo ->
+      RepositoryAvisoNotas.addEvent { repo ->
         updateBag(repo)
       }
       menuButton("Pedidos de Transferencia", LINES_LIST, view = PedidoTransferenciaView::class.java)
     }
   }
-  
+
   private fun @VaadinDsl ValoMenu.sectionLogin(user: Usuario, info: LoginInfo) {
     section("Login") {
       menuButton("Usuário:", badge = user.loginName)
-      if(user.estoque || user.admin) {
+      if (user.estoque || user.admin) {
         menuButton("Localizacao:", badge = info.abreviacao)
       }
-      info.usuario.loja?.sigla?.let {siglaLoja ->
+      info.usuario.loja?.sigla?.let { siglaLoja ->
         menuButton("Loja:", badge = siglaLoja)
       }
       menuButton(caption = "Endereco: ", badge = RegistryUserInfo.enderecoBrowser)
@@ -251,7 +224,7 @@ class EstoqueUI: UI() {
       }
     }
   }
-  
+
   private fun Usuario.rolePaineis() = this.admin || this.painel
   private fun Usuario.roleExpedicao() = this.admin || this.expedicao
   private fun Usuario.roleFutura() = this.admin || this.entregaFutura
@@ -260,15 +233,15 @@ class EstoqueUI: UI() {
   private fun Usuario.roleEtiqueta() = this.admin || this.etiqueta
   private fun Usuario.roleRessuprimento() = this.admin || this.ressuprimento
   private fun Usuario.roleAbastecimento() = this.admin || this.abastecimento
-  
+
   private fun loginScreen() {
     content = LoginForm("$title <p align=\"right\">$versao</p>")
     navigator = null
   }
-  
+
   private fun errorHandler(e: ErrorEvent) {
-    log?.error("Erro não identificado ${e.throwable.message}", e.throwable)
-    // when the exception occurs, show a nice notification
+    log?.error("Erro não identificado ${e.throwable.message}",
+               e.throwable) // when the exception occurs, show a nice notification
     Notification("Oops",
                  "\n" + "Ocorreu um erro e lamentamos muito isso. Já está trabalhando na correção!",
                  ERROR_MESSAGE).apply {
@@ -277,21 +250,20 @@ class EstoqueUI: UI() {
       show(Page.getCurrent())
     }
   }
-  
+
   companion object {
     val current
       get() = getCurrent() as? EstoqueUI
   }
 }
 
-@WebListener
-class Bootstrap: ServletContextListener {
+@WebListener class Bootstrap : ServletContextListener {
   override fun contextDestroyed(sce: ServletContextEvent?) {
     log?.info("Shutting down")
     log?.info("Destroying VaadinOnKotlin")
     log?.info("Shutdown complete")
   }
-  
+
   override fun contextInitialized(sce: ServletContextEvent?) {
     log?.info("Starting up")
     val home = System.getenv("HOME")
@@ -302,14 +274,11 @@ class Bootstrap: ServletContextListener {
 }
 
 @WebServlet(urlPatterns = ["/*"], name = "MyUIServlet", asyncSupported = true)
-@VaadinServletConfiguration(ui = EstoqueUI::class, productionMode = false)
-class MyUIServlet: VaadinServlet() {
+@VaadinServletConfiguration(ui = EstoqueUI::class, productionMode = false) class MyUIServlet : VaadinServlet() {
   companion object {
-    init {
-      // Vaadin logs into java.util.logging. Redirect that, so that all logging goes through slf4j.
+    init { // Vaadin logs into java.util.logging. Redirect that, so that all logging goes through slf4j.
       SLF4JBridgeHandler.removeHandlersForRootLogger()
-      SLF4JBridgeHandler.install()
-      //ETLVendasCaixa.start()
+      SLF4JBridgeHandler.install() //ETLVendasCaixa.start()
       ETLPedidos.start()
       ETLEntregaFutura.start()
       ETLTransferenciaAutomatica.start()
@@ -318,25 +287,15 @@ class MyUIServlet: VaadinServlet() {
   }
 }
 
-fun setCookie(nome: String, valor: String) {
-  // Create a new cookie
-  val myCookie = Cookie(nome, valor)
-  // Make cookie expire in 2 minutes
-  myCookie.maxAge = 60 * 60 * 24 * 5
-  // Set the cookie path.
-  myCookie.path =
-    VaadinService.getCurrentRequest()
-      .contextPath
-  // Save cookie
-  VaadinService.getCurrentResponse()
-    .addCookie(myCookie)
+fun setCookie(nome: String, valor: String) { // Create a new cookie
+  val myCookie = Cookie(nome, valor) // Make cookie expire in 2 minutes
+  myCookie.maxAge = 60 * 60 * 24 * 5 // Set the cookie path.
+  myCookie.path = VaadinService.getCurrentRequest().contextPath // Save cookie
+  VaadinService.getCurrentResponse().addCookie(myCookie)
 }
 
 fun getCokies(name: String): String? {
-  val cookie =
-    VaadinService.getCurrentRequest()
-      .cookies.toList()
-      .firstOrNull {it.name == name}
+  val cookie = VaadinService.getCurrentRequest().cookies.toList().firstOrNull { it.name == name }
   cookie?.let {
     setCookie(it.name, it.value)
   }

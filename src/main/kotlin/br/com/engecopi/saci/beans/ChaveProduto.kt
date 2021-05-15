@@ -8,5 +8,5 @@ data class ChaveProduto(val prdno: String, val grade: String, val barcode: Strin
 }
 
 fun List<ChaveProduto>.findChave(): List<ChaveProduto> {
-  return this.filter {it.barcode.isNotBlank()}.distinctBy {it.barcode + "/" + it.prdno + "/" + it.grade}
+  return this.filter { it.barcode.isNotBlank() }.distinctBy { it.barcode + "/" + it.prdno + "/" + it.grade }
 }

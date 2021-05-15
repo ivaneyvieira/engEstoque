@@ -9,35 +9,23 @@ import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
 
-@Cache(enableQueryCache = false)
-@Entity
-@View(name = "v_codigo_barra_cliente")
-class ViewCodBarCliente {
-  @Id
-  @Column(name = "id_nota")
-  val id: Long = 0
+@Cache(enableQueryCache = false) @Entity @View(name = "v_codigo_barra_cliente") class ViewCodBarCliente {
+  @Id @Column(name = "id_nota") val id: Long = 0
   val codbar: String = ""
   val codbarLimpo: String = ""
   val codbarNota: String = ""
   val storeno: Int = 0
   val numero: String = ""
   val sequencia: Int = 0
-  
-  companion object Find: ViewCodBarClienteFinder() {
+
+  companion object Find : ViewCodBarClienteFinder() {
     fun findNota(key: String): ViewCodBarCliente? {
-      return QViewCodBarCliente().or()
-        .codbar.eq(key)
-        .codbarNota.eq(key)
-        .endOr()
-        .findList()
-        .firstOrNull()
+      return QViewCodBarCliente().or().codbar.eq(key).codbarNota.eq(key).endOr().findList().firstOrNull()
     }
-    
+
     fun findKeyItemNota(key: String, statusNota: StatusNota): List<ItemNota> {
       val nota = findNota(key) ?: return emptyList()
-      return QItemNota().nota.id.eq(nota.id)
-        .status.eq(statusNota)
-        .findList()
+      return QItemNota().nota.id.eq(nota.id).status.eq(statusNota).findList()
     }
   }
 }

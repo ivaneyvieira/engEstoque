@@ -7,22 +7,16 @@ import br.com.engecopi.estoque.viewmodel.paineis.PedidoTransferenciaVo
 import br.com.engecopi.framework.ui.view.LayoutView
 import br.com.engecopi.framework.ui.view.dateFormat
 import br.com.engecopi.framework.ui.view.expand
-import com.github.mvysny.karibudsl.v8.AutoView
-import com.github.mvysny.karibudsl.v8.addColumnFor
-import com.github.mvysny.karibudsl.v8.button
-import com.github.mvysny.karibudsl.v8.cssLayout
-import com.github.mvysny.karibudsl.v8.grid
-import com.github.mvysny.karibudsl.v8.horizontalLayout
-import com.github.mvysny.karibudsl.v8.refresh
+import com.github.mvysny.karibudsl.v8.*
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.Grid
 import com.vaadin.ui.renderers.TextRenderer
 
-@AutoView("pedidosTransf")
-class PedidoTransferenciaView: LayoutView<PedidoTransferenciaViewModel>(), IPedidoTransferenciaView {
+@AutoView("pedidosTransf") class PedidoTransferenciaView : LayoutView<PedidoTransferenciaViewModel>(),
+                                                           IPedidoTransferenciaView {
   private var gridPedido: Grid<PedidoTransferenciaVo>? = null
-  
+
   init {
     viewModel = PedidoTransferenciaViewModel(this)
     setSizeFull()
@@ -45,7 +39,7 @@ class PedidoTransferenciaView: LayoutView<PedidoTransferenciaViewModel>(), IPedi
       }
       addColumnFor(PedidoTransferenciaVo::lojaNF) {
         caption = "Loja NF"
-        setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
+        setRenderer({ loja -> loja?.sigla ?: "" }, TextRenderer())
       }
       addColumnFor(PedidoTransferenciaVo::lancamento) {
         caption = "Data"

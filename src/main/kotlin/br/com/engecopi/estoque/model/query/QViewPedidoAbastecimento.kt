@@ -7,23 +7,14 @@ import br.com.engecopi.estoque.model.query.assoc.QAssocLoja
 import br.com.engecopi.estoque.model.query.assoc.QAssocNota
 import br.com.engecopi.estoque.model.query.assoc.QAssocUsuario
 import io.ebean.Database
-import io.ebean.typequery.PEnum
-import io.ebean.typequery.PInteger
-import io.ebean.typequery.PLocalDate
-import io.ebean.typequery.PLocalDateTime
-import io.ebean.typequery.PLocalTime
-import io.ebean.typequery.PLong
-import io.ebean.typequery.PString
-import io.ebean.typequery.TQRootBean
-import io.ebean.typequery.TypeQueryBean
+import io.ebean.typequery.*
 
 /**
  * Query bean for ViewPedidoAbastecimento.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
-@TypeQueryBean
-class QViewPedidoAbastecimento : TQRootBean<ViewPedidoAbastecimento, QViewPedidoAbastecimento> {
+@TypeQueryBean class QViewPedidoAbastecimento : TQRootBean<ViewPedidoAbastecimento, QViewPedidoAbastecimento> {
 
   companion object {
     /**
@@ -39,8 +30,8 @@ class QViewPedidoAbastecimento : TQRootBean<ViewPedidoAbastecimento, QViewPedido
   lateinit var version: PInteger<QViewPedidoAbastecimento>
   lateinit var nota: QAssocNota<QViewPedidoAbastecimento>
   lateinit var numero: PString<QViewPedidoAbastecimento>
-  lateinit var tipoMov: PEnum<QViewPedidoAbastecimento,TipoMov>
-  lateinit var tipoNota: PEnum<QViewPedidoAbastecimento,TipoNota>
+  lateinit var tipoMov: PEnum<QViewPedidoAbastecimento, TipoMov>
+  lateinit var tipoNota: PEnum<QViewPedidoAbastecimento, TipoNota>
   lateinit var rota: PString<QViewPedidoAbastecimento>
   lateinit var fornecedor: PString<QViewPedidoAbastecimento>
   lateinit var cliente: PString<QViewPedidoAbastecimento>

@@ -17,21 +17,20 @@ import com.vaadin.ui.ComboBox
 import com.vaadin.ui.renderers.TextRenderer
 import org.vaadin.patrik.FastNavigation
 
-@AutoView
-class AbreciacaoView: LayoutView<AbreciacaoViewModel>(), IAbreciacaoView {
-  
+@AutoView class AbreciacaoView : LayoutView<AbreciacaoViewModel>(), IAbreciacaoView {
+
   init {
     viewModel = AbreciacaoViewModel(this)
-    
+
     title("Localizações")
-    
+
     grid(Abreviacao::class) {
       val edtLoc = CheckBox()
       val edtImpressora = ComboBox<String>().apply {
         val itens = AppPrinter.printersInfo
-        setItems(itens.map {it.name})
+        setItems(itens.map { it.name })
         setItemCaptionGenerator {
-          itens.find {item -> item.name == it}?.description ?: ""
+          itens.find { item -> item.name == it }?.description ?: ""
         }
         isTextInputAllowed = false
       }
@@ -45,10 +44,10 @@ class AbreciacaoView: LayoutView<AbreciacaoViewModel>(), IAbreciacaoView {
 
       addColumnFor(Abreviacao::expedicao) {
         caption = "Expedição"
-        setRenderer({value -> if(value) "Sim" else "Não"}, TextRenderer())
+        setRenderer({ value -> if (value) "Sim" else "Não" }, TextRenderer())
         setEditorComponent(edtLoc)
       }
-  
+
       addColumnFor(Abreviacao::impressora) {
         caption = "Impressora"
         setEditorComponent(edtImpressora)
