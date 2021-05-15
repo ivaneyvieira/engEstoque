@@ -9,8 +9,7 @@ import br.com.engecopi.framework.ui.view.timeFormat
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.vaadin.ui.renderers.TextRenderer
 
-@AutoView
-class HistoricoView: CrudLayoutView<HistoricoVo, HistoricoViewModel>(false), IHistoricoView {
+@AutoView class HistoricoView : CrudLayoutView<HistoricoVo, HistoricoViewModel>(false), IHistoricoView {
   init {
     viewModel = HistoricoViewModel(this)
     layoutForm {
@@ -37,30 +36,30 @@ class HistoricoView: CrudLayoutView<HistoricoVo, HistoricoViewModel>(false), IHi
       column(HistoricoVo::usuario) {
         expandRatio = 2
         caption = "Usuário"
-        setRenderer({it?.nome}, TextRenderer())
+        setRenderer({ it?.nome }, TextRenderer())
         setSortProperty("usuario.nome")
       }
       column(HistoricoVo::produto) {
         expandRatio = 1
         caption = "Código"
-        setRenderer({it?.codigo?.trim()}, TextRenderer())
+        setRenderer({ it?.codigo?.trim() }, TextRenderer())
         setSortProperty("produto.codigo")
       }
       column(HistoricoVo::produto) {
         expandRatio = 3
         caption = "Nome"
-        setRenderer({it?.descricao}, TextRenderer())
+        setRenderer({ it?.descricao }, TextRenderer())
       }
       column(HistoricoVo::produto) {
         expandRatio = 1
         caption = "grade"
-        setRenderer({it?.grade}, TextRenderer())
+        setRenderer({ it?.grade }, TextRenderer())
         setSortProperty("produto.grade")
       }
       column(HistoricoVo::produto) {
         expandRatio = 4
         caption = "GTIN"
-        setRenderer({it?.barcodeGtin}, TextRenderer())
+        setRenderer({ it?.barcodeGtin }, TextRenderer())
       }
     }
   }

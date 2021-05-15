@@ -10,11 +10,11 @@ import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.ICrudView
 
-class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, UsuarioCrudVo, IUsuarioView>(view) {
+class UsuarioViewModel(view: IUsuarioView) : CrudViewModel<Usuario, QUsuario, UsuarioCrudVo, IUsuarioView>(view) {
   override fun newBean(): UsuarioCrudVo {
     return UsuarioCrudVo()
   }
-  
+
   private val queryProduto get() = QProduto()
 
   fun findProduto(offset: Int, limit: Int): List<Produto> {
@@ -26,9 +26,9 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
   }
 
   override fun update(bean: UsuarioCrudVo) {
-    bean.entityVo?.let {usuario ->
+    bean.entityVo?.let { usuario ->
       val loginName = bean.loginName ?: ""
-      if(loginName.isNotBlank()) usuario.loginName = loginName
+      if (loginName.isNotBlank()) usuario.loginName = loginName
       usuario.loja = bean.loja
       usuario.locais = bean.localizacaoes.toList()
       usuario.estoque = bean.estoque
@@ -104,7 +104,7 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
     get() = Produto.all()
 }
 
-class UsuarioCrudVo: EntityVo<Usuario>() {
+class UsuarioCrudVo : EntityVo<Usuario>() {
   override fun findEntity(): Usuario? {
     return Usuario.findUsuario(loginName)
   }
@@ -139,20 +139,20 @@ class UsuarioCrudVo: EntityVo<Usuario>() {
 
   private fun tiposUsuario(): List<String> {
     val tipos = mutableListOf<String>()
-    if(admin == true) tipos.add("Administrado")
+    if (admin == true) tipos.add("Administrado")
     else {
-      if(estoque) tipos.add("Movimentação")
-      if(expedicao) tipos.add("Expedicao")
-      if(entregaFutura) tipos.add("Entrega Futura")
-      if(painel) tipos.add("Painel")
-      if(configuracao) tipos.add("Configuração")
-      if(ressuprimento) tipos.add("Ressuprimento")
-      if(abastecimento) tipos.add("Abastecimento")
-      if(etiqueta) tipos.add("Etiqueta")
+      if (estoque) tipos.add("Movimentação")
+      if (expedicao) tipos.add("Expedicao")
+      if (entregaFutura) tipos.add("Entrega Futura")
+      if (painel) tipos.add("Painel")
+      if (configuracao) tipos.add("Configuração")
+      if (ressuprimento) tipos.add("Ressuprimento")
+      if (abastecimento) tipos.add("Abastecimento")
+      if (etiqueta) tipos.add("Etiqueta")
     }
 
     return tipos
   }
 }
 
-interface IUsuarioView: ICrudView
+interface IUsuarioView : ICrudView

@@ -5,24 +5,14 @@ import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.TipoMov
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.model.query.QNota
-import io.ebean.typequery.PEnum
-import io.ebean.typequery.PInteger
-import io.ebean.typequery.PLocalDate
-import io.ebean.typequery.PLocalDateTime
-import io.ebean.typequery.PLocalTime
-import io.ebean.typequery.PLong
-import io.ebean.typequery.PString
-import io.ebean.typequery.TQAssocBean
-import io.ebean.typequery.TQProperty
-import io.ebean.typequery.TypeQueryBean
+import io.ebean.typequery.*
 
 /**
  * Association query bean for AssocNota.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
-@TypeQueryBean
-class QAssocNota<R>(name: String, root: R) : TQAssocBean<Nota,R>(name, root) {
+@TypeQueryBean class QAssocNota<R>(name: String, root: R) : TQAssocBean<Nota, R>(name, root) {
 
   lateinit var id: PLong<R>
   lateinit var createdAt: PLocalDateTime<R>
@@ -30,8 +20,8 @@ class QAssocNota<R>(name: String, root: R) : TQAssocBean<Nota,R>(name, root) {
   lateinit var version: PInteger<R>
   lateinit var numero: PString<R>
   lateinit var numeroEntrega: PString<R>
-  lateinit var tipoMov: PEnum<R,TipoMov>
-  lateinit var tipoNota: PEnum<R,TipoNota>
+  lateinit var tipoMov: PEnum<R, TipoMov>
+  lateinit var tipoNota: PEnum<R, TipoNota>
   lateinit var rota: PString<R>
   lateinit var fornecedor: PString<R>
   lateinit var cliente: PString<R>
@@ -45,26 +35,26 @@ class QAssocNota<R>(name: String, root: R) : TQAssocBean<Nota,R>(name, root) {
   lateinit var sequencia: PInteger<R>
   lateinit var usuario: QAssocUsuario<R>
   lateinit var maxSequencia: PInteger<R>
-  lateinit var lancamentoOrigem: PEnum<R,LancamentoOrigem>
+  lateinit var lancamentoOrigem: PEnum<R, LancamentoOrigem>
 
   /**
    * Eagerly fetch this association loading the specified properties.
    */
-  fun fetch(vararg properties: TQProperty<QNota>) : R {
+  fun fetch(vararg properties: TQProperty<QNota>): R {
     return fetchProperties(*properties)
   }
 
   /**
    * Eagerly fetch this association using a 'query join' loading the specified properties.
    */
-  fun fetchQuery(vararg properties: TQProperty<QNota>) : R {
+  fun fetchQuery(vararg properties: TQProperty<QNota>): R {
     return fetchQueryProperties(*properties)
   }
 
   /**
    * Use lazy loading for this association loading the specified properties.
    */
-  fun fetchLazy(vararg properties: TQProperty<QNota>) : R {
+  fun fetchLazy(vararg properties: TQProperty<QNota>): R {
     return fetchLazyProperties(*properties)
   }
 

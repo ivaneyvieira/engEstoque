@@ -6,7 +6,7 @@ import br.com.engecopi.utils.format
 import br.com.engecopi.utils.localDate
 import io.ebean.DB
 
-class ETLPedidos: ETL<PedidoSaci>() {
+class ETLPedidos : ETL<PedidoSaci>() {
   override val sqlDelete = "DELETE FROM t_pedido where id = :id"
   override val sqlInsert = """
       INSERT INTO t_pedido(id, rota, storeno, numero, date, clienteName, abreviacao, nfno, nfse, status)
@@ -19,14 +19,14 @@ class ETLPedidos: ETL<PedidoSaci>() {
       WHERE id = :id
     """.trimIndent()
 
-  companion object: ETLThread<PedidoSaci>(ETLPedidos(), 60) {
+  companion object : ETLThread<PedidoSaci>(ETLPedidos(), 60) {
     val sql
       get() = """select id, rota, storeno, numero, date, clienteName, abreviacao, nfno, nfse, status 
       |from t_pedido
       |""".trimMargin()
-  
+
     override fun getSource() = saci.findPedidoTransferencia()
-  
+
     override fun getTarget() = DB.findDto(PedidoSaci::class.java, sql).findList()
   }
 }

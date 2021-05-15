@@ -22,16 +22,15 @@ import kotlin.reflect.KProperty
  *
  * WARNING: you can only read the property while holding the Vaadin UI lock (that is, there is current session available).
  */
-class SessionScoped<out R>(private val clazz: Class<R>): ReadOnlyProperty<Any?, R> {
+class SessionScoped<out R>(private val clazz: Class<R>) : ReadOnlyProperty<Any?, R> {
   override fun getValue(thisRef: Any?, property: KProperty<*>): R = getOrCreate()
 
   private fun getOrCreate(): R = checkUIThread().session.getOrCreate()
 
   private fun VaadinSession.getOrCreate(): R {
     var result: R? = getAttribute(clazz)
-    if(result == null) {
-      // look up the zero-arg constructor. the constructor should be private if the user follows our recommendations.
-      val constructor = clazz.declaredConstructors.first {it.parameterCount == 0}
+    if (result == null) { // look up the zero-arg constructor. the constructor should be private if the user follows our recommendations.
+      val constructor = clazz.declaredConstructors.first { it.parameterCount == 0 }
       constructor.isAccessible = true
       result = clazz.cast(constructor.newInstance())!!
       setAttribute(clazz, result)
@@ -45,7 +44,7 @@ class SessionScoped<out R>(private val clazz: Class<R>): ReadOnlyProperty<Any?, 
  * The object is bound under the string key of class full name.
  * @param R the object type
  */
-inline fun <reified R> lazySession() where R: Any, R: Serializable = SessionScoped(R::class.java)
+inline fun <reified R> lazySession() where R : Any, R : Serializable = SessionScoped(R::class.java)
 
 /**
  * Just a namespace object for attaching your [SessionScoped] objects.
@@ -68,7 +67,7 @@ object Session {
    * @param key the key
    * @return the attribute value, may be null
    */
-  operator fun <T: Any> get(key: KClass<T>): T? = current.getAttribute(key.java)
+  operator fun <T : Any> get(key: KClass<T>): T? = current.getAttribute(key.java)
 
   /**
    * Stores given value under given key in a session. Removes the mapping if value is null
@@ -89,7 +88,7 @@ object Session {
    * @param key the key
    * @param value the value to store, may be null if
    */
-  operator fun <T: Any> set(key: KClass<T>, value: T?) {
+  operator fun <T : Any> set(key: KClass<T>, value: T?) {
     try {
       current.lock()
       current.setAttribute(key.java, value)
@@ -114,7 +113,7 @@ object Cookies {
    * @param name cookie name
    * @return cookie or null if there is no such cookie.
    */
-  operator fun get(name: String): Cookie? = currentRequest.cookies?.firstOrNull {it.name == name}
+  operator fun get(name: String): Cookie? = currentRequest.cookies?.firstOrNull { it.name == name }
 
   /**
    * Overwrites given cookie, or deletes it.
@@ -122,7 +121,7 @@ object Cookies {
    * @param cookie the cookie to overwrite. If null, the cookie is deleted.
    */
   operator fun set(name: String, cookie: Cookie?) {
-    if(cookie == null) {
+    if (cookie == null) {
       val newCookie = Cookie(name, null)
       newCookie.maxAge = 0  // delete immediately
       newCookie.path = "/"
@@ -144,4 +143,4 @@ infix operator fun Cookies.minusAssign(cookie: Cookie) = set(cookie.name, null)
  * @throws IllegalStateException if not run in the UI thread or [UI.init] is ongoing.
  */
 fun checkUIThread() =
-  UI.getCurrent() ?: throw IllegalStateException("Not in UI thread, or UI.init() is currently ongoing")
+        UI.getCurrent() ?: throw IllegalStateException("Not in UI thread, or UI.init() is currently ongoing")

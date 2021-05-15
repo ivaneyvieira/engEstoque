@@ -10,34 +10,10 @@ import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.viewmodel.configuracao.IProdutoView
 import br.com.engecopi.estoque.viewmodel.configuracao.ProdutoViewModel
 import br.com.engecopi.estoque.viewmodel.configuracao.ProdutoVo
-import br.com.engecopi.framework.ui.view.CrudLayoutView
+import br.com.engecopi.framework.ui.view.*
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
-import br.com.engecopi.framework.ui.view.bindItens
-import br.com.engecopi.framework.ui.view.dateFormat
-import br.com.engecopi.framework.ui.view.dateFormatNotNull
-import br.com.engecopi.framework.ui.view.default
-import br.com.engecopi.framework.ui.view.grupo
-import br.com.engecopi.framework.ui.view.reload
-import br.com.engecopi.framework.ui.view.reloadBinderOnChange
-import br.com.engecopi.framework.ui.view.row
-import com.github.mvysny.karibudsl.v8.AutoView
-import com.github.mvysny.karibudsl.v8.VAlign
-import com.github.mvysny.karibudsl.v8.addColumnFor
-import com.github.mvysny.karibudsl.v8.align
-import com.github.mvysny.karibudsl.v8.bind
-import com.github.mvysny.karibudsl.v8.button
-import com.github.mvysny.karibudsl.v8.checkBoxGroup
-import com.github.mvysny.karibudsl.v8.comboBox
-import com.github.mvysny.karibudsl.v8.dateField
-import com.github.mvysny.karibudsl.v8.em
-import com.github.mvysny.karibudsl.v8.expandRatio
-import com.github.mvysny.karibudsl.v8.grid
-import com.github.mvysny.karibudsl.v8.h
-import com.github.mvysny.karibudsl.v8.onLeftClick
-import com.github.mvysny.karibudsl.v8.px
-import com.github.mvysny.karibudsl.v8.textField
-import com.github.mvysny.karibudsl.v8.w
+import com.github.mvysny.karibudsl.v8.*
 import com.vaadin.data.Binder
 import com.vaadin.data.HasValue
 import com.vaadin.ui.Alignment
@@ -49,17 +25,14 @@ import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
 import java.text.DecimalFormat
 
-@AutoView
-class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoView {
+@AutoView class ProdutoView : CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoView {
   init {
     viewModel = ProdutoViewModel(this)
     isAddClose = false
     layoutForm {
       binder.bean.lojaDefault = lojaDeposito
       formLayout.apply {
-        w =
-          (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
-            .px
+        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
         h = 300.px
         grupo("Produtos") {
           row {
@@ -74,7 +47,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoVi
               isReadOnly = true
               bind(binder).bind(ProdutoVo::descricaoProdutoSaci.name)
             }
-            if(operation != ADD) {
+            if (operation != ADD) {
               textField {
                 expandRatio = 1f
                 caption = "Grade"
@@ -83,17 +56,14 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoVi
               }
             }
           }
-  
+
           row {
-            if(operation == ADD) {
-              button("Todas as grade") {
-                //expandRatio = 1f
+            if (operation == ADD) {
+              button("Todas as grade") { //expandRatio = 1f
                 //addStyleName(ValoTheme.)
-                onLeftClick {_ ->
+                onLeftClick { _ ->
                   val produto = binder.bean
-                  val grades =
-                    produto.findGradesSaci()
-                      .toSet()
+                  val grades = produto.findGradesSaci().toSet()
                   produto.gradesProduto = grades
                   binder.bean = produto
                 }
@@ -103,7 +73,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoVi
             setComponentAlignment(footerLayout, Alignment.BOTTOM_LEFT)
             addComponentsAndExpand(Label(""))
           }
-          if(operation == ADD) {
+          if (operation == ADD) {
             row {
               checkBoxGroup<String> {
                 expandRatio = 1f
@@ -115,7 +85,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoVi
             }
           }
         }
-        
+
         grupo("Notas") {
           row {
             dateField("Data Inicial") {
@@ -134,10 +104,9 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoVi
             }
             comboBox<TipoNota>("Tipo") {
               expandRatio = 1f
-              default {it.descricao2}
+              default { it.descricao2 }
               id = "filtro"
-              setItems(TipoNota.values()
-                         .toList())
+              setItems(TipoNota.values().toList())
               isEmptySelectionAllowed = true
               emptySelectionCaption = "Todos"
               value = null
@@ -146,7 +115,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoVi
             }
             comboBox<LocProduto>("Local") {
               expandRatio = 2f
-              default {it.localizacao}
+              default { it.localizacao }
               isEmptySelectionAllowed = true
               id = "filtro"
               val itens = viewModel.localizacoes(binder.bean)
@@ -179,8 +148,8 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoVi
               addColumnFor(ItemNota::numeroEntrega) {
                 this.isSortable = false
                 caption = "NF Baixa"
-                this.setRenderer({lista ->
-                                   lista.joinToString(" ") {nota ->
+                this.setRenderer({ lista ->
+                                   lista.joinToString(" ") { nota ->
                                      nota.numero
                                    }
                                  }, TextRenderer())
@@ -197,7 +166,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoVi
               addColumnFor(ItemNota::tipoNota) {
                 this.isSortable = false
                 caption = "Tipo"
-                setRenderer({it?.descricao ?: ""}, TextRenderer())
+                setRenderer({ it?.descricao ?: "" }, TextRenderer())
               }
               addColumnFor(ItemNota::rota) {
                 this.isSortable = false
@@ -220,12 +189,10 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoVi
                 setRenderer(NumberRenderer(DecimalFormat("0")))
                 align = VAlign.Right
               }
-              editor.addOpenListener {event ->
-                event.bean.produto?.let {produto ->
-                  val locSulfixos =
-                    produto.localizacoes(abreviacaoDefault)
-                      .map {LocProduto(it)}
-                  comboLoc.setItems(locSulfixos.map {it.localizacao})
+              editor.addOpenListener { event ->
+                event.bean.produto?.let { produto ->
+                  val locSulfixos = produto.localizacoes(abreviacaoDefault).map { LocProduto(it) }
+                  comboLoc.setItems(locSulfixos.map { it.localizacao })
                   comboLoc.value = event.bean.localizacao
                 }
               }
@@ -234,7 +201,7 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoVi
                 viewModel.saveItem(item)
                 binder.reload()
               }
-              
+
               editor.cancelCaption = "Cancelar"
               editor.saveCaption = "Salvar"
               editor.isBuffered = true
@@ -247,13 +214,12 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoVi
           }
         }
       }
-      if(!usuarioDefault.admin && operation == UPDATE) binder.setReadOnly(true)
+      if (!usuarioDefault.admin && operation == UPDATE) binder.setReadOnly(true)
       readButton.isVisible = true
     }
     form("Entrada de produtos")
     gridCrud {
-      queryOnly = !RegistryUserInfo.usuarioDefault.admin
-      //grid.bodyRowHeight = 3 * 30.00
+      queryOnly = !RegistryUserInfo.usuarioDefault.admin //grid.bodyRowHeight = 3 * 30.00
       column(ProdutoVo::codigoProduto) {
         expandRatio = 1
         caption = "Código"
@@ -311,8 +277,8 @@ class ProdutoView: CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoVi
       }
     }
   }
-  
-  inline fun <reified BEAN: Any, FIELDVALUE> HasValue<FIELDVALUE>.reloadBinderOnChangeAndScroll(binder: Binder<BEAN>) {
+
+  inline fun <reified BEAN : Any, FIELDVALUE> HasValue<FIELDVALUE>.reloadBinderOnChangeAndScroll(binder: Binder<BEAN>) {
     reloadBinderOnChange(binder)
   }
 }

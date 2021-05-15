@@ -12,47 +12,27 @@ import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaVo
 import br.com.engecopi.estoque.viewmodel.movimentacao.ProdutoNotaVo
-import br.com.engecopi.framework.ui.view.CrudLayoutView
-import br.com.engecopi.framework.ui.view.CrudOperation
+import br.com.engecopi.framework.ui.view.*
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
-import br.com.engecopi.framework.ui.view.bindItens
-import br.com.engecopi.framework.ui.view.bindVisible
-import br.com.engecopi.framework.ui.view.default
-import br.com.engecopi.framework.ui.view.integerField
-import br.com.engecopi.framework.ui.view.reloadBinderOnChange
-import br.com.engecopi.framework.ui.view.row
-import com.github.mvysny.karibudsl.v8.VAlign
-import com.github.mvysny.karibudsl.v8.VaadinDsl
-import com.github.mvysny.karibudsl.v8.addColumnFor
-import com.github.mvysny.karibudsl.v8.align
-import com.github.mvysny.karibudsl.v8.bind
-import com.github.mvysny.karibudsl.v8.comboBox
-import com.github.mvysny.karibudsl.v8.expandRatio
-import com.github.mvysny.karibudsl.v8.getAll
-import com.github.mvysny.karibudsl.v8.grid
-import com.github.mvysny.karibudsl.v8.h
-import com.github.mvysny.karibudsl.v8.px
-import com.github.mvysny.karibudsl.v8.textField
+import com.github.mvysny.karibudsl.v8.*
 import com.vaadin.data.Binder
 import com.vaadin.event.ShortcutAction.KeyCode.ENTER
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.icons.VaadinIcons.PRINT
-import com.vaadin.ui.Button
-import com.vaadin.ui.ComboBox
-import com.vaadin.ui.Grid
+import com.vaadin.ui.*
 import com.vaadin.ui.Grid.SelectionMode.MULTI
-import com.vaadin.ui.HasComponents
-import com.vaadin.ui.TextField
-import com.vaadin.ui.VerticalLayout
 import org.vaadin.patrik.FastNavigation
 
-abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>(customFooterLayout : Boolean): CrudLayoutView<VO, MODEL>(customFooterLayout) {
+abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView>(customFooterLayout: Boolean) :
+        CrudLayoutView<VO, MODEL>(customFooterLayout) {
   lateinit var gridProduto: Grid<ProdutoNotaVo>
   val usuario get() = usuarioDefault
   val isAdmin get() = usuario.admin
-  
-  inline fun <reified V: NotaVo> (@VaadinDsl HasComponents).notaFiscalField(operation: CrudOperation?,
-                                                                            binder: Binder<V>): TextField {
+
+  inline fun <reified V : NotaVo> (@VaadinDsl HasComponents).notaFiscalField(
+    operation: CrudOperation?,
+    binder: Binder<V>,
+                                                                            ): TextField {
     return textField("Nota Fiscal") {
       expandRatio = 2f
       isReadOnly = operation != ADD
@@ -60,51 +40,51 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>(c
       reloadBinderOnChange(binder)
     }
   }
-  
+
   fun btnImprimeTudo(): Button {
     return Button("Imprime Etiquetas").apply {
       icon = PRINT
       addClickListener {
-        printText(impressoraUsuario, viewModel.imprimirItensPendentes())
-        //grid.refreshGrid()
+        printText(impressoraUsuario, viewModel.imprimirItensPendentes()) //grid.refreshGrid()
       }
     }
   }
-  
+
   fun btnDesfazer(): Button {
     return Button("Cancelar").apply {
       this.isVisible = usuario.admin
       icon = VaadinIcons.CLOSE
       addClickListener {
         val itens = grid.selectedItems.firstOrNull()
-        if(itens == null) showError("Não há item selecionado")
+        if (itens == null) showError("Não há item selecionado")
         else viewModel.desfazOperacao(itens.entityVo)
       }
     }
   }
-  
-  inline fun <reified V: NotaVo> (@VaadinDsl HasComponents).lojaField(operation: CrudOperation?, binder: Binder<V>) {
+
+  inline fun <reified V : NotaVo> (@VaadinDsl HasComponents).lojaField(operation: CrudOperation?, binder: Binder<V>) {
     comboBox<Loja>("Loja") {
       expandRatio = 2f
-      default {it.sigla}
+      default { it.sigla }
       isReadOnly = operation != ADD
       setItems(viewModel.findLojas(lojaDeposito))
-  
-      bind(binder).asRequired("A lojaDefault deve ser informada")
-        .bind(NotaVo::lojaNF.name)
+
+      bind(binder).asRequired("A lojaDefault deve ser informada").bind(NotaVo::lojaNF.name)
       reloadBinderOnChange(binder)
     }
   }
-  
-  inline fun <reified V: NotaVo> VerticalLayout.produtoField(operation: CrudOperation?,
-                                                             binder: Binder<V>,
-                                                             tipo: String) {
+
+  inline fun <reified V : NotaVo> VerticalLayout.produtoField(
+    operation: CrudOperation?,
+    binder: Binder<V>,
+    tipo: String,
+                                                             ) {
     row {
       this.bindVisible(binder, NotaVo::naoTemGrid.name)
       comboBox<Produto>("Código") {
         expandRatio = 2f
         isReadOnly = operation != ADD
-        default {"${it.codigo.trim()} ${it.grade}".trim()}
+        default { "${it.codigo.trim()} ${it.grade}".trim() }
         isTextInputAllowed = true
         bindItens(binder, NotaVo::produtoNota.name)
         bind(binder).bind(NotaVo::produto.name)
@@ -118,11 +98,11 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>(c
       comboBox<LocProduto>("Localizacao") {
         expandRatio = 3f
         isReadOnly = operation != ADD
-        default {localizacao ->
+        default { localizacao ->
           localizacao.localizacao
         }
         isTextInputAllowed = true
-  
+
         bindItens(binder, NotaVo::localizacaoProduto.name)
         bind(binder).bind(NotaVo::localizacao.name)
       }
@@ -134,8 +114,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>(c
       integerField("Qtd $tipo") {
         expandRatio = 1f
         isReadOnly = (!this@NotaView.isAdmin) && (operation != ADD)
-        this.bind(binder)
-          .bind(NotaVo::quantProduto.name)
+        this.bind(binder).bind(NotaVo::quantProduto.name)
       }
     }
     row {
@@ -146,15 +125,14 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>(c
         editor.isEnabled = true
         removeAllColumns()
         val selectionModel = setSelectionMode(MULTI)
-        selectionModel.addSelectionListener {select ->
-          if(select.isUserOriginated) {
-            this.dataProvider.getAll()
-              .forEach {
-                it.selecionado = false
-              }
-  
+        selectionModel.addSelectionListener { select ->
+          if (select.isUserOriginated) {
+            this.dataProvider.getAll().forEach {
+                      it.selecionado = false
+                    }
+
             select.allSelectedItems.forEach {
-              if(it.isSave) {
+              if (it.isSave) {
                 it.selecionado = false
                 selectionModel.deselect(it)
               }
@@ -166,7 +144,7 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>(c
           isEmptySelectionAllowed = false
           isTextInputAllowed = false
         }
-    
+
         addColumnFor(ProdutoNotaVo::codigo) {
           expandRatio = 1
           caption = "Código"
@@ -200,13 +178,11 @@ abstract class NotaView<VO: NotaVo, MODEL: NotaViewModel<VO, V>, V: INotaView>(c
           align = VAlign.Right
         }
         bindItens(binder, NotaVo::produtos.name)
-        editor.addOpenListener {event ->
-          event.bean.produto.let {produto ->
-            val locSulfixos =
-              produto.localizacoes(abreviacaoDefault)
-                .map {LocProduto(it)}
+        editor.addOpenListener { event ->
+          event.bean.produto.let { produto ->
+            val locSulfixos = produto.localizacoes(abreviacaoDefault).map { LocProduto(it) }
             comboLoc.setItems(locSulfixos)
-            comboLoc.setItemCaptionGenerator {it.localizacao}
+            comboLoc.setItemCaptionGenerator { it.localizacao }
             comboLoc.value = event.bean.localizacao
           }
         }

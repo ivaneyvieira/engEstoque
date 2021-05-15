@@ -5,28 +5,10 @@ import br.com.engecopi.estoque.model.LoginInfoProvider
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.Usuario
 import br.com.engecopi.saci.saci
-import com.github.mvysny.karibudsl.v8.alignment
-import com.github.mvysny.karibudsl.v8.button
-import com.github.mvysny.karibudsl.v8.comboBox
-import com.github.mvysny.karibudsl.v8.expandRatio
-import com.github.mvysny.karibudsl.v8.fillParent
-import com.github.mvysny.karibudsl.v8.horizontalLayout
-import com.github.mvysny.karibudsl.v8.label
-import com.github.mvysny.karibudsl.v8.onLeftClick
-import com.github.mvysny.karibudsl.v8.panel
-import com.github.mvysny.karibudsl.v8.passwordField
-import com.github.mvysny.karibudsl.v8.px
-import com.github.mvysny.karibudsl.v8.setPrimary
-import com.github.mvysny.karibudsl.v8.textField
-import com.github.mvysny.karibudsl.v8.verticalLayout
-import com.github.mvysny.karibudsl.v8.w
+import com.github.mvysny.karibudsl.v8.*
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.ui.ContentMode.HTML
-import com.vaadin.ui.Alignment
-import com.vaadin.ui.ComboBox
-import com.vaadin.ui.Notification
-import com.vaadin.ui.TextField
-import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 
 object LoginService {
@@ -35,7 +17,7 @@ object LoginService {
     RegistryUserInfo.loginInfoProvider = SessionLoginInfoProvider()
     EstoqueUI.current?.updateLogin()
   }
-  
+
   fun logout() {
     EstoqueUI.current?.loginInfo = null
     RegistryUserInfo.loginInfoProvider = null
@@ -43,19 +25,19 @@ object LoginService {
   }
 }
 
-class SessionLoginInfoProvider: LoginInfoProvider {
+class SessionLoginInfoProvider : LoginInfoProvider {
   override val loginInfo: LoginInfo? = null
     get() {
-      if(field == null) log?.debug("O usuário não está logado")
+      if (field == null) log?.debug("O usuário não está logado")
       return EstoqueUI.current?.loginInfo
     }
 }
 
-class LoginForm(private val appTitle: String): VerticalLayout() {
+class LoginForm(private val appTitle: String) : VerticalLayout() {
   private lateinit var username: TextField
   private lateinit var password: TextField
   private lateinit var abreviacao: ComboBox<String>
-  
+
   init {
     setSizeFull()
     isResponsive = true
@@ -113,7 +95,7 @@ class LoginForm(private val appTitle: String): VerticalLayout() {
             isResponsive = true
             alignment = Alignment.BOTTOM_RIGHT
             setPrimary()
-            onLeftClick {login()}
+            onLeftClick { login() }
           }
         }
       }
@@ -121,7 +103,7 @@ class LoginForm(private val appTitle: String): VerticalLayout() {
   }
 
   private fun changeUserName(loginName: String?) {
-    if(::abreviacao.isInitialized) {
+    if (::abreviacao.isInitialized) {
       val abreviacoes = abreviacaoes(loginName)
 
       abreviacao.setItems(abreviacoes)
@@ -138,13 +120,13 @@ class LoginForm(private val appTitle: String): VerticalLayout() {
     val user = saci.findUser(username.value)
     val pass = password.value
     val abrev = abreviacao.value ?: ""
-    if(user == null || user.senha != pass) {
+    if (user == null || user.senha != pass) {
       Notification.show("Usuário ou senha inválidos. Por favor, tente novamente.")
       LoginService.logout()
     }
     else {
       val usuario = Usuario.findUsuario(user.login)
-      if(usuario == null) {
+      if (usuario == null) {
         Notification.show("Usuário ou senha inválidos. Por favor, tente novamente.")
         LoginService.logout()
       }
