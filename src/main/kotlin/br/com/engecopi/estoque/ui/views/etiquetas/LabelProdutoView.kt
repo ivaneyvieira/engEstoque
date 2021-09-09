@@ -13,7 +13,8 @@ import com.vaadin.ui.*
 import com.vaadin.ui.renderers.TextRenderer
 import org.vaadin.viritin.fields.IntegerField
 
-@AutoView class LabelProdutoView : LayoutView<LabelProdutoViewModel>(), ILabelProdutoView {
+@AutoView
+class LabelProdutoView : LayoutView<LabelProdutoViewModel>(), ILabelProdutoView {
   private lateinit var gridProduto: Grid<Produto>
   private lateinit var cmbTipoFiltro: ComboBox<FiltroView>
   private lateinit var pnlFiltro: HorizontalLayout
@@ -27,14 +28,15 @@ import org.vaadin.viritin.fields.IntegerField
     val filtroTipoProduto = FiltroTipoProduto(viewModel)
     val filtroCodigoGrade = FiltroCodigoGrade(viewModel)
     val filtroNfe = FiltroNfe(viewModel)
-    val filtrosView = if (usuarioDefault.admin) listOf(filtroFaixaCodigo,
-                                                       filtroFaixaNome,
-                                                       filtroFabricante,
-                                                       filtroCentroLucro,
-                                                       filtroTipoProduto,
-                                                       filtroNfe,
-                                                       filtroCodigoGrade)
-    else listOf(filtroCodigoGrade)
+    val filtrosView =
+            if (usuarioDefault.admin) listOf(filtroFaixaCodigo,
+                                             filtroFaixaNome,
+                                             filtroFabricante,
+                                             filtroCentroLucro,
+                                             filtroTipoProduto,
+                                             filtroNfe,
+                                             filtroCodigoGrade)
+            else listOf(filtroCodigoGrade)
     setSizeFull()
     form("Código de barras produto")
     verticalLayout {

@@ -17,7 +17,8 @@ import com.vaadin.ui.ComboBox
 import com.vaadin.ui.renderers.TextRenderer
 import org.vaadin.patrik.FastNavigation
 
-@AutoView class AbreciacaoView : LayoutView<AbreciacaoViewModel>(), IAbreciacaoView {
+@AutoView
+class AbreciacaoView : LayoutView<AbreciacaoViewModel>(), IAbreciacaoView {
 
   init {
     viewModel = AbreciacaoViewModel(this)

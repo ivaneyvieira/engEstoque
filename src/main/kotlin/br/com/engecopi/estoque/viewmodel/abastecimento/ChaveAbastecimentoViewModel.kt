@@ -18,8 +18,8 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class ChaveAbastecimentoViewModel(view: IAbastecimentoView) : CrudViewModel<ViewPedidoAbastecimento, QViewPedidoAbastecimento, AbastecimentoVo, IAbastecimentoView>(
-  view) {
+class ChaveAbastecimentoViewModel(view: IAbastecimentoView) :
+        CrudViewModel<ViewPedidoAbastecimento, QViewPedidoAbastecimento, AbastecimentoVo, IAbastecimentoView>(view) {
   private val print = ChaveAbastecimentoPrint()
   private val processing = ChaveAbastecimentoProcessamento()
   private val find = ChaveAbastecimentoFind()

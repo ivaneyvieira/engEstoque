@@ -6,9 +6,13 @@ import io.ebean.annotation.Formula
 import io.ebean.annotation.View
 import javax.persistence.*
 
-@Cache(enableQueryCache = false) @Entity @View(name = "tab_produtos", dependentTables = ["produtos"])
+@Cache(enableQueryCache = false)
+@Entity
+@View(name = "tab_produtos", dependentTables = ["produtos"])
 class ViewProduto {
-  @Id @Column(name = "produto_id") var id: Long? = null
+  @Id
+  @Column(name = "produto_id")
+  var id: Long? = null
   var codigo: String? = null
   var nome: String? = null
   var grade: String? = null
@@ -20,9 +24,12 @@ class ViewProduto {
   var larg: Int? = null
   var alt: Int? = null
 
-  @Formula(select = "(comp*larg*alt/(100*100*100))") var cubagem: Double? = null
+  @Formula(select = "(comp*larg*alt/(100*100*100))")
+  var cubagem: Double? = null
 
-  @OneToOne(cascade = []) @JoinColumn(name = "produto_id") var produto: Produto? = null
+  @OneToOne(cascade = [])
+  @JoinColumn(name = "produto_id")
+  var produto: Produto? = null
 
   companion object Find : ViewProdutoFinder()
 }

@@ -18,7 +18,8 @@ import com.vaadin.ui.Grid
 import com.vaadin.ui.Grid.SelectionMode
 import com.vaadin.ui.TextField
 
-@AutoView class LabelNotaView : LayoutView<LabelNotaViewModel>(), ILabelNotaView {
+@AutoView
+class LabelNotaView : LayoutView<LabelNotaViewModel>(), ILabelNotaView {
   private lateinit var cmbImpressora: ComboBox<PrinterInfo>
   private lateinit var edtNumeroNota: TextField
   private lateinit var gridNota: Grid<NotaLabelVo>
@@ -64,10 +65,10 @@ import com.vaadin.ui.TextField
             alignment = BOTTOM_RIGHT
             addClickListener {
               viewModel.impressaoNota().forEach { pacote ->
-                        val impressoraCmb = impressora?.let { Printer(it.name) }
-                        val printer = impressoraCmb ?: pacote.impressora
-                        PrintUtil.printText(printer, pacote.text)
-                      }
+                val impressoraCmb = impressora?.let { Printer(it.name) }
+                val printer = impressoraCmb ?: pacote.impressora
+                PrintUtil.printText(printer, pacote.text)
+              }
             }
           }
         }

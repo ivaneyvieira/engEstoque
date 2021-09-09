@@ -23,7 +23,7 @@ import com.vaadin.ui.themes.ValoTheme
 
 @AutoView("chave_abastecimento")
 class ChaveAbastecimentoView : CrudLayoutView<AbastecimentoVo, ChaveAbastecimentoViewModel>(customFooterLayout = false),
-                               IAbastecimentoView {
+        IAbastecimentoView {
   var formCodBar: PnlCodigoBarras? = null
   private val isAdmin
     get() = userDefaultIsAdmin
@@ -235,8 +235,8 @@ class DlgAbastecimentoLoc(
               addStyleName(ValoTheme.BUTTON_PRIMARY)
               addClickListener {
                 val itens = gridProdutos.dataProvider.getAll().flatMap { loc ->
-                          loc.itensAbastecimento.filter { it.selecionado }
-                        }
+                  loc.itensAbastecimento.filter { it.selecionado }
+                }
                 execConfirma(itens)
                 close()
               }
@@ -257,16 +257,17 @@ class DlgAbastecimentoLoc(
               abreviacao
             }
             val abreviacoes = abreviacaoItens.keys.asSequence().flatten().distinct().map { abrev ->
-                      val itensAbastecimento = abreviacaoItens.filter { it.key.contains(abrev) }
-                              .map { it.value }
-                              .flatten()
-                              .distinct()
-                              .map { notaSaci ->
-                                val saldo = viewModel.saldoProduto(notaSaci, abrev)
-                                ItemAbastecimento(notaSaci, saldo, abrev)
-                              }
-                      LocalizacaoAbestecimento(abrev, itensAbastecimento)
-                    }.toList().sortedBy { it.abreviacao }.toList()
+              val itensAbastecimento =
+                      abreviacaoItens.filter { it.key.contains(abrev) }
+                        .map { it.value }
+                        .flatten()
+                        .distinct()
+                        .map { notaSaci ->
+                          val saldo = viewModel.saldoProduto(notaSaci, abrev)
+                          ItemAbastecimento(notaSaci, saldo, abrev)
+                        }
+              LocalizacaoAbestecimento(abrev, itensAbastecimento)
+            }.toList().sortedBy { it.abreviacao }.toList()
 
             this.dataProvider = ListDataProvider(abreviacoes)
             removeAllColumns()

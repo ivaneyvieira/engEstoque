@@ -25,7 +25,8 @@ import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
 import java.text.DecimalFormat
 
-@AutoView class ProdutoView : CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoView {
+@AutoView
+class ProdutoView : CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoView {
   init {
     viewModel = ProdutoViewModel(this)
     isAddClose = false

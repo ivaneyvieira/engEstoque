@@ -50,13 +50,13 @@ class ChaveAbastecimentoProcessamento {
 
   private fun createNota(notaDoSaci: NotaProdutoSaci?): Nota? {
     return Nota.createNota(notaDoSaci)?.apply {
-              if (this.existe()) Nota.findSaida(this.loja, this.numero)
-              else {
-                this.sequencia = Nota.maxSequencia() + 1
-                this.usuario = usuarioDefault
-                this.lancamentoOrigem = ABASTECI
-                this.save()
-              }
-            }
+      if (this.existe()) Nota.findSaida(this.loja, this.numero)
+      else {
+        this.sequencia = Nota.maxSequencia() + 1
+        this.usuario = usuarioDefault
+        this.lancamentoOrigem = ABASTECI
+        this.save()
+      }
+    }
   }
 }

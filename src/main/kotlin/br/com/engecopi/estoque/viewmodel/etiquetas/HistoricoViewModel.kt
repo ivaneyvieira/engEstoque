@@ -11,8 +11,8 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class HistoricoViewModel(view: IHistoricoView) : CrudViewModel<HistoricoEtiqueta, QHistoricoEtiqueta, HistoricoVo, IHistoricoView>(
-  view) {
+class HistoricoViewModel(view: IHistoricoView) :
+        CrudViewModel<HistoricoEtiqueta, QHistoricoEtiqueta, HistoricoVo, IHistoricoView>(view) {
   override fun update(bean: HistoricoVo) {
     bean.findEntity()?.let { hist ->
       hist.gtinOk = bean.gtinOk

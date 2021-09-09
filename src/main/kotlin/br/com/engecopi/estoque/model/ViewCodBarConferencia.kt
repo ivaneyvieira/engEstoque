@@ -10,8 +10,13 @@ import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
 
-@Cache(enableQueryCache = false) @Entity @View(name = "v_codigo_barra_conferencia") class ViewCodBarConferencia {
-  @Id @Column(name = "id_itens_nota") val id: Long = 0
+@Cache(enableQueryCache = false)
+@Entity
+@View(name = "v_codigo_barra_conferencia")
+class ViewCodBarConferencia {
+  @Id
+  @Column(name = "id_itens_nota")
+  val id: Long = 0
   val codbar: String = ""
   val storeno: Int = 0
   val numero: String = ""
@@ -21,9 +26,9 @@ import javax.persistence.Id
   companion object Find : ViewCodBarConferenciaFinder() {
     private fun findNotaCodbarCliente(key: String): ViewCodBarConferencia? {
       return QViewCodBarCliente().codbarLimpo.eq(key).findList().firstOrNull()?.run {
-                QViewCodBarConferencia().storeno.eq(storeno).numero.eq(numero).sequencia.eq(sequencia).abreviacao.eq(
-                          abreviacaoDefault).findList().firstOrNull()
-              }
+        QViewCodBarConferencia().storeno.eq(storeno).numero.eq(numero).sequencia.eq(sequencia).abreviacao.eq(
+          abreviacaoDefault).findList().firstOrNull()
+      }
     }
 
     private fun findNotaCodBarConferencia(key: String): ViewCodBarConferencia? {

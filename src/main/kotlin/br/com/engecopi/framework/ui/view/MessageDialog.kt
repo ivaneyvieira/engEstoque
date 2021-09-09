@@ -16,11 +16,11 @@ object MessageDialog {
     //      .show(Page.getCurrent())
     //  else
     MessageBox.createInfo()
-            .withCaption(caption)
-            .withHtmlMessage(message)
-            .withCloseButton(ButtonOption.caption("Fechar"))
-            .asModal(true)
-            .open()
+      .withCaption(caption)
+      .withHtmlMessage(message)
+      .withCloseButton(ButtonOption.caption("Fechar"))
+      .asModal(true)
+      .open()
   }
 
   fun warning(caption: String = "Aviso", message: String) {
@@ -28,11 +28,11 @@ object MessageDialog {
       delayMsec = 2000
     }.show(Page.getCurrent())
     else MessageBox.createWarning()
-            .withCaption(caption)
-            .withHtmlMessage(message)
-            .withCloseButton(ButtonOption.caption("Fechar"))
-            .asModal(true)
-            .open()
+      .withCaption(caption)
+      .withHtmlMessage(message)
+      .withCloseButton(ButtonOption.caption("Fechar"))
+      .asModal(true)
+      .open()
   }
 
   fun error(caption: String = "Erro", message: String) {
@@ -40,21 +40,21 @@ object MessageDialog {
       delayMsec = 2000
     }.show(Page.getCurrent())
     else MessageBox.createError()
-            .withCaption(caption)
-            .withHtmlMessage(message)
-            .withCloseButton(ButtonOption.caption("Fechar"))
-            .asModal(true)
-            .open()
+      .withCaption(caption)
+      .withHtmlMessage(message)
+      .withCloseButton(ButtonOption.caption("Fechar"))
+      .asModal(true)
+      .open()
   }
 
   fun question(caption: String = "Questão", message: String, execYes: () -> Unit = {}, execNo: () -> Unit = {}) {
     MessageBox.createQuestion()
-            .withCaption(caption)
-            .withHtmlMessage(message)
-            .withYesButton(execYes, *arrayOf(ButtonOption.caption("Sim")))
-            .withNoButton(execNo, *arrayOf(ButtonOption.caption("Não")))
-            .asModal(true)
-            .open()
+      .withCaption(caption)
+      .withHtmlMessage(message)
+      .withYesButton(execYes, *arrayOf(ButtonOption.caption("Sim")))
+      .withNoButton(execNo, *arrayOf(ButtonOption.caption("Não")))
+      .asModal(true)
+      .open()
   }
 
   fun question(
@@ -64,12 +64,12 @@ object MessageDialog {
     execNo: (Component) -> Unit = {},
               ) {
     MessageBox.createQuestion()
-            .withCaption(caption)
-            .withMessage(message)
-            .withYesButton({ execYes(message) }, *arrayOf(ButtonOption.caption("Sim")))
-            .withNoButton({ execNo(message) }, *arrayOf(ButtonOption.caption("Não")))
-            .asModal(true)
-            .open()
+      .withCaption(caption)
+      .withMessage(message)
+      .withYesButton({ execYes(message) }, *arrayOf(ButtonOption.caption("Sim")))
+      .withNoButton({ execNo(message) }, *arrayOf(ButtonOption.caption("Não")))
+      .asModal(true)
+      .open()
   }
 
   fun image(title: String, image: ByteArray) {

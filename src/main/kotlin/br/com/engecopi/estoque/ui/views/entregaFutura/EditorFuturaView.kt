@@ -17,8 +17,8 @@ import com.vaadin.ui.Label
 import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
-@AutoView("editor_futura") class EditorFuturaView : NotaView<EntregaFututaVo, EditorFuturaViewModel, IEditorFuturaView>(
-  true), IEditorFuturaView {
+@AutoView("editor_futura")
+class EditorFuturaView : NotaView<EntregaFututaVo, EditorFuturaViewModel, IEditorFuturaView>(true), IEditorFuturaView {
   init {
     viewModel = EditorFuturaViewModel(this)
     layoutForm {

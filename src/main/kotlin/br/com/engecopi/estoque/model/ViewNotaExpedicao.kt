@@ -15,14 +15,19 @@ import javax.persistence.EnumType
 import javax.persistence.Enumerated
 import javax.persistence.ManyToOne
 
-@Cache(enableQueryCache = false) @Entity @View(name = "v_nota_expedicao", dependentTables = ["notas", "itens_nota"])
+@Cache(enableQueryCache = false)
+@Entity
+@View(name = "v_nota_expedicao", dependentTables = ["notas", "itens_nota"])
 class ViewNotaExpedicao : BaseModel() {
-  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH]) var nota: Nota? = null
+  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
+  var nota: Nota? = null
   var numero: String = ""
 
-  @Enumerated(EnumType.STRING) var tipoMov: TipoMov = ENTRADA
+  @Enumerated(EnumType.STRING)
+  var tipoMov: TipoMov = ENTRADA
 
-  @Enumerated(EnumType.STRING) var tipoNota: TipoNota? = null
+  @Enumerated(EnumType.STRING)
+  var tipoNota: TipoNota? = null
   var rota: String = ""
   var fornecedor: String = ""
   var cliente: String = ""
@@ -32,10 +37,12 @@ class ViewNotaExpedicao : BaseModel() {
   var hora: LocalTime = LocalTime.now()
   var observacao: String = ""
 
-  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH]) var loja: Loja? = null
+  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
+  var loja: Loja? = null
   var sequencia: Int = 0
 
-  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH]) var usuario: Usuario? = null
+  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
+  var usuario: Usuario? = null
   var abreviacao: String? = ""
 
   companion object Find : ViewNotaExpedicaoFinder() {
@@ -43,8 +50,8 @@ class ViewNotaExpedicao : BaseModel() {
       numero ?: return null
       abreviacao ?: return null
       return QViewNotaExpedicao().numero.eq(numero).loja.equalTo(loja).abreviacao.eq(abreviacao)
-              .findList()
-              .firstOrNull()
+        .findList()
+        .firstOrNull()
     }
 
     fun findExpedicao(nota: Nota): ViewNotaExpedicao? {

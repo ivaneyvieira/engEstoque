@@ -19,7 +19,7 @@ import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView("editor_expedicao")
 class EditorExpedicaoExpedicaoView : NotaView<EntregaExpedicaoVo, EditorExpedicaoViewModel, IEditorExpedicaoView>(true),
-                                     IEditorExpedicaoView {
+        IEditorExpedicaoView {
   init {
     viewModel = EditorExpedicaoViewModel(this)
     layoutForm {

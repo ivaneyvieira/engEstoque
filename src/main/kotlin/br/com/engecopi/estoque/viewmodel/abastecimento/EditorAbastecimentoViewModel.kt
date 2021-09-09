@@ -8,11 +8,8 @@ import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
 
-class EditorAbastecimentoViewModel(view: IEditorAbastecimentoView) : NotaViewModel<EntregaAbastecimentoVo, IEditorAbastecimentoView>(
-  view,
-  SAIDA,
-  ENTREGUE,
-  ENTREGUE) {
+class EditorAbastecimentoViewModel(view: IEditorAbastecimentoView) :
+        NotaViewModel<EntregaAbastecimentoVo, IEditorAbastecimentoView>(view, SAIDA, ENTREGUE, ENTREGUE) {
   override fun newBean(): EntregaAbastecimentoVo {
     return EntregaAbastecimentoVo()
   }

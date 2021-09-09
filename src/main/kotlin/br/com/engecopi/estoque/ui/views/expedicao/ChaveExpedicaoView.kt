@@ -256,16 +256,17 @@ class DlgExpedicaoLoc(
               abreviacao
             }
             val abreviacoes = abreviacaoItens.keys.asSequence().flatten().distinct().map { abrev ->
-                      val itensExpedicao = abreviacaoItens.filter { it.key.contains(abrev) }
-                              .map { it.value }
-                              .flatten()
-                              .distinct()
-                              .map { notaSaci ->
-                                val saldo = viewModel.saldoProduto(notaSaci, abrev)
-                                ItemExpedicao(notaSaci, saldo, abrev)
-                              }
-                      LocalizacaoExpedicao(abrev, itensExpedicao)
-                    }.toList().sortedBy { it.abreviacao }.toList()
+              val itensExpedicao =
+                      abreviacaoItens.filter { it.key.contains(abrev) }
+                        .map { it.value }
+                        .flatten()
+                        .distinct()
+                        .map { notaSaci ->
+                          val saldo = viewModel.saldoProduto(notaSaci, abrev)
+                          ItemExpedicao(notaSaci, saldo, abrev)
+                        }
+              LocalizacaoExpedicao(abrev, itensExpedicao)
+            }.toList().sortedBy { it.abreviacao }.toList()
 
             this.dataProvider = ListDataProvider(abreviacoes)
             removeAllColumns()

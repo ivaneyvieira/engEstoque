@@ -33,8 +33,8 @@ object NetworkUtils {
   private fun pingNet(hostname: String?): Boolean {
     hostname ?: return false
     val byteAddr = hostname.split(".").mapNotNull {
-              it.toIntOrNull()?.toByte()
-            }.toByteArray()
+      it.toIntOrNull()?.toByte()
+    }.toByteArray()
     val inet = InetAddress.getByAddress(byteAddr)
     val isReachable = inet.isReachable(10000)
     return isReachable

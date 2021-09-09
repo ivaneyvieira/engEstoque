@@ -18,8 +18,8 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class ChaveExpedicaoViewModel(view: IChaveExpedicaoView) : CrudViewModel<ViewNotaExpedicao, QViewNotaExpedicao, ChaveExpedicaoVo, IChaveExpedicaoView>(
-  view) {
+class ChaveExpedicaoViewModel(view: IChaveExpedicaoView) :
+        CrudViewModel<ViewNotaExpedicao, QViewNotaExpedicao, ChaveExpedicaoVo, IChaveExpedicaoView>(view) {
   private val print = ChaveExpedicaoPrint()
   private val processing = ChaveExpedicaoProcessamento()
   private val find = ChaveExpedicaoFind()

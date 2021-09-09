@@ -18,8 +18,9 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView("editor_ressuprimento")
-class EditorRessuprimento : NotaView<EntregaRessuprimentoVo, EditorRessuprimentoViewModel, IEditorRessuprimentoView>(
-  true), IEditorRessuprimentoView {
+class EditorRessuprimento :
+        NotaView<EntregaRessuprimentoVo, EditorRessuprimentoViewModel, IEditorRessuprimentoView>(true),
+        IEditorRessuprimentoView {
   init {
     viewModel = EditorRessuprimentoViewModel(this)
     layoutForm {

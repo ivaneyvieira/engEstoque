@@ -19,8 +19,8 @@ data class NotaBaixaFatura(
   val produtos = ProdutoNota.produtos(storeno, numero)
   val abreviacoes = produtos.flatMap {
     ViewProdutoLoc.findByCodigoGrade(it.prdno, it.grade).map { produtoLoc ->
-              produtoLoc.abreviacao
-            }
+      produtoLoc.abreviacao
+    }
   }.distinct()
 }
 

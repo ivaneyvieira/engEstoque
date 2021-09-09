@@ -51,33 +51,25 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
         view.showWarning(msg)
       }
       else {
-        bean.entityVo = insertItemNota(nota,
-                                       produto,
-                                       bean.quantProduto ?: 0,
-                                       usuario,
-                                       bean.localizacao?.localizacao,
-                                       addTime)
+        bean.entityVo =
+                insertItemNota(nota, produto, bean.quantProduto ?: 0, usuario, bean.localizacao?.localizacao, addTime)
       }
     }
     else {
       val produtos = bean.produtos.filter { it.selecionado && it.quantidade != 0 }
       val produtosJaInserido = produtos.asSequence().distinctBy { it.produto.id }.filter { prd ->
-                prd.produto.let { Nota.itemDuplicado(nota, it) }
-              }.map { it.produto }.filterNotNull()
+        prd.produto.let { Nota.itemDuplicado(nota, it) }
+      }.map { it.produto }.filterNotNull()
       produtosJaInserido.forEach { prd ->
         val msg = "O produto ${prd.codigo} - ${prd.descricao}. Já foi inserido na nota ${nota.numero}."
         view.showWarning(msg)
       }
       produtos.filter { it.produto !in produtosJaInserido }.forEach { produto ->
-                produto.let { prd ->
-                  if (usuario.temProduto(prd.produto)) bean.entityVo = insertItemNota(nota,
-                                                                                      prd.produto,
-                                                                                      prd.quantidade,
-                                                                                      usuario,
-                                                                                      prd.localizacao?.localizacao,
-                                                                                      addTime)
-                }
-              }
+        produto.let { prd ->
+          if (usuario.temProduto(prd.produto)) bean.entityVo =
+                  insertItemNota(nota, prd.produto, prd.quantidade, usuario, prd.localizacao?.localizacao, addTime)
+        }
+      }
     }
   }
 
@@ -120,15 +112,15 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
 
   private fun updateItemNota(bean: VO, nota: Nota, produto: Produto?) {
     bean.toEntity()?.let { item ->
-              item.apply {
-                this.nota = nota
-                this.produto = produto
-                this.quantidade = bean.quantProduto ?: 0
-                this.status = bean.status!!
-              }
-              item.update()
-              item.produto?.recalculaSaldos(bean.localizacao?.localizacao ?: "")
-            }
+      item.apply {
+        this.nota = nota
+        this.produto = produto
+        this.quantidade = bean.quantProduto ?: 0
+        this.status = bean.status!!
+      }
+      item.update()
+      item.produto?.recalculaSaldos(bean.localizacao?.localizacao ?: "")
+    }
   }
 
   private fun saveProduto(produto: Produto?): Produto {
@@ -170,12 +162,12 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
     get() {
       Repositories.updateViewProdutosLoc()
       return QItemNota().setUseQueryCache(true)
-              .fetch("nota")
-              .fetch("usuario")
-              .fetch("produto")
-              .fetch("produto.vproduto")
-              .fetch("produto.viewProdutoLoc").nota.tipoMov.eq(tipo).filtroTipoNota().filtroStatus().or().nota.loja.eq(
-                lojaDeposito).nota.tipoNota.`in`(TipoNota.lojasExternas).endOr()
+        .fetch("nota")
+        .fetch("usuario")
+        .fetch("produto")
+        .fetch("produto.vproduto")
+        .fetch("produto.viewProdutoLoc").nota.tipoMov.eq(tipo).filtroTipoNota().filtroStatus().or().nota.loja.eq(
+          lojaDeposito).nota.tipoNota.`in`(TipoNota.lojasExternas).endOr()
     }
 
   abstract fun createVo(): VO
@@ -205,8 +197,8 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
 
   override fun QItemNota.filterString(text: String): QItemNota {
     return nota.numero.startsWith(text).codigoBarraCliente.startsWith(text)
-            .and().produto.viewProdutoLoc.localizacao.contains(text).produto.viewProdutoLoc.loja.eq(lojaDeposito)
-            .endAnd().produto.vproduto.codigo.contains(" $text").produto.vproduto.nome.contains(text)
+      .and().produto.viewProdutoLoc.localizacao.contains(text).produto.viewProdutoLoc.loja.eq(lojaDeposito)
+      .endAnd().produto.vproduto.codigo.contains(" $text").produto.vproduto.nome.contains(text)
   }
 
   override fun QItemNota.filterDate(date: LocalDate): QItemNota {
@@ -219,8 +211,8 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
 
   override fun delete(bean: VO) {
     bean.toEntity()?.also { item ->
-              item.delete()
-            }
+      item.delete()
+    }
   }
 
   fun findLojas(loja: Loja?): List<Loja> = execList {
@@ -314,15 +306,15 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?) : 
         else listItensEntrada(notaSaci)
       }
       produtos.addAll(produtosVo.asSequence()
-                              .filter {
-                                it.quantidade != 0 && it.codigo != "" && it.localizacao?.localizacao?.startsWith(
-                                  abreviacaoNota ?: "") ?: false
-                              }
-                              .sortedWith(compareBy(ProdutoNotaVo::isSave,
-                                                    ProdutoNotaVo::codigo,
-                                                    ProdutoNotaVo::grade,
-                                                    ProdutoNotaVo::localizacao))
-                              .toList())
+                        .filter {
+                          it.quantidade != 0 && it.codigo != "" && it.localizacao?.localizacao?.startsWith(
+                            abreviacaoNota ?: "") ?: false
+                        }
+                        .sortedWith(compareBy(ProdutoNotaVo::isSave,
+                                              ProdutoNotaVo::codigo,
+                                              ProdutoNotaVo::grade,
+                                              ProdutoNotaVo::localizacao))
+                        .toList())
     }
   }
 
@@ -486,11 +478,7 @@ class ProdutoNotaVo(
 }
 
 enum class ETipoGrupo(val ordem: Int) {
-  SELECT_FT(0),
-  RED(1),
-  WHITE(2),
-  BLUE(3),
-  GREEN(4)
+  SELECT_FT(0), RED(1), WHITE(2), BLUE(3), GREEN(4)
 }
 
 interface INotaView : ICrudView

@@ -29,13 +29,14 @@ class EntregaFutura(
         |where storenoVenda = :storeno
         |  AND numeroVenda = :numeroVenda
       """.trimMargin()
-      val list = DB.findDto(EntregaFutura::class.java, sql)
-              .setParameter("storeno", storeno)
-              .setParameter("numeroVenda", numeroVenda)
-              .findList()
-              .map { nf ->
-                NotaBaixaFatura(nf.storenoEntrega, nf.numeroEntrega, nf.dataEntrega.localDate())
-              }
+      val list =
+              DB.findDto(EntregaFutura::class.java, sql)
+                .setParameter("storeno", storeno)
+                .setParameter("numeroVenda", numeroVenda)
+                .findList()
+                .map { nf ->
+                  NotaBaixaFatura(nf.storenoEntrega, nf.numeroEntrega, nf.dataEntrega.localDate())
+                }
       return list
     }
 
@@ -47,12 +48,12 @@ class EntregaFutura(
         |  AND numeroEntrega = :numero
       """.trimMargin()
       return DB.findDto(EntregaFutura::class.java, sql)
-              .setParameter("storeno", storeno)
-              .setParameter("numero", numero)
-              .findList()
-              .map { nf ->
-                NotaBaixaFatura(nf.storenoVenda, nf.numeroVenda, nf.dataVenda.localDate())
-              }
+        .setParameter("storeno", storeno)
+        .setParameter("numero", numero)
+        .findList()
+        .map { nf ->
+          NotaBaixaFatura(nf.storenoVenda, nf.numeroVenda, nf.dataVenda.localDate())
+        }
     }
   }
 }

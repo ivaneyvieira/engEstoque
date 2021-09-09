@@ -11,7 +11,8 @@ import io.ebean.typequery.*
  *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
-@TypeQueryBean class QAssocViewNotaExpedicao<R>(name: String, root: R) : TQAssocBean<ViewNotaExpedicao, R>(name, root) {
+@TypeQueryBean
+class QAssocViewNotaExpedicao<R>(name: String, root: R) : TQAssocBean<ViewNotaExpedicao, R>(name, root) {
 
   lateinit var id: PLong<R>
   lateinit var createdAt: PLocalDateTime<R>
@@ -54,5 +55,4 @@ import io.ebean.typequery.*
   fun fetchLazy(vararg properties: TQProperty<QViewNotaExpedicao>): R {
     return fetchLazyProperties(*properties)
   }
-
 }

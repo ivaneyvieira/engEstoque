@@ -18,8 +18,9 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView("editor_abastecimento")
-class EditorAbastecimentoView : NotaView<EntregaAbastecimentoVo, EditorAbastecimentoViewModel, IEditorAbastecimentoView>(
-  customFooterLayout = true), IEditorAbastecimentoView {
+class EditorAbastecimentoView :
+        NotaView<EntregaAbastecimentoVo, EditorAbastecimentoViewModel, IEditorAbastecimentoView>(customFooterLayout = true),
+        IEditorAbastecimentoView {
   init {
     viewModel = EditorAbastecimentoViewModel(this)
     layoutForm {

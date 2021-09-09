@@ -37,13 +37,13 @@ class SaidaFind {
 
   private fun processaNotaSaci(loja: Loja, numeroNota: String): NotaItens {
     val notasSaci = Nota.findNotaSaidaSaci(loja, numeroNota).filter { loc ->
-              loc.localizacaoes().any { it.abreviacao == abreviacaoDefault }
-            }
+      loc.localizacaoes().any { it.abreviacao == abreviacaoDefault }
+    }
     val notaSaci = notasSaci.firstOrNull() ?: return NotaItens.erro("Nota inválida")
     return if (usuarioDefault.isTipoCompativel(notaSaci.tipoNota())) {
       Nota.createNotaItens(notasSaci).apply {
-                this.nota?.lancamentoOrigem = DEPOSITO
-              }
+        this.nota?.lancamentoOrigem = DEPOSITO
+      }
     }
     else NotaItens.erro("O usuário não possui permissão para trabalha com nota do tipo ${notaSaci.tipoNota()}")
   }

@@ -15,7 +15,8 @@ import io.ebean.typequery.*
  *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
-@TypeQueryBean class QNota : TQRootBean<Nota, QNota> {
+@TypeQueryBean
+class QNota : TQRootBean<Nota, QNota> {
 
   companion object {
     /**
@@ -47,7 +48,6 @@ import io.ebean.typequery.*
   lateinit var usuario: QAssocUsuario<QNota>
   lateinit var maxSequencia: PInteger<QNota>
   lateinit var lancamentoOrigem: PEnum<QNota, LancamentoOrigem>
-
 
   /**
    * Construct with a given Database.

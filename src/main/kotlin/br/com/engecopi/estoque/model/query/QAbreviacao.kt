@@ -10,7 +10,8 @@ import io.ebean.typequery.*
  *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
-@TypeQueryBean class QAbreviacao : TQRootBean<Abreviacao, QAbreviacao> {
+@TypeQueryBean
+class QAbreviacao : TQRootBean<Abreviacao, QAbreviacao> {
 
   companion object {
     /**
@@ -28,7 +29,6 @@ import io.ebean.typequery.*
   lateinit var loja: QAssocLoja<QAbreviacao>
   lateinit var expedicao: PBoolean<QAbreviacao>
   lateinit var impressora: PString<QAbreviacao>
-
 
   /**
    * Construct with a given Database.

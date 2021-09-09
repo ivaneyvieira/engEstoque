@@ -12,7 +12,8 @@ import io.ebean.typequery.*
  *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
-@TypeQueryBean class QLoja : TQRootBean<Loja, QLoja> {
+@TypeQueryBean
+class QLoja : TQRootBean<Loja, QLoja> {
 
   companion object {
     /**
@@ -31,7 +32,6 @@ import io.ebean.typequery.*
   lateinit var notas: QAssocNota<QLoja>
   lateinit var usuarios: QAssocUsuario<QLoja>
   lateinit var viewProdutoLoc: QAssocViewProdutoLoc<QLoja>
-
 
   /**
    * Construct with a given Database.

@@ -9,7 +9,8 @@ import io.ebean.typequery.*
  *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
-@TypeQueryBean class QViewCodBarCliente : TQRootBean<ViewCodBarCliente, QViewCodBarCliente> {
+@TypeQueryBean
+class QViewCodBarCliente : TQRootBean<ViewCodBarCliente, QViewCodBarCliente> {
 
   companion object {
     /**
@@ -26,7 +27,6 @@ import io.ebean.typequery.*
   lateinit var storeno: PInteger<QViewCodBarCliente>
   lateinit var numero: PString<QViewCodBarCliente>
   lateinit var sequencia: PInteger<QViewCodBarCliente>
-
 
   /**
    * Construct with a given Database.

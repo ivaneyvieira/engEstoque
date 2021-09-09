@@ -27,12 +27,12 @@ class PedidoNotaRessuprimento(
         |  AND numero = :numeroSerieTransferencia
       """.trimMargin()
       return DB.findDto(PedidoNotaRessuprimento::class.java, sql)
-              .setParameter("lojaTransferencia", lojaTransferencia)
-              .setParameter("numeroSerieTransferencia", numeroSerieTransferencia)
-              .findList()
-              .map { nf ->
-                NotaBaixaFatura(nf.storenoPedido, nf.ordno.toString(), nf.dataPedido.localDate())
-              }
+        .setParameter("lojaTransferencia", lojaTransferencia)
+        .setParameter("numeroSerieTransferencia", numeroSerieTransferencia)
+        .findList()
+        .map { nf ->
+          NotaBaixaFatura(nf.storenoPedido, nf.ordno.toString(), nf.dataPedido.localDate())
+        }
     }
 
     fun notaBaixa(numeroPedido: String?): List<NotaBaixaFatura> {
@@ -41,11 +41,11 @@ class PedidoNotaRessuprimento(
         |where ordno = :numeroPedido
       """.trimMargin()
       return DB.findDto(PedidoNotaRessuprimento::class.java, sql)
-              .setParameter("numeroPedido", numeroPedido)
-              .findList()
-              .map { nf ->
-                NotaBaixaFatura(nf.storenoNota, nf.numero, nf.dataNota.localDate())
-              }
+        .setParameter("numeroPedido", numeroPedido)
+        .findList()
+        .map { nf ->
+          NotaBaixaFatura(nf.storenoNota, nf.numero, nf.dataNota.localDate())
+        }
     }
   }
 }

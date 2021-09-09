@@ -27,12 +27,12 @@ class TransferenciaAutomatica(
         |  AND nftransf = :numeroSerieTransferencia
       """.trimMargin()
       return DB.findDto(TransferenciaAutomatica::class.java, sql)
-              .setParameter("lojaTransferencia", lojaTransferencia)
-              .setParameter("numeroSerieTransferencia", numeroSerieTransferencia)
-              .findList()
-              .map { nf ->
-                NotaBaixaFatura(nf.storenoFat, nf.nffat, nf.data.localDate())
-              }
+        .setParameter("lojaTransferencia", lojaTransferencia)
+        .setParameter("numeroSerieTransferencia", numeroSerieTransferencia)
+        .findList()
+        .map { nf ->
+          NotaBaixaFatura(nf.storenoFat, nf.nffat, nf.data.localDate())
+        }
     }
 
     fun notaBaixa(lojaFatura: Int?, numeroSerieFatura: String?): List<NotaBaixaFatura> {
@@ -43,12 +43,12 @@ class TransferenciaAutomatica(
         |  AND nffat = :numeroSerieFatura
       """.trimMargin()
       return DB.findDto(TransferenciaAutomatica::class.java, sql)
-              .setParameter("lojaFatura", lojaFatura)
-              .setParameter("numeroSerieFatura", numeroSerieFatura)
-              .findList()
-              .map { nf ->
-                NotaBaixaFatura(nf.storenoTransf, nf.nftransf, nf.data.localDate())
-              }
+        .setParameter("lojaFatura", lojaFatura)
+        .setParameter("numeroSerieFatura", numeroSerieFatura)
+        .findList()
+        .map { nf ->
+          NotaBaixaFatura(nf.storenoTransf, nf.nftransf, nf.data.localDate())
+        }
     }
   }
 }

@@ -10,23 +10,28 @@ abstract class ViewModel<V : IView>(val view: V) : IViewModel {
     view.showError(exception.message ?: "Erro desconhecido")
   }
 
-  @Throws(EViewModelError::class) fun <T> execList(block: () -> List<T>): List<T> {
+  @Throws(EViewModelError::class)
+  fun <T> execList(block: () -> List<T>): List<T> {
     return exec(block) ?: emptyList()
   }
 
-  @Throws(EViewModelError::class) fun execUnit(block: () -> Unit) {
+  @Throws(EViewModelError::class)
+  fun execUnit(block: () -> Unit) {
     exec(block)
   }
 
-  @Throws(EViewModelError::class) fun execString(block: () -> String): String {
+  @Throws(EViewModelError::class)
+  fun execString(block: () -> String): String {
     return exec(block) ?: ""
   }
 
-  @Throws(EViewModelError::class) fun execInt(block: () -> Int): Int {
+  @Throws(EViewModelError::class)
+  fun execInt(block: () -> Int): Int {
     return exec(block) ?: 0
   }
 
-  @Throws(EViewModelError::class) fun <T> exec(block: () -> T): T? {
+  @Throws(EViewModelError::class)
+  fun <T> exec(block: () -> T): T? {
     return if (inTransaction) block()
     else transaction {
       try {

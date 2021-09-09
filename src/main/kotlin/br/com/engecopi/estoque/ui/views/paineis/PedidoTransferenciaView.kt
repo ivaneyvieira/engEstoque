@@ -13,8 +13,8 @@ import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.Grid
 import com.vaadin.ui.renderers.TextRenderer
 
-@AutoView("pedidosTransf") class PedidoTransferenciaView : LayoutView<PedidoTransferenciaViewModel>(),
-                                                           IPedidoTransferenciaView {
+@AutoView("pedidosTransf")
+class PedidoTransferenciaView : LayoutView<PedidoTransferenciaViewModel>(), IPedidoTransferenciaView {
   private var gridPedido: Grid<PedidoTransferenciaVo>? = null
 
   init {

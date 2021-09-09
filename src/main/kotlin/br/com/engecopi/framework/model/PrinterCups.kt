@@ -31,7 +31,8 @@ open class PrinterCups(val host: String, val port: Int, val userName: String, va
     return printers.firstOrNull { it.name == printerName }
   }
 
-  @Throws(ECupsPrinter::class) fun CupsPrinter.printText(text: String, resultMsg: (String) -> Unit = {}) {
+  @Throws(ECupsPrinter::class)
+  fun CupsPrinter.printText(text: String, resultMsg: (String) -> Unit = {}) {
     val job = PrintJob.Builder(text.toByteArray()).build()
     try {
       val result = print(job)
@@ -50,9 +51,11 @@ open class PrinterCups(val host: String, val port: Int, val userName: String, va
     return NetworkUtils.isHostReachable(host)
   }
 
-  @Throws(ECupsPrinter::class) fun printCups(impressora: String, text: String, resultMsg: (String) -> Unit = {}) {
-    val printer = findPrinter(impressora)
-                  ?: throw ECupsPrinter("Impressora $impressora não está configurada no sistema operacional")
+  @Throws(ECupsPrinter::class)
+  fun printCups(impressora: String, text: String, resultMsg: (String) -> Unit = {}) {
+    val printer =
+            findPrinter(impressora)
+            ?: throw ECupsPrinter("Impressora $impressora não está configurada no sistema operacional")
     printer.printText(text, resultMsg)
   }
 
@@ -87,6 +90,5 @@ data class PrinterInfo(
 }
 
 enum class PrinterType {
-  REMOTE,
-  LOCAL
+  REMOTE, LOCAL
 }

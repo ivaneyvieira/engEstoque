@@ -45,7 +45,8 @@ import org.vaadin.patrik.FastNavigation
 import org.vaadin.viritin.fields.IntegerField
 import java.time.LocalDateTime
 
-@AutoView("") class SaidaView : NotaView<SaidaVo, SaidaViewModel, ISaidaView>(customFooterLayout = true), ISaidaView {
+@AutoView("")
+class SaidaView : NotaView<SaidaVo, SaidaViewModel, ISaidaView>(customFooterLayout = true), ISaidaView {
   var formCodBar: PnlCodigoBarras? = null
   override fun enter(event: ViewChangeEvent) {
     super.enter(event)
@@ -216,8 +217,8 @@ import java.time.LocalDateTime
             printText(impressoraUsuario, text)
             refreshGrid() //Imprime nota
             itens.firstOrNull()?.nota?.let { nota ->
-                      imprimeNotaConcluida(nota)
-                    }
+              imprimeNotaConcluida(nota)
+            }
           }
         }
         dlg.showDialog()
@@ -382,9 +383,9 @@ class DlgNotaSaida(
             selectionModel.addSelectionListener { select ->
               if (select.isUserOriginated) {
                 this.dataProvider.getAll().forEach {
-                          it.selecionado = false
-                          it.updateItem(false)
-                        }
+                  it.selecionado = false
+                  it.updateItem(false)
+                }
                 select.allSelectedItems.forEach {
                   if (it.saldoFinal < -100000000) { //TODO Saldo insuficiente
                     Notification.show("Saldo insuficiente")

@@ -25,15 +25,15 @@ class ChaveFuturaProcessamento {
     val notaDoSaci = itensChaveFutura.firstOrNull()?.notaProdutoSaci
     notaDoSaci?.storeno ?: throw EViewModelError("Nota não encontrada")
     val nota: Nota? = Nota.createNota(notaDoSaci)?.let {
-              if (it.existe()) Nota.findSaida(it.loja, it.numero)
-              else {
-                it.sequencia = Nota.maxSequencia() + 1
-                it.usuario = usuarioDefault
-                it.lancamentoOrigem = ENTREGA_F
-                it.save()
-                it
-              }
-            }
+      if (it.existe()) Nota.findSaida(it.loja, it.numero)
+      else {
+        it.sequencia = Nota.maxSequencia() + 1
+        it.usuario = usuarioDefault
+        it.lancamentoOrigem = ENTREGA_F
+        it.save()
+        it
+      }
+    }
     nota ?: throw EViewModelError("Nota não encontrada")
     val itens = itensChaveFutura.mapNotNull { itemVendaFutura ->
       val notaSaci = itemVendaFutura.notaProdutoSaci

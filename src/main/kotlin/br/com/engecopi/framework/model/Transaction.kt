@@ -21,10 +21,10 @@ object Transaction {
 
   fun variable(name: String, value: String?) {
     Ebean.currentTransaction()?.connection?.let { con ->
-              val stmt = con.createStatement()
-              val sql = "SET @$name := $value;"
-              stmt.executeQuery(sql)
-            }
+      val stmt = con.createStatement()
+      val sql = "SET @$name := $value;"
+      stmt.executeQuery(sql)
+    }
   }
 
   fun createSqlUpdate(sql: String): SqlUpdate? {

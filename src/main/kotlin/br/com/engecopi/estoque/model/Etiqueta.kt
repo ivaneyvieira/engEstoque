@@ -7,14 +7,20 @@ import javax.persistence.*
 import javax.persistence.CascadeType.*
 import javax.validation.constraints.Size
 
-@Entity @Table(name = "etiquetas") class Etiqueta : BaseModel() {
-  @Size(max = 60) var titulo: String = ""
+@Entity
+@Table(name = "etiquetas")
+class Etiqueta : BaseModel() {
+  @Size(max = 60)
+  var titulo: String = ""
 
-  @Enumerated(EnumType.STRING) var statusNota: StatusNota? = null
+  @Enumerated(EnumType.STRING)
+  var statusNota: StatusNota? = null
 
-  @Lob var template: String = ""
+  @Lob
+  var template: String = ""
 
-  @OneToMany(mappedBy = "etiqueta", cascade = [PERSIST, MERGE, REFRESH]) val itensNota: List<ItemNota>? = null
+  @OneToMany(mappedBy = "etiqueta", cascade = [PERSIST, MERGE, REFRESH])
+  val itensNota: List<ItemNota>? = null
   var etiquetaDefault: Boolean = false
   val isCliente
     get() = titulo.contains("CLiente")
@@ -28,7 +34,7 @@ import javax.validation.constraints.Size
 
     fun findByStatus(statusNota: StatusNota?, prefixo: String): List<Etiqueta> {
       return QEtiqueta().statusNota.eq(statusNota).etiquetaDefault.eq(true).titulo.contains(prefixo)
-              .orderBy().titulo.asc().findList()
+        .orderBy().titulo.asc().findList()
     }
   }
 }

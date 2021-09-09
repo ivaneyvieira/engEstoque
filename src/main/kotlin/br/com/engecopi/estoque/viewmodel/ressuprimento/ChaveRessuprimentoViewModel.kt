@@ -16,8 +16,9 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class ChaveRessuprimentoViewModel(view: IChaveRessuprimentoView) : CrudViewModel<ViewPedidoRessuprimento, QViewPedidoRessuprimento, ChaveRessuprimentoVo, IChaveRessuprimentoView>(
-  view) {
+class ChaveRessuprimentoViewModel(view: IChaveRessuprimentoView) :
+        CrudViewModel<ViewPedidoRessuprimento, QViewPedidoRessuprimento, ChaveRessuprimentoVo, IChaveRessuprimentoView>(
+          view) {
   private val processing = ChaveRessuprimentoProcessamento(view)
   private val print = ChaveRessuprimentoPrint()
   private val find = ChaveRessuprimentoFind(view)

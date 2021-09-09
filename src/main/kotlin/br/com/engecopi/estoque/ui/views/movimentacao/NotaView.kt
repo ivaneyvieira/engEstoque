@@ -128,8 +128,8 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
         selectionModel.addSelectionListener { select ->
           if (select.isUserOriginated) {
             this.dataProvider.getAll().forEach {
-                      it.selecionado = false
-                    }
+              it.selecionado = false
+            }
 
             select.allSelectedItems.forEach {
               if (it.isSave) {

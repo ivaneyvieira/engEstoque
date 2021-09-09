@@ -38,14 +38,14 @@ class SaidaViewModel(view: ISaidaView) : NotaViewModel<SaidaVo, ISaidaView>(view
 
   fun findByKey(key: String) = exec {
     find.findByKey(key).apply {
-              view.updateView()
-            }
+      view.updateView()
+    }
   }
 
   fun confirmaProdutos(itens: List<ProdutoNotaVo>, situacao: StatusNota) = execList {
     processing.confirmaProdutos(itens, situacao).apply {
-              view.updateView()
-            }
+      view.updateView()
+    }
   }
 }
 

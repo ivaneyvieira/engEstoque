@@ -35,13 +35,15 @@ object SystemUtils {
     }
   }
 
-  @Throws(IOException::class) private fun toBufferedImage(imagem: ByteArray?): BufferedImage? {
+  @Throws(IOException::class)
+  private fun toBufferedImage(imagem: ByteArray?): BufferedImage? {
     if (imagem == null) return null
     val inputStream = ByteArrayInputStream(imagem)
     return ImageIO.read(inputStream)
   }
 
-  @Throws(IOException::class) private fun toByteArray(image: BufferedImage): ByteArray? {
+  @Throws(IOException::class)
+  private fun toByteArray(image: BufferedImage): ByteArray? {
     val baos = ByteArrayOutputStream()
     ImageIO.write(image, "jpg", baos)
     baos.flush()
@@ -83,7 +85,8 @@ object SystemUtils {
     return readFile(file, Charset.defaultCharset())
   }
 
-  @Throws(IOException::class) fun readFile(filename: String, encoding: Charset): String {
+  @Throws(IOException::class)
+  fun readFile(filename: String, encoding: Charset): String {
     val encoded = resourceByteArray(filename)
     return String(encoded, encoding)
   }

@@ -9,16 +9,24 @@ import io.ebean.annotation.Cache
 import io.ebean.annotation.View
 import javax.persistence.*
 
-@Cache(enableQueryCache = false) @Entity @View(name = "t_loc_produtos") class ViewProdutoLoc(
-  @Id val id: String,
+@Cache(enableQueryCache = false)
+@Entity
+@View(name = "t_loc_produtos")
+class ViewProdutoLoc(
+  @Id
+  val id: String,
   val storeno: Int,
   val codigo: String,
   val grade: String,
   val localizacao: String,
   val abreviacao: String,
-  @ManyToOne(cascade = []) @JoinColumn(name = "produto_id") val produto: Produto,
-  @OneToOne(cascade = []) @JoinColumn(name = "loja_id") val loja: Loja,
-                                                                                            ) {
+  @ManyToOne(cascade = [])
+  @JoinColumn(name = "produto_id")
+  val produto: Produto,
+  @OneToOne(cascade = [])
+  @JoinColumn(name = "loja_id")
+  val loja: Loja,
+                    ) {
   companion object Find : ViewProdutoLocFinder() {
     fun existsCache(produto: Produto?): Boolean {
       return findByProduto(produto).count() > 0
@@ -45,17 +53,17 @@ import javax.persistence.*
     fun localizacoesProduto(produto: Produto?): List<String> {
       produto ?: return emptyList()
       return QViewProdutoLoc().produto.id.eq(produto.id)
-              .findList()
-              .asSequence()
-              .mapNotNull { it.localizacao }
-              .distinct()
-              .map { localizacao ->
-                val saldo = produto.saldoLocalizacao(localizacao)
-                Pair(localizacao, saldo)
-              }
-              .sortedBy { pair -> -pair.second }
-              .map { it.first }
-              .toList()
+        .findList()
+        .asSequence()
+        .mapNotNull { it.localizacao }
+        .distinct()
+        .map { localizacao ->
+          val saldo = produto.saldoLocalizacao(localizacao)
+          Pair(localizacao, saldo)
+        }
+        .sortedBy { pair -> -pair.second }
+        .map { it.first }
+        .toList()
     }
 
     fun abreviacoesProduto(produto: Produto?) =

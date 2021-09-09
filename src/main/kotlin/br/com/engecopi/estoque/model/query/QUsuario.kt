@@ -11,7 +11,8 @@ import io.ebean.typequery.*
  *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
-@TypeQueryBean class QUsuario : TQRootBean<Usuario, QUsuario> {
+@TypeQueryBean
+class QUsuario : TQRootBean<Usuario, QUsuario> {
 
   companion object {
     /**
@@ -40,7 +41,6 @@ import io.ebean.typequery.*
   lateinit var etiqueta: PBoolean<QUsuario>
   lateinit var ressuprimento: PBoolean<QUsuario>
   lateinit var abastecimento: PBoolean<QUsuario>
-
 
   /**
    * Construct with a given Database.

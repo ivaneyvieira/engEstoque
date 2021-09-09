@@ -9,7 +9,8 @@ import br.com.engecopi.framework.ui.view.timeFormat
 import com.github.mvysny.karibudsl.v8.AutoView
 import com.vaadin.ui.renderers.TextRenderer
 
-@AutoView class HistoricoView : CrudLayoutView<HistoricoVo, HistoricoViewModel>(false), IHistoricoView {
+@AutoView
+class HistoricoView : CrudLayoutView<HistoricoVo, HistoricoViewModel>(false), IHistoricoView {
   init {
     viewModel = HistoricoViewModel(this)
     layoutForm {
