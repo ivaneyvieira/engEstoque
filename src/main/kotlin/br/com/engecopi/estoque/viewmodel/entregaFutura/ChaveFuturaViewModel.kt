@@ -18,8 +18,8 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class ChaveFuturaViewModel(view: IChaveFuturaView) : CrudViewModel<ViewNotaFutura, QViewNotaFutura, ChaveFuturaVo, IChaveFuturaView>(
-  view) {
+class ChaveFuturaViewModel(view: IChaveFuturaView) :
+        CrudViewModel<ViewNotaFutura, QViewNotaFutura, ChaveFuturaVo, IChaveFuturaView>(view) {
   private val processing = ChaveFuturaProcessamento()
   private val print = ChaveFuturaPrint()
   private val find = ChaveFuturaFind()

@@ -9,8 +9,13 @@ import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
 
-@Cache(enableQueryCache = false) @Entity @View(name = "v_codigo_barra_cliente") class ViewCodBarCliente {
-  @Id @Column(name = "id_nota") val id: Long = 0
+@Cache(enableQueryCache = false)
+@Entity
+@View(name = "v_codigo_barra_cliente")
+class ViewCodBarCliente {
+  @Id
+  @Column(name = "id_nota")
+  val id: Long = 0
   val codbar: String = ""
   val codbarLimpo: String = ""
   val codbarNota: String = ""

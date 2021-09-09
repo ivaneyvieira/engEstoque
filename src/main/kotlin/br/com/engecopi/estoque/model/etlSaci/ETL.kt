@@ -43,9 +43,9 @@ abstract class ETL<T : EntryID> {
     val idsDelete = idsTarget.minus(idsSource)
     val listUpdate = target.mapNotNull { targetBean ->
       source.firstOrNull { sourceBean -> sourceBean.id == targetBean.id }?.let { sourceBean ->
-                if (sourceBean.chave == targetBean.chave) null
-                else sourceBean
-              }
+        if (sourceBean.chave == targetBean.chave) null
+        else sourceBean
+      }
     }
     val listDelete = target.filter { it.id in idsDelete }
     val listInsert = source.filter { it.id in idsInsert }
@@ -57,10 +57,10 @@ abstract class ETL<T : EntryID> {
     }
     updateTarget(listUpdate).forEach { bean ->
       target.firstOrNull { it.id == bean.id }?.let { targetBean ->
-                listenerUpdate.values.forEach { exec ->
-                  exec(bean, targetBean)
-                }
-              }
+        listenerUpdate.values.forEach { exec ->
+          exec(bean, targetBean)
+        }
+      }
     }
     insertTarget(listInsert).forEach { bean ->
       listenerInsert.values.forEach { exec ->
@@ -90,11 +90,11 @@ abstract class ETL<T : EntryID> {
     val sqlUpdate = DB.sqlUpdate(sql)
 
     DB.beginTransaction().use { txn ->
-              listBean.forEach { bean ->
-                sqlUpdate.setParameter(bean).addBatch()
-              }
-              txn.commit()
-            }
+      listBean.forEach { bean ->
+        sqlUpdate.setParameter(bean).addBatch()
+      }
+      txn.commit()
+    }
     return listBean
   }
 }

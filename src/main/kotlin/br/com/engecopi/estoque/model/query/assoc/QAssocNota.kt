@@ -12,7 +12,8 @@ import io.ebean.typequery.*
  *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
-@TypeQueryBean class QAssocNota<R>(name: String, root: R) : TQAssocBean<Nota, R>(name, root) {
+@TypeQueryBean
+class QAssocNota<R>(name: String, root: R) : TQAssocBean<Nota, R>(name, root) {
 
   lateinit var id: PLong<R>
   lateinit var createdAt: PLocalDateTime<R>
@@ -57,5 +58,4 @@ import io.ebean.typequery.*
   fun fetchLazy(vararg properties: TQProperty<QNota>): R {
     return fetchLazyProperties(*properties)
   }
-
 }

@@ -9,7 +9,8 @@ import io.ebean.typequery.*
  *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
-@TypeQueryBean class QAssocAbreviacao<R>(name: String, root: R) : TQAssocBean<Abreviacao, R>(name, root) {
+@TypeQueryBean
+class QAssocAbreviacao<R>(name: String, root: R) : TQAssocBean<Abreviacao, R>(name, root) {
 
   lateinit var id: PLong<R>
   lateinit var createdAt: PLocalDateTime<R>
@@ -40,5 +41,4 @@ import io.ebean.typequery.*
   fun fetchLazy(vararg properties: TQProperty<QAbreviacao>): R {
     return fetchLazyProperties(*properties)
   }
-
 }

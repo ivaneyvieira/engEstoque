@@ -21,21 +21,29 @@ import javax.validation.constraints.Size
 @CacheQueryTuning(maxSecsToLive = 30)
 @Entity
 @Table(name = "produtos")
-@Indices(Index(unique = true, columnNames = ["codigo", "grade"])) class Produto : BaseModel() {
-  @Size(max = 16) var codigo: String = ""
+@Indices(Index(unique = true, columnNames = ["codigo", "grade"]))
+class Produto : BaseModel() {
+  @Size(max = 16)
+  var codigo: String = ""
 
-  @Size(max = 8) var grade: String = ""
+  @Size(max = 8)
+  var grade: String = ""
 
-  @Size(max = 16) @Index(unique = false) var codebar: String = ""
+  @Size(max = 16)
+  @Index(unique = false)
+  var codebar: String = ""
   var dataCadastro: LocalDate = LocalDate.now()
 
-  @OneToMany(mappedBy = "produto", cascade = [REFRESH]) val itensNota: List<ItemNota>? = null
+  @OneToMany(mappedBy = "produto", cascade = [REFRESH])
+  val itensNota: List<ItemNota>? = null
 
   @OneToOne(cascade = []) //  @FetchPreference(1)
-  @JoinColumn(name = "id") var vproduto: ViewProduto? = null
+  @JoinColumn(name = "id")
+  var vproduto: ViewProduto? = null
 
   //@FetchPreference(2)
-  @OneToMany(mappedBy = "produto", cascade = [REFRESH]) var viewProdutoLoc: List<ViewProdutoLoc>? = null
+  @OneToMany(mappedBy = "produto", cascade = [REFRESH])
+  var viewProdutoLoc: List<ViewProdutoLoc>? = null
 
   @Formula(select = "LOC.localizacao",
            join = "LEFT join (select produto_id, GROUP_CONCAT(DISTINCT localizacao ORDER BY localizacao SEPARATOR ' -" + " ') as localizacao from t_loc_produtos FORCE INDEX(i2) where storeno = @LOJA_FIELD group by " + "produto_id) AS LOC ON LOC.produto_id = \${ta}.id")
@@ -59,24 +67,26 @@ import javax.validation.constraints.Size
     return locs.firstOrNull { localizacaoUser.contains(it.localizacao) }?.localizacao
   }
 
-  @Transactional fun recalculaSaldos() {
+  @Transactional
+  fun recalculaSaldos() {
     ViewProdutoLoc.findCache(this).map { it.localizacao }.forEach { localizacao ->
-              recalculaSaldos(localizacao)
-            }
+      recalculaSaldos(localizacao)
+    }
   }
 
-  @Transactional fun recalculaSaldos(localizacao: String): Int {
+  @Transactional
+  fun recalculaSaldos(localizacao: String): Int {
     val loja = lojaDeposito
     var saldo = 0
-    val itensNotNull = QItemNota().produto.id.eq(id)
-            .or().nota.loja.equalTo(loja).nota.tipoNota.`in`(TipoNota.lojasExternas)
-            .endOr().localizacao.like(if (localizacao == "") "%" else localizacao).findList()
+    val itensNotNull =
+            QItemNota().produto.id.eq(id).or().nota.loja.equalTo(loja).nota.tipoNota.`in`(TipoNota.lojasExternas)
+              .endOr().localizacao.like(if (localizacao == "") "%" else localizacao).findList()
     itensNotNull.sortedWith(compareBy(ItemNota::data, ItemNota::hora)).forEach { item ->
-              item.refresh()
-              saldo += item.quantidadeSaldo
-              item.saldo = saldo
-              item.update()
-            }
+      item.refresh()
+      saldo += item.quantidadeSaldo
+      item.saldo = saldo
+      item.update()
+    }
     return saldo
   }
 
@@ -138,22 +148,22 @@ import javax.validation.constraints.Size
     fun findFaixaFabricante(vendno: Int?): List<Produto> {
       vendno ?: return emptyList()
       return saci.findFornecedor(vendno).mapNotNull {
-                findProduto(it.codigo, it.grade)
-              }.filtroCD()
+        findProduto(it.codigo, it.grade)
+      }.filtroCD()
     }
 
     fun findFaixaCentroLucro(clno: Int?): List<Produto> {
       clno ?: return emptyList()
       return saci.findCentroLucro(clno).mapNotNull {
-                findProduto(it.codigo, it.grade)
-              }.filtroCD()
+        findProduto(it.codigo, it.grade)
+      }.filtroCD()
     }
 
     fun findTipoProduto(typeno: Int?): List<Produto> {
       typeno ?: return emptyList()
       return saci.findTipoProduto(typeno).mapNotNull {
-                findProduto(it.codigo, it.grade)
-              }.filtroCD()
+        findProduto(it.codigo, it.grade)
+      }.filtroCD()
     }
 
     fun delete(idDelete: Long?) {
@@ -167,8 +177,8 @@ import javax.validation.constraints.Size
 
   fun saldoAbreviacao(abreviacao: String?): Int {
     return QItemNota().produto.id.eq(id).localizacao.startsWith(abreviacao ?: "")
-            .findList()
-            .sumBy { it.quantidadeSaldo }
+      .findList()
+      .sumBy { it.quantidadeSaldo }
   }
 
   fun saldoTotal(): Int {
@@ -185,9 +195,9 @@ import javax.validation.constraints.Size
 
   fun localizacoes(abreviacao: String?): List<String> {
     return ViewProdutoLoc.localizacoesProduto(produto = this).let { list ->
-              if (abreviacao.isNullOrBlank()) list
-              else list.filter { it.startsWith(abreviacao) }
-            }
+      if (abreviacao.isNullOrBlank()) list
+      else list.filter { it.startsWith(abreviacao) }
+    }
   }
 
   fun prefixoLocalizacoes(): String {
@@ -196,11 +206,12 @@ import javax.validation.constraints.Size
     val localizacoesSplit = localizacoes.map { it.split("[.\\-]".toRegex()) }
     val ctParte = localizacoesSplit.asSequence().map { it.size - 1 }.minOrNull() ?: 0
     for (i in ctParte downTo 0) {
-      val prefix = localizacoesSplit.asSequence()
-              .map { it.subList(0, i) }
-              .map { it.joinToString(separator = ".") }
-              .distinct()
-              .toList()
+      val prefix =
+              localizacoesSplit.asSequence()
+                .map { it.subList(0, i) }
+                .map { it.joinToString(separator = ".") }
+                .distinct()
+                .toList()
 
       if (prefix.count() == 1) return prefix[0]
     }

@@ -8,8 +8,12 @@ import io.ebean.annotation.View
 import javax.persistence.Entity
 import javax.persistence.Id
 
-@Cache(enableQueryCache = false) @Entity @View(name = "tab_produtos_saci") class ViewProdutoSaci {
-  @Id var id: String = ""
+@Cache(enableQueryCache = false)
+@Entity
+@View(name = "tab_produtos_saci")
+class ViewProdutoSaci {
+  @Id
+  var id: String = ""
   var codigo: String? = null
   var nome: String? = null
   var grade: String? = null

@@ -61,7 +61,8 @@ import javax.servlet.http.Cookie
 @JavaScript("https://code.jquery.com/jquery-2.1.4.min.js", "https://code.responsivevoice.org/responsivevoice.js")
 @PushStateNavigation
 @PreserveOnRefresh
-@Push(PushMode.MANUAL) class EstoqueUI : UI() {
+@Push(PushMode.MANUAL)
+class EstoqueUI : UI() {
   private lateinit var menuVisaoGeral: MenuButton
   val title = "<h3>Estoque <strong>Engecopi</strong></h3>"
   private val versao = SystemUtils.readFile("/versao.txt")
@@ -257,7 +258,8 @@ import javax.servlet.http.Cookie
   }
 }
 
-@WebListener class Bootstrap : ServletContextListener {
+@WebListener
+class Bootstrap : ServletContextListener {
   override fun contextDestroyed(sce: ServletContextEvent?) {
     log?.info("Shutting down")
     log?.info("Destroying VaadinOnKotlin")
@@ -274,7 +276,8 @@ import javax.servlet.http.Cookie
 }
 
 @WebServlet(urlPatterns = ["/*"], name = "MyUIServlet", asyncSupported = true)
-@VaadinServletConfiguration(ui = EstoqueUI::class, productionMode = false) class MyUIServlet : VaadinServlet() {
+@VaadinServletConfiguration(ui = EstoqueUI::class, productionMode = false)
+class MyUIServlet : VaadinServlet() {
   companion object {
     init { // Vaadin logs into java.util.logging. Redirect that, so that all logging goes through slf4j.
       SLF4JBridgeHandler.removeHandlersForRootLogger()

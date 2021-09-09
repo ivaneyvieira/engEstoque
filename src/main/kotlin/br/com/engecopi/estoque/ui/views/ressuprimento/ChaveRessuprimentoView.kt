@@ -21,7 +21,7 @@ import com.vaadin.ui.themes.ValoTheme
 
 @AutoView("chave_ressuprimento")
 class ChaveRessuprimentoView : CrudLayoutView<ChaveRessuprimentoVo, ChaveRessuprimentoViewModel>(false),
-                               IChaveRessuprimentoView {
+        IChaveRessuprimentoView {
   var formCodBar: PnlCodigoBarras? = null
   private val isAdmin
     get() = RegistryUserInfo.userDefaultIsAdmin
@@ -95,8 +95,8 @@ class ChaveRessuprimentoView : CrudLayoutView<ChaveRessuprimentoVo, ChaveRessupr
           this.icon = PRINT
           this.addClickListener { click ->
             viewModel.imprimir(item?.entityVo?.nota).forEach { printEtiqueta ->
-                      PrintUtil.printText(printEtiqueta.abreviacao.printer, printEtiqueta.text)
-                    }
+              PrintUtil.printText(printEtiqueta.abreviacao.printer, printEtiqueta.text)
+            }
             val print = item?.impresso ?: true
             click.button.isEnabled = print == false || isAdmin
             refreshGrid()
@@ -163,8 +163,8 @@ class ChaveRessuprimentoView : CrudLayoutView<ChaveRessuprimentoVo, ChaveRessupr
       icon = PRINT
       addClickListener {
         viewModel.imprimeTudo().forEach { printEtiqueta ->
-                  PrintUtil.printText(printEtiqueta.abreviacao.printer, printEtiqueta.text)
-                }
+          PrintUtil.printText(printEtiqueta.abreviacao.printer, printEtiqueta.text)
+        }
       }
     }
   }
@@ -179,8 +179,8 @@ class ChaveRessuprimentoView : CrudLayoutView<ChaveRessuprimentoVo, ChaveRessupr
           val text = viewModel.imprimir(nota)
           PrintUtil.imprimeNotaConcluida(nota)
           viewModel.imprimir(nota).forEach { printEtiqueta ->
-                    PrintUtil.printText(printEtiqueta.abreviacao.printer, printEtiqueta.text)
-                  }
+            PrintUtil.printText(printEtiqueta.abreviacao.printer, printEtiqueta.text)
+          }
           updateView()
         }
         dialog.showDialog()
@@ -216,8 +216,8 @@ class DlgRessuprimento(
                   val notaItemSaci = it.notaProdutoSaci
                   notaItemSaci.gradeGenerica
                 }.groupBy { it.prdno }.filter { entry ->
-                          entry.value.size > 1
-                        }
+                  entry.value.size > 1
+                }
                 if (produtosPepetidos.isNotEmpty()) {
                   viewModel.view.showWarning("Foi selecionado mais uma grade do mesmo produto")
                 }
@@ -364,8 +364,8 @@ class DlgRessuprimentoLoc(
               addStyleName(ValoTheme.BUTTON_PRIMARY)
               addClickListener {
                 val itens = gridProdutos.dataProvider.getAll().flatMap { loc ->
-                          loc.itensRessuprimento.filter { it.selecionado }
-                        }
+                  loc.itensRessuprimento.filter { it.selecionado }
+                }
                 execConfirma(itens)
                 close()
               }
@@ -386,16 +386,17 @@ class DlgRessuprimentoLoc(
               abreviacao
             }
             val abreviacoes = abreviacaoItens.keys.flatten().distinct().map { abrev ->
-                      val itensRessuprimento = abreviacaoItens.filter { it.key.contains(abrev) }
-                              .map { it.value }
-                              .flatten()
-                              .distinct()
-                              .map { notaSaci ->
-                                val saldo = viewModel.saldoProduto(notaSaci, abrev)
-                                ItemRessuprimento(notaSaci, saldo, abrev)
-                              }
-                      LocalizacaoRessuprimento(abrev, itensRessuprimento)
-                    }.sortedBy { it.abreviacao }
+              val itensRessuprimento =
+                      abreviacaoItens.filter { it.key.contains(abrev) }
+                        .map { it.value }
+                        .flatten()
+                        .distinct()
+                        .map { notaSaci ->
+                          val saldo = viewModel.saldoProduto(notaSaci, abrev)
+                          ItemRessuprimento(notaSaci, saldo, abrev)
+                        }
+              LocalizacaoRessuprimento(abrev, itensRessuprimento)
+            }.sortedBy { it.abreviacao }
 
             this.dataProvider = ListDataProvider(abreviacoes)
             removeAllColumns()

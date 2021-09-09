@@ -33,38 +33,55 @@ import javax.validation.constraints.Size
          Index(columnNames = ["loja_id", "tipo_mov", "numero"], unique = true))
 @Cache(enableQueryCache = true)
 @CacheQueryTuning(maxSecsToLive = 30)
-@Table(name = "notas") class Nota : BaseModel() {
-  @Size(max = 40) @Index(unique = false) var numero: String = ""
+@Table(name = "notas")
+class Nota : BaseModel() {
+  @Size(max = 40)
+  @Index(unique = false)
+  var numero: String = ""
 
-  @Size(max = 40) @Index(unique = false) var numeroEntrega: String = ""
+  @Size(max = 40)
+  @Index(unique = false)
+  var numeroEntrega: String = ""
 
-  @Enumerated(EnumType.STRING) var tipoMov: TipoMov = ENTRADA
+  @Enumerated(EnumType.STRING)
+  var tipoMov: TipoMov = ENTRADA
 
-  @Enumerated(EnumType.STRING) var tipoNota: TipoNota? = null
+  @Enumerated(EnumType.STRING)
+  var tipoNota: TipoNota? = null
 
-  @Size(max = 6) var rota: String = ""
+  @Size(max = 6)
+  var rota: String = ""
 
-  @Length(60) var fornecedor: String = ""
+  @Length(60)
+  var fornecedor: String = ""
 
-  @Length(60) var cliente: String = ""
+  @Length(60)
+  var cliente: String = ""
   var lancamento: LocalDate = LocalDate.now()
   var data: LocalDate = LocalDate.now()
   var dataEmissao: LocalDate = LocalDate.now()
   var hora: LocalTime = LocalTime.now()
 
-  @Size(max = 100) var observacao: String = ""
+  @Size(max = 100)
+  var observacao: String = ""
 
-  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH]) var loja: Loja? = null
+  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
+  var loja: Loja? = null
 
-  @OneToMany(mappedBy = "nota", cascade = [PERSIST, MERGE, REFRESH]) val itensNota: List<ItemNota>? = null
+  @OneToMany(mappedBy = "nota", cascade = [PERSIST, MERGE, REFRESH])
+  val itensNota: List<ItemNota>? = null
 
-  @Column(name = "sequencia", columnDefinition = "int(11) default 0") var sequencia: Int = 0
+  @Column(name = "sequencia", columnDefinition = "int(11) default 0")
+  var sequencia: Int = 0
 
-  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH]) var usuario: Usuario? = null
+  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
+  var usuario: Usuario? = null
 
-  @Aggregation("max(sequencia)") var maxSequencia: Int? = 0
+  @Aggregation("max(sequencia)")
+  var maxSequencia: Int? = 0
 
-  @Enumerated(EnumType.STRING) var lancamentoOrigem: LancamentoOrigem = EXPEDICAO
+  @Enumerated(EnumType.STRING)
+  var lancamentoOrigem: LancamentoOrigem = EXPEDICAO
   val cancelado
     get() = tipoNota == CANCELADA_E || tipoNota == CANCELADA_S
   val multipicadorCancelado
@@ -115,8 +132,9 @@ import javax.validation.constraints.Size
       val numero = notaSimples.numeroSerie()
       val tipoNota = notaSimples.tipoNota() ?: return NotaItens.erro("Nota com tipo inválido")
       val loja = notaSimples.loja() ?: return NotaItens.erro("Nota com loja inválido")
-      val nota = findNota(loja, numero, tipoNota.tipoMov) ?: createNota(notaSimples)
-                 ?: return NotaItens.erro("Erro ao criar a nota")
+      val nota =
+              findNota(loja, numero, tipoNota.tipoMov) ?: createNota(notaSimples)
+              ?: return NotaItens.erro("Erro ao criar a nota")
       nota.sequencia = maxSequencia() + 1
       nota.usuario = usuarioDefault
       val itens = notasaci.mapNotNull { item ->
@@ -190,7 +208,7 @@ import javax.validation.constraints.Size
       val tipoMov = nota.tipoMov
       val produtoId = produto?.id ?: return false
       return QItemNota().nota.loja.id.eq(lojaId).nota.numero.eq(numero).nota.tipoMov.eq(tipoMov).produto.id.eq(produtoId)
-                     .findCount() > 0
+               .findCount() > 0
     }
 
     fun findNotaSaidaKey(nfeKey: String): List<NotaProdutoSaci> {
@@ -218,12 +236,12 @@ import javax.validation.constraints.Size
     }
 
     fun notaBaixa(storeno: Int?, numero: String?) = TransferenciaAutomatica.notaBaixa(storeno, numero)
-            .ifEmpty { EntregaFutura.notaBaixa(storeno, numero) }
-            .ifEmpty { PedidoNotaRessuprimento.notaBaixa(numero) }
+      .ifEmpty { EntregaFutura.notaBaixa(storeno, numero) }
+      .ifEmpty { PedidoNotaRessuprimento.notaBaixa(numero) }
 
     fun notaFatura(storeno: Int?, numero: String?) = TransferenciaAutomatica.notaFatura(storeno, numero)
-            .ifEmpty { EntregaFutura.notaFatura(storeno, numero) }
-            .ifEmpty { PedidoNotaRessuprimento.pedidoRessuprimento(storeno, numero) }
+      .ifEmpty { EntregaFutura.notaFatura(storeno, numero) }
+      .ifEmpty { PedidoNotaRessuprimento.pedidoRessuprimento(storeno, numero) }
   }
 
   fun dataBaixa(): LocalDate? = notaBaixa().data
@@ -242,8 +260,7 @@ import javax.validation.constraints.Size
 }
 
 enum class TipoMov(val descricao: String) {
-  ENTRADA("Entrada"),
-  SAIDA("Saida")
+  ENTRADA("Entrada"), SAIDA("Saida")
 }
 
 enum class TipoNota(
@@ -298,15 +315,16 @@ data class NotaSerie(val id: Long, val tipoNota: TipoNota) {
       return values.find { it.tipoNota == tipo }
     }
 
-    val values = listOf(NotaSerie(1, VENDA),
-                        NotaSerie(2, ENT_RET),
-                        NotaSerie(3, TRANSFERENCIA_S),
-                        NotaSerie(4, ACERTO_S),
-                        NotaSerie(5, PEDIDO_S),
-                        NotaSerie(6, DEV_FOR),
-                        NotaSerie(7, VENDAF),
-                        NotaSerie(8, OUTRAS_NFS),
-                        NotaSerie(9, CHAVE_SAIDA))
+    val values =
+            listOf(NotaSerie(1, VENDA),
+                   NotaSerie(2, ENT_RET),
+                   NotaSerie(3, TRANSFERENCIA_S),
+                   NotaSerie(4, ACERTO_S),
+                   NotaSerie(5, PEDIDO_S),
+                   NotaSerie(6, DEV_FOR),
+                   NotaSerie(7, VENDAF),
+                   NotaSerie(8, OUTRAS_NFS),
+                   NotaSerie(9, CHAVE_SAIDA))
   }
 }
 

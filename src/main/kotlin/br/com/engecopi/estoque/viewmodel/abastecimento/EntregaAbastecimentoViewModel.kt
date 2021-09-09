@@ -10,11 +10,8 @@ import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaVo
 
-class EntregaAbastecimentoViewModel(view: IEntregaAbastecimentoView) : NotaViewModel<EntregaAbastecimentoVo, IEntregaAbastecimentoView>(
-  view,
-  SAIDA,
-  ENTREGUE,
-  CONFERIDA) {
+class EntregaAbastecimentoViewModel(view: IEntregaAbastecimentoView) :
+        NotaViewModel<EntregaAbastecimentoVo, IEntregaAbastecimentoView>(view, SAIDA, ENTREGUE, CONFERIDA) {
   private val find = EntregaAbastecimentoFind(view)
 
   override fun newBean(): EntregaAbastecimentoVo {

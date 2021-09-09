@@ -21,7 +21,7 @@ import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView("entrega_expedicao")
 class EntregaExpedicaoView : NotaView<EntregaExpedicaoVo, EntregaExpedicaoViewModel, IEntregaExpedicaoView>(true),
-                             IEntregaExpedicaoView {
+        IEntregaExpedicaoView {
   var formCodBar: PnlCodigoBarras? = null
 
   override fun enter(event: ViewChangeEvent) {

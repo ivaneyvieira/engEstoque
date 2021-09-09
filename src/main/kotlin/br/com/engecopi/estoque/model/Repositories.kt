@@ -22,7 +22,8 @@ object Repositories {
     newViewProdutosLoc()
   }
 
-  @Synchronized private fun atualizaRepositorio() {
+  @Synchronized
+  private fun atualizaRepositorio() {
     updateTabelas()
     val serverCacheManager = Ebean.getServerCacheManager()
     serverCacheManager.clear(ViewProdutoLoc::class.java)

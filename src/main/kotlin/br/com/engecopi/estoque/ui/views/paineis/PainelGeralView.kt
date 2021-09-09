@@ -18,7 +18,8 @@ import com.vaadin.ui.Grid
 import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
 
-@AutoView("painel") class PainelGeralView : LayoutView<PainelGeralViewModel>(), IPainelGeralView {
+@AutoView("painel")
+class PainelGeralView : LayoutView<PainelGeralViewModel>(), IPainelGeralView {
   val saidaPendenteDataProvider = ListDataProvider<NotaSaci>(mutableListOf())
   val entradaPendenteDataProvider = ListDataProvider<NotaSaci>(mutableListOf())
   val saidaCanceladaDataProvider = ListDataProvider<NotaSaci>(mutableListOf())

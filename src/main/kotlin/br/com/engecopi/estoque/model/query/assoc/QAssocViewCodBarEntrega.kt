@@ -9,7 +9,8 @@ import io.ebean.typequery.*
  *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
-@TypeQueryBean class QAssocViewCodBarEntrega<R>(name: String, root: R) : TQAssocBean<ViewCodBarEntrega, R>(name, root) {
+@TypeQueryBean
+class QAssocViewCodBarEntrega<R>(name: String, root: R) : TQAssocBean<ViewCodBarEntrega, R>(name, root) {
 
   lateinit var id: PLong<R>
   lateinit var codbar: PString<R>
@@ -41,5 +42,4 @@ import io.ebean.typequery.*
   fun fetchLazy(vararg properties: TQProperty<QViewCodBarEntrega>): R {
     return fetchLazyProperties(*properties)
   }
-
 }

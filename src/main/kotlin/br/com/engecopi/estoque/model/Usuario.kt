@@ -14,18 +14,27 @@ import javax.persistence.OneToMany
 import javax.persistence.Table
 import javax.validation.constraints.Size
 
-@Entity @Table(name = "usuarios") class Usuario : BaseModel() {
-  @Size(max = 8) @Index(unique = true) var loginName: String = ""
+@Entity
+@Table(name = "usuarios")
+class Usuario : BaseModel() {
+  @Size(max = 8)
+  @Index(unique = true)
+  var loginName: String = ""
 
-  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH]) var loja: Loja? = null
+  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
+  var loja: Loja? = null
 
-  @Length(4000) var localizacaoes: String = ""
+  @Length(4000)
+  var localizacaoes: String = ""
 
-  @Length(4000) var notaSeries: String = ""
+  @Length(4000)
+  var notaSeries: String = ""
 
-  @Length(40) var impressora: String = ""
+  @Length(40)
+  var impressora: String = ""
 
-  @OneToMany(mappedBy = "usuario", cascade = [PERSIST, MERGE, REFRESH]) val itensNota: List<ItemNota>? = null
+  @OneToMany(mappedBy = "usuario", cascade = [PERSIST, MERGE, REFRESH])
+  val itensNota: List<ItemNota>? = null
   var locais: List<String>
     get() = localizacaoes.split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }.toList()
     set(value) {
@@ -69,8 +78,8 @@ import javax.validation.constraints.Size
 
   fun localizacoesProduto(produto: Produto): List<String> {
     return QViewProdutoLoc().produto.equalTo(produto).or().loja.equalTo(loja).loja.equalTo(null)
-            .endOr()
-            .or().abreviacao.isIn(locais).localizacao.isIn(locais).endOr().findList().mapNotNull { it.localizacao }
+      .endOr()
+      .or().abreviacao.isIn(locais).localizacao.isIn(locais).endOr().findList().mapNotNull { it.localizacao }
   }
 
   fun isTipoCompativel(tipo: TipoNota?): Boolean {
@@ -82,9 +91,9 @@ import javax.validation.constraints.Size
     get() {
       return locais.flatMap { loc ->
         QViewProdutoLoc().loja.eq(loja).or().abreviacao.eq(loc).localizacao.eq(loc)
-                .endOr()
-                .findList()
-                .map { it.produto }
+          .endOr()
+          .findList()
+          .map { it.produto }
       }
     }
 

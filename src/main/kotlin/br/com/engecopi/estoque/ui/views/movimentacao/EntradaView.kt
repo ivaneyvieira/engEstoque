@@ -18,8 +18,8 @@ import com.vaadin.shared.ui.ContentMode.HTML
 import com.vaadin.ui.*
 import com.vaadin.ui.renderers.TextRenderer
 
-@AutoView open class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(customFooterLayout = true),
-                                   IEntradaView {
+@AutoView
+open class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(customFooterLayout = true), IEntradaView {
   private lateinit var formBinder: Binder<EntradaVo>
   private lateinit var fieldNotaFiscal: TextField
 
@@ -197,8 +197,8 @@ import com.vaadin.ui.renderers.TextRenderer
     bean.entityVo = null
     bean.atualizaNota()
     formBinder.getBinding("produtos").ifPresent { binding ->
-              binding.read(bean)
-            }
+      binding.read(bean)
+    }
     if (bean.produtosCompletos()) hideForm()
   }
 }

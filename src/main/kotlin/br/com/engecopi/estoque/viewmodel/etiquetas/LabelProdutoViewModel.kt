@@ -48,10 +48,11 @@ class LabelProdutoViewModel(view: ILabelProdutoView) : ViewModel<ILabelProdutoVi
     return view.listaProduto.joinToString(separator = "\n") { prd ->
       val barcodeGtin = prd.barcodeGtin.distinct()
       barcodeGtin.joinToString(separator = "\n") { bar ->
-        val print = template.replace("[Codigo]", prd.codigo.trim())
-                .replace("[Grade]", prd.grade)
-                .replace("[Descricao]", prd.descricao ?: "")
-                .replace("[Gtin]", bar)
+        val print =
+                template.replace("[Codigo]", prd.codigo.trim())
+                  .replace("[Grade]", prd.grade)
+                  .replace("[Descricao]", prd.descricao ?: "")
+                  .replace("[Gtin]", bar)
         HistoricoEtiqueta.save(prd, bar, print)
         print
       }
@@ -60,8 +61,8 @@ class LabelProdutoViewModel(view: ILabelProdutoView) : ViewModel<ILabelProdutoVi
 
   fun addFaixaNfe(nfe: String?) = execUnit {
     val produtos = Nota.findNotaEntradaSaci(lojaDeposito, nfe).mapNotNull {
-              Produto.findProduto(it.prdno, it.grade)
-            }
+      Produto.findProduto(it.prdno, it.grade)
+    }
     view.listaProduto = produtos
   }
 }

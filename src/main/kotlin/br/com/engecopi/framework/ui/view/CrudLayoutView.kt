@@ -25,8 +25,7 @@ import kotlin.reflect.KProperty1
 import kotlin.streams.toList
 
 abstract class CrudLayoutView<C : EntityVo<*>, V : CrudViewModel<*, *, C, *>>(val customFooterLayout: Boolean) :
-        LayoutView<V>(),
-        ICrudView {
+        LayoutView<V>(), ICrudView {
   var isAddClose = true
   var isStillShow = false
   val headerLayout = HorizontalLayout()

@@ -22,8 +22,8 @@ import com.vaadin.ui.Grid.SelectionMode.MULTI
 import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
 
-@AutoView("chave_futura") class ChaveFuturaView : CrudLayoutView<ChaveFuturaVo, ChaveFuturaViewModel>(false),
-                                                  IChaveFuturaView {
+@AutoView("chave_futura")
+class ChaveFuturaView : CrudLayoutView<ChaveFuturaVo, ChaveFuturaViewModel>(false), IChaveFuturaView {
   var formCodBar: PnlCodigoBarras? = null
   private val isAdmin
     get() = RegistryUserInfo.userDefaultIsAdmin
@@ -215,8 +215,8 @@ class DlgFutura(
                   val notaItemSaci = it.notaProdutoSaci
                   notaItemSaci.gradeGenerica
                 }.groupBy { it.prdno }.filter { entry ->
-                          entry.value.size > 1
-                        }
+                  entry.value.size > 1
+                }
                 if (produtosPepetidos.isNotEmpty()) {
                   viewModel.view.showWarning("Foi selecionado mais uma grade do mesmo produto")
                 }
@@ -363,8 +363,8 @@ class DlgFuturaLoc(
               addStyleName(ValoTheme.BUTTON_PRIMARY)
               addClickListener {
                 val itens = gridProdutos.dataProvider.getAll().flatMap { loc ->
-                          loc.itensChaveFutura.filter { it.selecionado }
-                        }
+                  loc.itensChaveFutura.filter { it.selecionado }
+                }
                 execConfirma(itens)
                 close()
               }
@@ -385,16 +385,17 @@ class DlgFuturaLoc(
               abreviacao
             }
             val abreviacoes = abreviacaoItens.keys.flatten().distinct().map { abrev ->
-                      val itensVendaFutura = abreviacaoItens.filter { it.key.contains(abrev) }
-                              .map { it.value }
-                              .flatten()
-                              .distinct()
-                              .map { notaSaci ->
-                                val saldo = viewModel.saldoProduto(notaSaci, abrev)
-                                ItemChaveFutura(notaSaci, saldo, abrev)
-                              }
-                      LocalizacaoFutura(abrev, itensVendaFutura)
-                    }.sortedBy { it.abreviacao }
+              val itensVendaFutura =
+                      abreviacaoItens.filter { it.key.contains(abrev) }
+                        .map { it.value }
+                        .flatten()
+                        .distinct()
+                        .map { notaSaci ->
+                          val saldo = viewModel.saldoProduto(notaSaci, abrev)
+                          ItemChaveFutura(notaSaci, saldo, abrev)
+                        }
+              LocalizacaoFutura(abrev, itensVendaFutura)
+            }.sortedBy { it.abreviacao }
 
             this.dataProvider = ListDataProvider(abreviacoes)
             removeAllColumns()

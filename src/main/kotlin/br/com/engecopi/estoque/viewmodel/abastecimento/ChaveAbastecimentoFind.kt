@@ -11,9 +11,9 @@ import br.com.engecopi.saci.beans.NotaProdutoSaci
 class ChaveAbastecimentoFind {
   fun findNotaSaidaKey(key: String): List<NotaProdutoSaci> {
     val notaSaci = Nota.findNotaSaidaSaci(lojaDeposito, key).ifEmpty {
-              val keyNota = KeyNota(key)
-              Nota.findNotaSaidaSaci(keyNota.storeno, keyNota.numero)
-            }
+      val keyNota = KeyNota(key)
+      Nota.findNotaSaidaSaci(keyNota.storeno, keyNota.numero)
+    }
     val nota = notaSaci.firstOrNull() ?: throw EChaveNaoEncontrada()
     val numero = nota.numero ?: ""
     return when {

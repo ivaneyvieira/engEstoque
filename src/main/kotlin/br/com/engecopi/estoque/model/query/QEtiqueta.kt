@@ -11,7 +11,8 @@ import io.ebean.typequery.*
  *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
-@TypeQueryBean class QEtiqueta : TQRootBean<Etiqueta, QEtiqueta> {
+@TypeQueryBean
+class QEtiqueta : TQRootBean<Etiqueta, QEtiqueta> {
 
   companion object {
     /**
@@ -30,7 +31,6 @@ import io.ebean.typequery.*
   lateinit var template: PString<QEtiqueta>
   lateinit var itensNota: QAssocItemNota<QEtiqueta>
   lateinit var etiquetaDefault: PBoolean<QEtiqueta>
-
 
   /**
    * Construct with a given Database.

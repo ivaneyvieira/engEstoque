@@ -75,8 +75,8 @@ class LabelNotaViewModel(view: ILabelNotaView) : ViewModel<ILabelNotaView>(view)
     val numeroKey = view.numeroNota ?: ""
     val key = KeyNota(numeroKey)
     val nota = Nota.findSaida(key.storeno, key.numero) ?: throw EViewModelError("Nota não encontrada")
-    view.listaNota = nota.itensNota().groupBy { it.abreviacao }.values.mapNotNull { it.firstOrNull() }
-            .map { NotaLabelVo(it) }
+    view.listaNota =
+            nota.itensNota().groupBy { it.abreviacao }.values.mapNotNull { it.firstOrNull() }.map { NotaLabelVo(it) }
   }
 }
 
@@ -88,8 +88,7 @@ interface ILabelNotaView : IView {
 }
 
 enum class ETipoEtiqueta(val descricao: String) {
-  LANCAMENTO("Lançamento"),
-  ENTREGA("Entrega")
+  LANCAMENTO("Lançamento"), ENTREGA("Entrega")
 }
 
 class NotaLabelVo(val itensNota: ItemNota) {

@@ -10,7 +10,8 @@ import io.ebean.typequery.*
  *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
-@TypeQueryBean class QViewProduto : TQRootBean<ViewProduto, QViewProduto> {
+@TypeQueryBean
+class QViewProduto : TQRootBean<ViewProduto, QViewProduto> {
 
   companion object {
     /**
@@ -33,7 +34,6 @@ import io.ebean.typequery.*
   lateinit var alt: PInteger<QViewProduto>
   lateinit var cubagem: PDouble<QViewProduto>
   lateinit var produto: QAssocProduto<QViewProduto>
-
 
   /**
    * Construct with a given Database.

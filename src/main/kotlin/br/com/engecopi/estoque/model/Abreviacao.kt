@@ -12,13 +12,18 @@ import javax.persistence.Entity
 import javax.persistence.ManyToOne
 import javax.persistence.Table
 
-@Entity @Table(name = "abreviacoes") @Index(columnNames = ["loja_id", "abreviacao"], unique = true) class Abreviacao(
-  @Length(6) var abreviacao: String,
-  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH]) var loja: Loja,
+@Entity
+@Table(name = "abreviacoes")
+@Index(columnNames = ["loja_id", "abreviacao"], unique = true)
+class Abreviacao(
+  @Length(6)
+  var abreviacao: String,
+  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
+  var loja: Loja,
   var expedicao: Boolean,
-  @Length(15) var impressora: String,
-                                                                                                                    ) :
-        BaseModel() {
+  @Length(15)
+  var impressora: String,
+                ) : BaseModel() {
   val printer
     get() = Printer(impressora)
 

@@ -91,7 +91,8 @@ fun <V, T> HasItems<T>.bindItens(binder: Binder<V>, propertyList: String): Bindi
       else if (this is TwinColSelect<T>) setItems(itens)
       else setItems(itens)
     }
-    @Suppress("UNCHECKED_CAST") val contains = itens.contains(oldValue as? T)
+    @Suppress("UNCHECKED_CAST")
+    val contains = itens.contains(oldValue as? T)
     val value = if (oldValue == null || !contains) null
     else itens.find { it == oldValue }
     if (value == null) hasValue?.value = hasValue?.emptyValue
@@ -152,12 +153,12 @@ inline fun <reified BEAN : Any, FIELDVALUE> HasValue<FIELDVALUE>.reloadBinderOnC
           binder.getBinding(prop.name).orElse(null)
         }
         binder.fields.toList().mapNotNull { field ->
-                  bindings.find { binding ->
-                    binding.field == field && binding.field != this
-                  }
-                }.forEach { binding ->
-                  binding.read(bean)
-                }
+          bindings.find { binding ->
+            binding.field == field && binding.field != this
+          }
+        }.forEach { binding ->
+          binding.read(bean)
+        }
       }
       else {
         reloadPropertys(binder, *propertys)
@@ -170,8 +171,8 @@ fun <BEAN> reloadPropertys(binder: Binder<BEAN>, vararg propertys: KProperty1<BE
   val bean = binder.bean
   propertys.forEach { prop ->
     binder.getBinding(prop.name).ifPresent { binding ->
-              binding.read(bean)
-            }
+      binding.read(bean)
+    }
   }
 }
 
@@ -254,10 +255,11 @@ fun <T : Any> (@VaadinDsl HasComponents).filterGrid(
           block()
         }
 
-@VaadinDsl fun (@VaadinDsl HasComponents).listBuilder(
+@VaadinDsl
+fun (@VaadinDsl HasComponents).listBuilder(
   caption: String? = null,
   block: (@VaadinDsl ListBuilder).() -> Unit = {},
-                                                     ) = init(ListBuilder(caption), block)
+                                          ) = init(ListBuilder(caption), block)
 
 fun Window.showDialog() {
   isClosable = true

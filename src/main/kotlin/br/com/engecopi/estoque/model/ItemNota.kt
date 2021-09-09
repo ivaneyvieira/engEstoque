@@ -26,33 +26,45 @@ import kotlin.reflect.full.memberProperties
 @CacheQueryTuning(maxSecsToLive = 30)
 @Table(name = "itens_nota")
 @Indices(Index(unique = true, columnNames = ["nota_id", "produto_id", "localizacao"]),
-         Index(columnNames = ["produto_id", "nota_id"])) class ItemNota : BaseModel() {
+         Index(columnNames = ["produto_id", "nota_id"]))
+class ItemNota : BaseModel() {
   var data: LocalDate = LocalDate.now()
   var hora: LocalTime = LocalTime.now()
   var quantidade: Int = 0
   var quantidadeSaci: Int? = null
 
-  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH]) var produto: Produto? = null
+  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
+  var produto: Produto? = null
 
-  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH]) var nota: Nota? = null
+  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
+  var nota: Nota? = null
 
-  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH]) var etiqueta: Etiqueta? = null
+  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
+  var etiqueta: Etiqueta? = null
 
-  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH]) var usuario: Usuario? = null
+  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
+  var usuario: Usuario? = null
   var saldo: Int? = 0
   var impresso: Boolean = false
 
-  @Length(60) var localizacao: String = ""
+  @Length(60)
+  var localizacao: String = ""
 
-  @Enumerated(EnumType.STRING) @Index var status: StatusNota = ENTREGUE
+  @Enumerated(EnumType.STRING)
+  @Index
+  var status: StatusNota = ENTREGUE
 
-  @Size(max = 60) var codigoBarraCliente: String? = ""
+  @Size(max = 60)
+  var codigoBarraCliente: String? = ""
 
-  @Size(max = 60) var codigoBarraConferencia: String? = ""
+  @Size(max = 60)
+  var codigoBarraConferencia: String? = ""
 
-  @Size(max = 60) var codigoBarraConferenciaBaixa: String? = ""
+  @Size(max = 60)
+  var codigoBarraConferenciaBaixa: String? = ""
 
-  @Size(max = 60) var codigoBarraEntrega: String? = ""
+  @Size(max = 60)
+  var codigoBarraEntrega: String? = ""
   val quantidadeSaldo: Int
     get() = (status.multiplicador) * quantidade * (nota?.multipicadorCancelado ?: 0)
   val viewCodigoBarraConferencia: ViewCodBarConferencia?
@@ -80,8 +92,8 @@ import kotlin.reflect.full.memberProperties
   val ultilmaMovimentacao: Boolean
     get() {
       return produto?.ultimaNota()?.let {
-                it.id == this.id
-              } ?: true
+        it.id == this.id
+      } ?: true
     }
   private val abrev: String
     get() = localizacao.split('.').getOrNull(0) ?: ""
@@ -112,15 +124,15 @@ import kotlin.reflect.full.memberProperties
       val storeno = notaProdutoSaci.storeno ?: return null
       val produto = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return null
       return QItemNota().nota.fetchQuery().nota.numero.eq("${notaProdutoSaci.numero}/${notaProdutoSaci.serie}").nota.loja.numero.eq(
-                storeno).produto.equalTo(produto).findList().firstOrNull()
+        storeno).produto.equalTo(produto).findList().firstOrNull()
     }
 
     fun createItemNota(notaProdutoSaci: NotaProdutoSaci, notaPrd: Nota?, abreviacao: String?): ItemNota? {
       notaPrd ?: return null
       val produtoSaci = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return null
       val locProduto = ViewProdutoLoc.localizacoesProduto(produtoSaci).firstOrNull {
-                it.startsWith(abreviacao ?: "")
-              } ?: ""
+        it.startsWith(abreviacao ?: "")
+      } ?: ""
       val item = find(notaPrd, produtoSaci)
 
       return item ?: ItemNota().apply {

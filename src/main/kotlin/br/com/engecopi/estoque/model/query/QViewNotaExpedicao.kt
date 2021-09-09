@@ -14,7 +14,8 @@ import io.ebean.typequery.*
  *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
-@TypeQueryBean class QViewNotaExpedicao : TQRootBean<ViewNotaExpedicao, QViewNotaExpedicao> {
+@TypeQueryBean
+class QViewNotaExpedicao : TQRootBean<ViewNotaExpedicao, QViewNotaExpedicao> {
 
   companion object {
     /**
@@ -44,7 +45,6 @@ import io.ebean.typequery.*
   lateinit var sequencia: PInteger<QViewNotaExpedicao>
   lateinit var usuario: QAssocUsuario<QViewNotaExpedicao>
   lateinit var abreviacao: PString<QViewNotaExpedicao>
-
 
   /**
    * Construct with a given Database.

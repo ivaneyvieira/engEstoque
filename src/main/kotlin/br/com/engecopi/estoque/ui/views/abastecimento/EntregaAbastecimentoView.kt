@@ -20,8 +20,9 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView("entrega_abastecimento")
-class EntregaAbastecimentoView : NotaView<EntregaAbastecimentoVo, EntregaAbastecimentoViewModel, IEntregaAbastecimentoView>(
-  customFooterLayout = true), IEntregaAbastecimentoView {
+class EntregaAbastecimentoView :
+        NotaView<EntregaAbastecimentoVo, EntregaAbastecimentoViewModel, IEntregaAbastecimentoView>(customFooterLayout = true),
+        IEntregaAbastecimentoView {
   var formCodBar: PnlCodigoBarras? = null
 
   override fun enter(event: ViewChangeEvent) {

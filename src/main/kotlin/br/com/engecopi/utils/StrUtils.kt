@@ -55,8 +55,9 @@ fun parameterNames(sql: String): List<String> {
   return matches.map { it.groupValues }.toList().flatten().filter { !it.startsWith(":") }
 }
 
-@Suppress("UNCHECKED_CAST") fun readInstanceProperty(instance: Any, propertyName: String): Any? {
+@Suppress("UNCHECKED_CAST")
+fun readInstanceProperty(instance: Any, propertyName: String): Any? {
   val property = instance::class.memberProperties // don't cast here to <Any, R>, it would succeed silently
-          .firstOrNull { it.name == propertyName } as? KProperty1<Any, *> // force a invalid cast exception if incorrect type here
+    .firstOrNull { it.name == propertyName } as? KProperty1<Any, *> // force a invalid cast exception if incorrect type here
   return property?.get(instance)
 }

@@ -9,7 +9,8 @@ import io.ebean.typequery.*
  *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
-@TypeQueryBean class QAssocViewProdutoLoc<R>(name: String, root: R) : TQAssocBean<ViewProdutoLoc, R>(name, root) {
+@TypeQueryBean
+class QAssocViewProdutoLoc<R>(name: String, root: R) : TQAssocBean<ViewProdutoLoc, R>(name, root) {
 
   lateinit var id: PString<R>
   lateinit var storeno: PInteger<R>
@@ -40,5 +41,4 @@ import io.ebean.typequery.*
   fun fetchLazy(vararg properties: TQProperty<QViewProdutoLoc>): R {
     return fetchLazyProperties(*properties)
   }
-
 }

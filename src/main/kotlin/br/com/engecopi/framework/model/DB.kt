@@ -15,7 +15,8 @@ object DB {
     }
   }
 
-  @Throws(PersistenceException::class) fun executeSqls(sqls: List<String>, vararg params: Pair<String, Any?>) {
+  @Throws(PersistenceException::class)
+  fun executeSqls(sqls: List<String>, vararg params: Pair<String, Any?>) {
     sqls.forEach { sql ->
       println(sql)
       val update = Transaction.createSqlUpdate(sql)
@@ -28,24 +29,26 @@ object DB {
 
   fun String.split(): List<String> {
     return this.replace("::=", ":=")
-            .replace(":=", "::=")
-            .split(";")
-            .map { it.replace('\n', ' ') }
-            .map { it.trim() }
-            .filter { it.isNotBlank() }
+      .replace(":=", "::=")
+      .split(";")
+      .map { it.replace('\n', ' ') }
+      .map { it.trim() }
+      .filter { it.isNotBlank() }
   }
 
-  @Throws(PersistenceException::class) fun sciptSql(sqlScript: String, vararg params: Pair<String, Any>) {
+  @Throws(PersistenceException::class)
+  fun sciptSql(sqlScript: String, vararg params: Pair<String, Any>) {
     xa {
       val sqls = sqlScript.split()
       executeSqls(sqls, * params)
     }
   }
 
-  @Throws(PersistenceException::class) inline fun <reified T> sqlEntity(
+  @Throws(PersistenceException::class)
+  inline fun <reified T> sqlEntity(
     sqlScript: String,
     vararg params: Pair<String, Any?>,
-                                                                       ): List<T> {
+                                  ): List<T> {
     return xa {
       val sqls = sqlScript.split()
       val sqlsScript = sqls.dropLast(1)
@@ -82,10 +85,11 @@ object DB {
     }
   }
 
-  @Throws(PersistenceException::class) inline fun <reified T> sqlScalar(
+  @Throws(PersistenceException::class)
+  inline fun <reified T> sqlScalar(
     sqlScript: String,
     vararg params: Pair<String, Any>,
-                                                                       ): List<T> {
+                                  ): List<T> {
     return xa {
       val sqls = sqlScript.split()
       val sqlsScript = sqls.dropLast(1)

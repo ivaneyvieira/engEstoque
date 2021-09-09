@@ -14,7 +14,8 @@ import io.ebean.typequery.*
  *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
-@TypeQueryBean class QItemNota : TQRootBean<ItemNota, QItemNota> {
+@TypeQueryBean
+class QItemNota : TQRootBean<ItemNota, QItemNota> {
 
   companion object {
     /**
@@ -44,7 +45,6 @@ import io.ebean.typequery.*
   lateinit var codigoBarraConferencia: PString<QItemNota>
   lateinit var codigoBarraConferenciaBaixa: PString<QItemNota>
   lateinit var codigoBarraEntrega: PString<QItemNota>
-
 
   /**
    * Construct with a given Database.

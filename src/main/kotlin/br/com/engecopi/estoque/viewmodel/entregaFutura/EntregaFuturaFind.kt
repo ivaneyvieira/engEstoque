@@ -68,9 +68,9 @@ class EntregaFuturaFind(val view: IView) {
       val notaFutura = findItensNotaFutura(storeno, numero)
       notaFutura
     }.ifEmpty {
-              val notaRessuprimento = findItemRessuprimento(storeno, numero)
-              notaRessuprimento
-            }
+      val notaRessuprimento = findItemRessuprimento(storeno, numero)
+      notaRessuprimento
+    }
   }
 
   private fun findItemRessuprimento(storeno: Int, numero: String): List<ItemNota> {

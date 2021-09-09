@@ -17,7 +17,7 @@ open class QueryDB(private val driver: String, val url: String, val username: St
     config.jdbcUrl = url
     config.username = username
     config.password = password
-    config.addDataSourceProperty("cachePrepStmts", "true")
+    config.addDataSourceProperty("cachePrepStmts", "false")
     config.addDataSourceProperty("useServerPrepStmts", "true")
     config.addDataSourceProperty("prepStmtCacheSize", "250")
     config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048")

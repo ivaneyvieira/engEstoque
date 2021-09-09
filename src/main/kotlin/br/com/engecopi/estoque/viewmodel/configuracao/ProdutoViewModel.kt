@@ -22,10 +22,10 @@ class ProdutoViewModel(view: IProdutoView) : CrudViewModel<Produto, QProduto, Pr
 
   override fun update(bean: ProdutoVo) {
     bean.toEntity()?.let { produto ->
-              produto.codigo = bean.codigoProduto.lpad(16, " ")
-              produto.codebar = bean.codebar ?: ""
-              produto.update()
-            }
+      produto.codigo = bean.codigoProduto.lpad(16, " ")
+      produto.codebar = bean.codebar ?: ""
+      produto.update()
+    }
   }
 
   override fun add(bean: ProdutoVo) {
@@ -35,13 +35,13 @@ class ProdutoViewModel(view: IProdutoView) : CrudViewModel<Produto, QProduto, Pr
       val gradesProduto = bean.gradesProduto.filter { it != "" }
       if (gradesProduto.isEmpty()) throw EViewModelError("Este produto deveria tem grade")
       else gradesProduto.filter { grade -> !gradesSalvas.contains(grade) }.forEach { grade ->
-                Produto().apply {
-                  this.codigo = bean.codigoProduto.lpad(16, " ")
-                  this.grade = grade
-                  this.codebar = bean.codebar ?: ""
-                  this.save()
-                }
-              }
+        Produto().apply {
+          this.codigo = bean.codigoProduto.lpad(16, " ")
+          this.grade = grade
+          this.codebar = bean.codebar ?: ""
+          this.save()
+        }
+      }
     }
     else {
       Produto().apply {
@@ -81,14 +81,14 @@ class ProdutoViewModel(view: IProdutoView) : CrudViewModel<Produto, QProduto, Pr
 
   override fun QProduto.filterString(text: String): QProduto {
     return codigo.contains(text).codebar.eq(text).vproduto.nome.contains(text).grade.contains(text).localizacao.contains(
-              text)
+      text)
   }
 
   fun localizacoes(bean: ProdutoVo?): List<LocProduto> {
     return bean?.produto?.localizacoes("")
-            .orEmpty()
-            .filter { it.startsWith(abreviacaoDefault) || userDefaultIsAdmin }
-            .map { LocProduto(it) }
+      .orEmpty()
+      .filter { it.startsWith(abreviacaoDefault) || userDefaultIsAdmin }
+      .map { LocProduto(it) }
   }
 
   fun saveItem(item: ItemNota?) {
@@ -123,8 +123,8 @@ class ProdutoVo : EntityVo<Produto>() {
     get() = produto?.codebar ?: ""
   val localizacao
     get() = produto?.localizacoes(abreviacaoDefault).orEmpty().filter {
-              it.startsWith(abreviacaoDefault)
-            }.asSequence().distinct().joinToString(" / ")
+      it.startsWith(abreviacaoDefault)
+    }.asSequence().distinct().joinToString(" / ")
   val produto
     get() = toEntity()
   val temGrade get() = toEntity()?.temGrade
@@ -148,9 +148,9 @@ class ProdutoVo : EntityVo<Produto>() {
       produto?.recalculaSaldos()
 
       return produto?.findItensNota().orEmpty().filter { item ->
-                filtroLoja(item) && filtroDataInicial(item) && filtroDataFinal(item) && filtroTipoNota(item) && filtroLocalizacao(
-                  item) && filtroQuantidade(item)
-              }.sortedWith(compareBy(ItemNota::localizacao, ItemNota::data, ItemNota::hora)).toList()
+        filtroLoja(item) && filtroDataInicial(item) && filtroDataFinal(item) && filtroTipoNota(item) && filtroLocalizacao(
+          item) && filtroQuantidade(item)
+      }.sortedWith(compareBy(ItemNota::localizacao, ItemNota::data, ItemNota::hora)).toList()
     }
 
   private fun filtroQuantidade(item: ItemNota) = (item.quantidadeSaldo != 0)
