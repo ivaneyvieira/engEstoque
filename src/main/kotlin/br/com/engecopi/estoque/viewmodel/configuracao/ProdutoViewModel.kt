@@ -9,6 +9,7 @@ import br.com.engecopi.framework.viewmodel.CrudViewModel
 import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.ICrudView
+import br.com.engecopi.saci.saci
 import br.com.engecopi.utils.lpad
 import java.time.LocalDate
 
@@ -24,6 +25,7 @@ class ProdutoViewModel(view: IProdutoView) : CrudViewModel<Produto, QProduto, Pr
     bean.toEntity()?.let { produto ->
       produto.codigo = bean.codigoProduto.lpad(16, " ")
       produto.codebar = bean.codebar ?: ""
+      produto.mesesVencimento = saci.findProdutoGarantia(bean.codigoProduto)?.mesesGarantia
       produto.update()
     }
   }
@@ -39,6 +41,7 @@ class ProdutoViewModel(view: IProdutoView) : CrudViewModel<Produto, QProduto, Pr
           this.codigo = bean.codigoProduto.lpad(16, " ")
           this.grade = grade
           this.codebar = bean.codebar ?: ""
+          this.mesesVencimento = saci.findProdutoGarantia(bean.codigoProduto)?.mesesGarantia
           this.save()
         }
       }
@@ -48,6 +51,7 @@ class ProdutoViewModel(view: IProdutoView) : CrudViewModel<Produto, QProduto, Pr
         this.codigo = bean.codigoProduto.lpad(16, " ")
         this.grade = ""
         this.codebar = bean.codebar ?: ""
+        this.mesesVencimento = saci.findProdutoGarantia(bean.codigoProduto)?.mesesGarantia
         this.save()
       }
     }
@@ -110,6 +114,8 @@ class ProdutoVo : EntityVo<Produto>() {
   var gradesProduto: Set<String> = emptySet()
   val descricaoProduto: String?
     get() = produto?.descricao
+  val meseGarantia: Int?
+    get() = entityVo?.mesesVencimento
   val descricaoProdutoSaci: String?
     get() = if (entityVo == null) ViewProdutoSaci.find(codigoProduto).firstOrNull()?.nome
     else entityVo?.descricao

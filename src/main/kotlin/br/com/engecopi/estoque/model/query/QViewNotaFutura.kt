@@ -7,11 +7,19 @@ import br.com.engecopi.estoque.model.query.assoc.QAssocLoja
 import br.com.engecopi.estoque.model.query.assoc.QAssocNota
 import br.com.engecopi.estoque.model.query.assoc.QAssocUsuario
 import io.ebean.Database
-import io.ebean.typequery.*
+import io.ebean.typequery.PEnum
+import io.ebean.typequery.PInteger
+import io.ebean.typequery.PLocalDate
+import io.ebean.typequery.PLocalDateTime
+import io.ebean.typequery.PLocalTime
+import io.ebean.typequery.PLong
+import io.ebean.typequery.PString
+import io.ebean.typequery.TQRootBean
+import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for ViewNotaFutura.
- *
+ * 
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
@@ -31,8 +39,8 @@ class QViewNotaFutura : TQRootBean<ViewNotaFutura, QViewNotaFutura> {
   lateinit var version: PInteger<QViewNotaFutura>
   lateinit var nota: QAssocNota<QViewNotaFutura>
   lateinit var numero: PString<QViewNotaFutura>
-  lateinit var tipoMov: PEnum<QViewNotaFutura, TipoMov>
-  lateinit var tipoNota: PEnum<QViewNotaFutura, TipoNota>
+  lateinit var tipoMov: PEnum<QViewNotaFutura,TipoMov>
+  lateinit var tipoNota: PEnum<QViewNotaFutura,TipoNota>
   lateinit var rota: PString<QViewNotaFutura>
   lateinit var fornecedor: PString<QViewNotaFutura>
   lateinit var cliente: PString<QViewNotaFutura>
@@ -45,6 +53,7 @@ class QViewNotaFutura : TQRootBean<ViewNotaFutura, QViewNotaFutura> {
   lateinit var sequencia: PInteger<QViewNotaFutura>
   lateinit var usuario: QAssocUsuario<QViewNotaFutura>
   lateinit var abreviacao: PString<QViewNotaFutura>
+
 
   /**
    * Construct with a given Database.

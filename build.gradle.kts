@@ -76,7 +76,7 @@ dependencies {
   compile("io.ebean:ebean:12.1.5")
   compile("io.ebean:ebean-querybean:12.1.5")
   compile("io.ebean:ebean-agent:12.1.5")
-  // testImplementation("io.ebean:ebean-test:12.1.5")
+
   compile("io.ebean.tools:finder-generator:12.1.1")
   
   compile("com.vaadin:vaadin-themes:$vaadin8Version")
@@ -125,7 +125,7 @@ tasks.getByName<War>("war") {
   enabled = true
 }
 
-tasks.withType<ShadowJar>() {
+tasks.withType<ShadowJar> {
   manifest {
     attributes["Main-Class"] = "br.com.engecopi.estoque.background.EtlExecuteKt"
   }

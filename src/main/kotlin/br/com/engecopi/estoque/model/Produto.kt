@@ -9,6 +9,7 @@ import br.com.engecopi.estoque.model.query.QProduto
 import br.com.engecopi.framework.model.BaseModel
 import br.com.engecopi.saci.saci
 import br.com.engecopi.utils.lpad
+import io.ebean.DB
 import io.ebean.annotation.*
 import io.ebean.annotation.Cache
 import io.ebean.annotation.Index
@@ -28,6 +29,8 @@ class Produto : BaseModel() {
 
   @Size(max = 8)
   var grade: String = ""
+
+  var mesesVencimento: Int? = null
 
   @Size(max = 16)
   @Index(unique = false)
@@ -91,6 +94,19 @@ class Produto : BaseModel() {
   }
 
   companion object Find : ProdutoFinder() {
+    fun updateMesesGarantia() {
+      DB.beginTransaction().use { tx ->
+        val qPrd = QProduto._alias
+        QProduto().select(qPrd.mesesVencimento, qPrd.codigo).mesesVencimento.isNull.findEach { produto ->
+          saci.findProdutoGarantia(produto.codigo)?.mesesGarantia?.let { mesesGarantia ->
+            produto.mesesVencimento = mesesGarantia
+            produto.save()
+          }
+        }
+        tx.commit()
+      }
+    }
+
     fun findProduto(codigo: String?, grade: String?): Produto? {
       codigo ?: return null
       return QProduto().codigo.eq(codigo.trim().lpad(16, " ")).grade.eq(grade ?: "").findList().firstOrNull()

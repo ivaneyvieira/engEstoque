@@ -5,11 +5,16 @@ import br.com.engecopi.estoque.model.query.assoc.QAssocNota
 import br.com.engecopi.estoque.model.query.assoc.QAssocUsuario
 import br.com.engecopi.estoque.model.query.assoc.QAssocViewProdutoLoc
 import io.ebean.Database
-import io.ebean.typequery.*
+import io.ebean.typequery.PInteger
+import io.ebean.typequery.PLocalDateTime
+import io.ebean.typequery.PLong
+import io.ebean.typequery.PString
+import io.ebean.typequery.TQRootBean
+import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for Loja.
- *
+ * 
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
@@ -32,6 +37,7 @@ class QLoja : TQRootBean<Loja, QLoja> {
   lateinit var notas: QAssocNota<QLoja>
   lateinit var usuarios: QAssocUsuario<QLoja>
   lateinit var viewProdutoLoc: QAssocViewProdutoLoc<QLoja>
+
 
   /**
    * Construct with a given Database.

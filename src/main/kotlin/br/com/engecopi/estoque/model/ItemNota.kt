@@ -7,9 +7,12 @@ import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.dtos.filterProduto
 import br.com.engecopi.estoque.model.finder.ItemNotaFinder
 import br.com.engecopi.estoque.model.query.QItemNota
+import br.com.engecopi.estoque.model.query.QNota
+import br.com.engecopi.estoque.model.query.QProduto
 import br.com.engecopi.framework.model.BaseModel
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.utils.format
+import io.ebean.DB
 import io.ebean.annotation.*
 import io.ebean.annotation.Cache
 import io.ebean.annotation.Index
@@ -38,6 +41,8 @@ class ItemNota : BaseModel() {
 
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var nota: Nota? = null
+
+  var dataValidade: LocalDate? = null
 
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var etiqueta: Etiqueta? = null
@@ -156,6 +161,25 @@ class ItemNota : BaseModel() {
 
     fun findItensBarcodeCliente(barcode: String): List<ItemNota> {
       return QItemNota().codigoBarraCliente.eq(barcode).findList()
+    }
+
+    fun updateVencimento() {
+      DB.beginTransaction().use { tx ->
+        val qItem = QItemNota._alias
+        val qNota = QNota._alias
+        val qProd = QProduto._alias
+        QItemNota().select(qItem.dataValidade,
+                           qItem.produto.mesesVencimento,
+                           qItem.nota.dataEmissao).produto.mesesVencimento.isNotNull.and().dataValidade.isNull.findEach { item ->
+          item.nota?.dataEmissao?.let { data ->
+            item.produto?.mesesVencimento?.toLong()?.let { meses ->
+              item.dataValidade = data.plusMonths(meses)
+              item.save()
+            }
+          }
+        }
+        tx.commit()
+      }
     }
   }
 

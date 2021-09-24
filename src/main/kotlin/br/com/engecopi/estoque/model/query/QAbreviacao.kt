@@ -3,11 +3,17 @@ package br.com.engecopi.estoque.model.query
 import br.com.engecopi.estoque.model.Abreviacao
 import br.com.engecopi.estoque.model.query.assoc.QAssocLoja
 import io.ebean.Database
-import io.ebean.typequery.*
+import io.ebean.typequery.PBoolean
+import io.ebean.typequery.PInteger
+import io.ebean.typequery.PLocalDateTime
+import io.ebean.typequery.PLong
+import io.ebean.typequery.PString
+import io.ebean.typequery.TQRootBean
+import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for Abreviacao.
- *
+ * 
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
@@ -29,6 +35,7 @@ class QAbreviacao : TQRootBean<Abreviacao, QAbreviacao> {
   lateinit var loja: QAssocLoja<QAbreviacao>
   lateinit var expedicao: PBoolean<QAbreviacao>
   lateinit var impressora: PString<QAbreviacao>
+
 
   /**
    * Construct with a given Database.

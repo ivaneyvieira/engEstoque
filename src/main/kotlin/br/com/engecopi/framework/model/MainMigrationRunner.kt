@@ -6,6 +6,10 @@ import java.io.File
 import java.util.*
 
 fun main() { // System.setProperty("ddl.migration.generate", "true")
+  executeMigracao()
+}
+
+fun executeMigracao() {
   val home = System.getenv("HOME")
   val fileName = System.getenv("EBEAN_PROPS") ?: "$home/ebean.properties"
   val properties = Properties()

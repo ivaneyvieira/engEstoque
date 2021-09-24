@@ -11,7 +11,7 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for ViewProdutoLoc.
- *
+ * 
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
@@ -33,6 +33,7 @@ class QViewProdutoLoc : TQRootBean<ViewProdutoLoc, QViewProdutoLoc> {
   lateinit var abreviacao: PString<QViewProdutoLoc>
   lateinit var produto: QAssocProduto<QViewProdutoLoc>
   lateinit var loja: QAssocLoja<QViewProdutoLoc>
+
 
   /**
    * Construct with a given Database.

@@ -95,7 +95,7 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
         isReadOnly = true
         bind(binder).bind(NotaVo::descricaoProduto.name)
       }
-      comboBox<LocProduto>("Localizacao") {
+      comboBox<LocProduto>("Localização") {
         expandRatio = 3f
         isReadOnly = operation != ADD
         default { localizacao ->

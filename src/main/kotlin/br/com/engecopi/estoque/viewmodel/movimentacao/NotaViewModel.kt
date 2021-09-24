@@ -372,6 +372,8 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?) : 
     get() = toEntity()?.let { LocalDateTime.of(it.data, it.hora) } ?: LocalDateTime.now()
   val dataEmissao: LocalDate
     get() = toEntity()?.nota?.dataEmissao ?: notaSaci?.dtEmissao?.localDate() ?: LocalDate.now()
+  val dataValidade: LocalDate?
+    get() = toEntity()?.dataValidade
   val numeroInterno: Int
     get() = if (entityVo == null) notaSaci?.invno ?: 0
     else 0
