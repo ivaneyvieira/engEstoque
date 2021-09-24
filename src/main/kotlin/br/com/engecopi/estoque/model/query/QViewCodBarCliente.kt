@@ -2,11 +2,15 @@ package br.com.engecopi.estoque.model.query
 
 import br.com.engecopi.estoque.model.ViewCodBarCliente
 import io.ebean.Database
-import io.ebean.typequery.*
+import io.ebean.typequery.PInteger
+import io.ebean.typequery.PLong
+import io.ebean.typequery.PString
+import io.ebean.typequery.TQRootBean
+import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for ViewCodBarCliente.
- *
+ * 
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
@@ -27,6 +31,7 @@ class QViewCodBarCliente : TQRootBean<ViewCodBarCliente, QViewCodBarCliente> {
   lateinit var storeno: PInteger<QViewCodBarCliente>
   lateinit var numero: PString<QViewCodBarCliente>
   lateinit var sequencia: PInteger<QViewCodBarCliente>
+
 
   /**
    * Construct with a given Database.

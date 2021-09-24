@@ -14,6 +14,7 @@ class DadosProdutosSaci(
   val alt: Double,
   val localizacao: String,
   val abreviacao: String,
+  val mesesValidade: Int
                        ) : EntryID(id) {
   override val chave: String
     get() = "$nome;$unidade;$comp;$larg;$alt"

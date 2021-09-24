@@ -33,7 +33,7 @@ class ProdutoView : CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoV
     layoutForm {
       binder.bean.lojaDefault = lojaDeposito
       formLayout.apply {
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
+        w = (UI.getCurrent().page.browserWindowWidth * 0.9).toInt().px
         h = 300.px
         grupo("Produtos") {
           row {
@@ -44,9 +44,14 @@ class ProdutoView : CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoV
               reloadBinderOnChangeAndScroll(binder)
             }
             textField("Descrição") {
-              expandRatio = 3f
+              expandRatio = 4f
               isReadOnly = true
               bind(binder).bind(ProdutoVo::descricaoProdutoSaci.name)
+            }
+            integerField ("Meses de Garantia") {
+              expandRatio = 1f
+              isReadOnly = true
+              bind(binder).bind(ProdutoVo::meseGarantia.name)
             }
             if (operation != ADD) {
               textField {
@@ -163,6 +168,11 @@ class ProdutoView : CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoV
                 this.isSortable = false
                 caption = "Data lançamento"
                 dateFormatNotNull()
+              }
+              addColumnFor(ItemNota::dataValidade) {
+                this.isSortable = false
+                caption = "Data Validade"
+                dateFormat()
               }
               addColumnFor(ItemNota::tipoNota) {
                 this.isSortable = false

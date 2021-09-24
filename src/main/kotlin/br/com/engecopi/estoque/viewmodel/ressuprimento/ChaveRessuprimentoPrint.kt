@@ -9,7 +9,7 @@ import br.com.engecopi.estoque.model.query.QItemNota
 
 class ChaveRessuprimentoPrint {
   fun imprimir(nota: Nota?): List<EtiquetaRessuprimento> {
-    nota ?: return return emptyList()
+    nota ?: return emptyList()
     val id = nota.id
     val notaRef = Nota.byId(id) ?: return emptyList()
     val listaItens = notaRef.itensNota()

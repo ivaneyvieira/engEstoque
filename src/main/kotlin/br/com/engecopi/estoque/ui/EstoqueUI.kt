@@ -1,9 +1,6 @@
 package br.com.engecopi.estoque.ui
 
-import br.com.engecopi.estoque.model.LoginInfo
-import br.com.engecopi.estoque.model.RegistryUserInfo
-import br.com.engecopi.estoque.model.RepositoryAvisoNotas
-import br.com.engecopi.estoque.model.Usuario
+import br.com.engecopi.estoque.model.*
 import br.com.engecopi.estoque.model.etlSaci.ETLEntregaFutura
 import br.com.engecopi.estoque.model.etlSaci.ETLPedidoNotaRessuprimento
 import br.com.engecopi.estoque.model.etlSaci.ETLPedidos
@@ -31,6 +28,7 @@ import br.com.engecopi.estoque.ui.views.paineis.PedidoTransferenciaView
 import br.com.engecopi.estoque.ui.views.ressuprimento.ChaveRessuprimentoView
 import br.com.engecopi.estoque.ui.views.ressuprimento.EditorRessuprimento
 import br.com.engecopi.estoque.ui.views.ressuprimento.EntregaRessuprimentoView
+import br.com.engecopi.framework.model.executeMigracao
 import br.com.engecopi.framework.ui.view.toViewName
 import br.com.engecopi.utils.SystemUtils
 import com.github.mvysny.karibudsl.v8.*
@@ -272,6 +270,8 @@ class Bootstrap : ServletContextListener {
     val fileName = System.getenv("EBEAN_PROPS") ?: "$home/ebean.properties"
     System.setProperty("ebean.props.file", fileName)
     println("##################### $fileName")
+    Produto.updateMesesGarantia()
+    ItemNota.updateVencimento()
   }
 }
 

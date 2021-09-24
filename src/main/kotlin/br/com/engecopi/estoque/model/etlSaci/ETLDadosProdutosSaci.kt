@@ -8,8 +8,10 @@ class ETLDadosProdutosSaci : ETL<DadosProdutosSaci>() {
   override val sqlDelete: String
     get() = "DELETE FROM t_dados_produto_saci WHERE id = :id"
   override val sqlInsert = """
-      INSERT IGNORE INTO t_dados_produto_saci(id, storeno, codigo, grade, nome, unidade, comp, larg, alt, localizacao, abreviacao)
-      VALUES(:id, :storeno, :codigo, :grade, :nome, :unidade, :comp, :larg, :alt, :localizacao, :abreviacao)
+      INSERT IGNORE INTO t_dados_produto_saci(id, storeno, codigo, grade, nome, unidade, comp, larg, alt, 
+      localizacao, abreviacao, mesesValidade)
+      VALUES(:id, :storeno, :codigo, :grade, :nome, :unidade, :comp, :larg, :alt, :localizacao, :abreviacao, 
+      :mesesValidade)
     """.trimIndent()
   override val sqlUpdate = """
       UPDATE t_dados_produto_saci
@@ -17,7 +19,8 @@ class ETLDadosProdutosSaci : ETL<DadosProdutosSaci>() {
           unidade     = :unidade,
           comp        = :comp,
           larg        = :larg,
-          alt         = :alt
+          alt         = :alt,
+          mesesValidade = :mesesValidade
       WHERE id = :id
     """.trimIndent()
 

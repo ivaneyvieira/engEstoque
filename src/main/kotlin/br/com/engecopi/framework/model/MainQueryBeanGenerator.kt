@@ -6,7 +6,7 @@ import io.ebean.typequery.generator.GeneratorConfig
 fun main() {
   val config = GeneratorConfig()
   config.lang = "kt"
-  config.classesDirectory = "./out/production/classes/" //config.classesDirectory = "./build/classes/kotlin/main/"
+  config.classesDirectory = "./out/production/classes/"
   config.destDirectory = "./src/main/kotlin"
   config.destResourceDirectory = "./src/main/resources"
 

@@ -36,8 +36,7 @@ object NetworkUtils {
       it.toIntOrNull()?.toByte()
     }.toByteArray()
     val inet = InetAddress.getByAddress(byteAddr)
-    val isReachable = inet.isReachable(10000)
-    return isReachable
+    return inet.isReachable(10000)
   }
 
   private fun isReachable(

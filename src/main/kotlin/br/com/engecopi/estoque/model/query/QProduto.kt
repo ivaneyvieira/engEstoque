@@ -5,11 +5,17 @@ import br.com.engecopi.estoque.model.query.assoc.QAssocItemNota
 import br.com.engecopi.estoque.model.query.assoc.QAssocViewProduto
 import br.com.engecopi.estoque.model.query.assoc.QAssocViewProdutoLoc
 import io.ebean.Database
-import io.ebean.typequery.*
+import io.ebean.typequery.PInteger
+import io.ebean.typequery.PLocalDate
+import io.ebean.typequery.PLocalDateTime
+import io.ebean.typequery.PLong
+import io.ebean.typequery.PString
+import io.ebean.typequery.TQRootBean
+import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for Produto.
- *
+ * 
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
@@ -29,6 +35,7 @@ class QProduto : TQRootBean<Produto, QProduto> {
   lateinit var version: PInteger<QProduto>
   lateinit var codigo: PString<QProduto>
   lateinit var grade: PString<QProduto>
+  lateinit var mesesVencimento: PInteger<QProduto>
   lateinit var codebar: PString<QProduto>
   lateinit var dataCadastro: PLocalDate<QProduto>
   lateinit var itensNota: QAssocItemNota<QProduto>
@@ -36,6 +43,7 @@ class QProduto : TQRootBean<Produto, QProduto> {
   lateinit var viewProdutoLoc: QAssocViewProdutoLoc<QProduto>
   lateinit var localizacao: PString<QProduto>
   lateinit var saldo_total: PInteger<QProduto>
+
 
   /**
    * Construct with a given Database.

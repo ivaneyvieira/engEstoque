@@ -9,7 +9,7 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for ViewProdutoSaci.
- *
+ * 
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
@@ -31,6 +31,7 @@ class QViewProdutoSaci : TQRootBean<ViewProdutoSaci, QViewProdutoSaci> {
   lateinit var custo: PDouble<QViewProdutoSaci>
   lateinit var unidade: PString<QViewProdutoSaci>
   lateinit var tipo: PString<QViewProdutoSaci>
+
 
   /**
    * Construct with a given Database.

@@ -5,7 +5,9 @@ import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
 import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
 import br.com.engecopi.estoque.model.Nota.Find
 import br.com.engecopi.estoque.model.dtos.ProdutoGrade
+import br.com.engecopi.utils.localDate
 import br.com.engecopi.utils.lpad
+import java.time.LocalDate
 
 data class NotaProdutoSaci(
   val rota: String?,
@@ -22,8 +24,15 @@ data class NotaProdutoSaci(
   val tipo: String?,
   val invno: Int?,
   val abreviacao: String?,
+  val mesesValidade: Int?,
                           ) {
   var gradeGenerica: Boolean = false
+
+  fun validade(): LocalDate? {
+    val meses = mesesValidade ?: return null
+    val dataEntrada = dtEmissao?.localDate() ?: return null
+    return dataEntrada.plusMonths(meses.toLong())
+  }
 
   fun isSave(): Boolean {
     return ItemNota.isSave(this)

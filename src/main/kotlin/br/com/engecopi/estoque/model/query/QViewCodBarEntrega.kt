@@ -2,11 +2,15 @@ package br.com.engecopi.estoque.model.query
 
 import br.com.engecopi.estoque.model.ViewCodBarEntrega
 import io.ebean.Database
-import io.ebean.typequery.*
+import io.ebean.typequery.PInteger
+import io.ebean.typequery.PLong
+import io.ebean.typequery.PString
+import io.ebean.typequery.TQRootBean
+import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for ViewCodBarEntrega.
- *
+ * 
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
@@ -29,6 +33,7 @@ class QViewCodBarEntrega : TQRootBean<ViewCodBarEntrega, QViewCodBarEntrega> {
   lateinit var codigo: PString<QViewCodBarEntrega>
   lateinit var grade: PString<QViewCodBarEntrega>
   lateinit var quantidade: PInteger<QViewCodBarEntrega>
+
 
   /**
    * Construct with a given Database.
