@@ -273,12 +273,13 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?) : 
       }
     }
 
+  /*
   fun dataFabricacao(dataVal: LocalDate) = if (produto?.mesesVencimento == null) null
   else dataVal.minusMonths((produto?.mesesVencimento ?: 0).toLong())
 
   fun dataMaxRecebimento(dataVal: LocalDate) = if (produto?.mesesVencimento == null) null
   else dataVal.minusMonths(((produto?.mesesVencimento ?: 0) * 3.0 / 4.0).roundToLong())
-
+*/
   var tipoNota: TipoNota = OUTROS_E
   val temGrid
     get() = (tipoNota != OUTROS_E) && (entityVo == null)

@@ -7,10 +7,12 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 private const val DATE_PATTERN = "dd/MM/yy"
+private const val DATE_PATTERN_MESANO = "MM/yyyy"
 private const val DATETIME_PATTERN = "dd/MM/yy HH:mm"
 private const val TIME_PATTERN = "HH:mm"
 
 private val DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_PATTERN)
+private val DATE_FORMATTER_MESANO = DateTimeFormatter.ofPattern(DATE_PATTERN_MESANO)
 private val DATETIME_FORMATTER = DateTimeFormatter.ofPattern(DATETIME_PATTERN)
 private val TIME_FORMATTER = DateTimeFormatter.ofPattern(TIME_PATTERN)
 
@@ -74,6 +76,10 @@ fun Date?.format(): String? {
 
 fun LocalDate?.format(): String {
   return this?.format(DATE_FORMATTER) ?: ""
+}
+
+fun LocalDate?.formatMesAno(): String {
+  return this?.format(DATE_FORMATTER_MESANO) ?: ""
 }
 
 fun Int.localDate(): LocalDate? {
