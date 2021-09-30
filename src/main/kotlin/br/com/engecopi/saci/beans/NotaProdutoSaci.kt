@@ -28,12 +28,6 @@ data class NotaProdutoSaci(
                           ) {
   var gradeGenerica: Boolean = false
 
-  fun validade(): LocalDate? {
-    val meses = mesesValidade ?: return null
-    val dataEntrada = dtEmissao?.localDate() ?: return null
-    return dataEntrada.plusMonths(meses.toLong())
-  }
-
   fun isSave(): Boolean {
     return ItemNota.isSave(this)
   }

@@ -271,7 +271,6 @@ class Bootstrap : ServletContextListener {
     System.setProperty("ebean.props.file", fileName)
     println("##################### $fileName")
     Produto.updateMesesGarantia()
-    ItemNota.updateVencimento()
   }
 }
 
