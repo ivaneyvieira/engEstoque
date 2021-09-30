@@ -180,6 +180,10 @@ fun <C> Column<C, LocalDate?>.dateFormat() {
   this.setRenderer(LocalDateRenderer { DateTimeFormatter.ofPattern("dd/MM/yy") })
 }
 
+fun <C> Column<C, LocalDate?>.mesAnoFormat() {
+  this.setRenderer(LocalDateRenderer { DateTimeFormatter.ofPattern("MM/yy") })
+}
+
 fun <C> Column<C, LocalDate>.dateFormatNotNull() {
   this.setRenderer(LocalDateRenderer { DateTimeFormatter.ofPattern("dd/MM/yy") })
 }

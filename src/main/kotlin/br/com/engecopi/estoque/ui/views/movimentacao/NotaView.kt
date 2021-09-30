@@ -19,6 +19,7 @@ import com.vaadin.data.Binder
 import com.vaadin.event.ShortcutAction.KeyCode.ENTER
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.icons.VaadinIcons.PRINT
+import com.vaadin.shared.ui.datefield.DateResolution
 import com.vaadin.ui.*
 import com.vaadin.ui.Grid.SelectionMode.MULTI
 import org.vaadin.patrik.FastNavigation
@@ -81,6 +82,7 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
                                                              ) {
     row {
       this.bindVisible(binder, NotaVo::naoTemGrid.name)
+      var dataValidade : DateField? = null
       comboBox<Produto>("Código") {
         expandRatio = 2f
         isReadOnly = operation != ADD
@@ -89,14 +91,28 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
         bindItens(binder, NotaVo::produtoNota.name)
         bind(binder).bind(NotaVo::produto.name)
         reloadBinderOnChange(binder)
+        this.addValueChangeListener {
+          it.value?.let { produto ->
+            val meses = produto.mesesVencimento ?: 0
+            dataValidade?.isVisible = meses > 0 && tipo == "Entrada"
+          }
+        }
       }
       textField("Descrição") {
         expandRatio = 5f
         isReadOnly = true
         bind(binder).bind(NotaVo::descricaoProduto.name)
       }
+      dataValidade = dateField("Validade") {
+        expandRatio = 1f
+        this.isVisible = false
+        placeholder = "mm/aaaa"
+        this.dateFormat = "MM/yy"
+        this.resolution = DateResolution.MONTH
+        bind(binder).withValidator(ValidatorVencimento(binder, isAdmin)).bind(NotaVo::dataValidade.name)
+      }
       comboBox<LocProduto>("Localização") {
-        expandRatio = 3f
+        expandRatio = 2f
         isReadOnly = operation != ADD
         default { localizacao ->
           localizacao.localizacao

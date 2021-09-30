@@ -40,7 +40,7 @@ class ChaveFuturaFind {
       val gradeStr = notaSaci.grade ?: ""
       if (gradeStr.startsWith("***")) {
         Produto.findProdutos(notaSaci.codigo()).mapNotNull { produto ->
-          val quant = notaSaci.quant ?: 0
+          //val quant = notaSaci.quant ?: 0
           notaSaci.copy(grade = produto.grade).apply {
             this.gradeGenerica = true
           } // }

@@ -144,8 +144,8 @@ open class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(cus
       }
       column(EntradaVo::dataValidade) {
         caption = "Validade"
-        dateFormat()
-        //setSortProperty("nota.dataEmissao", "data", "hora")
+        mesAnoFormat()
+        setSortProperty("dataValidade")
       }
       column(EntradaVo::quantProduto) {
         caption = "Quantidade"

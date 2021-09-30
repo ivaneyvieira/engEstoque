@@ -19,6 +19,7 @@ import br.com.engecopi.utils.localDate
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import kotlin.math.roundToLong
 
 abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
   view: V,
@@ -59,7 +60,7 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
       val produtos = bean.produtos.filter { it.selecionado && it.quantidade != 0 }
       val produtosJaInserido = produtos.asSequence().distinctBy { it.produto.id }.filter { prd ->
         prd.produto.let { Nota.itemDuplicado(nota, it) }
-      }.map { it.produto }.filterNotNull()
+      }.map { it.produto }
       produtosJaInserido.forEach { prd ->
         val msg = "O produto ${prd.codigo} - ${prd.descricao}. Já foi inserido na nota ${nota.numero}."
         view.showWarning(msg)
@@ -96,6 +97,7 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
             this.nota = nota
             this.produto = produto
             this.quantidade = quantProduto
+            this.dataValidade = null
             this.usuario = usuario
             this.localizacao = local
             this.hora = addTime
@@ -116,6 +118,7 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
         this.nota = nota
         this.produto = produto
         this.quantidade = bean.quantProduto ?: 0
+        this.dataValidade = bean.dataValidade
         this.status = bean.status!!
       }
       item.update()
@@ -269,6 +272,13 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?) : 
         atualizaNota()
       }
     }
+
+  fun dataFabricacao(dataVal: LocalDate) = if (produto?.mesesVencimento == null) null
+  else dataVal.minusMonths((produto?.mesesVencimento ?: 0).toLong())
+
+  fun dataMaxRecebimento(dataVal: LocalDate) = if (produto?.mesesVencimento == null) null
+  else dataVal.minusMonths(((produto?.mesesVencimento ?: 0) * 3.0 / 4.0).roundToLong())
+
   var tipoNota: TipoNota = OUTROS_E
   val temGrid
     get() = (tipoNota != OUTROS_E) && (entityVo == null)
@@ -372,8 +382,11 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?) : 
     get() = toEntity()?.let { LocalDateTime.of(it.data, it.hora) } ?: LocalDateTime.now()
   val dataEmissao: LocalDate
     get() = toEntity()?.nota?.dataEmissao ?: notaSaci?.dtEmissao?.localDate() ?: LocalDate.now()
-  val dataValidade: LocalDate?
+  var dataValidade: LocalDate?
     get() = toEntity()?.dataValidade
+    set(value) {
+      toEntity()?.dataValidade = value
+    }
   val numeroInterno: Int
     get() = if (entityVo == null) notaSaci?.invno ?: 0
     else 0
