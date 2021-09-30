@@ -107,7 +107,7 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
         expandRatio = 1f
         this.isVisible = false
         placeholder = "mm/aaaa"
-        this.dateFormat = "MM/yy"
+        this.dateFormat = "MM/yyyy"
         this.resolution = DateResolution.MONTH
         bind(binder).withValidator(ValidatorVencimento(binder, isAdmin)).bind(NotaVo::dataValidade.name)
       }
