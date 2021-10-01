@@ -82,7 +82,7 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
                                                              ) {
     row {
       this.bindVisible(binder, NotaVo::naoTemGrid.name)
-      var dataValidade : DateField? = null
+      var dataValidade: DateField? = null
       comboBox<Produto>("Código") {
         expandRatio = 2f
         isReadOnly = operation != ADD
@@ -105,7 +105,9 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
       }
       dataValidade = dateField("Validade") {
         expandRatio = 1f
-        this.isVisible = false
+        val meses = binder.bean.produto?.mesesVencimento ?: 0
+        this.isVisible = meses > 0 && tipo == "Entrada"
+        isReadOnly = operation != ADD || isAdmin
         placeholder = "mm/aaaa"
         this.dateFormat = "MM/yyyy"
         this.resolution = DateResolution.MONTH
@@ -138,7 +140,9 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
       gridProduto = grid(ProdutoNotaVo::class) {
         expandRatio = 2f
         this.h = 200.px
-        editor.isEnabled = true
+        this.editor.isEnabled = true
+        this.editor.binder
+
         removeAllColumns()
         val selectionModel = setSelectionMode(MULTI)
         selectionModel.addSelectionListener { select ->
@@ -161,6 +165,32 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
           isTextInputAllowed = false
         }
 
+        val edtDataValidade = DateField().apply {
+          placeholder = "mm/aaaa"
+          this.dateFormat = "MM/yyyy"
+          this.resolution = DateResolution.MONTH
+
+          this.addValueChangeListener {
+            if (it.isUserOriginated) {
+              val nota: NotaVo? = binder.bean
+              val bean = this@grid.editor.binder.bean
+              val meses = bean.produto.mesesVencimento
+              val dataEntrada = nota?.lancamento
+              val dataEmissao = nota?.dataEmissao
+              val data = it.value
+              val msgerro =
+                      ValidatorVencimento.erroValidacao(dataVencimento = data,
+                                                        dataEntrada = dataEntrada,
+                                                        dataEmissao = dataEmissao,
+                                                        mesesVencimento = meses)
+              if (msgerro != null) {
+                Notification.show(msgerro, Notification.Type.ERROR_MESSAGE)
+                it.source.clear()
+              }
+            }
+          }
+        }
+
         addColumnFor(ProdutoNotaVo::codigo) {
           expandRatio = 1
           caption = "Código"
@@ -168,6 +198,11 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
         addColumnFor(ProdutoNotaVo::descricaoProduto) {
           expandRatio = 5
           caption = "Descrição"
+        }
+        addColumnFor(ProdutoNotaVo::dataValidade) {
+          expandRatio = 1
+          caption = "Validade"
+          setEditorComponent(edtDataValidade)
         }
         addColumnFor(ProdutoNotaVo::localizacao) {
           expandRatio = 4

@@ -511,7 +511,13 @@ class DlgNotaSaida(
       val produto = item.produto
       val statusNota = item.status
       val isSave = item.id != 0L
-      if (produto != null) ProdutoNotaVo(produto, statusNota, LocProduto(item.localizacao), isSave).apply {
+      val dataValidade = item.dataValidade
+      if (produto != null) ProdutoNotaVo(produto = produto,
+                                         statusNota = statusNota,
+                                         dataValidade = dataValidade,
+                                         localizacao = LocProduto(item.localizacao),
+                                         isSave = isSave)
+        .apply {
         this.quantidade = item.quantidade
         this.value = item
         this.updateItem(false)
