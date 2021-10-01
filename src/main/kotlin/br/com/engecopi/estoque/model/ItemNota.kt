@@ -10,6 +10,7 @@ import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.framework.model.BaseModel
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.utils.format
+import br.com.engecopi.utils.formatMesAno
 import io.ebean.annotation.*
 import io.ebean.annotation.Cache
 import io.ebean.annotation.Index
@@ -247,6 +248,10 @@ class NotaPrint(val item: ItemNota) {
     get() = item.codigoBarraCliente ?: ""
   val dataLancamento
     get() = item.nota?.lancamento?.format(DateTimeFormatter.ofPattern("dd/MM/yy")) ?: ""
+  val validade
+    get() = item.dataValidade?.formatMesAno() ?: ""
+  val numVal
+    get() = item.dataValidade?.format(DateTimeFormatter.ofPattern("yyyyMM"))?.toIntOrNull()  ?: 0
   val nomeFilial
     get() = "ENGECOPI ${item.nota?.loja?.sigla}"
   val numeroLoja = notaSaci?.loja?.numero ?: 0

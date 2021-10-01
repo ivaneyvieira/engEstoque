@@ -19,7 +19,6 @@ import br.com.engecopi.utils.localDate
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import kotlin.math.roundToLong
 
 abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
   view: V,
@@ -53,7 +52,13 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
       }
       else {
         bean.entityVo =
-                insertItemNota(nota, produto, bean.quantProduto ?: 0, usuario, bean.localizacao?.localizacao, addTime)
+                insertItemNota(nota = nota,
+                               produto = produto,
+                               dataValidade = bean.dataValidade,
+                               quantProduto = bean.quantProduto ?: 0,
+                               usuario = usuario,
+                               local = bean.localizacao?.localizacao,
+                               addTime = addTime)
       }
     }
     else {
@@ -68,7 +73,13 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
       produtos.filter { it.produto !in produtosJaInserido }.forEach { produto ->
         produto.let { prd ->
           if (usuario.temProduto(prd.produto)) bean.entityVo =
-                  insertItemNota(nota, prd.produto, prd.quantidade, usuario, prd.localizacao?.localizacao, addTime)
+                  insertItemNota(nota = nota,
+                                 produto = prd.produto,
+                                 dataValidade = prd.dataValidade,
+                                 quantProduto = prd.quantidade,
+                                 usuario = usuario,
+                                 local = prd.localizacao?.localizacao,
+                                 addTime = addTime)
         }
       }
     }
@@ -77,6 +88,7 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
   private fun insertItemNota(
     nota: Nota,
     produto: Produto?,
+    dataValidade: LocalDate?,
     quantProduto: Int,
     usuario: Usuario,
     local: String?,
@@ -97,7 +109,7 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
             this.nota = nota
             this.produto = produto
             this.quantidade = quantProduto
-            this.dataValidade = null
+            this.dataValidade = dataValidade
             this.usuario = usuario
             this.localizacao = local
             this.hora = addTime
@@ -333,19 +345,28 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?) : 
     val prd = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return emptyList()
     val localizacoes = prd.localizacoes(abreviacaoNota).sorted()
     val ultimaLocalizacao = localizacoes.maxOrNull() ?: ""
-    val produtoVo = ProdutoNotaVo(prd, RECEBIDO, LocProduto(ultimaLocalizacao), notaProdutoSaci.isSave()).apply {
-      quantidade = notaProdutoSaci.quant ?: 0
-    }
+    val produtoVo =
+            ProdutoNotaVo(produto = prd,
+                          statusNota = RECEBIDO,
+                          dataValidade = null,
+                          localizacao = LocProduto(ultimaLocalizacao),
+                          isSave = notaProdutoSaci.isSave()).apply {
+              quantidade = notaProdutoSaci.quant ?: 0
+            }
     return listOf(produtoVo)
   }
 
   private fun listItensSaida(notaProdutoSaci: NotaProdutoSaci): List<ProdutoNotaVo> {
     val prd = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return emptyList()
     var quant = notaProdutoSaci.quant ?: return emptyList()
-    val localizacoes = prd.localizacoes(abreviacaoNota).sorted()
+    val localizacoes = prd.localizacoes(abreviacaoNota).sorted() //TODO Pegar a localizacao com a validade mais recente
     val ultimaLocalizacao = localizacoes.maxOrNull() ?: ""
     val produtosLocais = localizacoes.map { localizacao ->
-      ProdutoNotaVo(prd, CONFERIDA, LocProduto(localizacao), notaProdutoSaci.isSave()).apply {
+      ProdutoNotaVo(produto = prd,
+                    statusNota = CONFERIDA,
+                    dataValidade = null,
+                    localizacao = LocProduto(localizacao),
+                    isSave = notaProdutoSaci.isSave()).apply {
         if (quant > 0) if (quant > saldo) {
           if (localizacao == ultimaLocalizacao) {
             quantidade = quant
@@ -443,6 +464,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?) : 
 class ProdutoNotaVo(
   val produto: Produto,
   val statusNota: StatusNota,
+  var dataValidade: LocalDate?,
   var localizacao: LocProduto?,
   var isSave: Boolean,
                    ) {

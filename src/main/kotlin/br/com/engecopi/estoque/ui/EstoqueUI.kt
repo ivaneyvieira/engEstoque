@@ -240,7 +240,7 @@ class EstoqueUI : UI() {
 
   private fun errorHandler(e: ErrorEvent) {
     log?.error("Erro não identificado ${e.throwable.message}",
-               e.throwable) // when the exception occurs, show a nice notification
+               e.throwable)
     Notification("Oops",
                  "\n" + "Ocorreu um erro e lamentamos muito isso. Já está trabalhando na correção!",
                  ERROR_MESSAGE).apply {

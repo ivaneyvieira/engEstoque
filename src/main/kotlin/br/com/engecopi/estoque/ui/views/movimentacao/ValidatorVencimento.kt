@@ -13,24 +13,44 @@ class ValidatorVencimento<V : NotaVo>(val binder: Binder<V>, val isAdmin: Boolea
   override fun apply(value: LocalDate?,
                      context: ValueContext?): ValidationResult { //if (isAdmin) return ValidationResult.ok()
     value ?: return ValidationResult.ok()
-    val mesesVencimento = binder.bean.produto?.mesesVencimento ?: return ValidationResult.ok()
-
-    val dataValidadeMinima = dataValidadeMinima(mesesVencimento)
-    val dataValidadeMaxima = dataValidadeMaxima(mesesVencimento)
-    return if (value.isBefore(dataValidadeMinima)) ValidationResult.error("Mes de validade inválido (antes de " + "${dataValidadeMinima.formatMesAno()})")
-    else if (value.isAfter(dataValidadeMaxima)) ValidationResult.error("Mes de validade inválido (depois de " + "${dataValidadeMaxima.formatMesAno()})")
-    else ValidationResult.ok()
+    val bean = binder.bean ?: return ValidationResult.ok()
+    val dataEntrada = bean.nota?.data
+    val dataEmissao = bean.nota?.dataEmissao
+    val mesesVencimento = bean.produto?.mesesVencimento ?: return ValidationResult.ok()
+    val msgErro =
+            erroValidacao(dataVencimento = value,
+                          dataEntrada = dataEntrada,
+                          dataEmissao = dataEmissao,
+                          mesesVencimento = mesesVencimento) ?: return ValidationResult.ok()
+    return ValidationResult.error(msgErro)
   }
 
   companion object {
-    fun dataValidadeMinima(mesesVencimento: Int): LocalDate {
+    fun erroValidacao(dataVencimento: LocalDate?,
+                      dataEntrada: LocalDate?,
+                      dataEmissao: LocalDate?,
+                      mesesVencimento: Int?): String? {
+      mesesVencimento ?: return null
+      dataVencimento ?: return null
+      val dataValidadeMinima = dataValidadeMinima(dataEntrada, mesesVencimento)
+      val dataValidadeMaxima = dataValidadeMaxima(dataEmissao, mesesVencimento)
+      return when {
+        dataVencimento.isBefore(dataValidadeMinima) -> "Mes de validade inválido (antes de " + "${dataValidadeMinima.formatMesAno()})"
+        dataVencimento.isAfter(dataValidadeMaxima)  -> "Mes de validade inválido (depois de " + "${dataValidadeMaxima.formatMesAno()})"
+        else                                        -> null
+      }
+    }
+
+    fun dataValidadeMinima(dataEntrada: LocalDate?, mesesVencimento: Int): LocalDate? {
+      dataEntrada ?: return null
       val mesesVencimentoMinimo = (mesesVencimento * 3.0 / 4.0).roundToInt()
-      val data = LocalDate.now().plusMonths(mesesVencimentoMinimo.toLong())
+      val data = dataEntrada.plusMonths(mesesVencimentoMinimo.toLong())
       return data.withDayOfMonth(1)
     }
 
-    fun dataValidadeMaxima(mesesVencimento: Int): LocalDate {
-      val data = LocalDate.now().plusMonths(mesesVencimento.toLong())
+    fun dataValidadeMaxima(dataEmissao: LocalDate?, mesesVencimento: Int): LocalDate? {
+      dataEmissao ?: return null
+      val data = dataEmissao.plusMonths(mesesVencimento.toLong())
       return data.withDayOfMonth(data.lengthOfMonth())
     }
   }
