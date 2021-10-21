@@ -95,6 +95,24 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
     addTime: LocalTime,
                             ): ItemNota? {
     if (local.isNullOrBlank()) throw EViewModelError("Não foi especificado a localização do item")
+    val mesesVencimento = produto?.mesesVencimento ?: 0
+    if (nota.tipoNota == COMPRA && mesesVencimento > 0) {
+      when (dataValidade) {
+        null -> throw EViewModelError("Não foi informada a data de vencimento")
+        else -> {
+          val erroVencimento =
+                  ValidatorVencimento.erroValidacao(
+                    dataVencimento = dataValidade,
+                    dataEntrada = nota.data,
+                    dataEmissao = nota.dataEmissao,
+                    mesesVencimento = mesesVencimento,
+                                                   )
+          if (!erroVencimento.isNullOrEmpty()) {
+            throw EViewModelError(erroVencimento)
+          }
+        }
+      }
+    }
     val saldoLocal = produto?.saldoLocalizacao(local) ?: 0
     return if (quantProduto != 0) {
       when {
@@ -104,8 +122,7 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
           null
         }
         else                                                                    -> {
-          val item = ItemNota()
-          item.apply {
+          ItemNota().apply {
             this.nota = nota
             this.produto = produto
             this.quantidade = quantProduto
@@ -114,10 +131,9 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
             this.localizacao = local
             this.hora = addTime
             this.status = statusDefault
+            this.insert()
+            this.produto?.recalculaSaldos(local)
           }
-          item.insert()
-          item.produto?.recalculaSaldos(local)
-          item
         }
       }
     }
@@ -155,7 +171,7 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
 
   private fun saveNota(bean: VO): Nota {
     val nota: Nota = bean.nota ?: Nota()
-    nota.apply {
+    return nota.apply {
       val numeroNota = bean.notaSaci?.numeroSerie()
       this.numero = if (numeroNota.isNullOrBlank()) "${Nota.novoNumero()}"
       else numeroNota
@@ -168,9 +184,8 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
       this.rota = bean.rota ?: ""
       this.fornecedor = bean.fornecedor
       this.cliente = bean.cliente
+      this.save()
     }
-    nota.save()
-    return nota
   }
 
   override val query: QItemNota
@@ -256,7 +271,7 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
 
   fun desfazOperacao(item: ItemNota?) = exec {
     item?.desfazerOperacao()
-    view.updateView()
+    view?.updateView()
   }
 }
 

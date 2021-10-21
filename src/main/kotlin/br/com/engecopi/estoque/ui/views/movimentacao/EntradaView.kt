@@ -8,18 +8,23 @@ import br.com.engecopi.estoque.ui.print.PrintUtil.printText
 import br.com.engecopi.estoque.viewmodel.movimentacao.EntradaViewModel
 import br.com.engecopi.estoque.viewmodel.movimentacao.EntradaVo
 import br.com.engecopi.estoque.viewmodel.movimentacao.IEntradaView
+import br.com.engecopi.estoque.viewmodel.movimentacao.ProdutoNotaVo
 import br.com.engecopi.framework.ui.view.*
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
+import br.com.engecopi.saci.QuerySaci
 import com.github.mvysny.karibudsl.v8.*
 import com.vaadin.data.Binder
+import com.vaadin.event.ShortcutAction
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.ui.ContentMode.HTML
+import com.vaadin.shared.ui.ValueChangeMode
 import com.vaadin.ui.*
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView
 open class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(customFooterLayout = true), IEntradaView {
+  private lateinit var edtBarcode: TextField
   private lateinit var formBinder: Binder<EntradaVo>
   private lateinit var fieldNotaFiscal: TextField
 
@@ -34,7 +39,6 @@ open class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(cus
       formLayout.apply {
         formBinder = binder
         w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
-
         grupo("Nota fiscal de entrada") {
           row {
             fieldNotaFiscal = notaFiscalField(operation, binder)
@@ -80,9 +84,27 @@ open class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(cus
           label("<b>Produto</b>") {
             contentMode = HTML
           }
+          edtBarcode = TextField("Cogio de Barras").apply {
+            addValueChangeListener {
+              val barcode = it.value
+              gridProduto.execBarcode(barcode)
+            }
+            this.valueChangeMode = ValueChangeMode.EAGER
+            this.addGlobalShortcutListener(ShortcutAction.KeyCode.F2) {
+              this.focus()
+            }
+
+            if (!QuerySaci.test) {
+              this.valueChangeMode = ValueChangeMode.LAZY
+              valueChangeTimeout = 200
+              this.blockCLipboard()
+            }
+          }
 
           addComponent(footerLayout)
           setComponentAlignment(footerLayout, Alignment.BOTTOM_LEFT)
+          addComponent(edtBarcode)
+          setComponentAlignment(edtBarcode, Alignment.BOTTOM_LEFT)
           addComponentsAndExpand(Label(""))
         }
         grupo {
@@ -205,6 +227,18 @@ open class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(cus
       binding.read(bean)
     }
     if (bean.produtosCompletos()) hideForm()
+  }
+}
+
+private fun Grid<ProdutoNotaVo>.execBarcode(barcode: String?) {
+  if (!barcode.isNullOrBlank()) {
+    val itensBarcode = this.dataProvider.getAll().filter {
+      val produto = it.produto
+      produto.barcodeGtin.contains(barcode) || produto.codebar == barcode
+    }
+    itensBarcode.forEach {
+      this.selectionModel.select(it)
+    }
   }
 }
 

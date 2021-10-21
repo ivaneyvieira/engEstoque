@@ -1,6 +1,5 @@
-package br.com.engecopi.estoque.ui.views.movimentacao
+package br.com.engecopi.estoque.viewmodel.movimentacao
 
-import br.com.engecopi.estoque.viewmodel.movimentacao.NotaVo
 import br.com.engecopi.utils.formatMesAno
 import com.vaadin.data.Binder
 import com.vaadin.data.ValidationResult
@@ -41,14 +40,14 @@ class ValidatorVencimento<V : NotaVo>(val binder: Binder<V>, val isAdmin: Boolea
       }
     }
 
-    fun dataValidadeMinima(dataEntrada: LocalDate?, mesesVencimento: Int): LocalDate? {
+    private fun dataValidadeMinima(dataEntrada: LocalDate?, mesesVencimento: Int): LocalDate? {
       dataEntrada ?: return null
       val mesesVencimentoMinimo = (mesesVencimento * 3.0 / 4.0).roundToInt()
       val data = dataEntrada.plusMonths(mesesVencimentoMinimo.toLong())
       return data.withDayOfMonth(1)
     }
 
-    fun dataValidadeMaxima(dataEmissao: LocalDate?, mesesVencimento: Int): LocalDate? {
+    private fun dataValidadeMaxima(dataEmissao: LocalDate?, mesesVencimento: Int): LocalDate? {
       dataEmissao ?: return null
       val data = dataEmissao.plusMonths(mesesVencimento.toLong())
       return data.withDayOfMonth(data.lengthOfMonth())
