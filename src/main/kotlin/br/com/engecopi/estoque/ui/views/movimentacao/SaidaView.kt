@@ -44,6 +44,7 @@ import org.vaadin.grideditorcolumnfix.GridEditorColumnFix
 import org.vaadin.patrik.FastNavigation
 import org.vaadin.viritin.fields.IntegerField
 import java.time.LocalDateTime
+import javax.ws.rs.client.Entity.html
 
 @AutoView("")
 class SaidaView : NotaView<SaidaVo, SaidaViewModel, ISaidaView>(customFooterLayout = true), ISaidaView {
@@ -352,7 +353,7 @@ class DlgNotaSaida(
               }
             }
           }
-          label("Código de barras")
+          html("<b>Código de barras</b>")
           edtBarcode.apply {
             addValueChangeListener {
               val barcode = it.value
@@ -516,12 +517,11 @@ class DlgNotaSaida(
                                          statusNota = statusNota,
                                          dataValidade = dataValidade,
                                          localizacao = LocProduto(item.localizacao),
-                                         isSave = isSave)
-        .apply {
-        this.quantidade = item.quantidade
-        this.value = item
-        this.updateItem(false)
-      }
+                                         isSave = isSave).apply {
+          this.quantidade = item.quantidade
+          this.value = item
+          this.updateItem(false)
+        }
       else null
     }.sortedByDescending { it.dateUpdate }
 
@@ -536,7 +536,9 @@ class DlgNotaSaida(
   private fun execBarcode(barcode: String?) {
     if (!barcode.isNullOrBlank()) {
       val listProduto = viewModel.findByBarcodeProduto(barcode)
-      if (listProduto.isEmpty()) viewModel.view.showWarning("Produto não encontrado no saci")
+      if (listProduto.isEmpty()) {
+        viewModel.view.showWarning("Produto não encontrado no saci")
+      }
       else {
         val produtosVO = gridProdutos.dataProvider.getAll()
         produtosVO.forEach { it.updateItem(false) }
@@ -553,7 +555,9 @@ class DlgNotaSaida(
             }
           }
         }
-        if (interProdutos.isEmpty()) viewModel.view.showWarning("Produto não encontrado no grid")
+        if (interProdutos.isEmpty()) {
+          viewModel.view.showWarning("Produto não encontrado no grid")
+        }
       }
       edtBarcode.focus()
       edtBarcode.selectAll()
@@ -577,14 +581,4 @@ class DlgNotaSaida(
     if (gridProdutos.dataProvider.getAll().all { !it.allowSelect() }) close()
   }
 }
-
-private fun TextField.blockCLipboard() {
-  this.addGlobalShortcutListener(KeyShortcut(KeyCode.V, setOf(ModifierKey.Ctrl))) {
-    this.value = ""
-  }
-  this.addContextClickListener {
-    this.value = ""
-  }
-}
-
 

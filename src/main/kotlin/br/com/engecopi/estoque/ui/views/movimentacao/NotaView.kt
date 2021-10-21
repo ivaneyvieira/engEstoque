@@ -8,14 +8,12 @@ import br.com.engecopi.estoque.model.RegistryUserInfo.impressoraUsuario
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.ui.print.PrintUtil.printText
-import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
-import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
-import br.com.engecopi.estoque.viewmodel.movimentacao.NotaVo
-import br.com.engecopi.estoque.viewmodel.movimentacao.ProdutoNotaVo
+import br.com.engecopi.estoque.viewmodel.movimentacao.*
 import br.com.engecopi.framework.ui.view.*
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import com.github.mvysny.karibudsl.v8.*
 import com.vaadin.data.Binder
+import com.vaadin.event.ShortcutAction
 import com.vaadin.event.ShortcutAction.KeyCode.ENTER
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.icons.VaadinIcons.PRINT
@@ -257,4 +255,14 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
     }
   }
 }
+
+fun TextField.blockCLipboard() {
+  this.addGlobalShortcutListener(KeyShortcut(ShortcutAction.KeyCode.V, setOf(ModifierKey.Ctrl))) {
+    this.value = ""
+  }
+  this.addContextClickListener {
+    this.value = ""
+  }
+}
+
 
