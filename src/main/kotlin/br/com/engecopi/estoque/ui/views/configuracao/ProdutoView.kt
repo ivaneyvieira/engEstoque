@@ -251,6 +251,11 @@ class ProdutoView : CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoV
         caption = "Localização"
         setSortProperty("localizacao")
       }
+      column(ProdutoVo::meseGarantia) {
+        expandRatio = 1
+        caption = "Meses de Garantia"
+        setSortProperty("meses_vencimento")
+      }
       column(ProdutoVo::saldo) {
         expandRatio = 1
         caption = "Saldo"
