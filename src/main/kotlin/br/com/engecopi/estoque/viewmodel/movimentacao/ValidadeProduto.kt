@@ -38,13 +38,14 @@ class ValidadeProduto {
     private fun dataValidadeMinima(dataEntrada: LocalDate?, mesesValidade: Int): LocalDate? {
       dataEntrada ?: return null
       val mesesVencimentoMinimo = (mesesValidade * 3.0 / 4.0).roundToInt()
-      val data = dataEntrada.plusMonths(mesesVencimentoMinimo.toLong())
+
+      val data = dataEntrada.plusMonths(if (mesesVencimentoMinimo < 0) 0 else (mesesVencimentoMinimo.toLong() - 1))
       return data.withDayOfMonth(1)
     }
 
     private fun dataValidadeMaxima(dataEmissao: LocalDate?, mesesValidade: Int): LocalDate? {
       dataEmissao ?: return null
-      val data = dataEmissao.plusMonths(mesesValidade.toLong())
+      val data = dataEmissao.plusMonths(if (mesesValidade < 0) 0 else (mesesValidade.toLong() - 1))
       return data.withDayOfMonth(data.lengthOfMonth())
     }
   }
