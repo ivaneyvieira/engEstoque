@@ -109,7 +109,7 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
         placeholder = "mm/aaaa"
         this.dateFormat = "MM/yyyy"
         this.resolution = DateResolution.MONTH
-        bind(binder).withValidator(ValidatorVencimento(binder, isAdmin)).bind(NotaVo::dataValidade.name)
+        bind(binder).withValidator(VaadinValidadeValidator(binder, isAdmin)).bind(NotaVo::dataValidade.name)
       }
       comboBox<LocProduto>("Localização") {
         expandRatio = 2f
@@ -177,10 +177,13 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
               val dataEmissao = nota?.dataEmissao
               val data = it.value
               val msgerro =
-                      ValidatorVencimento.erroValidacao(dataVencimento = data,
-                                                        dataEntrada = dataEntrada,
-                                                        dataEmissao = dataEmissao,
-                                                        mesesVencimento = meses)
+                      ValidadeProduto.erroValidacao(
+                        produto = binder.bean.codigo,
+                        dataValidade = data,
+                        dataEntrada = dataEntrada,
+                        dataEmissao = dataEmissao,
+                        mesesValidade = meses,
+                                                   )
               if (msgerro != null) {
                 Notification.show(msgerro, Notification.Type.ERROR_MESSAGE)
                 it.source.clear()
