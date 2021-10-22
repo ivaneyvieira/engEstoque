@@ -63,7 +63,7 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
     }
     else {
       val produtos = bean.produtos.filter { it.selecionado && it.quantidade != 0 }
-      val produtosJaInserido = produtos.asSequence().distinctBy { it.produto.id }.filter { prd ->
+      val produtosJaInserido = produtos.distinctBy { it.produto.id }.filter { prd ->
         prd.produto.let { Nota.itemDuplicado(nota, it) }
       }.map { it.produto }
       produtosJaInserido.forEach { prd ->
@@ -95,22 +95,18 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
     addTime: LocalTime,
                             ): ItemNota? {
     if (local.isNullOrBlank()) throw EViewModelError("Não foi especificado a localização do item")
-    val mesesVencimento = produto?.mesesVencimento ?: 0
-    if (nota.tipoNota == COMPRA && mesesVencimento > 0) {
-      when (dataValidade) {
-        null -> throw EViewModelError("Não foi informada a data de vencimento")
-        else -> {
-          val erroVencimento =
-                  ValidatorVencimento.erroValidacao(
-                    dataVencimento = dataValidade,
-                    dataEntrada = nota.data,
-                    dataEmissao = nota.dataEmissao,
-                    mesesVencimento = mesesVencimento,
-                                                   )
-          if (!erroVencimento.isNullOrEmpty()) {
-            throw EViewModelError(erroVencimento)
-          }
-        }
+    val mesesValidade = produto?.mesesVencimento ?: 0
+    if (nota.tipoNota == COMPRA && mesesValidade > 0) {
+      val erroVencimento =
+              ValidadeProduto.erroValidacao(
+                produto = produto?.codigo ?: "",
+                dataValidade = dataValidade,
+                dataEntrada = nota.data,
+                dataEmissao = nota.dataEmissao,
+                mesesValidade = mesesValidade,
+                                           )
+      if (!erroVencimento.isNullOrEmpty()) {
+        throw EViewModelError(erroVencimento)
       }
     }
     val saldoLocal = produto?.saldoLocalizacao(local) ?: 0

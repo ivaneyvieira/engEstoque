@@ -84,7 +84,7 @@ open class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(cus
           label("<b>Produto</b>") {
             contentMode = HTML
           }
-          edtBarcode = TextField("Cogio de Barras").apply {
+          edtBarcode = TextField("Código de Barras").apply {
             addValueChangeListener {
               val barcode = it.value
               gridProduto.execBarcode(barcode)
@@ -228,18 +228,21 @@ open class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(cus
     }
     if (bean.produtosCompletos()) hideForm()
   }
-}
 
-private fun Grid<ProdutoNotaVo>.execBarcode(barcode: String?) {
-  if (!barcode.isNullOrBlank()) {
-    val itensBarcode = this.dataProvider.getAll().filter {
-      val produto = it.produto
-      produto.barcodeGtin.contains(barcode) || produto.codebar == barcode
-    }
-    itensBarcode.forEach {
-      this.selectionModel.select(it)
+  private fun Grid<ProdutoNotaVo>.execBarcode(barcode: String?) {
+    if (!barcode.isNullOrBlank()) {
+      val itensBarcode = this.dataProvider.getAll().filter {
+        val produto = it.produto
+        produto.barcodeGtin.contains(barcode) || produto.codebar == barcode
+      }
+
+      itensBarcode.forEach {
+        this.selectionModel.select(it)
+        it.selecionado = true
+      }
     }
   }
 }
+
 
 
