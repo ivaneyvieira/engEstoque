@@ -29,8 +29,8 @@ class Produto : BaseModel() {
 
   @Size(max = 8)
   var grade: String = ""
-
   var mesesVencimento: Int? = null
+  var quantidadePacote: Int? = null
 
   @Size(max = 16)
   @Index(unique = false)
@@ -97,9 +97,10 @@ class Produto : BaseModel() {
     fun updateMesesGarantia() {
       DB.beginTransaction().use { tx ->
         val qPrd = QProduto._alias
-        QProduto().select(qPrd.mesesVencimento, qPrd.codigo).mesesVencimento.isNull.findEach { produto ->
-          saci.findProdutoGarantia(produto.codigo)?.mesesGarantia?.let { mesesGarantia ->
-            produto.mesesVencimento = mesesGarantia
+        QProduto().select(qPrd.mesesVencimento, qPrd.quantidadePacote, qPrd.codigo).findEach { produto ->
+          saci.findProdutoGarantia(produto.codigo).let { produtoGarantia ->
+            produto.mesesVencimento = produtoGarantia?.mesesGarantia
+            produto.quantidadePacote = produtoGarantia?.quantidadePacote
             produto.save()
           }
         }

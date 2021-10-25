@@ -20,7 +20,8 @@ import java.time.format.DateTimeFormatter
 import javax.persistence.*
 import javax.persistence.CascadeType.*
 import javax.validation.constraints.Size
-import kotlin.math.roundToLong
+import kotlin.math.ceil
+import kotlin.math.roundToInt
 import kotlin.reflect.full.memberProperties
 
 @Entity
@@ -93,6 +94,8 @@ class ItemNota : BaseModel() {
     get() = nota?.tipoNota
   val dataNota: LocalDate?
     get() = nota?.data
+  val quantidadeVolume
+    get() = ceil((quantidade * 1.00).div(produto?.quantidadePacote ?: 1)).roundToInt()
   val ultilmaMovimentacao: Boolean
     get() {
       return produto?.ultimaNota()?.let {
@@ -163,7 +166,7 @@ class ItemNota : BaseModel() {
     }
   }
 
-  fun printEtiqueta() = NotaPrint(this)
+  fun printEtiqueta(volume: Int? = null) = NotaPrint(this, volume)
 
   fun recalculaSaldos() {
     produto?.recalculaSaldos(localizacao = localizacao)
@@ -212,7 +215,7 @@ class ItemNota : BaseModel() {
   }
 }
 
-class NotaPrint(val item: ItemNota) {
+class NotaPrint(val item: ItemNota, val volume: Int? = null) {
   val notaSaci = item.nota
   val rota = notaSaci?.rota ?: ""
   val nota = notaSaci?.numero ?: ""
@@ -251,7 +254,15 @@ class NotaPrint(val item: ItemNota) {
   val validade
     get() = item.dataValidade?.formatMesAno() ?: ""
   val numVal
-    get() = item.dataValidade?.format(DateTimeFormatter.ofPattern("yyyyMM"))?.toIntOrNull()  ?: 0
+    get() = item.dataValidade?.format(DateTimeFormatter.ofPattern("yyyyMM"))?.toIntOrNull() ?: 0
+  val quantidadePacote
+    get() = produto?.quantidadePacote ?: 1
+  val quantidadeVolume: Int
+    get() {
+      volume ?: return quant
+      val saldo = quant - (volume - 1) * quantidadePacote
+      return if (saldo > quantidadePacote) quantidadePacote else saldo
+    }
   val nomeFilial
     get() = "ENGECOPI ${item.nota?.loja?.sigla}"
   val numeroLoja = notaSaci?.loja?.numero ?: 0

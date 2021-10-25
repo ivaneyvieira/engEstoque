@@ -73,13 +73,15 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
       produtos.filter { it.produto !in produtosJaInserido }.forEach { produto ->
         produto.let { prd ->
           if (usuario.temProduto(prd.produto)) bean.entityVo =
-                  insertItemNota(nota = nota,
-                                 produto = prd.produto,
-                                 dataValidade = prd.dataValidade,
-                                 quantProduto = prd.quantidade,
-                                 usuario = usuario,
-                                 local = prd.localizacao?.localizacao,
-                                 addTime = addTime)
+                  insertItemNota(
+                    nota = nota,
+                    produto = prd.produto,
+                    dataValidade = prd.dataValidade,
+                    quantProduto = prd.quantidade,
+                    usuario = usuario,
+                    local = prd.localizacao?.localizacao,
+                    addTime = addTime,
+                                )
         }
       }
     }

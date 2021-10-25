@@ -8,6 +8,7 @@ import com.vaadin.data.Validator
 import com.vaadin.data.ValueContext
 import java.time.LocalDate
 
+/*
 class VaadinValidadeValidator<V : NotaVo>(val binder: Binder<V>, val isAdmin: Boolean) : Validator<LocalDate> {
   override fun apply(value: LocalDate?,
                      context: ValueContext?): ValidationResult { //if (isAdmin) return ValidationResult.ok()
@@ -28,3 +29,4 @@ class VaadinValidadeValidator<V : NotaVo>(val binder: Binder<V>, val isAdmin: Bo
     return ValidationResult.error(msgErro)
   }
 }
+*/

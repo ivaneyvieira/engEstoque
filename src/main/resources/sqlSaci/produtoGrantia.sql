@@ -1,4 +1,5 @@
-SELECT TRIM(no) AS codigo, garantia AS mesesGarantia
+SELECT TRIM(no)                             AS codigo,
+       IF(tipoGarantia = 2, garantia, NULL) AS mesesGarantia,
+       ROUND(qttyPackClosed / 1000)         AS quantidadePacote
 FROM sqldados.prd AS P
-WHERE tipoGarantia = 2
-  AND no = LPAD(:codigo, 16, ' ')
+WHERE no = LPAD(:codigo, 16, ' ')

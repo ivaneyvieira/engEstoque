@@ -55,23 +55,36 @@ class NotaPrint {
     return imprimirItens(itens, statusImpressao)
   }
 
-  fun imprimirItens(itens: List<ItemNota>, statusImpressao: StatusNota): String {
-    val etiquetas = Etiqueta.findByStatus(statusImpressao, "ETEXP")
-    return etiquetas.joinToString(separator = "\n") { etiqueta ->
-      imprimir(itens, etiqueta)
+  fun imprimirItens(itensNotaList: List<ItemNota>, statusImpressao: StatusNota): String {
+    val etiquetasNota = Etiqueta.findByStatus(statusImpressao, "ETEXP")
+    val etiquetasVol = Etiqueta.findByStatus(statusImpressao, "ETVOL")
+    val result = itensNotaList.joinToString { item ->
+      val etiquetasNotaStr = etiquetasNota.joinToString(separator = "\n") { etiqueta ->
+        imprimir(listOf(item), etiqueta)
+      }
+      val volRange = (1..item.quantidadeVolume).toList()
+
+      val etiquetasVolStr = volRange.joinToString(separator = "\n") { volume ->
+        etiquetasVol.joinToString { etiqueta ->
+          imprimir(listOf(item), etiqueta, volume)
+        }
+      }
+
+      "$etiquetasNotaStr\n$etiquetasVolStr"
     }
+    return result
   }
 
-  private fun imprimir(itens: List<ItemNota>, etiqueta: Etiqueta): String {
+  private fun imprimir(itens: List<ItemNota>, etiqueta: Etiqueta, volume: Int? = null): String {
     return itens.filter { it.abreviacao?.abreviacao == abreviacaoDefault }
-      .map { imprimir(it, etiqueta) }
+      .map { imprimir(it, etiqueta, volume) }
       .distinct()
       .joinToString(separator = "\n")
   }
 
-  private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {
+  private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta, volume: Int? = null): String {
     itemNota ?: return ""
-    val print = itemNota.printEtiqueta()
+    val print = itemNota.printEtiqueta(volume)
     if (!usuarioDefault.admin) itemNota.let {
       it.refresh()
       it.impresso = true
