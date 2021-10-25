@@ -116,6 +116,13 @@ class ProdutoVo : EntityVo<Produto>() {
     get() = produto?.descricao
   val meseGarantia: Int?
     get() = entityVo?.mesesVencimento
+  val quantidadePacote: Int?
+    get() = entityVo?.quantidadePacote
+  val meseGarantiaStr: String
+    get() {
+      val meses = meseGarantia ?: return ""
+      return if (meses == 1) "$meses mês" else "$meses meses"
+    }
   val descricaoProdutoSaci: String?
     get() = if (entityVo == null) ViewProdutoSaci.find(codigoProduto).firstOrNull()?.nome
     else entityVo?.descricao

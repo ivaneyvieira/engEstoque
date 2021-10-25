@@ -8,7 +8,10 @@ import br.com.engecopi.estoque.model.RegistryUserInfo.impressoraUsuario
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.ui.print.PrintUtil.printText
-import br.com.engecopi.estoque.viewmodel.movimentacao.*
+import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
+import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
+import br.com.engecopi.estoque.viewmodel.movimentacao.NotaVo
+import br.com.engecopi.estoque.viewmodel.movimentacao.ProdutoNotaVo
 import br.com.engecopi.framework.ui.view.*
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import com.github.mvysny.karibudsl.v8.*
@@ -109,7 +112,7 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
         placeholder = "mm/aaaa"
         this.dateFormat = "MM/yyyy"
         this.resolution = DateResolution.MONTH
-        bind(binder).withValidator(VaadinValidadeValidator(binder, isAdmin)).bind(NotaVo::dataValidade.name)
+        bind(binder).bind(NotaVo::dataValidade.name)
       }
       comboBox<LocProduto>("Localização") {
         expandRatio = 2f
@@ -166,8 +169,7 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
         val edtDataValidade = DateField().apply {
           placeholder = "mm/aaaa"
           this.dateFormat = "MM/yyyy"
-          this.resolution = DateResolution.MONTH
-
+          this.resolution = DateResolution.MONTH/*
           this.addValueChangeListener {
             if (it.isUserOriginated) {
               val nota: NotaVo? = binder.bean
@@ -190,6 +192,7 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
               }
             }
           }
+ */
         }
 
         addColumnFor(ProdutoNotaVo::codigo) {

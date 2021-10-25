@@ -48,10 +48,15 @@ class ProdutoView : CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoV
               isReadOnly = true
               bind(binder).bind(ProdutoVo::descricaoProdutoSaci.name)
             }
-            integerField ("Meses de Garantia") {
+            textField("Garantia") {
               expandRatio = 1f
               isReadOnly = true
-              bind(binder).bind(ProdutoVo::meseGarantia.name)
+              bind(binder).bind(ProdutoVo::meseGarantiaStr.name)
+            }
+            integerField("Quant. Pac") {
+              expandRatio = 1f
+              isReadOnly = true
+              bind(binder).bind(ProdutoVo::quantidadePacote.name)
             }
             if (operation != ADD) {
               textField {
@@ -251,9 +256,15 @@ class ProdutoView : CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoV
         caption = "Localização"
         setSortProperty("localizacao")
       }
-      column(ProdutoVo::meseGarantia) {
+      column(ProdutoVo::meseGarantiaStr) {
         expandRatio = 1
-        caption = "Meses de Garantia"
+        caption = "Garantia"
+        setSortProperty("meses_vencimento")
+      }
+      column(ProdutoVo::quantidadePacote) {
+        expandRatio = 1
+        caption = "Quant. Pac."
+        align = VAlign.Right
         setSortProperty("meses_vencimento")
       }
       column(ProdutoVo::saldo) {
@@ -283,7 +294,7 @@ class ProdutoView : CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoV
         setSortProperty("vproduto.alt")
         setRenderer(NumberRenderer(DecimalFormat("0")))
         align = VAlign.Right
-      }
+      }/*
       column(ProdutoVo::cubagem) {
         expandRatio = 1
         caption = "Cubagem"
@@ -291,6 +302,7 @@ class ProdutoView : CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoV
         setRenderer(NumberRenderer(DecimalFormat("0.000000")))
         align = VAlign.Right
       }
+       */
     }
   }
 

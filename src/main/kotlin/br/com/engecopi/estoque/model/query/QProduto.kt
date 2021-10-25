@@ -36,6 +36,7 @@ class QProduto : TQRootBean<Produto, QProduto> {
   lateinit var codigo: PString<QProduto>
   lateinit var grade: PString<QProduto>
   lateinit var mesesVencimento: PInteger<QProduto>
+  lateinit var quantidadePacote: PInteger<QProduto>
   lateinit var codebar: PString<QProduto>
   lateinit var dataCadastro: PLocalDate<QProduto>
   lateinit var itensNota: QAssocItemNota<QProduto>
