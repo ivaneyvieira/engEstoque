@@ -238,6 +238,8 @@ class NotaPrint(val item: ItemNota, val volume: Int? = null) {
   val grade = produto?.grade ?: ""
   val name = produto?.descricao ?: ""
   val prdnoGrade = "$prdno${if (grade == "") "" else "-$grade"}"
+  val codebar
+    get() = produto?.barcodeGtin?.maxOrNull() ?: ""
   val un
     get() = produto?.vproduto?.unidade ?: "UN"
   val loc = item.localizacao
