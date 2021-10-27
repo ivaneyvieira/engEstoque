@@ -98,7 +98,7 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
                             ): ItemNota? {
     if (local.isNullOrBlank()) throw EViewModelError("Não foi especificado a localização do item")
     val mesesValidade = produto?.mesesVencimento ?: 0
-    if (nota.tipoNota == COMPRA && mesesValidade > 0) {
+    if (nota.tipoNota?.tipoMov == ENTRADA && mesesValidade > 0) {
       val erroVencimento =
               ValidadeProduto.erroValidacao(
                 produto = produto?.codigo ?: "",
