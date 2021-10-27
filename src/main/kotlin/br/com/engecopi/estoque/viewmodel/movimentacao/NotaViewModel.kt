@@ -269,7 +269,7 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
 
   fun desfazOperacao(item: ItemNota?) = exec {
     item?.desfazerOperacao()
-    view?.updateView()
+    view.updateView()
   }
 }
 

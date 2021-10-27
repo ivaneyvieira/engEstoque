@@ -265,6 +265,8 @@ class NotaPrint(val item: ItemNota, val volume: Int? = null) {
       val saldo = quant - (volume - 1) * quantidadePacote
       return if (saldo > quantidadePacote) quantidadePacote else saldo
     }
+  val codigoBarraVolume
+    get() = "$codebar $numVal $quantidadeVolume $volume"
   val nomeFilial
     get() = "ENGECOPI ${item.nota?.loja?.sigla}"
   val numeroLoja = notaSaci?.loja?.numero ?: 0
