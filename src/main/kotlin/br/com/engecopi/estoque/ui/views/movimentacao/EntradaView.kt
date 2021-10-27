@@ -23,7 +23,7 @@ import com.vaadin.ui.*
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView
-open class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(customFooterLayout = true), IEntradaView {
+class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(customFooterLayout = true), IEntradaView {
   private lateinit var edtBarcode: TextField
   private lateinit var formBinder: Binder<EntradaVo>
   private lateinit var fieldNotaFiscal: TextField
@@ -204,7 +204,7 @@ open class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(cus
     }
   }
 
-  protected fun imprimeItem(domainObject: EntradaVo, imprimir: (ItemNota?) -> String) {
+  private fun imprimeItem(domainObject: EntradaVo, imprimir: (ItemNota?) -> String) {
     val itemNota = domainObject.itemNota ?: domainObject.findEntity()
     val text = imprimir(itemNota)
     printText(impressoraUsuario, text)

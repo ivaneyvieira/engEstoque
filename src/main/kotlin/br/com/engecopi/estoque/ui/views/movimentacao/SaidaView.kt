@@ -48,7 +48,7 @@ import javax.ws.rs.client.Entity.html
 
 @AutoView("")
 class SaidaView : NotaView<SaidaVo, SaidaViewModel, ISaidaView>(customFooterLayout = true), ISaidaView {
-  var formCodBar: PnlCodigoBarras? = null
+  private var formCodBar: PnlCodigoBarras? = null
   override fun enter(event: ViewChangeEvent) {
     super.enter(event)
     formCodBar?.focusEdit()
@@ -324,24 +324,19 @@ class DlgNotaSaida(
                   if (origem != null) when (origem) {
                     DEPOSITO  -> confirmaProdutos(produtosSelecionado = produtos intersect itensSelecionados,
                                                   produtosNaoSelecionado = produtos intersect naoSelect,
-                                                  statusSelecionado = ENTREGUE,
-                                                  statusNaoSelecionado = ENT_LOJA)
+                                                  statusSelecionado = ENTREGUE)
                     EXPEDICAO -> confirmaProdutos(produtosSelecionado = produtos intersect itensSelecionados,
                                                   produtosNaoSelecionado = produtos intersect naoSelect,
-                                                  statusSelecionado = CONFERIDA,
-                                                  statusNaoSelecionado = ENT_LOJA)
+                                                  statusSelecionado = CONFERIDA)
                     ENTREGA_F -> confirmaProdutos(produtosSelecionado = produtos intersect itensSelecionados,
                                                   produtosNaoSelecionado = produtos intersect naoSelect,
-                                                  statusSelecionado = CONFERIDA,
-                                                  statusNaoSelecionado = ENT_LOJA)
+                                                  statusSelecionado = CONFERIDA)
                     RESSUPRI  -> confirmaProdutos(produtosSelecionado = produtos intersect itensSelecionados,
                                                   produtosNaoSelecionado = produtos intersect naoSelect,
-                                                  statusSelecionado = CONFERIDA,
-                                                  statusNaoSelecionado = ENT_LOJA)
+                                                  statusSelecionado = CONFERIDA)
                     ABASTECI  -> confirmaProdutos(produtosSelecionado = produtos intersect itensSelecionados,
                                                   produtosNaoSelecionado = emptySet(),
-                                                  statusSelecionado = ENTREGUE,
-                                                  statusNaoSelecionado = ENT_LOJA)
+                                                  statusSelecionado = ENTREGUE)
                   }
                 }
                 close()
@@ -498,11 +493,12 @@ class DlgNotaSaida(
   }
 
   private fun confirmaProdutos(
-    produtosSelecionado: Set<ProdutoNotaVo>, produtosNaoSelecionado: Set<ProdutoNotaVo>,
-    statusSelecionado: StatusNota, statusNaoSelecionado: StatusNota,
+    produtosSelecionado: Set<ProdutoNotaVo>,
+    produtosNaoSelecionado: Set<ProdutoNotaVo>,
+    statusSelecionado: StatusNota,
                               ) {
     viewModel.confirmaProdutos(produtosSelecionado.toList(), statusSelecionado)
-    viewModel.confirmaProdutos(produtosNaoSelecionado.toList(), statusNaoSelecionado)
+    viewModel.confirmaProdutos(produtosNaoSelecionado.toList(), ENT_LOJA)
   }
 
   private fun @VaadinDsl Grid<ProdutoNotaVo>.updateProdutosNota() {
@@ -518,10 +514,10 @@ class DlgNotaSaida(
                                          dataValidade = dataValidade,
                                          localizacao = LocProduto(item.localizacao),
                                          isSave = isSave).apply {
-          this.quantidade = item.quantidade
-          this.value = item
-          this.updateItem(false)
-        }
+        this.quantidade = item.quantidade
+        this.value = item
+        this.updateItem(false)
+      }
       else null
     }.sortedByDescending { it.dateUpdate }
 
@@ -535,28 +531,36 @@ class DlgNotaSaida(
 
   private fun execBarcode(barcode: String?) {
     if (!barcode.isNullOrBlank()) {
-      val listProduto = viewModel.findByBarcodeProduto(barcode)
-      if (listProduto.isEmpty()) {
+      val barcodeVolume = viewModel.findByBarcodeProduto(barcode)
+      if (barcodeVolume == null) {
         viewModel.view.showWarning("Produto não encontrado no saci")
+      }
+      else if(!barcodeVolume.isDataVencimentoValida()){
+        viewModel.view.showWarning("Data de vencimento não é válida")
       }
       else {
         val produtosVO = gridProdutos.dataProvider.getAll()
         produtosVO.forEach { it.updateItem(false) }
         val produtos = produtosVO.mapNotNull { it.value?.produto }
-        val interProdutos = produtos intersect listProduto
-        interProdutos.forEach { produto ->
-          val itemVO = produtosVO.filter { it.value?.produto?.id == produto.id }
-          itemVO.forEach { item ->
-            val codigo = item.value?.codigo?.trim()
-            when { //TODO Saldo Negativo
-              // item.saldoFinal < 0 -> viewModel.view.showWarning("O saldo final do produto '$codigo' está negativo")
-              item.allowSelect() -> selecionaProduto(item)
-              else               -> viewModel.view.showWarning("O produto '$codigo' não é selecionavel")
-            }
-          }
-        }
+        val interProdutos = produtos intersect listOf(barcodeVolume.produto)
         if (interProdutos.isEmpty()) {
           viewModel.view.showWarning("Produto não encontrado no grid")
+        }
+        else {
+          interProdutos.forEach { produto ->
+            val itemVO = produtosVO.filter { it.value?.produto?.id == produto.id }
+            itemVO.forEach { item ->
+              val codigo = item.value?.codigo?.trim()
+              when { //TODO Saldo Negativo
+                // item.saldoFinal < 0 -> viewModel.view.showWarning("O saldo final do produto '$codigo' está negativo")
+                item.allowSelect() -> {
+                  item.quantidade = item.quantidade + (barcodeVolume.quantidadeVolume ?: 0)
+                  selecionaProduto(item)
+                }
+                else               -> viewModel.view.showWarning("O produto '$codigo' não é selecionavel")
+              }
+            }
+          }
         }
       }
       edtBarcode.focus()
