@@ -75,9 +75,9 @@ data class BarcodeVolume(
   val produtoValidade: ProdutoValidade?,
                         ) {
   fun isDataVencimentoValida(): Boolean {
-    val validadeAtual = produtoValidade?.dataValidade ?: return true
-    val dataEtiqueta = dataValidade?.withDayOfMonth(1) ?: return true
-    return validadeAtual.isAfter(dataEtiqueta) || dataEtiqueta == dataValidade
+    return true // val validadeAtual = produtoValidade?.dataValidade ?: return true
+    // val dataEtiqueta = dataValidade?.withDayOfMonth(1) ?: return true
+    // return validadeAtual.isAfter(dataEtiqueta) || dataEtiqueta == dataValidade
   }
 }
 
