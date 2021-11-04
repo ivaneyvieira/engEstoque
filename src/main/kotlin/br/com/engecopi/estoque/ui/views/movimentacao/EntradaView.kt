@@ -1,6 +1,7 @@
 package br.com.engecopi.estoque.ui.views.movimentacao
 
 import br.com.engecopi.estoque.model.ItemNota
+import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressoraUsuario
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.TipoNota
@@ -115,8 +116,7 @@ class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(customFo
               val produto = it.item
               if (produto != null) openDilaogProduto(produto)
             }
-          }
-          //gridProduto.setSelectionMode(Grid.SelectionMode.SINGLE)
+          } //gridProduto.setSelectionMode(Grid.SelectionMode.SINGLE)
           operationButton?.removeClickShortcut()
         }
       }
@@ -238,10 +238,12 @@ class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(customFo
   }
 
   private fun openDilaogProduto(produtoItem: ProdutoNotaVo) {
-    val dialog = DialogItemNota(produtoItem) {
+    val nota = formBinder.bean.nota ?: return
+    val dialog = DialogItemNota(nota, produtoItem) {
       gridProduto.selectionModel.select(produtoItem)
       gridProduto.dataProvider.refreshAll()
     }
+
     dialog.setWidth("400px")
     dialog.showDialog()
   }
