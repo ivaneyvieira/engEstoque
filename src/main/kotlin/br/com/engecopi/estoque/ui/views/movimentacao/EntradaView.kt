@@ -109,6 +109,15 @@ class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(customFo
         }
         grupo {
           produtoField(operation, binder, "Entrada")
+          gridProduto.editor.isEnabled = false
+          gridProduto.addItemClickListener {
+            if (it.mouseEventDetails.isDoubleClick && isAdmin) {
+              val produto = it.item
+              if (produto != null) openDilaogProduto(produto)
+            }
+          }
+          //gridProduto.setSelectionMode(Grid.SelectionMode.SINGLE)
+          operationButton?.removeClickShortcut()
         }
       }
       if (!isAdmin && operation == UPDATE) binder.setReadOnly(true)
@@ -138,7 +147,6 @@ class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(customFo
             }
           })
         }
-
         button
       }.id = "btnPrint"
       column(EntradaVo::lojaNF) {
@@ -229,17 +237,26 @@ class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(customFo
     if (bean.produtosCompletos()) hideForm()
   }
 
+  private fun openDilaogProduto(produtoItem: ProdutoNotaVo) {
+    val dialog = DialogItemNota(produtoItem) {
+      gridProduto.selectionModel.select(produtoItem)
+      gridProduto.dataProvider.refreshAll()
+    }
+    dialog.setWidth("400px")
+    dialog.showDialog()
+  }
+
   private fun Grid<ProdutoNotaVo>.execBarcode(barcode: String?) {
     if (!barcode.isNullOrBlank()) {
-      val itensBarcode = this.dataProvider.getAll().filter {
+      val produtoItem = this.dataProvider.getAll().firstOrNull {
         val produto = it.produto
         produto.barcodeGtin.contains(barcode) || produto.codebar == barcode
-      }
+      } ?: return
 
-      itensBarcode.forEach {
-        this.selectionModel.select(it)
-        it.selecionado = true
-      }
+      this.selectionModel.select(produtoItem)
+      produtoItem.selecionado = true
+
+      openDilaogProduto(produtoItem)
     }
   }
 }
