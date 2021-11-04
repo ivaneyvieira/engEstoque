@@ -15,6 +15,7 @@ import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.ICrudView
 import br.com.engecopi.saci.beans.NotaProdutoSaci
+import br.com.engecopi.utils.formatMesAno
 import br.com.engecopi.utils.localDate
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -502,6 +503,8 @@ class ProdutoNotaVo(
   var grupoSelecao: ETipoGrupo = WHITE
   val ordermSelecao: Int
     get() = grupoSelecao.ordem
+  val dataValidadeStr
+    get() = dataValidade.formatMesAno()
 
   fun allowSelect(): Boolean {
     val status = this.value?.status ?: return false

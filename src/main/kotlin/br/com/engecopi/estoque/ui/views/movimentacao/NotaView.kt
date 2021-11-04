@@ -169,30 +169,7 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
         val edtDataValidade = DateField().apply {
           placeholder = "mm/aaaa"
           this.dateFormat = "MM/yyyy"
-          this.resolution = DateResolution.MONTH/*
-          this.addValueChangeListener {
-            if (it.isUserOriginated) {
-              val nota: NotaVo? = binder.bean
-              val bean = this@grid.editor.binder.bean
-              val meses = bean.produto.mesesVencimento
-              val dataEntrada = nota?.lancamento
-              val dataEmissao = nota?.dataEmissao
-              val data = it.value
-              val msgerro =
-                      ValidadeProduto.erroValidacao(
-                        produto = binder.bean.codigo,
-                        dataValidade = data,
-                        dataEntrada = dataEntrada,
-                        dataEmissao = dataEmissao,
-                        mesesValidade = meses,
-                                                   )
-              if (msgerro != null) {
-                Notification.show(msgerro, Notification.Type.ERROR_MESSAGE)
-                it.source.clear()
-              }
-            }
-          }
- */
+          this.resolution = DateResolution.MONTH
         }
 
         addColumnFor(ProdutoNotaVo::codigo) {
@@ -203,10 +180,9 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
           expandRatio = 5
           caption = "Descrição"
         }
-        addColumnFor(ProdutoNotaVo::dataValidade) {
+        addColumnFor(ProdutoNotaVo::dataValidadeStr) {
           expandRatio = 1
           caption = "Validade"
-          setEditorComponent(edtDataValidade)
         }
         addColumnFor(ProdutoNotaVo::localizacao) {
           expandRatio = 4
@@ -241,7 +217,7 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
             comboLoc.value = event.bean.localizacao
           }
         }
-        val nav = FastNavigation<ProdutoNotaVo>(this, false, true)
+        val nav = FastNavigation(this, false, true)
         nav.changeColumnAfterLastRow = true
         nav.openEditorWithSingleClick = true
         nav.allowArrowToChangeRow = true
