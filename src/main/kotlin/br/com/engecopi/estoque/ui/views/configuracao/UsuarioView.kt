@@ -8,17 +8,32 @@ import br.com.engecopi.estoque.viewmodel.configuracao.UsuarioCrudVo
 import br.com.engecopi.estoque.viewmodel.configuracao.UsuarioViewModel
 import br.com.engecopi.framework.model.AppPrinter
 import br.com.engecopi.framework.model.PrinterInfo
-import br.com.engecopi.framework.ui.view.*
+import br.com.engecopi.framework.ui.view.CrudLayoutView
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
-import com.github.mvysny.karibudsl.v8.*
+import br.com.engecopi.framework.ui.view.bindItensSet
+import br.com.engecopi.framework.ui.view.grupo
+import br.com.engecopi.framework.ui.view.reloadBinderOnChange
+import br.com.engecopi.framework.ui.view.row
+import com.github.mvysny.karibudsl.v8.AutoView
+import com.github.mvysny.karibudsl.v8.alignment
+import com.github.mvysny.karibudsl.v8.bind
+import com.github.mvysny.karibudsl.v8.checkBox
+import com.github.mvysny.karibudsl.v8.checkBoxGroup
+import com.github.mvysny.karibudsl.v8.comboBox
+import com.github.mvysny.karibudsl.v8.expandRatio
+import com.github.mvysny.karibudsl.v8.isExpanded
+import com.github.mvysny.karibudsl.v8.perc
+import com.github.mvysny.karibudsl.v8.textField
+import com.github.mvysny.karibudsl.v8.twinColSelect
+import com.github.mvysny.karibudsl.v8.w
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
 
 @AutoView
-class UsuarioView : CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>(false), IUsuarioView {
+class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>(false), IUsuarioView {
   private val isAdmin = RegistryUserInfo.usuarioDefault.admin
-
+  
   init {
     viewModel = UsuarioViewModel(this)
     layoutForm {
@@ -49,25 +64,26 @@ class UsuarioView : CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>(false), IUsu
               isTextInputAllowed = false
               this.emptySelectionCaption = "Todas"
               setItems(viewModel.lojas)
-              setItemCaptionGenerator { it.sigla }
+              setItemCaptionGenerator {it.sigla}
               bind(binder).bind(UsuarioCrudVo::loja)
               reloadBinderOnChange(binder)
             }
-
+            
             comboBox<PrinterInfo>("Impressora") {
               expandRatio = 1f
               val itens = AppPrinter.printersInfo
               setItems(itens)
-              setItemCaptionGenerator { it.description }
-
+              setItemCaptionGenerator {it.description}
+              
               isTextInputAllowed = false
-              bind(binder).withConverter({ printerInfo ->
+              bind(binder).withConverter({printerInfo ->
                                            printerInfo?.name ?: ""
-                                         }, { name ->
-                                           itens.find { it.name == name }
-                                         }).bind(UsuarioCrudVo::impressora)
+                                         }, {name ->
+                                           itens.find {it.name == name}
+                                         })
+                .bind(UsuarioCrudVo::impressora)
             }
-
+            
             checkBox("Administrador") {
               bind(binder).bind(UsuarioCrudVo::admin)
               alignment = Alignment.BOTTOM_RIGHT
@@ -131,7 +147,7 @@ class UsuarioView : CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>(false), IUsu
           }
         }
       }
-      if (!isAdmin && operation == UPDATE) binder.setReadOnly(true)
+      if(!isAdmin && operation == UPDATE) binder.setReadOnly(true)
     }
     form("Usuários")
     gridCrud {
@@ -152,7 +168,7 @@ class UsuarioView : CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>(false), IUsu
       column(UsuarioCrudVo::loja) {
         expandRatio = 1
         caption = "Loja"
-        setRenderer({ loja -> loja?.sigla ?: "Todas" }, TextRenderer())
+        setRenderer({loja -> loja?.sigla ?: "Todas"}, TextRenderer())
       }
       column(UsuarioCrudVo::localStr) {
         expandRatio = 1

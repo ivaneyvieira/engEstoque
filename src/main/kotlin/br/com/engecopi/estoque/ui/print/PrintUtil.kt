@@ -2,7 +2,10 @@ package br.com.engecopi.estoque.ui.print
 
 import br.com.engecopi.estoque.model.Etiqueta
 import br.com.engecopi.estoque.model.ItemNota
-import br.com.engecopi.estoque.model.LancamentoOrigem.*
+import br.com.engecopi.estoque.model.LancamentoOrigem.ABASTECI
+import br.com.engecopi.estoque.model.LancamentoOrigem.ENTREGA_F
+import br.com.engecopi.estoque.model.LancamentoOrigem.EXPEDICAO
+import br.com.engecopi.estoque.model.LancamentoOrigem.RESSUPRI
 import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
@@ -24,7 +27,7 @@ object PrintUtil {
   fun imprimeNotaConcluida(nota: Nota?) {
     nota ?: return
     val printer = RegistryUserInfo.usuarioDefault.impressoraExpedicao()
-    val impressoraNota = when (nota.lancamentoOrigem) {
+    val impressoraNota = when(nota.lancamentoOrigem) {
       ABASTECI  -> Printer(printer)
       EXPEDICAO -> Printer(printer)
       ENTREGA_F -> Printer("ENTREGA")
@@ -37,19 +40,21 @@ object PrintUtil {
     val textNota = this.imprimirNota(nota)
     printText(impressoraNota, textNota)
   }
-
+  
   fun printText(impressora: Printer?, text: String?) {
     impressora ?: return
-    if (!text.isNullOrBlank()) {
+    if(!text.isNullOrBlank()) {
       when {
         QuerySaci.test -> {
           val image = ZPLPreview.createPdf(text, "4x2")
-          if (image != null) showImage("Preview ${impressora.nome}", image)
+          if(image != null) showImage("Preview ${impressora.nome}", image)
         }
         else           -> try {
           AppPrinter.printCups(impressora.nome, text)
-        } catch (e: ECupsPrinter) {
-          Notification("Erro", "\n" + e.message, ERROR_MESSAGE).apply {
+        } catch(e: ECupsPrinter) {
+          Notification("Erro",
+                       "\n" + e.message,
+                       ERROR_MESSAGE).apply {
             styleName += " " + ValoTheme.NOTIFICATION_CLOSABLE
             position = TOP_CENTER
             show(Page.getCurrent())
@@ -58,40 +63,42 @@ object PrintUtil {
       }
     }
   }
-
+  
   private fun imprimirNotaConferida(itens: List<ItemNota>): String {
     val etiquetas = Etiqueta.findByStatus(CONFERIDA, "ETENT")
-    return etiquetas.joinToString(separator = "\n") { etiqueta ->
+    return etiquetas.joinToString(separator = "\n") {etiqueta ->
       imprimir(itens, etiqueta)
     }
   }
-
+  
   private fun imprimirNota(nota: Nota): String {
     val itens = nota.itensNota()
-    val itensIncluidos = itens.filter { it.status == INCLUIDA }
-    val itensConferidos = itens.filter { it.status == CONFERIDA }
-    return if (itensIncluidos.isEmpty()) {
+    val itensIncluidos = itens.filter {it.status == INCLUIDA}
+    val itensConferidos = itens.filter {it.status == CONFERIDA}
+    return if(itensIncluidos.isEmpty()) {
       imprimirNotaConferida(itensConferidos)
     }
     else ""
   }
-
+  
   private fun imprimir(itens: List<ItemNota>, etiqueta: Etiqueta): String {
-    return itens.map { imprimir(it, etiqueta) }.distinct().joinToString(separator = "\n")
+    return itens.map {imprimir(it, etiqueta)}
+      .distinct()
+      .joinToString(separator = "\n")
   }
-
+  
   private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {
     itemNota ?: return ""
     val print = itemNota.printEtiqueta()
-    if (!usuarioDefault.admin) itemNota.let { item ->
+    if(!usuarioDefault.admin) itemNota.let {item ->
       item.refresh()
       item.impresso = true
       item.update()
     }
-
+    
     return print.print(etiqueta.template)
   }
-
+  
   private fun showImage(title: String, image: ByteArray) {
     MessageDialog.image(title, image)
   }

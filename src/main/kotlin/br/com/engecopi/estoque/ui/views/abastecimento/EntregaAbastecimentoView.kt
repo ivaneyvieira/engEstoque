@@ -8,10 +8,23 @@ import br.com.engecopi.estoque.ui.views.movimentacao.NotaView
 import br.com.engecopi.estoque.viewmodel.abastecimento.EntregaAbastecimentoViewModel
 import br.com.engecopi.estoque.viewmodel.abastecimento.EntregaAbastecimentoVo
 import br.com.engecopi.estoque.viewmodel.abastecimento.IEntregaAbastecimentoView
-import br.com.engecopi.framework.ui.view.*
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
-import com.github.mvysny.karibudsl.v8.*
+import br.com.engecopi.framework.ui.view.dateFormat
+import br.com.engecopi.framework.ui.view.default
+import br.com.engecopi.framework.ui.view.grupo
+import br.com.engecopi.framework.ui.view.intFormat
+import br.com.engecopi.framework.ui.view.row
+import com.github.mvysny.karibudsl.v8.AutoView
+import com.github.mvysny.karibudsl.v8.bind
+import com.github.mvysny.karibudsl.v8.comboBox
+import com.github.mvysny.karibudsl.v8.dateField
+import com.github.mvysny.karibudsl.v8.expandRatio
+import com.github.mvysny.karibudsl.v8.label
+import com.github.mvysny.karibudsl.v8.px
+import com.github.mvysny.karibudsl.v8.textField
+import com.github.mvysny.karibudsl.v8.verticalLayout
+import com.github.mvysny.karibudsl.v8.w
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 import com.vaadin.shared.ui.ContentMode.HTML
 import com.vaadin.ui.Alignment
@@ -20,26 +33,28 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView("entrega_abastecimento")
-class EntregaAbastecimentoView :
-        NotaView<EntregaAbastecimentoVo, EntregaAbastecimentoViewModel, IEntregaAbastecimentoView>(customFooterLayout = true),
-        IEntregaAbastecimentoView {
+class EntregaAbastecimentoView:
+  NotaView<EntregaAbastecimentoVo, EntregaAbastecimentoViewModel, IEntregaAbastecimentoView>(customFooterLayout = true),
+  IEntregaAbastecimentoView {
   var formCodBar: PnlCodigoBarras? = null
-
+  
   override fun enter(event: ViewChangeEvent) {
     super.enter(event)
     formCodBar?.focusEdit()
   }
-
+  
   init {
     viewModel = EntregaAbastecimentoViewModel(this)
     layoutForm {
-      if (operation == ADD) {
+      if(operation == ADD) {
         binder.bean.lojaNF = lojaDeposito
         binder.bean.usuario = usuario
       }
       formLayout.apply {
-        w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
-
+        w =
+          (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+            .px
+        
         grupo("Nota fiscal de saída") {
           verticalLayout {
             row {
@@ -47,7 +62,7 @@ class EntregaAbastecimentoView :
               lojaField(operation, binder)
               comboBox<TipoNota>("Tipo") {
                 expandRatio = 2f
-                default { it.descricao }
+                default {it.descricao}
                 isReadOnly = true
                 setItems(TipoNota.valuesSaida())
                 bind(binder).bind(EntregaAbastecimentoVo::tipoNota)
@@ -72,10 +87,10 @@ class EntregaAbastecimentoView :
           }
         }
         row {
-          label("<b>Produto</b>") {
+          label("<b>Produto</b>"){
             contentMode = HTML
           }
-
+    
           addComponent(footerLayout)
           setComponentAlignment(footerLayout, Alignment.BOTTOM_LEFT)
           addComponentsAndExpand(Label(""))
@@ -84,7 +99,7 @@ class EntregaAbastecimentoView :
           produtoField(operation, binder, "Saída")
         }
       }
-      if (!isAdmin && operation == UPDATE) binder.setReadOnly(true)
+      if(!isAdmin && operation == UPDATE) binder.setReadOnly(true)
     }
     form("Entrega abastecimento")
     gridCrud {
@@ -98,7 +113,7 @@ class EntregaAbastecimentoView :
       }
       column(EntregaAbastecimentoVo::lojaNF) {
         caption = "Loja NF"
-        setRenderer({ loja -> loja?.sigla ?: "" }, TextRenderer())
+        setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
       }
       column(EntregaAbastecimentoVo::tipoNotaDescricao) {
         caption = "TipoNota"
@@ -131,11 +146,11 @@ class EntregaAbastecimentoView :
       }
       column(EntregaAbastecimentoVo::localizacao) {
         caption = "Localização"
-        setRenderer({ it?.toString() }, TextRenderer())
+        setRenderer({it?.toString()}, TextRenderer())
       }
       column(EntregaAbastecimentoVo::usuario) {
         caption = "Usuário"
-        setRenderer({ it?.loginName ?: "" }, TextRenderer())
+        setRenderer({it?.loginName ?: ""}, TextRenderer())
         setSortProperty("usuario.loginName")
       }
       column(EntregaAbastecimentoVo::rotaDescricao) {
@@ -145,24 +160,25 @@ class EntregaAbastecimentoView :
         caption = "Cliente"
         setSortProperty("nota.cliente")
       }
-      val itens = viewModel.notasConferidas().groupBy { it.nota?.numero }.entries.sortedBy { entry ->
-        entry.value.map { it.id }.maxOrNull()
-      }.mapNotNull { it.key }
-
-      grid.setStyleGenerator { saida ->
-        if (saida.status == CONFERIDA) {
+      val itens = viewModel.notasConferidas().groupBy {it.nota?.numero}.entries.sortedBy {entry ->
+        entry.value.map {it.id}
+          .maxOrNull()
+      }.mapNotNull {it.key}
+      
+      grid.setStyleGenerator {saida ->
+        if(saida.status == CONFERIDA) {
           val numero = saida.numeroNF
           val index = itens.indexOf(numero)
-          if (index % 2 == 0) "pendente"
+          if(index % 2 == 0) "pendente"
           else "pendente2"
         }
         else null
       }
     }
   }
-
+  
   private fun formCodbar(): PnlCodigoBarras {
-    return PnlCodigoBarras("Código de barras") { key ->
+    return PnlCodigoBarras("Código de barras") {key ->
       viewModel.findKey(key)
       refreshGrid()
     }

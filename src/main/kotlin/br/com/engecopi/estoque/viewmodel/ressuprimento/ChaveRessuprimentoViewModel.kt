@@ -1,10 +1,15 @@
 package br.com.engecopi.estoque.viewmodel.ressuprimento
 
-import br.com.engecopi.estoque.model.*
+import br.com.engecopi.estoque.model.Loja
+import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
+import br.com.engecopi.estoque.model.TipoMov
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
+import br.com.engecopi.estoque.model.TipoNota
+import br.com.engecopi.estoque.model.Usuario
+import br.com.engecopi.estoque.model.ViewPedidoRessuprimento
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.model.query.QViewPedidoRessuprimento
 import br.com.engecopi.estoque.ui.log
@@ -16,67 +21,75 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class ChaveRessuprimentoViewModel(view: IChaveRessuprimentoView) :
-        CrudViewModel<ViewPedidoRessuprimento, QViewPedidoRessuprimento, ChaveRessuprimentoVo, IChaveRessuprimentoView>(
-          view) {
+class ChaveRessuprimentoViewModel(view: IChaveRessuprimentoView):
+  CrudViewModel<ViewPedidoRessuprimento, QViewPedidoRessuprimento, ChaveRessuprimentoVo, IChaveRessuprimentoView>(view) {
   private val processing = ChaveRessuprimentoProcessamento(view)
   private val print = ChaveRessuprimentoPrint()
   private val find = ChaveRessuprimentoFind(view)
-
+  
   fun imprimeTudo() = execList {
-    print.imprimeTudo().updateView()
+    print.imprimeTudo()
+      .updateView()
   }
-
+  
   fun imprimir(nota: Nota?) = execList {
-    print.imprimir(nota).updateView()
+    print.imprimir(nota)
+      .updateView()
   }
-
+  
   fun findNotaSaidaKey(key: String) = execList {
-    find.findNotaSaidaKey(key).updateView()
+    find.findNotaSaidaKey(key)
+      .updateView()
   }
-
+  
   fun findLoja(storeno: Int?) = find.findLoja(storeno)
-
+  
   fun abreviacoes(prdno: String?, grade: String?) = find.abreviacoes(prdno, grade)
-
+  
   fun saldoProduto(notaProdutoSaci: NotaProdutoSaci, abreviacao: String) =
-          find.saldoProduto(notaProdutoSaci, abreviacao)
-
+    find.saldoProduto(notaProdutoSaci, abreviacao)
+  
   override fun newBean(): ChaveRessuprimentoVo {
     return ChaveRessuprimentoVo()
   }
-
+  
   fun processaKey(notasSaci: List<ItemRessuprimento>) = exec {
-    processing.processaKey(notasSaci).updateView()
+    processing.processaKey(notasSaci)
+      .updateView()
   }
-
+  
   override fun update(bean: ChaveRessuprimentoVo) {
     log?.error("Atualização não permitida")
   }
-
+  
   override fun add(bean: ChaveRessuprimentoVo) {
     log?.error("Inserssão não permitida")
   }
-
+  
   override fun delete(bean: ChaveRessuprimentoVo) {
     val nota = bean.findEntity() ?: return
     val saida = Nota.findSaida(nota.loja, nota.numero) ?: return
-
-    QItemNota().nota.equalTo(saida).status.notIn(ENTREGUE, ENT_LOJA).localizacao.startsWith(bean.abreviacao).delete()
-
-    if (saida.itensNota().isEmpty()) saida.delete()
+    
+    QItemNota().nota.equalTo(saida)
+      .status.notIn(ENTREGUE, ENT_LOJA)
+      .localizacao.startsWith(bean.abreviacao)
+      .delete()
+    
+    if(saida.itensNota().isEmpty())
+      saida.delete()
   }
-
+  
   override val query: QViewPedidoRessuprimento
     get() = QViewPedidoRessuprimento()
-
+  
   override fun ViewPedidoRessuprimento.toVO(): ChaveRessuprimentoVo {
     val bean = this
     return ChaveRessuprimentoVo().apply {
       numero = bean.numero
       numeroBaixa = bean.numeroBaixa.filter {
         it.abreviacoes.contains(bean.abreviacao)
-      }.joinToString(" ") { it.numero }
+      }
+        .joinToString(" ") {it.numero}
       tipoMov = bean.tipoMov
       tipoNota = bean.tipoNota
       rota = bean.rota
@@ -95,11 +108,11 @@ class ChaveRessuprimentoViewModel(view: IChaveRessuprimentoView) :
   }
 }
 
-class ChaveRessuprimentoVo : EntityVo<ViewPedidoRessuprimento>() {
+class ChaveRessuprimentoVo: EntityVo<ViewPedidoRessuprimento>() {
   override fun findEntity(): ViewPedidoRessuprimento? {
     return ViewPedidoRessuprimento.findSaida(lojaDeposito, numero, abreviacao)
   }
-
+  
   var numero: String = ""
   var numeroBaixa: String = ""
   var tipoMov: TipoMov = ENTRADA
@@ -125,22 +138,20 @@ class ChaveRessuprimentoVo : EntityVo<ViewPedidoRessuprimento>() {
 
 data class ChaveGroup(val nota: Nota?, val abreviacao: String?)
 
-data class ItemRessuprimento(
-  val notaProdutoSaci: NotaProdutoSaci,
-  val saldo: Int,
-  val abrevicao: String,
-  var selecionado: Boolean = false,
-                            ) {
+data class ItemRessuprimento(val notaProdutoSaci: NotaProdutoSaci,
+                             val saldo: Int,
+                             val abrevicao: String,
+                             var selecionado: Boolean = false) {
   val prdno = notaProdutoSaci.prdno
   val grade = notaProdutoSaci.grade
   val nome = notaProdutoSaci.nome
   val quant = notaProdutoSaci.quant ?: 0
   val saldoFinal = saldo - quant
-
+  
   fun isSave() = notaProdutoSaci.isSave()
 }
 
-interface IChaveRessuprimentoView : ICrudView {
+interface IChaveRessuprimentoView: ICrudView {
   fun updateGrid()
 }
 

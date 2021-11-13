@@ -4,20 +4,18 @@ import br.com.engecopi.estoque.model.etlSaci.EntryID
 import br.com.engecopi.utils.localDate
 import io.ebean.DB
 
-class TransferenciaAutomatica(
-  id: String,
-  val storeno: Int,
-  val pdvno: Int,
-  val xano: Int,
-  val data: Int,
-  val storenoFat: Int,
-  val nffat: String,
-  val storenoTransf: Int,
-  val nftransf: String,
-                             ) : EntryID(id) {
+class TransferenciaAutomatica(id: String,
+                              val storeno: Int,
+                              val pdvno: Int,
+                              val xano: Int,
+                              val data: Int,
+                              val storenoFat: Int,
+                              val nffat: String,
+                              val storenoTransf: Int,
+                              val nftransf: String): EntryID(id) {
   override val chave: String
     get() = "$storenoFat$nffat$storenoTransf$nftransf"
-
+  
   companion object {
     fun notaFatura(lojaTransferencia: Int?, numeroSerieTransferencia: String?): List<NotaBaixaFatura> {
       lojaTransferencia ?: return emptyList()
@@ -30,11 +28,13 @@ class TransferenciaAutomatica(
         .setParameter("lojaTransferencia", lojaTransferencia)
         .setParameter("numeroSerieTransferencia", numeroSerieTransferencia)
         .findList()
-        .map { nf ->
-          NotaBaixaFatura(nf.storenoFat, nf.nffat, nf.data.localDate())
+        .map {nf ->
+          NotaBaixaFatura(nf.storenoFat,
+                          nf.nffat,
+                          nf.data.localDate())
         }
     }
-
+  
     fun notaBaixa(lojaFatura: Int?, numeroSerieFatura: String?): List<NotaBaixaFatura> {
       lojaFatura ?: return emptyList()
       numeroSerieFatura ?: return emptyList()
@@ -46,8 +46,10 @@ class TransferenciaAutomatica(
         .setParameter("lojaFatura", lojaFatura)
         .setParameter("numeroSerieFatura", numeroSerieFatura)
         .findList()
-        .map { nf ->
-          NotaBaixaFatura(nf.storenoTransf, nf.nftransf, nf.data.localDate())
+        .map {nf ->
+          NotaBaixaFatura(nf.storenoTransf,
+                          nf.nftransf,
+                          nf.data.localDate())
         }
     }
   }

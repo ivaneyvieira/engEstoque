@@ -10,7 +10,13 @@ import br.com.engecopi.framework.ui.view.LayoutView
 import br.com.engecopi.framework.ui.view.dateFormat
 import br.com.engecopi.framework.ui.view.expand
 import br.com.engecopi.saci.beans.NotaSaci
-import com.github.mvysny.karibudsl.v8.*
+import com.github.mvysny.karibudsl.v8.AutoView
+import com.github.mvysny.karibudsl.v8.addColumnFor
+import com.github.mvysny.karibudsl.v8.button
+import com.github.mvysny.karibudsl.v8.cssLayout
+import com.github.mvysny.karibudsl.v8.grid
+import com.github.mvysny.karibudsl.v8.horizontalLayout
+import com.github.mvysny.karibudsl.v8.isExpanded
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.CssLayout
@@ -19,12 +25,12 @@ import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
 
 @AutoView("painel")
-class PainelGeralView : LayoutView<PainelGeralViewModel>(), IPainelGeralView {
+class PainelGeralView: LayoutView<PainelGeralViewModel>(), IPainelGeralView {
   val saidaPendenteDataProvider = ListDataProvider<NotaSaci>(mutableListOf())
   val entradaPendenteDataProvider = ListDataProvider<NotaSaci>(mutableListOf())
   val saidaCanceladaDataProvider = ListDataProvider<NotaSaci>(mutableListOf())
   val entradaCanceladaDataProvider = ListDataProvider<NotaSaci>(mutableListOf())
-
+  
   init {
     viewModel = PainelGeralViewModel(this)
     setSizeFull()
@@ -86,7 +92,7 @@ class PainelGeralView : LayoutView<PainelGeralViewModel>(), IPainelGeralView {
   private fun CssLayout.gridNotaSaci(dataProvider: ListDataProvider<NotaSaci>, tipoMov: TipoMov): Grid<NotaSaci> {
     return grid(dataProvider = dataProvider) {
       setSizeFull()
-      if (tipoMov == ENTRADA) {
+      if(tipoMov == ENTRADA) {
         addColumnFor(NotaSaci::invno) {
           caption = "NI"
         }
@@ -100,7 +106,7 @@ class PainelGeralView : LayoutView<PainelGeralViewModel>(), IPainelGeralView {
       }
       addColumnFor(NotaSaci::tipo) {
         caption = "Tipo"
-        setRenderer({ tipo -> TipoNota.value(tipo)?.descricao ?: "" }, TextRenderer())
+        setRenderer({tipo -> TipoNota.value(tipo)?.descricao ?: ""}, TextRenderer())
       }
     }
   }

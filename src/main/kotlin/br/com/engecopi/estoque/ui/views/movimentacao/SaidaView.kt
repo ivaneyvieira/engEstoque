@@ -529,9 +529,9 @@ class DlgNotaSaida(
     sortOrder = listOf(GridSortOrder(grupoSelecaoCol, ASCENDING), GridSortOrder(dateUpdateCol, DESCENDING))
   }
 
-  private fun execBarcode(barcode: String?) {
+  private fun execBarcode2(barcode: String?) {
     if (!barcode.isNullOrBlank()) {
-      val barcodeVolume = viewModel.findByBarcodeProduto(barcode)
+      val barcodeVolume = viewModel.findByBarcodeProduto2(barcode)
       if (barcodeVolume == null) {
         viewModel.view.showWarning("Produto não encontrado no saci")
       }
@@ -562,6 +562,34 @@ class DlgNotaSaida(
             }
           }
         }
+      }
+      edtBarcode.focus()
+      edtBarcode.selectAll()
+    }
+  }
+
+  private fun execBarcode(barcode: String?) {
+    if(!barcode.isNullOrBlank()) {
+      val listProduto = viewModel.findByBarcodeProduto(barcode)
+      if(listProduto.isEmpty()) viewModel.view.showWarning("Produto não encontrado no saci")
+      else {
+        val produtosVO = gridProdutos.dataProvider.getAll()
+        produtosVO.forEach {it.updateItem(false)}
+        val produtos = produtosVO.mapNotNull {it.value?.produto}
+        val interProdutos = produtos intersect listProduto
+        interProdutos.forEach {produto ->
+          val itemVO = produtosVO.filter {it.value?.produto?.id == produto.id}
+          itemVO.forEach {item ->
+            val codigo = item.value?.codigo?.trim()
+            when {
+              //TODO Saldo Negativo
+              // item.saldoFinal < 0 -> viewModel.view.showWarning("O saldo final do produto '$codigo' está negativo")
+              item.allowSelect() -> selecionaProduto(item)
+              else               -> viewModel.view.showWarning("O produto '$codigo' não é selecionavel")
+            }
+          }
+        }
+        if(interProdutos.isEmpty()) viewModel.view.showWarning("Produto não encontrado no grid")
       }
       edtBarcode.focus()
       edtBarcode.selectAll()

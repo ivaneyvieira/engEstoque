@@ -2,7 +2,9 @@ package br.com.engecopi.estoque.model
 
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
-import br.com.engecopi.estoque.model.TipoNota.*
+import br.com.engecopi.estoque.model.TipoNota.COMPRA
+import br.com.engecopi.estoque.model.TipoNota.DEV_CLI
+import br.com.engecopi.estoque.model.TipoNota.DEV_FOR
 import br.com.engecopi.estoque.ui.log
 import br.com.engecopi.saci.beans.DevolucaoFornecedor
 import br.com.engecopi.saci.beans.NotaSaci
@@ -17,7 +19,7 @@ object RepositoryAvisoNotas {
   private val notaEntradaSalva = mutableListOf<Nota>()
   private val notaSaidaSalva = mutableListOf<Nota>()
   private val listEvents = ArrayList<(RepositoryAvisoNotas) -> Unit>()
-
+  
   fun addEvent(event: (RepositoryAvisoNotas) -> Unit) {
     listEvents.clear()
     listEvents.add(event)
@@ -31,9 +33,9 @@ object RepositoryAvisoNotas {
         refreshNotaEntradaTodas()
         refreshNotaEntradaApp()
         refreshNotaSaidaApp()
-        listEvents.forEach { event -> event(this) }
+        listEvents.forEach {event -> event(this)}
       }
-    } catch (e: Throwable) {
+    } catch(e: Throwable) {
       log?.warn("Erro no refresh")
       e.printStackTrace()
     }
@@ -50,7 +52,8 @@ object RepositoryAvisoNotas {
   }
 
   private fun refreshDevolucaoFornecedor() {
-    devolucaoFornecedor.clear() //   devolucaoFornecedor.addAll(saci.findDevolucaoFornecedor(storeno, abreviacao))
+    devolucaoFornecedor.clear()
+    //   devolucaoFornecedor.addAll(saci.findDevolucaoFornecedor(storeno, abreviacao))
   }
 
   private fun refreshNotaEntradaTodas() {
@@ -60,58 +63,61 @@ object RepositoryAvisoNotas {
 
   private fun refreshNotaSaidaTodas() {
     notaSaidaTodas.clear()
-    val lista = saci.findNotaSaidaSaci(storeno, abreviacao).sortedBy { it.tipo }
+    val lista =
+      saci.findNotaSaidaSaci(storeno, abreviacao)
+        .sortedBy {it.tipo}
     notaSaidaTodas.addAll(lista)
   }
 
   fun notaEntradaDevolvida(): List<NotaSaci> {
-    return notaEntradaTodas.filter { nfEntrada ->
-      devolucaoFornecedor.any { dev ->
+    return notaEntradaTodas.filter {nfEntrada ->
+      devolucaoFornecedor.any {dev ->
         dev.numeroSerieEntrada == nfEntrada.numero
       }
     }
   }
 
   fun notaEntradaCancelada(): List<NotaSaci> {
-    val canceladas = notaSaidaTodas.filter { it.cancelado == "S" }
-    return canceladas.filter { nfEntrada ->
-      notaEntradaSalva.any { nota ->
+    val canceladas = notaSaidaTodas.filter {it.cancelado == "S"}
+    return canceladas.filter {nfEntrada ->
+      notaEntradaSalva.any {nota ->
         nota.numero == nfEntrada.numeroSerie
       }
     }
   }
 
   fun notaSaidaCancelada(): List<NotaSaci> {
-    val canceladas = notaSaidaTodas.filter { it.cancelado == "S" }
-    return canceladas.filter { nfSaida ->
-      notaSaidaSalva.any { nota ->
+    val canceladas = notaSaidaTodas.filter {it.cancelado == "S"}
+    return canceladas.filter {nfSaida ->
+      notaSaidaSalva.any {nota ->
         nota.numero == nfSaida.numeroSerie
       }
     }
   }
 
   fun notaEntradaPendente(): List<NotaSaci> {
-    val naoCanceladas = notaSaidaTodas.filter { it.cancelado == "N" }
-    return naoCanceladas.filter { nfSaida ->
+    val naoCanceladas = notaSaidaTodas.filter {it.cancelado == "N"}
+    return naoCanceladas.filter {nfSaida ->
       nfSaida.entradaAceita()
-    }.filter { nfEntrada ->
-      !notaEntradaSalva.any { nota ->
-        nota.numero == nfEntrada.numeroSerie
+    }.filter {nfEntrada ->
+        !notaEntradaSalva.any {nota ->
+          nota.numero == nfEntrada.numeroSerie
+        }
       }
-    }
   }
 
   fun notaSaidaPendente(): List<NotaSaci> {
     val naoCanceladas = notaSaidaTodas.filter {
       it.cancelado == "N"
-    }.sortedBy { it.tipo }
-    return naoCanceladas.filter { nfSaida ->
-      nfSaida.saidaAceita()
-    }.filter { nfSaida ->
-      !notaSaidaSalva.any { nota ->
-        nota.numero == nfSaida.numeroSerie
-      }
     }
+      .sortedBy {it.tipo}
+    return naoCanceladas.filter {nfSaida ->
+      nfSaida.saidaAceita()
+    }.filter {nfSaida ->
+        !notaSaidaSalva.any {nota ->
+          nota.numero == nfSaida.numeroSerie
+        }
+      }
   }
 
   fun hasWarning(): Boolean {

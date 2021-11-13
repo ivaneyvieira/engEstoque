@@ -1,5 +1,6 @@
 package br.com.engecopi.estoque.viewmodel.movimentacao
 
+import br.com.engecopi.estoque.model.RegistryUserInfo
 import br.com.engecopi.utils.formatMesAno
 import java.time.LocalDate
 import kotlin.math.roundToInt
@@ -11,23 +12,30 @@ class ValidadeProduto {
                       dataEntrada: LocalDate?,
                       dataEmissao: LocalDate?,
                       mesesValidade: Int?): String? {
-      return when (mesesValidade) {
-        null -> {
-          when (dataValidade) {
-            null -> null
-            else -> "Produto '$produto' não deve possui data de validade"
-          }
+      return when {
+        RegistryUserInfo.usuarioDefault.admin -> {
+          null
         }
-        else -> {
-          when (dataValidade) {
-            null -> "Produto '$produto' deveria ter data de validade"
-            else -> {
-              val dataValidadeMinima = dataValidadeMinima(dataEntrada, mesesValidade)
-              val dataValidadeMaxima = dataValidadeMaxima(dataEmissao, mesesValidade)
-              when {
-                dataValidade.isBefore(dataValidadeMinima) -> "Produto '$produto'. Mes de validade inválido (antes de " + "${dataValidadeMinima.formatMesAno()})"
-                dataValidade.isAfter(dataValidadeMaxima)  -> "Produto '$produto'. Mes de validade inválido (depois de " + "${dataValidadeMaxima.formatMesAno()})"
-                else                                      -> null
+        else                                  -> {
+          when {
+            mesesValidade == null -> {
+              when (dataValidade) {
+                null -> null
+                else -> "Produto '$produto' não deve possui data de validade"
+              }
+            }
+            else                  -> {
+              when (dataValidade) {
+                null -> "Produto '$produto' deveria ter data de validade"
+                else -> {
+                  val dataValidadeMinima = dataValidadeMinima(dataEntrada, mesesValidade)
+                  val dataValidadeMaxima = dataValidadeMaxima(dataEmissao, mesesValidade)
+                  when {
+                    dataValidade.isBefore(dataValidadeMinima) -> "Produto '$produto'. Mes de validade inválido (antes de " + "${dataValidadeMinima.formatMesAno()})"
+                    dataValidade.isAfter(dataValidadeMaxima)  -> "Produto '$produto'. Mes de validade inválido (depois de " + "${dataValidadeMaxima.formatMesAno()})"
+                    else                                      -> null
+                  }
+                }
               }
             }
           }

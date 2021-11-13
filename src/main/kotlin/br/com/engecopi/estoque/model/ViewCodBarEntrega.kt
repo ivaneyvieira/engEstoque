@@ -23,8 +23,8 @@ class ViewCodBarEntrega {
   val codigo: String = ""
   val grade: String = ""
   val quantidade: Int = 0
-
-  companion object Find : ViewCodBarEntregaFinder() {
+  
+  companion object Find: ViewCodBarEntregaFinder() {
     fun findNota(key: String): ItemNota? {
       val id = QViewCodBarEntrega().codbar.eq(key).findList().firstOrNull()?.id ?: return null
       return ItemNota.byId(id) ?: return null

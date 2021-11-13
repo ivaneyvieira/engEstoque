@@ -1,7 +1,6 @@
 package br.com.engecopi.estoque.ui.views.movimentacao
 
 import br.com.engecopi.estoque.model.ItemNota
-import br.com.engecopi.estoque.model.Nota
 import br.com.engecopi.estoque.model.RegistryUserInfo.impressoraUsuario
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.TipoNota
