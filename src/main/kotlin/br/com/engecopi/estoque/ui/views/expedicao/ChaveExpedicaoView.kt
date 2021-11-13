@@ -7,31 +7,60 @@ import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.ui.print.PrintUtil.imprimeNotaConcluida
 import br.com.engecopi.estoque.ui.print.PrintUtil.printText
 import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
-import br.com.engecopi.estoque.viewmodel.expedicao.*
-import br.com.engecopi.framework.ui.view.*
+import br.com.engecopi.estoque.viewmodel.expedicao.ChaveExpedicaoViewModel
+import br.com.engecopi.estoque.viewmodel.expedicao.ChaveExpedicaoVo
+import br.com.engecopi.estoque.viewmodel.expedicao.IChaveExpedicaoView
+import br.com.engecopi.estoque.viewmodel.expedicao.ItemExpedicao
+import br.com.engecopi.estoque.viewmodel.expedicao.LocalizacaoExpedicao
+import br.com.engecopi.framework.ui.view.CrudLayoutView
+import br.com.engecopi.framework.ui.view.dateFormat
+import br.com.engecopi.framework.ui.view.grupo
+import br.com.engecopi.framework.ui.view.row
+import br.com.engecopi.framework.ui.view.showDialog
+import br.com.engecopi.framework.ui.view.timeFormat
 import br.com.engecopi.saci.beans.NotaProdutoSaci
 import br.com.engecopi.utils.localDate
-import com.github.mvysny.karibudsl.v8.*
+import com.github.mvysny.karibudsl.v8.AutoView
+import com.github.mvysny.karibudsl.v8.VAlign
+import com.github.mvysny.karibudsl.v8.addColumnFor
+import com.github.mvysny.karibudsl.v8.align
+import com.github.mvysny.karibudsl.v8.alignment
+import com.github.mvysny.karibudsl.v8.button
+import com.github.mvysny.karibudsl.v8.dateField
+import com.github.mvysny.karibudsl.v8.expandRatio
+import com.github.mvysny.karibudsl.v8.getAll
+import com.github.mvysny.karibudsl.v8.grid
+import com.github.mvysny.karibudsl.v8.horizontalLayout
+import com.github.mvysny.karibudsl.v8.px
+import com.github.mvysny.karibudsl.v8.refresh
+import com.github.mvysny.karibudsl.v8.textField
+import com.github.mvysny.karibudsl.v8.verticalLayout
+import com.github.mvysny.karibudsl.v8.w
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.icons.VaadinIcons.PRINT
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
-import com.vaadin.ui.*
+import com.vaadin.ui.Alignment
+import com.vaadin.ui.Button
+import com.vaadin.ui.Grid
 import com.vaadin.ui.Grid.SelectionMode.MULTI
+import com.vaadin.ui.Notification
+import com.vaadin.ui.UI
+import com.vaadin.ui.Window
 import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
 
 @AutoView("chave_expedicao")
-class ChaveExpedicaoView : CrudLayoutView<ChaveExpedicaoVo, ChaveExpedicaoViewModel>(false), IChaveExpedicaoView {
+class ChaveExpedicaoView: CrudLayoutView<ChaveExpedicaoVo, ChaveExpedicaoViewModel>(false), IChaveExpedicaoView {
   var formCodBar: PnlCodigoBarras? = null
   private val isAdmin
     get() = userDefaultIsAdmin
-
+  
   override fun enter(event: ViewChangeEvent) {
     super.enter(event)
     formCodBar?.focusEdit()
   }
-
+  
   init {
     viewModel = ChaveExpedicaoViewModel(this)
     layoutForm {
@@ -90,12 +119,13 @@ class ChaveExpedicaoView : CrudLayoutView<ChaveExpedicaoVo, ChaveExpedicaoViewMo
         caption = "Número NF"
         setSortProperty("numero")
       }
-      grid.addComponentColumn { item ->
-        Button().apply { //print {viewModel.imprimir(item)}.extend(this)
+      grid.addComponentColumn {item ->
+        Button().apply {
+          //print {viewModel.imprimir(item)}.extend(this)
           val impresso = item?.impresso ?: true
           this.isEnabled = impresso == false || isAdmin
           this.icon = PRINT
-          this.addClickListener { click ->
+          this.addClickListener {click ->
             val pacotes = viewModel.imprimir(item?.entityVo?.nota)
             pacotes.forEach {
               printText(it.impressora, it.text)
@@ -108,13 +138,13 @@ class ChaveExpedicaoView : CrudLayoutView<ChaveExpedicaoVo, ChaveExpedicaoViewMo
       }.id = "btnPrint"
       column(ChaveExpedicaoVo::loja) {
         caption = "Loja NF"
-        setRenderer({ loja ->
+        setRenderer({loja ->
                       loja?.sigla ?: ""
                     }, TextRenderer())
       }
       column(ChaveExpedicaoVo::tipoNota) {
         caption = "TipoNota"
-        setRenderer({ tipo ->
+        setRenderer({tipo ->
                       tipo?.descricao ?: ""
                     }, TextRenderer())
         setSortProperty("tipo_nota")
@@ -156,10 +186,10 @@ class ChaveExpedicaoView : CrudLayoutView<ChaveExpedicaoVo, ChaveExpedicaoViewMo
   }
 
   private fun formCodbar(): PnlCodigoBarras {
-    return PnlCodigoBarras("Chave da Nota Fiscal") { key ->
+    return PnlCodigoBarras("Chave da Nota Fiscal") {key ->
       val notaSaida = viewModel.findNotaSaidaKey(key)
-      if (notaSaida.isNotEmpty()) {
-        val dialog = DlgExpedicaoLoc(notaSaida, viewModel) { itens ->
+      if(notaSaida.isNotEmpty()) {
+        val dialog = DlgExpedicaoLoc(notaSaida, viewModel) {itens ->
           val nota = viewModel.processaKey(itens)
           val pacotes = viewModel.imprimir(nota)
           pacotes.forEach {
@@ -177,24 +207,25 @@ class ChaveExpedicaoView : CrudLayoutView<ChaveExpedicaoVo, ChaveExpedicaoViewMo
       icon = PRINT
       addClickListener {
         val text = viewModel.imprimeTudo()
-        printText(impressoraUsuario, text) //grid.refreshGrid()
+        printText(impressoraUsuario, text)
+        //grid.refreshGrid()
       }
     }
   }
 }
 
-class DlgExpedicaoLoc(
-  val notaProdutoSaida: List<NotaProdutoSaci>,
-  val viewModel: ChaveExpedicaoViewModel,
-  val execConfirma: (itens: List<ItemExpedicao>) -> Unit,
-                     ) : Window("Localizações") {
+class DlgExpedicaoLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
+                      val viewModel: ChaveExpedicaoViewModel,
+                      val execConfirma: (itens: List<ItemExpedicao>) -> Unit): Window("Localizações") {
   private lateinit var gridProdutos: Grid<LocalizacaoExpedicao>
-
+  
   init {
     val nota = notaProdutoSaida.firstOrNull()
     verticalLayout {
-      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
-
+      w =
+        (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+          .px
+      
       grupo("Nota fiscal de saída") {
         verticalLayout {
           row {
@@ -233,8 +264,8 @@ class DlgExpedicaoLoc(
             button("Confirma") {
               addStyleName(ValoTheme.BUTTON_PRIMARY)
               addClickListener {
-                val itens = gridProdutos.dataProvider.getAll().flatMap { loc ->
-                  loc.itensExpedicao.filter { it.selecionado }
+                val itens = gridProdutos.dataProvider.getAll().flatMap {loc ->
+                  loc.itensExpedicao.filter {it.selecionado}
                 }
                 execConfirma(itens)
                 close()
@@ -251,28 +282,34 @@ class DlgExpedicaoLoc(
         row {
           gridProdutos = grid(LocalizacaoExpedicao::class) {
             val itens = notaProdutoSaida
-            val abreviacaoItens = itens.groupBy { item ->
-              val abreviacao = viewModel.abreviacoes(item.prdno, item.grade).sorted()
+            val abreviacaoItens = itens.groupBy {item ->
+              val abreviacao =
+                viewModel.abreviacoes(item.prdno, item.grade)
+                  .sorted()
               abreviacao
             }
-            val abreviacoes = abreviacaoItens.keys.asSequence().flatten().distinct().map { abrev ->
-              val itensExpedicao =
-                      abreviacaoItens.filter { it.key.contains(abrev) }
-                        .map { it.value }
-                        .flatten()
-                        .distinct()
-                        .map { notaSaci ->
-                          val saldo = viewModel.saldoProduto(notaSaci, abrev)
-                          ItemExpedicao(notaSaci, saldo, abrev)
-                        }
-              LocalizacaoExpedicao(abrev, itensExpedicao)
-            }.toList().sortedBy { it.abreviacao }.toList()
+            val abreviacoes =
+              abreviacaoItens.keys.asSequence()
+                .flatten()
+                .distinct()
+                .map {abrev ->
+                  val itensExpedicao =
+                    abreviacaoItens.filter {it.key.contains(abrev)}
+                      .map {it.value}
+                      .flatten()
+                      .distinct()
+                      .map {notaSaci ->
+                        val saldo = viewModel.saldoProduto(notaSaci, abrev)
+                        ItemExpedicao(notaSaci, saldo, abrev)
+                }
+                  LocalizacaoExpedicao(abrev, itensExpedicao)
+            }.toList().sortedBy {it.abreviacao}.toList()
 
             this.dataProvider = ListDataProvider(abreviacoes)
             removeAllColumns()
 
             setSizeFull()
-            addComponentColumn { item ->
+            addComponentColumn {item ->
               Button().apply {
                 this.icon = VaadinIcons.CHECK
                 this.addClickListener {
@@ -298,17 +335,17 @@ class DlgExpedicaoLoc(
   }
 }
 
-class DlgExpedicao(
-  val localizacaoExpedicao: LocalizacaoExpedicao,
-  val viewModel: ChaveExpedicaoViewModel,
-  val update: () -> Unit,
-                  ) : Window("Itens da Nota") {
+class DlgExpedicao(val localizacaoExpedicao: LocalizacaoExpedicao,
+                   val viewModel: ChaveExpedicaoViewModel,
+                   val update: () -> Unit): Window("Itens da Nota") {
   private lateinit var gridProdutos: Grid<ItemExpedicao>
-
+  
   init {
     verticalLayout {
-      w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
-
+      w =
+        (UI.getCurrent().page.browserWindowWidth * 0.8).toInt()
+          .px
+      
       grupo("Expedição ${localizacaoExpedicao.abreviacao}") {
         row {
           horizontalLayout {
@@ -320,7 +357,7 @@ class DlgExpedicao(
                 localizacaoExpedicao.itensExpedicao.forEach {
                   it.selecionado = false
                 }
-                val itensSelecionado = gridProdutos.selectedItems.toList().filter { !it.isSave() }
+                val itensSelecionado = gridProdutos.selectedItems.toList().filter {!it.isSave()}
 
                 itensSelecionado.forEach {
                   it.selecionado = true
@@ -344,14 +381,14 @@ class DlgExpedicao(
             this.dataProvider = ListDataProvider(itens)
             removeAllColumns()
             val selectionModel = setSelectionMode(MULTI)
-            selectionModel.addSelectionListener { select ->
-              if (select.isUserOriginated) {
+            selectionModel.addSelectionListener {select ->
+              if(select.isUserOriginated) {
                 select.allSelectedItems.forEach {
-                  if (it.isSave()) {
+                  if(it.isSave()) {
                     Notification.show("Não pode ser selecionado. Já está salvo")
                     selectionModel.deselect(it)
                   }
-                  else if (it.saldoFinal < -100000000) { //TODO Saldo insuficiente
+                  else if(it.saldoFinal < -100000000) { //TODO Saldo insuficiente
                     Notification.show("Não pode ser selecionado. Saldo insuficiente.")
                     selectionModel.deselect(it)
                   }
@@ -397,8 +434,8 @@ class DlgExpedicao(
               }
             }
           }
-          localizacaoExpedicao.itensExpedicao.forEach { item ->
-            if (item.selecionado) gridProdutos.select(item)
+          localizacaoExpedicao.itensExpedicao.forEach {item ->
+            if(item.selecionado) gridProdutos.select(item)
             else gridProdutos.deselect(item)
           }
         }

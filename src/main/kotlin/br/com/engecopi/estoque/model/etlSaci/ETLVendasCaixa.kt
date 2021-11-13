@@ -4,7 +4,7 @@ import br.com.engecopi.estoque.model.dtos.VendasCaixa
 import br.com.engecopi.saci.saci
 import io.ebean.DB
 
-class ETLVendasCaixa : ETL<VendasCaixa>() {
+class ETLVendasCaixa: ETL<VendasCaixa>() {
   override val sqlDelete = "DELETE FROM t_vendas_caixa WHERE id = :id"
   override val sqlInsert = """
        INSERT INTO t_vendas_caixa(id, storeno, nfno, nfse, prdno, grade, qtty)
@@ -16,12 +16,12 @@ class ETLVendasCaixa : ETL<VendasCaixa>() {
       WHERE id = :id
     """.trimIndent()
 
-  companion object : ETLThread<VendasCaixa>(ETLVendasCaixa(), 30) {
+  companion object: ETLThread<VendasCaixa>(ETLVendasCaixa(), 30) {
     val sql
       get() = "select id, storeno, nfno, nfse, prdno, grade, qtty from t_vendas_caixa"
-
+  
     override fun getSource() = saci.findVendasCaixa()
-
+  
     override fun getTarget() = DB.findDto(VendasCaixa::class.java, sql).findList()
   }
 }

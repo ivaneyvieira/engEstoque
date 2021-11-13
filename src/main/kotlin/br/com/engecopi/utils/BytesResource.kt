@@ -24,7 +24,7 @@ fun ByteArray.md5(): String {
   return DatatypeConverter.printHexBinary(bytes)
 }
 
-class BytesStreamSource(private val imagem: ByteArray) : StreamSource {
+class BytesStreamSource(private val imagem: ByteArray): StreamSource {
   override fun getStream(): InputStream {
     return ByteArrayInputStream(imagem)
   }

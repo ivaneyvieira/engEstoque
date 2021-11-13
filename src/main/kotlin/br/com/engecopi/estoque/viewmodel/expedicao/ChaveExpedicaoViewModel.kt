@@ -1,11 +1,18 @@
 package br.com.engecopi.estoque.viewmodel.expedicao
 
-import br.com.engecopi.estoque.model.*
+import br.com.engecopi.estoque.model.Loja
+import br.com.engecopi.estoque.model.Nota
+import br.com.engecopi.estoque.model.Produto
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
+import br.com.engecopi.estoque.model.TipoMov
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
+import br.com.engecopi.estoque.model.TipoNota
+import br.com.engecopi.estoque.model.Usuario
+import br.com.engecopi.estoque.model.ViewNotaExpedicao
+import br.com.engecopi.estoque.model.ViewProdutoLoc
 import br.com.engecopi.estoque.model.dtos.VendasCaixa
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.model.query.QViewNotaExpedicao
@@ -18,50 +25,56 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class ChaveExpedicaoViewModel(view: IChaveExpedicaoView) :
-        CrudViewModel<ViewNotaExpedicao, QViewNotaExpedicao, ChaveExpedicaoVo, IChaveExpedicaoView>(view) {
+class ChaveExpedicaoViewModel(view: IChaveExpedicaoView):
+  CrudViewModel<ViewNotaExpedicao, QViewNotaExpedicao, ChaveExpedicaoVo, IChaveExpedicaoView>(view) {
   private val print = ChaveExpedicaoPrint()
   private val processing = ChaveExpedicaoProcessamento()
   private val find = ChaveExpedicaoFind()
-
+  
   override fun newBean(): ChaveExpedicaoVo {
     return ChaveExpedicaoVo()
   }
-
+  
   override fun update(bean: ChaveExpedicaoVo) {
     log?.error("Atualização não permitida")
   }
-
+  
   override fun add(bean: ChaveExpedicaoVo) {
     log?.error("Inserssão não permitida")
   }
-
+  
   override fun delete(bean: ChaveExpedicaoVo) {
     val nota = bean.findEntity() ?: return
     val saida = Nota.findSaida(nota.loja, nota.numero) ?: return
-
-    QItemNota().nota.equalTo(saida).status.notIn(ENTREGUE, ENT_LOJA).localizacao.startsWith(bean.abreviacao).delete()
-
-    if (saida.itensNota().isEmpty()) saida.delete()
+    
+    QItemNota().nota.equalTo(saida)
+      .status.notIn(ENTREGUE, ENT_LOJA)
+      .localizacao.startsWith(bean.abreviacao)
+      .delete()
+    
+    if(saida.itensNota().isEmpty())
+      saida.delete()
   }
-
+  
   override val query: QViewNotaExpedicao
     get() = QViewNotaExpedicao().loja.eq(lojaDeposito).nota.tipoNota.notIn(TipoNota.lojasExternas)
-
+  
   private fun QViewNotaExpedicao.filtroNotaSerie(): QViewNotaExpedicao {
-    val tipos = usuarioDefault.series.map { it.tipoNota }
+    val tipos = usuarioDefault.series.map {it.tipoNota}
     val queryOr = or()
-    val querySeries = tipos.fold(queryOr) { q, tipo ->
+    val querySeries = tipos.fold(queryOr) {q, tipo ->
       q.nota.tipoNota.eq(tipo)
     }
-
+    
     return querySeries.endOr()
   }
-
+  
   override fun QViewNotaExpedicao.orderQuery(): QViewNotaExpedicao {
-    return this.order().lancamento.desc().id.desc()
+    return this.order()
+      .lancamento.desc()
+      .id.desc()
   }
-
+  
   override fun ViewNotaExpedicao.toVO(): ChaveExpedicaoVo {
     val bean = this
     return ChaveExpedicaoVo().apply {
@@ -82,55 +95,58 @@ class ChaveExpedicaoViewModel(view: IChaveExpedicaoView) :
       abreviacao = bean.abreviacao
     }
   }
-
+  
   fun processaKey(notasSaci: List<ItemExpedicao>) = exec {
-    processing.processaKey(notasSaci).updateView()
+    processing.processaKey(notasSaci)
+      .updateView()
   }
-
+  
   fun imprimeTudo() = execString {
-    print.imprimeTudo().updateView()
+    print.imprimeTudo()
+      .updateView()
   }
-
+  
   fun imprimir(nota: Nota?) = execList {
-    print.imprimir(nota).updateView()
+    print.imprimir(nota)
+      .updateView()
   }
-
+  
   fun findNotaSaidaKey(key: String) = execList {
     find.findNotaSaidaKey(key)
   }
-
+  
   fun findLoja(storeno: Int?): Loja? = Loja.findLoja(storeno)
-
+  
   fun abreviacoes(prdno: String?, grade: String?): List<String> {
     val produto = Produto.findProduto(prdno, grade) ?: return emptyList()
     return ViewProdutoLoc.abreviacoesProduto(produto)
   }
-
+  
   override fun QViewNotaExpedicao.filterString(text: String): QViewNotaExpedicao {
     return nota.numero.startsWith(text)
   }
-
+  
   override fun QViewNotaExpedicao.filterDate(date: LocalDate): QViewNotaExpedicao {
     return data.eq(date)
   }
-
+  
   fun saldoProduto(notaProdutoSaci: NotaProdutoSaci, abreviacao: String): Int {
     val produto = Produto.findProduto(notaProdutoSaci.codigo(), notaProdutoSaci.grade)
     return produto?.saldoAbreviacao(abreviacao) ?: 0
   }
-
+  
   fun processaVendas(venda: VendasCaixa) {
     val produto = Produto.findProduto(venda.prdno, venda.grade) ?: return
     val locacalizacoes = produto.viewProdutoLoc ?: return
-    locacalizacoes.filter { it.abreviacao == "S" }
+    locacalizacoes.filter {it.abreviacao == "S"}
   }
 }
 
-class ChaveExpedicaoVo : EntityVo<ViewNotaExpedicao>() {
+class ChaveExpedicaoVo: EntityVo<ViewNotaExpedicao>() {
   override fun findEntity(): ViewNotaExpedicao? {
     return ViewNotaExpedicao.findSaida(lojaDeposito, numero, abreviacao)
   }
-
+  
   var numero: String = ""
   var tipoMov: TipoMov = ENTRADA
   var tipoNota: TipoNota? = null
@@ -151,20 +167,18 @@ class ChaveExpedicaoVo : EntityVo<ViewNotaExpedicao>() {
     get() = LocalDateTime.of(data, hora)
 }
 
-data class ItemExpedicao(
-  val notaProdutoSaci: NotaProdutoSaci,
-  val saldo: Int,
-  val abrevicao: String,
-  var selecionado: Boolean = false,
-                        ) {
+data class ItemExpedicao(val notaProdutoSaci: NotaProdutoSaci,
+                         val saldo: Int,
+                         val abrevicao: String,
+                         var selecionado: Boolean = false) {
   val prdno = notaProdutoSaci.prdno
   val grade = notaProdutoSaci.grade
   val nome = notaProdutoSaci.nome
   val quant = notaProdutoSaci.quant ?: 0
   val saldoFinal = saldo - quant
-
+  
   fun isSave() = notaProdutoSaci.isSave()
 }
 
-interface IChaveExpedicaoView : ICrudView
+interface IChaveExpedicaoView: ICrudView
 

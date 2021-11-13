@@ -13,7 +13,7 @@ object RegistryUserInfo {
     set(value) {
       field = value
       val loginInfo = value?.loginInfo
-      if (loginInfo == null) {
+      if(loginInfo == null) {
         Transaction.variable(LOJA_FIELD, "NULL")
         Transaction.variable(USER_FIELD, "NULL")
         Transaction.variable(ABREV_FIELD, "NULL")
@@ -47,7 +47,7 @@ object RegistryUserInfo {
 
 data class LoginInfo(val usuario: Usuario, val abreviacao: String)
 
-class EUsuarioNaoInicializado : EViewModelError("O usuário não está logado")
+class EUsuarioNaoInicializado: EViewModelError("O usuário não está logado")
 
 interface LoginInfoProvider {
   val loginInfo: LoginInfo?

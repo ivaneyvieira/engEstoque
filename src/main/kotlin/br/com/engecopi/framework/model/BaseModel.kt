@@ -4,7 +4,11 @@ import io.ebean.Model
 import io.ebean.annotation.WhenCreated
 import io.ebean.annotation.WhenModified
 import java.time.LocalDateTime
-import javax.persistence.*
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.MappedSuperclass
+import javax.persistence.Version
 
 @MappedSuperclass
 abstract class BaseModel(
@@ -16,5 +20,4 @@ abstract class BaseModel(
   @WhenModified
   var updatedAt: LocalDateTime = LocalDateTime.now(),
   @Version
-  var version: Int = 0,
-                        ) : Model()
+  var version: Int = 0): Model()

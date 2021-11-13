@@ -28,7 +28,6 @@ import br.com.engecopi.estoque.ui.views.paineis.PedidoTransferenciaView
 import br.com.engecopi.estoque.ui.views.ressuprimento.ChaveRessuprimentoView
 import br.com.engecopi.estoque.ui.views.ressuprimento.EditorRessuprimento
 import br.com.engecopi.estoque.ui.views.ressuprimento.EntregaRessuprimentoView
-import br.com.engecopi.framework.model.executeMigracao
 import br.com.engecopi.framework.ui.view.toViewName
 import br.com.engecopi.utils.SystemUtils
 import com.github.mvysny.karibudsl.v8.*

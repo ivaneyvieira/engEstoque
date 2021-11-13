@@ -10,16 +10,27 @@ import br.com.engecopi.framework.ui.view.default
 import br.com.engecopi.framework.ui.view.row
 import br.com.engecopi.utils.SystemUtils
 import br.com.engecopi.utils.ZPLPreview
-import com.github.mvysny.karibudsl.v8.*
+import com.github.mvysny.karibudsl.v8.AutoView
+import com.github.mvysny.karibudsl.v8.alignment
+import com.github.mvysny.karibudsl.v8.bind
+import com.github.mvysny.karibudsl.v8.button
+import com.github.mvysny.karibudsl.v8.checkBox
+import com.github.mvysny.karibudsl.v8.comboBox
+import com.github.mvysny.karibudsl.v8.expandRatio
+import com.github.mvysny.karibudsl.v8.h
+import com.github.mvysny.karibudsl.v8.px
+import com.github.mvysny.karibudsl.v8.textArea
+import com.github.mvysny.karibudsl.v8.textField
+import com.github.mvysny.karibudsl.v8.w
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.TextArea
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView
-class EtiquetaView : CrudLayoutView<EtiquetaVo, EtiquetaViewModel>(false), IEtiquetaView {
+class EtiquetaView: CrudLayoutView<EtiquetaVo, EtiquetaViewModel>(false), IEtiquetaView {
   private lateinit var template: TextArea
-
+  
   init {
     viewModel = EtiquetaViewModel(this)
     layoutForm {
@@ -35,7 +46,7 @@ class EtiquetaView : CrudLayoutView<EtiquetaVo, EtiquetaViewModel>(false), IEtiq
         row {
           comboBox<StatusNota>("Tipo") {
             expandRatio = 2f
-            default { it.descricao }
+            default {it.descricao}
             setItems(StatusNota.values().toList())
             bind(binder).bind(EtiquetaVo::statusNota)
           }
@@ -59,7 +70,7 @@ class EtiquetaView : CrudLayoutView<EtiquetaVo, EtiquetaViewModel>(false), IEtiq
             addClickListener {
               val zpl = template.value
               val image = ZPLPreview.createPdf(zpl, "4x2")
-              if (image != null) showImage("Preview", image)
+              if(image != null) showImage("Preview", image)
             }
           }
         }
@@ -81,7 +92,7 @@ class EtiquetaView : CrudLayoutView<EtiquetaVo, EtiquetaViewModel>(false), IEtiq
         setSortProperty("titulo")
       }
       column(EtiquetaVo::statusNota) {
-        setRenderer({ it?.descricao ?: "" }, TextRenderer())
+        setRenderer({it?.descricao ?: ""}, TextRenderer())
         caption = "Tipo"
         setSortProperty("statusNota")
       }

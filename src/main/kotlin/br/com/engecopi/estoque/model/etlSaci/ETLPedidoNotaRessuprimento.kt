@@ -4,7 +4,7 @@ import br.com.engecopi.estoque.model.dtos.PedidoNotaRessuprimento
 import br.com.engecopi.saci.saci
 import io.ebean.DB
 
-class ETLPedidoNotaRessuprimento : ETL<PedidoNotaRessuprimento>() {
+class ETLPedidoNotaRessuprimento: ETL<PedidoNotaRessuprimento>() {
   override val sqlDelete: String
     get() = "DELETE FROM t_pedido_nota_ressuprimento WHERE id =:id"
   override val sqlInsert: String
@@ -20,12 +20,12 @@ class ETLPedidoNotaRessuprimento : ETL<PedidoNotaRessuprimento>() {
       |    numero      = :numero
       |WHERE id =:id
     """.trimMargin()
-
-  companion object : ETLThread<PedidoNotaRessuprimento>(ETLPedidoNotaRessuprimento(), 60) {
+  
+  companion object: ETLThread<PedidoNotaRessuprimento>(ETLPedidoNotaRessuprimento(), 60) {
     val sql = "SELECT * FROM t_pedido_nota_ressuprimento"
-
+    
     override fun getSource() = saci.findPedidoNota()
-
+    
     override fun getTarget() = DB.findDto(PedidoNotaRessuprimento::class.java, sql).findList()
   }
 }

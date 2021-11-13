@@ -22,25 +22,36 @@ class ViewCodBarConferencia {
   val numero: String = ""
   val sequencia: Int = 0
   val abreviacao: String = ""
-
-  companion object Find : ViewCodBarConferenciaFinder() {
+  
+  companion object Find: ViewCodBarConferenciaFinder() {
     private fun findNotaCodbarCliente(key: String): ViewCodBarConferencia? {
-      return QViewCodBarCliente().codbarLimpo.eq(key).findList().firstOrNull()?.run {
-        QViewCodBarConferencia().storeno.eq(storeno).numero.eq(numero).sequencia.eq(sequencia).abreviacao.eq(
-          abreviacaoDefault).findList().firstOrNull()
-      }
+      return QViewCodBarCliente().codbarLimpo.eq(key)
+        .findList()
+        .firstOrNull()
+        ?.run {
+          QViewCodBarConferencia().storeno.eq(storeno)
+            .numero.eq(numero)
+            .sequencia.eq(sequencia)
+            .abreviacao.eq(abreviacaoDefault)
+            .findList()
+            .firstOrNull()
+        }
     }
-
+    
     private fun findNotaCodBarConferencia(key: String): ViewCodBarConferencia? {
-      return QViewCodBarConferencia().codbar.eq(key).findList().firstOrNull()
+      return QViewCodBarConferencia().codbar.eq(key)
+        .findList()
+        .firstOrNull()
     }
-
+    
     fun findNota(key: String): ViewCodBarConferencia? {
       return findNotaCodbarCliente(key) ?: findNotaCodBarConferencia(key)
     }
-
+    
     fun findKeyItemNota(key: String): List<ItemNota> {
-      return QViewCodBarConferencia().codbar.eq(key).findList().mapNotNull { ItemNota.byId(it.id) }
+      return QViewCodBarConferencia().codbar.eq(key)
+        .findList()
+        .mapNotNull {ItemNota.byId(it.id)}
     }
   }
 }

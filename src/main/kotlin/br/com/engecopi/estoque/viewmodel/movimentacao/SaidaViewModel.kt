@@ -36,7 +36,7 @@ class SaidaViewModel(view: ISaidaView) : NotaViewModel<SaidaVo, ISaidaView>(view
 
   override fun createVo() = SaidaVo()
 
-  fun findByBarcodeProduto(barcode: String?): BarcodeVolume? {
+  fun findByBarcodeProduto2(barcode: String?): BarcodeVolume? {
     val splitBarcode = barcode?.split(" ").orEmpty()
     val barcodeProduto = splitBarcode.getOrNull(0) ?: return null
     val produto = find.findByBarcodeProduto(barcodeProduto).firstOrNull() ?: return null
@@ -50,6 +50,10 @@ class SaidaViewModel(view: ISaidaView) : NotaViewModel<SaidaVo, ISaidaView>(view
 
     val produtoValidade = fisrtProdutoValidade(produto.codigo)
     return BarcodeVolume(produto, dataValidade, quantidadeVolume, volume, produtoValidade)
+  }
+
+  fun findByBarcodeProduto(barcode: String?): List<Produto> {
+    return find.findByBarcodeProduto(barcode)
   }
 
   fun findByKey(key: String) = exec {

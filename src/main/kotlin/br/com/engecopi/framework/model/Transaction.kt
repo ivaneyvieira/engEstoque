@@ -9,18 +9,19 @@ object Transaction {
   private fun inTransaction(): Boolean {
     return Ebean.currentTransaction() != null
   }
-
+  
   fun <T> execTransacao(lambda: () -> T): T {
-    return if (inTransaction()) lambda()
-    else Ebean.beginTransaction().use { transaction ->
+    return if(inTransaction()) lambda()
+    else Ebean.beginTransaction().use {transaction ->
       val ret = lambda()
       transaction.commit()
       ret
     }
   }
-
+  
   fun variable(name: String, value: String?) {
-    Ebean.currentTransaction()?.connection?.let { con ->
+    Ebean.currentTransaction()
+      ?.connection?.let {con ->
       val stmt = con.createStatement()
       val sql = "SET @$name := $value;"
       stmt.executeQuery(sql)

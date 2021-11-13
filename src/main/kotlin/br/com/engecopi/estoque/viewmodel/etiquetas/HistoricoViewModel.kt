@@ -11,19 +11,21 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class HistoricoViewModel(view: IHistoricoView) :
-        CrudViewModel<HistoricoEtiqueta, QHistoricoEtiqueta, HistoricoVo, IHistoricoView>(view) {
+class HistoricoViewModel(view: IHistoricoView): CrudViewModel<HistoricoEtiqueta, QHistoricoEtiqueta, HistoricoVo, IHistoricoView>(
+  view) {
   override fun update(bean: HistoricoVo) {
-    bean.findEntity()?.let { hist ->
+    bean.findEntity()?.let {hist ->
       hist.gtinOk = bean.gtinOk
       hist.save()
     }
   }
 
-  override fun add(bean: HistoricoVo) { //Não implementado
+  override fun add(bean: HistoricoVo) {
+    //Não implementado
   }
 
-  override fun delete(bean: HistoricoVo) { //Não implementado
+  override fun delete(bean: HistoricoVo) {
+    //Não implementado
   }
 
   override fun newBean(): HistoricoVo {
@@ -49,7 +51,7 @@ class HistoricoViewModel(view: IHistoricoView) :
   }
 }
 
-class HistoricoVo : EntityVo<HistoricoEtiqueta>() {
+class HistoricoVo: EntityVo<HistoricoEtiqueta>() {
   override fun findEntity(): HistoricoEtiqueta? {
     return HistoricoEtiqueta.byId(id)
   }
@@ -72,4 +74,4 @@ class HistoricoVo : EntityVo<HistoricoEtiqueta>() {
   var gtinOk: Boolean = false
 }
 
-interface IHistoricoView : ICrudView
+interface IHistoricoView: ICrudView

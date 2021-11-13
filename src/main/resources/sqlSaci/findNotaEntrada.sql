@@ -109,7 +109,7 @@ FROM sqldados.eord           AS N
 	       ON E.prdno = P.prdno AND E.grade = P.grade AND E.storeno = 4
   LEFT JOIN  sqldados.custp  AS C
 	       ON C.no = N.custno
-WHERE N.paymno = 290
+WHERE N.paymno = 430
   AND N.storeno = :storeno
   AND (N.ordno = :nfname)
   AND (:invse = '')
