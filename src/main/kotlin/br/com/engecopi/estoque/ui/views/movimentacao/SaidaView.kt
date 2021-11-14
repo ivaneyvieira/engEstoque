@@ -508,10 +508,10 @@ class DlgNotaSaida(
       val produto = item.produto
       val statusNota = item.status
       val isSave = item.id != 0L
-      val dataValidade = item.dataValidade
+      val dataFabricacao = item.dataFabricacao
       if (produto != null) ProdutoNotaVo(produto = produto,
                                          statusNota = statusNota,
-                                         dataValidade = dataValidade,
+                                         dataFabricacao = dataFabricacao,
                                          localizacao = LocProduto(item.localizacao),
                                          isSave = isSave).apply {
         this.quantidade = item.quantidade

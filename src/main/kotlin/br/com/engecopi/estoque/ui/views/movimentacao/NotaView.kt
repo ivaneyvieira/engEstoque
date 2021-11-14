@@ -104,7 +104,7 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
         isReadOnly = true
         bind(binder).bind(NotaVo::descricaoProduto.name)
       }
-      dataValidade = dateField("Validade") {
+      dataValidade = dateField("Fabricação") {
         expandRatio = 1f
         val meses = binder.bean.produto?.mesesVencimento ?: 0
         this.isVisible = meses > 0 && tipo == "Entrada"
@@ -112,7 +112,7 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
         placeholder = "mm/aaaa"
         this.dateFormat = "MM/yyyy"
         this.resolution = DateResolution.MONTH
-        bind(binder).bind(NotaVo::dataValidade.name)
+        bind(binder).bind(NotaVo::dataFabricacao.name)
       }
       comboBox<LocProduto>("Localização") {
         expandRatio = 2f
@@ -180,9 +180,9 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
           expandRatio = 5
           caption = "Descrição"
         }
-        addColumnFor(ProdutoNotaVo::dataValidadeStr) {
+        addColumnFor(ProdutoNotaVo::dataFabricacaoStr) {
           expandRatio = 1
-          caption = "Validade"
+          caption = "Fabricação"
         }
         addColumnFor(ProdutoNotaVo::localizacao) {
           expandRatio = 4

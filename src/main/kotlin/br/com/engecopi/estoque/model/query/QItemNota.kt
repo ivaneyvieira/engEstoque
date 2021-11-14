@@ -44,7 +44,7 @@ class QItemNota : TQRootBean<ItemNota, QItemNota> {
   lateinit var quantidadeSaci: PInteger<QItemNota>
   lateinit var produto: QAssocProduto<QItemNota>
   lateinit var nota: QAssocNota<QItemNota>
-  lateinit var dataValidade: PLocalDate<QItemNota>
+  lateinit var dataFabricacao: PLocalDate<QItemNota>
   lateinit var etiqueta: QAssocEtiqueta<QItemNota>
   lateinit var usuario: QAssocUsuario<QItemNota>
   lateinit var saldo: PInteger<QItemNota>
