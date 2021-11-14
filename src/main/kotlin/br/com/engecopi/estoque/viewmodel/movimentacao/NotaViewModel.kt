@@ -55,7 +55,7 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
         bean.entityVo =
                 insertItemNota(nota = nota,
                                produto = produto,
-                               dataValidade = bean.dataValidade,
+                               dataFabricacao = bean.dataFabricacao,
                                quantProduto = bean.quantProduto ?: 0,
                                usuario = usuario,
                                local = bean.localizacao?.localizacao,
@@ -77,7 +77,7 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
                   insertItemNota(
                     nota = nota,
                     produto = prd.produto,
-                    dataValidade = prd.dataValidade,
+                    dataFabricacao = prd.dataFabricacao,
                     quantProduto = prd.quantidade,
                     usuario = usuario,
                     local = prd.localizacao?.localizacao,
@@ -91,7 +91,7 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
   private fun insertItemNota(
     nota: Nota,
     produto: Produto?,
-    dataValidade: LocalDate?,
+    dataFabricacao: LocalDate?,
     quantProduto: Int,
     usuario: Usuario,
     local: String?,
@@ -101,15 +101,14 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
     val mesesValidade = produto?.mesesVencimento ?: 0
     if (nota.tipoNota?.tipoMov == ENTRADA && mesesValidade > 0) {
       val erroVencimento =
-              ValidadeProduto.erroValidacao(
+              ValidadeProduto.erroMesFabricacao(
                 produto = produto?.codigo ?: "",
-                dataValidade = dataValidade,
+                dataFabricacao = dataFabricacao,
                 dataEntrada = nota.data,
-                dataEmissao = nota.dataEmissao,
                 mesesValidade = mesesValidade,
                                            )
-      if (!erroVencimento.isNullOrEmpty()) {
-        throw EViewModelError(erroVencimento)
+      if (erroVencimento.isError()) {
+        throw EViewModelError(erroVencimento.msgErro())
       }
     }
     val saldoLocal = produto?.saldoLocalizacao(local) ?: 0
@@ -125,7 +124,7 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
             this.nota = nota
             this.produto = produto
             this.quantidade = quantProduto
-            this.dataValidade = dataValidade
+            this.dataFabricacao = dataFabricacao
             this.usuario = usuario
             this.localizacao = local
             this.hora = addTime
@@ -145,7 +144,7 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
         this.nota = nota
         this.produto = produto
         this.quantidade = bean.quantProduto ?: 0
-        this.dataValidade = bean.dataValidade
+        this.dataFabricacao = bean.dataFabricacao
         this.status = bean.status!!
       }
       item.update()
@@ -362,7 +361,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?) : 
     val produtoVo =
             ProdutoNotaVo(produto = prd,
                           statusNota = RECEBIDO,
-                          dataValidade = null,
+                          dataFabricacao = null,
                           localizacao = LocProduto(ultimaLocalizacao),
                           isSave = notaProdutoSaci.isSave()).apply {
               quantidade = notaProdutoSaci.quant ?: 0
@@ -378,7 +377,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?) : 
     val produtosLocais = localizacoes.map { localizacao ->
       ProdutoNotaVo(produto = prd,
                     statusNota = CONFERIDA,
-                    dataValidade = null,
+                    dataFabricacao = null,
                     localizacao = LocProduto(localizacao),
                     isSave = notaProdutoSaci.isSave()).apply {
         if (quant > 0) if (quant > saldo) {
@@ -418,10 +417,10 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?) : 
     get() = toEntity()?.let { LocalDateTime.of(it.data, it.hora) } ?: LocalDateTime.now()
   val dataEmissao: LocalDate
     get() = toEntity()?.nota?.dataEmissao ?: notaSaci?.dtEmissao?.localDate() ?: LocalDate.now()
-  var dataValidade: LocalDate?
-    get() = toEntity()?.dataValidade
+  var dataFabricacao: LocalDate?
+    get() = toEntity()?.dataFabricacao
     set(value) {
-      toEntity()?.dataValidade = value
+      toEntity()?.dataFabricacao = value
     }
   val numeroInterno: Int
     get() = if (entityVo == null) notaSaci?.invno ?: 0
@@ -478,7 +477,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?) : 
 class ProdutoNotaVo(
   val produto: Produto,
   val statusNota: StatusNota,
-  var dataValidade: LocalDate?,
+  var dataFabricacao: LocalDate?,
   var localizacao: LocProduto?,
   var isSave: Boolean,
                    ) {
@@ -503,8 +502,8 @@ class ProdutoNotaVo(
   var grupoSelecao: ETipoGrupo = WHITE
   val ordermSelecao: Int
     get() = grupoSelecao.ordem
-  val dataValidadeStr
-    get() = dataValidade.formatMesAno()
+  val dataFabricacaoStr
+    get() = dataFabricacao.formatMesAno()
 
   fun allowSelect(): Boolean {
     val status = this.value?.status ?: return false

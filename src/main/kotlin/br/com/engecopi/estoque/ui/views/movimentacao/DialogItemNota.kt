@@ -17,7 +17,7 @@ import com.vaadin.ui.themes.ValoTheme
 class DialogItemNota(val nota: Nota, private val produtoVo: ProdutoNotaVo, val salvaProduto: () -> Unit = {}) :
         Window("Produto") {
   private lateinit var cmbLocalizacao: ComboBox<LocProduto>
-  private lateinit var edtDataValidade: DateField
+  private lateinit var edtDataFabricacao: DateField
 
   init {
     verticalLayout {
@@ -30,13 +30,13 @@ class DialogItemNota(val nota: Nota, private val produtoVo: ProdutoNotaVo, val s
           this.value = produtoVo.descricaoProduto.trim()
           this.isReadOnly = true
         }
-        edtDataValidade = dateField("Validade") {
+        edtDataFabricacao = dateField("Fabricação") {
           val meses = produtoVo.produto.mesesVencimento ?: 0
           this.isVisible = meses > 0
           placeholder = "mm/aaaa"
           this.dateFormat = "MM/yyyy"
           this.resolution = DateResolution.MONTH
-          this.value = produtoVo.dataValidade
+          this.value = produtoVo.dataFabricacao
         }
         cmbLocalizacao = comboBox<LocProduto>("Localização") {
           default { localizacao ->
@@ -56,14 +56,14 @@ class DialogItemNota(val nota: Nota, private val produtoVo: ProdutoNotaVo, val s
           this.styleName = ValoTheme.BUTTON_PRIMARY
           onLeftClick {
             val msg = validaProduto()
-            if (msg == null) {
+            if (msg.isOk()) {
               produtoVo.localizacao = cmbLocalizacao.value
-              produtoVo.dataValidade = edtDataValidade.value
+              produtoVo.dataFabricacao = edtDataFabricacao.value
               produtoVo.selecionado = true
               salvaProduto()
               this@DialogItemNota.close()
             }else {
-              Notification.show(msg, Notification.Type.ERROR_MESSAGE)
+              Notification.show(msg.msgErro(), Notification.Type.ERROR_MESSAGE)
             }
           }
         }
@@ -72,19 +72,18 @@ class DialogItemNota(val nota: Nota, private val produtoVo: ProdutoNotaVo, val s
             this@DialogItemNota.close()
           }
         }
-        edtDataValidade.focus()
+        edtDataFabricacao.focus()
       }
     }
   }
 
-  private fun validaProduto(): String? {
+  private fun validaProduto(): ValidadeProduto {
     val produto = produtoVo.produto
     val mesesValidade = produto.mesesVencimento ?: 0
-    return ValidadeProduto.erroValidacao(
+    return ValidadeProduto.erroMesFabricacao(
       produto = produto.codigo,
-      dataValidade = edtDataValidade.value,
+      dataFabricacao = edtDataFabricacao.value,
       dataEntrada = nota.data,
-      dataEmissao = nota.dataEmissao,
       mesesValidade = mesesValidade,
                                  )
   }

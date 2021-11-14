@@ -42,7 +42,7 @@ class ItemNota : BaseModel() {
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var nota: Nota? = null
 
-  var dataValidade: LocalDate? = null
+  var dataFabricacao: LocalDate? = null
 
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
   var etiqueta: Etiqueta? = null
@@ -253,10 +253,10 @@ class NotaPrint(val item: ItemNota, val volume: Int? = null) {
     get() = item.codigoBarraCliente ?: ""
   val dataLancamento
     get() = item.nota?.lancamento?.format(DateTimeFormatter.ofPattern("dd/MM/yy")) ?: ""
-  val validade
-    get() = item.dataValidade?.formatMesAno() ?: ""
-  val numVal
-    get() = item.dataValidade?.format(DateTimeFormatter.ofPattern("yyyyMM"))?.toIntOrNull() ?: 0
+  val fabricacao
+    get() = item.dataFabricacao?.formatMesAno() ?: ""
+  val numFab
+    get() = item.dataFabricacao?.format(DateTimeFormatter.ofPattern("yyyyMM"))?.toIntOrNull() ?: 0
   val quantidadePacote
     get() = produto?.quantidadePacote ?: 1
   val quantidadeVolume: Int
@@ -266,7 +266,7 @@ class NotaPrint(val item: ItemNota, val volume: Int? = null) {
       return if (saldo > quantidadePacote) quantidadePacote else saldo
     }
   val codigoBarraVolume
-    get() = "$codebar $numVal $quantidadeVolume $volume"
+    get() = "$codebar $numFab $quantidadeVolume $volume"
   val nomeFilial
     get() = "ENGECOPI ${item.nota?.loja?.sigla}"
   val numeroLoja = notaSaci?.loja?.numero ?: 0

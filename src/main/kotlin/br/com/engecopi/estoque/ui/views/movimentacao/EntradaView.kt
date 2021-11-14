@@ -171,10 +171,10 @@ class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(customFo
         dateFormat()
         setSortProperty("nota.dataEmissao", "data", "hora")
       }
-      column(EntradaVo::dataValidade) {
-        caption = "Validade"
+      column(EntradaVo::dataFabricacao) {
+        caption = "Fabricação"
         mesAnoFormat()
-        setSortProperty("dataValidade")
+        setSortProperty("dataFabricacao")
       }
       column(EntradaVo::quantProduto) {
         caption = "Quantidade"

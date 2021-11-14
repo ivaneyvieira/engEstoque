@@ -174,9 +174,9 @@ class ProdutoView : CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoV
                 caption = "Data lançamento"
                 dateFormatNotNull()
               }
-              addColumnFor(ItemNota::dataValidade) {
+              addColumnFor(ItemNota::dataFabricacao) {
                 this.isSortable = false
-                caption = "Data Validade"
+                caption = "Data Fabricacao"
                 mesAnoFormat()
               }
               addColumnFor(ItemNota::tipoNota) {

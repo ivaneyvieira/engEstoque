@@ -33,7 +33,7 @@ class QAssocItemNota<R>(name: String, root: R) : TQAssocBean<ItemNota,R>(name, r
   lateinit var quantidadeSaci: PInteger<R>
   lateinit var produto: QAssocProduto<R>
   lateinit var nota: QAssocNota<R>
-  lateinit var dataValidade: PLocalDate<R>
+  lateinit var dataFabricacao: PLocalDate<R>
   lateinit var etiqueta: QAssocEtiqueta<R>
   lateinit var usuario: QAssocUsuario<R>
   lateinit var saldo: PInteger<R>
