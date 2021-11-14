@@ -37,6 +37,7 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
       usuario.painel = bean.painel
       usuario.configuracao = bean.configuracao
       usuario.entregaFutura = bean.entregaFutura
+      usuario.retiraFutura = bean.retiraFutura
       usuario.ressuprimento = bean.ressuprimento
       usuario.abastecimento = bean.abastecimento
       usuario.admin = bean.admin ?: false
@@ -58,6 +59,7 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
       this.painel = bean.painel
       this.configuracao = bean.configuracao
       this.entregaFutura = bean.entregaFutura
+      this.retiraFutura = bean.retiraFutura
       this.ressuprimento = bean.ressuprimento
       this.abastecimento = bean.abastecimento
       this.admin = bean.admin ?: false
@@ -83,6 +85,7 @@ class UsuarioViewModel(view: IUsuarioView): CrudViewModel<Usuario, QUsuario, Usu
       this.painel = usuario.painel
       this.configuracao = usuario.configuracao
       this.entregaFutura = usuario.entregaFutura
+      this.retiraFutura = usuario.retiraFutura
       this.ressuprimento = usuario.ressuprimento
       this.abastecimento = usuario.abastecimento
       this.admin = usuario.admin
@@ -130,6 +133,7 @@ class UsuarioCrudVo: EntityVo<Usuario>() {
   var painel: Boolean = false
   var configuracao: Boolean = false
   var entregaFutura: Boolean = false
+  var retiraFutura: Boolean = false
   var ressuprimento: Boolean = false
   var abastecimento: Boolean = false
   var admin: Boolean? = false
@@ -144,6 +148,7 @@ class UsuarioCrudVo: EntityVo<Usuario>() {
       if(estoque) tipos.add("Movimentação")
       if(expedicao) tipos.add("Expedicao")
       if(entregaFutura) tipos.add("Entrega Futura")
+      if(retiraFutura) tipos.add("Retira Futura")
       if(painel) tipos.add("Painel")
       if(configuracao) tipos.add("Configuração")
       if(ressuprimento) tipos.add("Ressuprimento")
