@@ -15,7 +15,7 @@ import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.framework.viewmodel.IView
 
-class EntregaFuturaFind(val view: IView) {
+class RetiraFuturaFind(val view: IView) {
   fun findKey(key: String): List<ItemNota> {
     val itens = findItensNotaTransferencia(key).filter {
       val tipoNota = it.status

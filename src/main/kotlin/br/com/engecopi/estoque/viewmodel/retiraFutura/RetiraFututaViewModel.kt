@@ -9,12 +9,12 @@ import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaVo
 
-class EntregaFututaViewModel(view: IEntregaFuturaView):
-  NotaViewModel<EntregaFututaVo, IEntregaFuturaView>(view, SAIDA, ENTREGUE, CONFERIDA) {
-  private val find = EntregaFuturaFind(view)
+class RetiraFututaViewModel(view: IRetiraFuturaView):
+  NotaViewModel<RetiraFututaVo, IRetiraFuturaView>(view, SAIDA, ENTREGUE, CONFERIDA) {
+  private val find = RetiraFuturaFind(view)
   
-  override fun newBean(): EntregaFututaVo {
-    return EntregaFututaVo()
+  override fun newBean(): RetiraFututaVo {
+    return RetiraFututaVo()
   }
   
   override fun QItemNota.filtroTipoNota(): QItemNota {
@@ -26,7 +26,7 @@ class EntregaFututaViewModel(view: IEntregaFuturaView):
       .nota.usuario.isNotNull.nota.sequencia.ne(0)
   }
   
-  override fun createVo() = EntregaFututaVo()
+  override fun createVo() = RetiraFututaVo()
   
   fun findKey(key: String) = exec {
     find.findKey(key)
@@ -36,7 +36,7 @@ class EntregaFututaViewModel(view: IEntregaFuturaView):
   fun notasConferidas() = find.notasConferidas()
 }
 
-class EntregaFututaVo: NotaVo(SAIDA, "")
+class RetiraFututaVo: NotaVo(SAIDA, "")
 
-interface IEntregaFuturaView: INotaView
+interface IRetiraFuturaView: INotaView
 

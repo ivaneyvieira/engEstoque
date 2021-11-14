@@ -5,7 +5,7 @@ import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.ui.views.movimentacao.NotaView
 import br.com.engecopi.estoque.viewmodel.retiraFutura.EditorFuturaViewModel
-import br.com.engecopi.estoque.viewmodel.retiraFutura.EntregaFututaVo
+import br.com.engecopi.estoque.viewmodel.retiraFutura.RetiraFututaVo
 import br.com.engecopi.estoque.viewmodel.retiraFutura.IEditorFuturaView
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
@@ -31,8 +31,8 @@ import com.vaadin.ui.Label
 import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
-@AutoView("editor_futura")
-class EditorFuturaView: NotaView<EntregaFututaVo, EditorFuturaViewModel, IEditorFuturaView>(true),
+@AutoView("editor_retira_futura")
+class EditorRetiraFuturaView: NotaView<RetiraFututaVo, EditorFuturaViewModel, IEditorFuturaView>(true),
                         IEditorFuturaView {
   init {
     viewModel = EditorFuturaViewModel(this)
@@ -56,23 +56,23 @@ class EditorFuturaView: NotaView<EntregaFututaVo, EditorFuturaViewModel, IEditor
                 default {it.descricao}
                 isReadOnly = true
                 setItems(TipoNota.valuesSaida())
-                bind(binder).bind(EntregaFututaVo::tipoNota)
+                bind(binder).bind(RetiraFututaVo::tipoNota)
               }
               dateField("Data") {
                 expandRatio = 1f
                 isReadOnly = true
-                bind(binder).bind(EntregaFututaVo::dataNota.name)
+                bind(binder).bind(RetiraFututaVo::dataNota.name)
               }
               textField("Rota") {
                 expandRatio = 1f
                 isReadOnly = true
-                bind(binder).bind(EntregaFututaVo::rota)
+                bind(binder).bind(RetiraFututaVo::rota)
               }
             }
             row {
               textField("Observação da nota fiscal") {
                 expandRatio = 1f
-                bind(binder).bind(EntregaFututaVo::observacaoNota)
+                bind(binder).bind(RetiraFututaVo::observacaoNota)
               }
             }
           }
@@ -92,76 +92,76 @@ class EditorFuturaView: NotaView<EntregaFututaVo, EditorFuturaViewModel, IEditor
       }
       if(!isAdmin && operation == UPDATE) binder.setReadOnly(true)
     }
-    form("Editor Entrega Futura")
+    form("Editor Retira Futura")
     gridCrud {
       reloadOnly = !isAdmin
       addCustomToolBarComponent(btnDesfazer())
-      column(EntregaFututaVo::numeroCodigo) {
+      column(RetiraFututaVo::numeroCodigo) {
         caption = "Número Conferencia"
         setSortProperty("codigo_barra_conferencia")
       }
-      column(EntregaFututaVo::dataEmissao) {
+      column(RetiraFututaVo::dataEmissao) {
         caption = "Emissao"
         dateFormat()
         setSortProperty("nota.dataEmissao", "data", "hora")
       }
-      column(EntregaFututaVo::numeroBaixa) {
+      column(RetiraFututaVo::numeroBaixa) {
         caption = "NF Baixa"
       }
-      column(EntregaFututaVo::dataBaixa) {
+      column(RetiraFututaVo::dataBaixa) {
         caption = "Data Baixa"
         dateFormat()
       }
-      column(EntregaFututaVo::lancamento) {
+      column(RetiraFututaVo::lancamento) {
         caption = "Lançamento"
         dateFormat()
         setSortProperty("nota.lancamento")
       }
-      column(EntregaFututaVo::horaLacamento) {
+      column(RetiraFututaVo::horaLacamento) {
         caption = "Hora"
         timeFormat()
         setSortProperty("nota.lancamento", "nota.hora")
       }
-      column(EntregaFututaVo::lojaNF) {
+      column(RetiraFututaVo::lojaNF) {
         caption = "Loja NF"
         setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
       }
-      column(EntregaFututaVo::tipoNotaDescricao) {
+      column(RetiraFututaVo::tipoNotaDescricao) {
         caption = "TipoNota"
         setSortProperty("nota.tipo_nota")
       }
-      column(EntregaFututaVo::quantProduto) {
+      column(RetiraFututaVo::quantProduto) {
         caption = "Quantidade"
         intFormat()
       }
-      column(EntregaFututaVo::status) {
+      column(RetiraFututaVo::status) {
         caption = "Situação"
         setRenderer({it?.descricao ?: ""}, TextRenderer())
       }
-      column(EntregaFututaVo::codigo) {
+      column(RetiraFututaVo::codigo) {
         caption = "Código"
         setSortProperty("produto.codigo")
       }
-      column(EntregaFututaVo::descricaoProduto) {
+      column(RetiraFututaVo::descricaoProduto) {
         caption = "Descrição"
       }
-      column(EntregaFututaVo::grade) {
+      column(RetiraFututaVo::grade) {
         caption = "Grade"
         setSortProperty("produto.grade")
       }
-      column(EntregaFututaVo::localizacao) {
+      column(RetiraFututaVo::localizacao) {
         caption = "Localização"
         setRenderer({it?.abreviacao}, TextRenderer())
       }
-      column(EntregaFututaVo::usuario) {
+      column(RetiraFututaVo::usuario) {
         caption = "Usuário"
         setRenderer({it?.loginName ?: ""}, TextRenderer())
         setSortProperty("usuario.loginName")
       }
-      column(EntregaFututaVo::rotaDescricao) {
+      column(RetiraFututaVo::rotaDescricao) {
         caption = "Rota"
       }
-      column(EntregaFututaVo::cliente) {
+      column(RetiraFututaVo::cliente) {
         caption = "Cliente"
         setSortProperty("nota.cliente")
       }

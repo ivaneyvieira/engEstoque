@@ -100,6 +100,10 @@ class UsuarioView: CrudLayoutView<UsuarioCrudVo, UsuarioViewModel>(false), IUsua
               bind(binder).bind(UsuarioCrudVo::entregaFutura)
               alignment = Alignment.BOTTOM_RIGHT
             }
+            checkBox("Retira Futura") {
+              bind(binder).bind(UsuarioCrudVo::retiraFutura)
+              alignment = Alignment.BOTTOM_RIGHT
+            }
             checkBox("Ressuprimento") {
               bind(binder).bind(UsuarioCrudVo::ressuprimento)
               alignment = Alignment.BOTTOM_RIGHT

@@ -50,8 +50,8 @@ import com.vaadin.ui.Window
 import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
 
-@AutoView("chave_futura")
-class ChaveFuturaView: CrudLayoutView<ChaveFuturaVo, ChaveFuturaViewModel>(false), IChaveFuturaView {
+@AutoView("chave_retira_futura")
+class ChaveRetiraFuturaView: CrudLayoutView<ChaveFuturaVo, ChaveFuturaViewModel>(false), IChaveFuturaView {
   var formCodBar: PnlCodigoBarras? = null
   private val isAdmin
     get() = RegistryUserInfo.userDefaultIsAdmin
@@ -104,7 +104,7 @@ class ChaveFuturaView: CrudLayoutView<ChaveFuturaVo, ChaveFuturaViewModel>(false
         }
       }
     }
-    form("Chave Entrega Futura")
+    form("Chave Retira Futura")
     gridCrud {
       addCustomToolBarComponent(btnImprimeTudo())
       formCodBar = formCodbar()

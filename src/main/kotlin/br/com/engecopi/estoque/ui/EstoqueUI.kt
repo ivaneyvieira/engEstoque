@@ -28,6 +28,9 @@ import br.com.engecopi.estoque.ui.views.paineis.PedidoTransferenciaView
 import br.com.engecopi.estoque.ui.views.ressuprimento.ChaveRessuprimentoView
 import br.com.engecopi.estoque.ui.views.ressuprimento.EditorRessuprimento
 import br.com.engecopi.estoque.ui.views.ressuprimento.EntregaRessuprimentoView
+import br.com.engecopi.estoque.ui.views.retiraFutura.ChaveRetiraFuturaView
+import br.com.engecopi.estoque.ui.views.retiraFutura.EditorRetiraFuturaView
+import br.com.engecopi.estoque.ui.views.retiraFutura.RetiraFuturaView
 import br.com.engecopi.framework.ui.view.toViewName
 import br.com.engecopi.utils.SystemUtils
 import com.github.mvysny.karibudsl.v8.*
@@ -110,6 +113,8 @@ class EstoqueUI : UI() {
 
       if (user.roleFutura()) sectionFutura(user)
 
+      if (user.roleRetiraFutura()) sectionRetiraFutura(user)
+
       if (user.roleRessuprimento()) sectionRessuprimento(user)
 
       if (user.roleAbastecimento()) sectionAbastecimento(user)
@@ -179,6 +184,14 @@ class EstoqueUI : UI() {
     }
   }
 
+  private fun @VaadinDsl ValoMenu.sectionRetiraFutura(user: Usuario) {
+    section("Retira Futura") {
+      menuButton("Chave", NEWSPAPER, view = ChaveRetiraFuturaView::class.java)
+      menuButton("Entrega", TRUCK, view = RetiraFuturaView::class.java)
+      menuButton("Editor", TRUCK, view = EditorRetiraFuturaView::class.java)
+    }
+  }
+
   private fun @VaadinDsl ValoMenu.sectionRessuprimento(user: Usuario) {
     section("Ressuprimento") {
       menuButton("Chave", NEWSPAPER, view = ChaveRessuprimentoView::class.java)
@@ -226,6 +239,7 @@ class EstoqueUI : UI() {
   private fun Usuario.rolePaineis() = this.admin || this.painel
   private fun Usuario.roleExpedicao() = this.admin || this.expedicao
   private fun Usuario.roleFutura() = this.admin || this.entregaFutura
+  private fun Usuario.roleRetiraFutura() = this.admin || this.retiraFutura
   private fun Usuario.roleMovimentacao() = this.admin || this.estoque
   private fun Usuario.roleConfiguracao() = this.admin || this.configuracao
   private fun Usuario.roleEtiqueta() = this.admin || this.etiqueta

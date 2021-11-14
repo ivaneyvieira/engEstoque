@@ -64,7 +64,9 @@ class Usuario: BaseModel() {
     get() = !admin && expedicao && estoque
   val isEstoqueVendaFutura
     get() = !admin && entregaFutura
-  
+  val isEstoqueRetiraFutura
+    get() = !admin && retiraFutura
+
   private fun mapNotaSerie(idStr: String): NotaSerie? {
     val id =
       idStr.trim()
@@ -80,6 +82,7 @@ class Usuario: BaseModel() {
   var painel: Boolean = false
   var configuracao: Boolean = false
   var entregaFutura: Boolean = false
+  var retiraFutura: Boolean = false
   var etiqueta: Boolean = true
   var ressuprimento: Boolean = false
   var abastecimento: Boolean = false

@@ -11,9 +11,9 @@ import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
 
 class EditorFuturaViewModel(view: IEditorFuturaView):
-  NotaViewModel<EntregaFututaVo, IEditorFuturaView>(view, SAIDA, ENTREGUE, ENTREGUE) {
-  override fun newBean(): EntregaFututaVo {
-    return EntregaFututaVo()
+  NotaViewModel<RetiraFututaVo, IEditorFuturaView>(view, SAIDA, ENTREGUE, ENTREGUE) {
+  override fun newBean(): RetiraFututaVo {
+    return RetiraFututaVo()
   }
   
   override fun QItemNota.filtroTipoNota(): QItemNota {
@@ -25,7 +25,7 @@ class EditorFuturaViewModel(view: IEditorFuturaView):
       .nota.usuario.isNotNull.nota.sequencia.ne(0)
   }
   
-  override fun createVo() = EntregaFututaVo()
+  override fun createVo() = RetiraFututaVo()
   
   fun notasConferidas(): List<ItemNota> {
     return QItemNota().status.eq(CONFERIDA)
