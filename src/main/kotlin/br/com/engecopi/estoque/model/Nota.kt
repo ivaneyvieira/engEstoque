@@ -235,19 +235,19 @@ class Nota: BaseModel() {
     fun findNotaSaidaSaci(loja: Loja, numeroNF: String?): List<NotaProdutoSaci> {
       return findNotaSaidaSaci(loja.numero, numeroNF)
     }
-    
+
     fun findNotaSaidaSaci(storeno: Int?, numeroNF: String?): List<NotaProdutoSaci> {
       numeroNF ?: return emptyList()
       storeno ?: return emptyList()
       val numero =
-        numeroNF.split("/")
-          .getOrNull(0) ?: return emptyList()
+              numeroNF.split("/")
+                .getOrNull(0) ?: return emptyList()
       val serie =
-        numeroNF.split("/")
-          .getOrNull(1) ?: ""
+              numeroNF.split("/")
+                .getOrNull(1) ?: ""
       return saci.findNotaSaida(storeno, numero, serie, usuarioDefault.admin)
     }
-    
+
     fun itemDuplicado(nota: Nota?, produto: Produto?): Boolean {
       val lojaId = nota?.loja?.id ?: return false
       val numero = nota.numero
