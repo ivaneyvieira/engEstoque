@@ -1,9 +1,7 @@
 package br.com.engecopi.estoque.viewmodel.retiraFutura
 
 import br.com.engecopi.estoque.model.ItemNota
-import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
-import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
-import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
+import br.com.engecopi.estoque.model.StatusNota.*
 import br.com.engecopi.estoque.model.TipoMov.SAIDA
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.query.QItemNota

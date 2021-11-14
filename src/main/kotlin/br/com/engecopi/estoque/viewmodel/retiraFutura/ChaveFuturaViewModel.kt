@@ -1,17 +1,11 @@
 package br.com.engecopi.estoque.viewmodel.retiraFutura
 
-import br.com.engecopi.estoque.model.Loja
-import br.com.engecopi.estoque.model.Nota
-import br.com.engecopi.estoque.model.Produto
+import br.com.engecopi.estoque.model.*
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
-import br.com.engecopi.estoque.model.TipoMov
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
-import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
-import br.com.engecopi.estoque.model.Usuario
-import br.com.engecopi.estoque.model.ViewNotaFutura
 import br.com.engecopi.estoque.model.dtos.VendasCaixa
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.model.query.QViewNotaFutura

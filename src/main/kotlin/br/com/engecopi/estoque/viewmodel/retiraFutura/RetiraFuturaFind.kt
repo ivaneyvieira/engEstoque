@@ -3,10 +3,7 @@ package br.com.engecopi.estoque.viewmodel.retiraFutura
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.KeyNota
 import br.com.engecopi.estoque.model.Nota
-import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
-import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
-import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
-import br.com.engecopi.estoque.model.StatusNota.INCLUIDA
+import br.com.engecopi.estoque.model.StatusNota.*
 import br.com.engecopi.estoque.model.TipoNota.VENDAF
 import br.com.engecopi.estoque.model.dtos.EntregaFutura
 import br.com.engecopi.estoque.model.dtos.PedidoNotaRessuprimento
