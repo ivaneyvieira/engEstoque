@@ -112,6 +112,13 @@ class ItemNota : BaseModel() {
     get() = nota?.notaBaixa()?.filterProduto(codigo, grade) ?: emptyList()
   val dataEntrega
     get() = nota?.dataBaixa()
+  val dataValidade: LocalDate?
+    get() {
+      return if (produto?.mesesVencimento == null) {
+        null
+      }
+      else dataFabricacao?.plusMonths(produto?.mesesVencimento?.toLong() ?: 0)
+    }
 
   companion object Find : ItemNotaFinder() {
     fun find(loja: Int?, numero: String?): List<ItemNota> {
@@ -255,6 +262,8 @@ class NotaPrint(val item: ItemNota, val volume: Int? = null) {
     get() = item.nota?.lancamento?.format(DateTimeFormatter.ofPattern("dd/MM/yy")) ?: ""
   val fabricacao
     get() = item.dataFabricacao?.formatMesAno() ?: ""
+  val validade: String
+    get() = item.dataValidade.formatMesAno()
   val numFab
     get() = item.dataFabricacao?.format(DateTimeFormatter.ofPattern("yyyyMM"))?.toIntOrNull() ?: 0
   val quantidadePacote
