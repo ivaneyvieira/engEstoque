@@ -2,7 +2,7 @@ package br.com.engecopi.estoque.viewmodel.retiraFutura
 
 import br.com.engecopi.estoque.model.*
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
-import br.com.engecopi.estoque.model.TipoNota.VENDAF
+import br.com.engecopi.estoque.model.TipoNota.RETIRAF
 import br.com.engecopi.estoque.viewmodel.EChaveNaoEncontrada
 import br.com.engecopi.estoque.viewmodel.ENotaNaoEntregaFutura
 import br.com.engecopi.estoque.viewmodel.ENovaBaixaLancada
@@ -17,9 +17,9 @@ class ChaveFuturaFind {
     val nota = notaSaci.firstOrNull() ?: throw EChaveNaoEncontrada()
     val numero = nota.numero ?: ""
     return when {
-      nota.isNotaBaixaLancada() -> throw ENovaBaixaLancada()
-      nota.tipoNota() != VENDAF -> throw ENotaNaoEntregaFutura(numero)
-      else                      -> notaSaci
+      nota.isNotaBaixaLancada()          -> throw ENovaBaixaLancada()
+      nota.tipoNota() != RETIRAF -> throw ENotaNaoEntregaFutura(numero)
+      else                               -> notaSaci
     }.expandeGradeGenerica()
   }
   

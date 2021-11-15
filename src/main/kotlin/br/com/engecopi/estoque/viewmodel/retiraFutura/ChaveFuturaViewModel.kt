@@ -5,7 +5,7 @@ import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.model.StatusNota.ENTREGUE
 import br.com.engecopi.estoque.model.StatusNota.ENT_LOJA
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
-import br.com.engecopi.estoque.model.TipoNota.VENDAF
+import br.com.engecopi.estoque.model.TipoNota.RETIRAF
 import br.com.engecopi.estoque.model.dtos.VendasCaixa
 import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.model.query.QViewNotaFutura
@@ -50,7 +50,7 @@ class ChaveFuturaViewModel(view: IChaveFuturaView):
   }
   
   override val query: QViewNotaFutura
-    get() = QViewNotaFutura().nota.tipoNota.eq(VENDAF)
+    get() = QViewNotaFutura().nota.tipoNota.eq(RETIRAF)
   
   private fun QViewNotaFutura.filtroNotaSerie(): QViewNotaFutura {
     val tipos = usuarioDefault.series.map {
