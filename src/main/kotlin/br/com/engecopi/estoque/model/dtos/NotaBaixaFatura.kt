@@ -27,7 +27,7 @@ data class NotaBaixaFatura(val storeno: Int,
 val List<NotaBaixaFatura>.storeno
   get() = this.map {it.storeno}.distinct().joinToString(separator = "/")
 val List<NotaBaixaFatura>.data
-  get() = this.mapNotNull {it.data}.max()
+  get() = this.mapNotNull {it.data}.maxOrNull()
 
 data class ProdutoNota(val prdno: String?, val grade: String?) {
   companion object {
