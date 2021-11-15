@@ -21,12 +21,11 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
-  view: V,
-  val tipo: TipoMov,
-  private val statusDefault: StatusNota,
-  private val statusImpressao: StatusNota,
-                                                        ) : CrudViewModel<ItemNota, QItemNota, VO, V>(view) {
+abstract class NotaViewModel<VO : NotaVo, V : INotaView>(view: V,
+                                                         val tipo: TipoMov,
+                                                         private val statusDefault: StatusNota,
+                                                         private val statusImpressao: StatusNota) :
+        CrudViewModel<ItemNota, QItemNota, VO, V>(view) {
   private val print = NotaPrint()
 
   override fun update(bean: VO) {
@@ -106,7 +105,7 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
                 dataFabricacao = dataFabricacao,
                 dataEntrada = nota.data,
                 mesesValidade = mesesValidade,
-                                           )
+                                               )
       if (erroVencimento.isError()) {
         throw EViewModelError(erroVencimento.msgErro())
       }
