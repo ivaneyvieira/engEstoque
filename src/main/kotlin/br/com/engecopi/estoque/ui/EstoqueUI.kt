@@ -283,7 +283,7 @@ class Bootstrap : ServletContextListener {
     val fileName = System.getenv("EBEAN_PROPS") ?: "$home/ebean.properties"
     System.setProperty("ebean.props.file", fileName)
     println("##################### $fileName")
-    Produto.updateMesesGarantia()
+    //Produto.updateMesesGarantia()
   }
 }
 

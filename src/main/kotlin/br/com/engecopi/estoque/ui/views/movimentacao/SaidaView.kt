@@ -231,14 +231,18 @@ class SaidaView : NotaView<SaidaVo, SaidaViewModel, ISaidaView>(customFooterLayo
 
   private fun imprimeItem(item: SaidaVo) {
     val text = viewModel.imprimirItem(item.itemNota)
-    printText(impressoraUsuario, text)
-    refreshGrid()
+    showZPLPreview(text) {
+      printText(impressoraUsuario, text)
+      refreshGrid()
+    }
   }
 
   private fun imprimeNotaCompleta(item: SaidaVo) {
     val text = viewModel.imprimirNotaCompleta(item.itemNota)
-    printText(impressoraUsuario, text)
-    refreshGrid()
+    showZPLPreview(text) {
+      printText(impressoraUsuario, text)
+      refreshGrid()
+    }
   }
 }
 

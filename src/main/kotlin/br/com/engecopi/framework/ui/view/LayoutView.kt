@@ -1,6 +1,7 @@
 package br.com.engecopi.framework.ui.view
 
 import br.com.engecopi.framework.viewmodel.ViewModel
+import br.com.engecopi.utils.ZPLPreview
 import com.fo0.advancedtokenfield.main.AdvancedTokenField
 import com.github.mvysny.karibudsl.v8.*
 import com.vaadin.data.Binder
@@ -59,8 +60,13 @@ abstract class LayoutView<V : ViewModel<*>> : VerticalLayout(), View {
     if (msg.isNotBlank()) MessageDialog.info(message = msg)
   }
 
-  fun showImage(title: String, image: ByteArray) {
-    MessageDialog.image(title, image)
+  fun showImage(title: String, image: ByteArray, printRunnable: () -> Unit) {
+    MessageDialog.image(title, image, printRunnable)
+  }
+
+  fun showZPLPreview(zplCode : String, printRunnable: () -> Unit){
+    val image = ZPLPreview.createPdf(zplCode, "4x2")
+    if(image != null) showImage("Preview", image, printRunnable)
   }
 
   fun showQuestion(msg: String, execYes: () -> Unit, execNo: () -> Unit) {
