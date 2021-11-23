@@ -13,8 +13,9 @@ import com.vaadin.ui.DateField
 import com.vaadin.ui.Notification
 import com.vaadin.ui.Window
 import com.vaadin.ui.themes.ValoTheme
+import java.time.LocalDate
 
-class DialogItemNota(val nota: Nota, private val produtoVo: ProdutoNotaVo, val salvaProduto: () -> Unit = {}) :
+class DialogItemNota(val nota: Nota?, private val produtoVo: ProdutoNotaVo, val salvaProduto: () -> Unit = {}) :
         Window("Produto") {
   private lateinit var cmbLocalizacao: ComboBox<LocProduto>
   private lateinit var edtDataFabricacao: DateField
@@ -83,7 +84,7 @@ class DialogItemNota(val nota: Nota, private val produtoVo: ProdutoNotaVo, val s
     return ValidadeProduto.erroMesFabricacao(
       produto = produto.codigo,
       dataFabricacao = edtDataFabricacao.value,
-      dataEntrada = nota.data,
+      dataEntrada = nota?.data ?: LocalDate.now(),
       mesesValidade = mesesValidade,
                                  )
   }

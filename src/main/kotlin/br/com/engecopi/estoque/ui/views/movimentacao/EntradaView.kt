@@ -16,6 +16,7 @@ import br.com.engecopi.saci.QuerySaci
 import com.github.mvysny.karibudsl.v8.*
 import com.vaadin.data.Binder
 import com.vaadin.event.ShortcutAction
+import com.vaadin.event.selection.MultiSelectionEvent
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.ui.ContentMode.HTML
 import com.vaadin.shared.ui.ValueChangeMode
@@ -115,7 +116,25 @@ class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(customFo
               val produto = it.item
               if (produto != null) openDilaogProduto(produto)
             }
-          } //gridProduto.setSelectionMode(Grid.SelectionMode.SINGLE)
+          }
+          gridProduto.addSelectionListener {
+            if (it.isUserOriginated) {
+              val produto = if (it is MultiSelectionEvent<ProdutoNotaVo>) {
+                it.addedSelection.firstOrNull()
+              }
+              else {
+                it.allSelectedItems.firstOrNull()
+              }
+              if (isAdmin) {
+                if (produto != null) openDilaogProduto(produto)
+              }
+              else {
+                if (produto != null) gridProduto.deselect(produto)
+              }
+            }
+          }
+
+          //gridProduto.setSelectionMode(Grid.SelectionMode.SINGLE)
           operationButton?.removeClickShortcut()
         }
       }
@@ -237,7 +256,7 @@ class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(customFo
   }
 
   private fun openDilaogProduto(produtoItem: ProdutoNotaVo) {
-    val nota = formBinder.bean.nota ?: return
+    val nota = formBinder.bean.nota
     val dialog = DialogItemNota(nota, produtoItem) {
       gridProduto.selectionModel.select(produtoItem)
       gridProduto.dataProvider.refreshAll()
