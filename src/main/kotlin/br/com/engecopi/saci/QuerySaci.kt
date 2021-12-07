@@ -298,12 +298,27 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     }
   }
 
-  fun findProdutoGarantia(codigo : String?): ProdutoGarantia? {
+  fun findProdutoGarantia(codigo: String?): ProdutoGarantia? {
     codigo ?: return null
     val sql = "/sqlSaci/produtoGrantia.sql"
     return query(sql) { q ->
       q.addOptionalParameter("codigo", codigo.trim())
       q.executeAndFetch(ProdutoGarantia::class.java).firstOrNull()
+    }
+  }
+
+  fun findProdutosSaci(storeno: Int, vendno: Int, typeno: Int, clno: Int, pedido: Int): List<String>? {
+    val sql = "/sqlSaci/findProdutosSaci.sql"
+    if (vendno == 0 && typeno == 0 && clno == 0 && pedido == 0) return null
+    return query(sql) { q ->
+      q.addParameter("storeno", storeno)
+      q.addParameter("vendno", vendno)
+      q.addParameter("typeno", typeno)
+      q.addParameter("clno", clno)
+      q.addParameter("pedido", pedido)
+      q.executeScalarList(String::class.java).map {
+        it.lpad(16, " ")
+      }
     }
   }
 

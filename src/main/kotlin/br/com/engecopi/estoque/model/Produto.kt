@@ -8,6 +8,7 @@ import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.model.query.QProduto
 import br.com.engecopi.framework.model.BaseModel
 import br.com.engecopi.saci.saci
+import br.com.engecopi.utils.SystemUtils
 import br.com.engecopi.utils.lpad
 import io.ebean.DB
 import io.ebean.annotation.*
@@ -186,6 +187,20 @@ class Produto : BaseModel() {
     fun delete(idDelete: Long?) {
       QProduto().id.eq(idDelete).delete()
     }
+
+    fun findProdutoSaldo(filtro: FiltroEstoque): List<ProdutoSaldo> {
+      val sql = SystemUtils.readFile("/sqlSaci/relatorioSaldo.sql") ?: return emptyList()
+      return DB.beginTransaction().use { tx ->
+        DB.findDto(ProdutoSaldo::class.java, sql)
+          .setParameter("storeno", filtro.storeno)
+          .setParameter("prdno", filtro.prdno)
+          .setParameter("estoque", filtro.estoque.sinal)
+          .findList().filter {
+            val codigos = filtro.produtoFiltro() ?: return@filter true
+            it.codigo in codigos
+          }
+      }
+    }
   }
 
   fun saldoLocalizacao(localizacao: String?): Int {
@@ -260,4 +275,25 @@ data class LocProduto(val localizacao: String) : Comparable<LocProduto> {
   override fun toString(): String {
     return localizacao
   }
+}
+
+class ProdutoSaldo(val codigo: String,
+                   val nome: String,
+                   val grade: String,
+                   val codebar: String,
+                   val localizacao: String,
+                   val quantidade: Int)
+
+enum class EStatusEstoque(val sinal: String) {
+  IGUAL("="), DIFERENTE("<>"), MAIOR(">"), MENOR("<"), TODOS("T")
+}
+
+data class FiltroEstoque(val storeno: Int,
+                         val prdno: String,
+                         val estoque: EStatusEstoque,
+                         val vendno: Int,
+                         val typeno: Int,
+                         val clno: Int,
+                         val pedido: Int){
+  fun produtoFiltro() = saci.findProdutosSaci(storeno, vendno, typeno, clno, pedido)
 }
