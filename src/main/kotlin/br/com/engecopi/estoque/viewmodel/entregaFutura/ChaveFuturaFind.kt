@@ -60,13 +60,6 @@ class ChaveFuturaFind {
       })
     }
   }
-  
-  private fun List<NotaProdutoSaci>.filtroTipoCompativel(): List<NotaProdutoSaci> {
-    return this.filter {nota ->
-      val tipo = nota.tipoNota() ?: return@filter false
-      return@filter usuarioDefault.isTipoCompativel(tipo)
-    }
-  }
 }
 
 
