@@ -10,7 +10,7 @@ SELECT DISTINCT CAST(IFNULL(X.xrouteno, '') AS CHAR) AS rota,
 		C.name                               AS clienteName,
 		CASE
 		  WHEN (N.nfse = 1 AND N.cfo IN (5922, 6922)) OR
-		       (N.nfse = 7 AND N.cfo IN (5405, 6102))
+		       (N.nfse = 7 AND N.cfo IN (5102, 6102))
 		    THEN 'VENDAF'
 		  WHEN N.nfse = '66'
 		    THEN 'ACERTO_S'
