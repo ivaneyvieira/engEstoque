@@ -37,6 +37,7 @@ class ItemNota : BaseModel() {
   var quantidadeSaci: Int? = null
 
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
+  @FetchPreference(1)
   var produto: Produto? = null
 
   @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
