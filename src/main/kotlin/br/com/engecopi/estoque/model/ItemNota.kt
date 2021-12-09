@@ -95,8 +95,11 @@ class ItemNota : BaseModel() {
     get() = nota?.tipoNota
   val dataNota: LocalDate?
     get() = nota?.data
-  val quantidadeVolume
-    get() = ceil((quantidade * 1.00).div(produto?.quantidadePacote ?: 1)).roundToInt()
+  val quantidadeVolume : Int
+    get() {
+      val quantidadePacote = produto()?.quantidadePacote ?: return 0
+      return ceil((quantidade * 1.00).div(quantidadePacote )).roundToInt()
+    }
   val ultilmaMovimentacao: Boolean
     get() {
       return produto?.ultimaNota()?.let {
@@ -120,6 +123,11 @@ class ItemNota : BaseModel() {
       }
       else dataFabricacao?.plusMonths(produto?.mesesVencimento?.toLong() ?: 0)
     }
+
+  fun produto(): Produto? {
+    val id = produto?.id ?: return null
+    return Produto.byId(id)
+  }
 
   companion object Find : ItemNotaFinder() {
     fun find(loja: Int?, numero: String?): List<ItemNota> {
