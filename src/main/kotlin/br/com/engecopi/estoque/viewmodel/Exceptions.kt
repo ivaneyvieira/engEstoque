@@ -6,6 +6,8 @@ class EChaveNaoEncontrada: EViewModelError("Chave não encontrada")
 
 class ENotaNaoEntregaFutura(val numero: String): EViewModelError("A nota $numero não é uma fatura de entrega futura")
 
+class ENotaNaoRetiraFutura(val numero: String): EViewModelError("A nota $numero não é uma fatura de retira futura")
+
 class ENotaEntregaFutura(val numero: String): EViewModelError("A nota $numero é uma fatura de entrega futura")
 
 class EPedidoRessuprimento(val numero: String): EViewModelError("A nota $numero é um pedido de ressuprimento")

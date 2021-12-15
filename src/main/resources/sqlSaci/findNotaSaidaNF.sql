@@ -9,8 +9,9 @@ SELECT DISTINCT CAST(IFNULL(X.xrouteno, '') AS CHAR) AS rota,
 		P.qtty                               AS quant,
 		C.name                               AS clienteName,
 		CASE
-		  WHEN (N.nfse = 1 AND N.cfo IN (5922, 6922)) OR
-		       (N.nfse = 7)
+		  WHEN (IFNULL(NP.optionEntrega, 0) % 100) = 4
+		    THEN 'RETIRAF'
+		  WHEN (N.nfse = 1 AND N.cfo IN (5922, 6922)) OR (N.nfse = 7)
 		    THEN 'VENDAF'
 		  WHEN N.nfse = '66'
 		    THEN 'ACERTO_S'
@@ -32,6 +33,9 @@ SELECT DISTINCT CAST(IFNULL(X.xrouteno, '') AS CHAR) AS rota,
 FROM sqldados.nf             AS N
   INNER JOIN sqldados.xaprd  AS P
 	       USING (storeno, pdvno, xano)
+  LEFT JOIN  sqldados.nfrprd AS NP
+	       ON P.storeno = NP.storeno AND P.pdvno = NP.pdvno AND P.xano = NP.xano AND
+		  P.prdno = NP.prdno AND P.grade = NP.grade AND (optionEntrega % 100) = 4
   INNER JOIN sqldados.prdloc AS E
 	       ON E.prdno = P.prdno AND E.grade = P.grade AND E.storeno = 4
   LEFT JOIN  sqldados.custp  AS C
@@ -45,3 +49,7 @@ WHERE N.storeno = :storeno
   AND N.nfse = :nfse
   AND N.status <> 1
 HAVING tipo <> ''
+
+
+
+
