@@ -77,7 +77,14 @@ class Usuario : BaseModel() {
     return ViewProdutoLoc.existsCache(produto)
   }
 
-  fun impressoraExpedicao() = if (loginName in listOf("CD5A", "EXP4B")) "CD5A" else "EXP4"
+  fun impressoraExpedicao(): String {
+    val impressoraDefault = if (loginName in listOf("CD5A", "EXP4B")) "CD5A" else "EXP4"
+    val saciUser = usuarioSaci() ?: return impressoraDefault
+    val impressoraUsuario = saciUser.impressora ?: return impressoraDefault
+
+    val impressoras = Abreviacao.findAll().map { it.impressora }.filter { it.isNotBlank() }
+    return if (impressoraUsuario in impressoras) impressoraUsuario else impressoraDefault
+  }
 
   fun localizacoesProduto(produto: Produto): List<String> {
     return QViewProdutoLoc().produto.equalTo(produto).or().loja.equalTo(loja).loja.equalTo(null)
