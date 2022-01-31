@@ -12,55 +12,53 @@ open class PrinterCups(val host: String, val port: Int, val userName: String, va
   private val printers
     get() = cupsClient.printers.toList()
   private val printerRemote
-    get() = printers.filter {it.location != ""}.map {cupsPrinter ->
+    get() = printers.filter { it.location != "" }.map { cupsPrinter ->
       PrinterInfo.newInstance(cupsPrinter, REMOTE)
     }
   private val printerLocal
-    get() = printers.filter {it.printerURL.host == localHost}.map {cupsPrinter ->
-      PrinterInfo.newInstance(cupsPrinter, LOCAL)
-        .copy(location = "Local ${cupsPrinter.name}")
+    get() = printers.filter { it.printerURL.host == localHost }.map { cupsPrinter ->
+      PrinterInfo.newInstance(cupsPrinter, LOCAL)//.copy(location = "Local ${cupsPrinter.name}")
     }
   val printersInfo
     get() = printerRemote
-  
+
   fun printerExists(printerName: String): Boolean {
     val impressoras = printers
-    return impressoras.any {it.name == printerName}
+    return impressoras.any { it.name == printerName }
   }
-  
+
   fun findPrinter(printerName: String): CupsPrinter? {
-    return printers.firstOrNull {it.name == printerName}
+    return printers.firstOrNull { it.name == printerName }
   }
-  
+
   @Throws(ECupsPrinter::class)
   fun CupsPrinter.printText(text: String, resultMsg: (String) -> Unit = {}) {
-    val job = PrintJob.Builder(text.toByteArray())
-      .build()
+    val job = PrintJob.Builder(text.toByteArray()).build()
     try {
       val result = print(job)
       resultMsg("Job ${result.jobId}: ${result.resultDescription} : ${result.resultMessage}")
-    } catch(e: Exception) {
+    } catch (e: Exception) {
       throw ECupsPrinter("Erro de impressão")
     }
   }
-  
+
   fun CupsPrinter.printerTeste() {
     printText(etiqueta)
   }
-  
+
   fun CupsPrinter.isHostReachable(): Boolean {
     val host = this.printerURL.host
     return NetworkUtils.isHostReachable(host)
   }
-  
+
   @Throws(ECupsPrinter::class)
   fun printCups(impressora: String, text: String, resultMsg: (String) -> Unit = {}) {
     val printer =
-      findPrinter(impressora)
-      ?: throw ECupsPrinter("Impressora $impressora não está configurada no sistema operacional")
+            findPrinter(impressora)
+            ?: throw ECupsPrinter("Impressora $impressora não está configurada no sistema operacional")
     printer.printText(text, resultMsg)
   }
-  
+
   private val etiqueta = """
     |^XA
     |^FT20,070^A0N,70,50^FH^FDNF ENTRADA:1212^FS
@@ -76,20 +74,19 @@ open class PrinterCups(val host: String, val port: Int, val userName: String, va
     |^XZ""".trimMargin()
 }
 
-data class PrinterInfo(val name: String, val location: String, val description: String,
-                       val type: PrinterType) {
-  val urlHost
+data class PrinterInfo(val name: String, /*val location: String, */val description: String, val type: PrinterType) {
+ /* val urlHost2
     get() = location
-  
+*/
   companion object {
     fun newInstance(printer: CupsPrinter, printerType: PrinterType) = PrinterInfo(name = printer.name,
-                                                                                  location = printer.location,
-                                                                                  description = printer.description,
+                                                                                 /* location = printer.location ?: "",*/
+                                                                                  description = printer.description
+                                                                                                ?: "",
                                                                                   type = printerType)
   }
 }
 
 enum class PrinterType {
-  REMOTE,
-  LOCAL
+  REMOTE, LOCAL
 }
