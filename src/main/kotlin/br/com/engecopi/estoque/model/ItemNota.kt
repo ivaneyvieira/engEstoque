@@ -252,6 +252,7 @@ class NotaPrint(val item: ItemNota, val volume: Int? = null) {
   val quant = item.quantidade
   val prdno = produto?.codigo?.trim() ?: ""
   val grade = produto?.grade ?: ""
+  val codbar = produto?.vproduto?.codebar ?: ""
   val name = produto?.descricao ?: ""
   val prdnoGrade = "$prdno${if (grade == "") "" else "-$grade"}"
   val codebar
