@@ -273,7 +273,7 @@ class ProdutoView : CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoV
       }
       column(ProdutoVo::quantidadePacote) {
         expandRatio = 1
-        caption = "Quant. Pac."
+        caption = "Embalagem"
         align = VAlign.Right
         setSortProperty("meses_vencimento")
       }
