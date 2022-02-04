@@ -246,6 +246,11 @@ class ProdutoView : CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoV
         caption = "Código"
         setSortProperty("codigo")
       }
+      column(ProdutoVo::codebar) {
+        expandRatio = 1
+        caption = "Código Barras"
+        setSortProperty("codebar")
+      }
       column(ProdutoVo::descricaoProduto) {
         expandRatio = 5
         caption = "Descrição"
@@ -279,7 +284,7 @@ class ProdutoView : CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoV
         setRenderer(NumberRenderer(DecimalFormat("0")))
         align = VAlign.Right
       }
-      column(ProdutoVo::comprimento) {
+    /*  column(ProdutoVo::comprimento) {
         expandRatio = 1
         caption = "Comprimento"
         setSortProperty("vproduto.comp")
@@ -299,7 +304,7 @@ class ProdutoView : CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoV
         setSortProperty("vproduto.alt")
         setRenderer(NumberRenderer(DecimalFormat("0")))
         align = VAlign.Right
-      }/*
+      }
       column(ProdutoVo::cubagem) {
         expandRatio = 1
         caption = "Cubagem"
