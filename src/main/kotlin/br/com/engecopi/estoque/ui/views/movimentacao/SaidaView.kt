@@ -3,7 +3,7 @@ package br.com.engecopi.estoque.ui.views.movimentacao
 import br.com.engecopi.estoque.model.*
 import br.com.engecopi.estoque.model.LancamentoOrigem.*
 import br.com.engecopi.estoque.model.RegistryUserInfo.abreviacaoDefault
-import br.com.engecopi.estoque.model.RegistryUserInfo.impressoraUsuario
+import br.com.engecopi.estoque.model.RegistryUserInfo.impressoraLocalizacao
 import br.com.engecopi.estoque.model.RegistryUserInfo.lojaDeposito
 import br.com.engecopi.estoque.model.StatusNota.*
 import br.com.engecopi.estoque.ui.print.PrintUtil.imprimeNotaConcluida
@@ -215,7 +215,7 @@ class SaidaView : NotaView<SaidaVo, SaidaViewModel, ISaidaView>(customFooterLayo
         val dlg = DlgNotaSaida(nota, viewModel) { itens ->
           if (itens.isNotEmpty()) {
             val text = viewModel.imprimirItens(itens)
-            printText(impressoraUsuario, text)
+            printText(impressoraLocalizacao, text)
             refreshGrid() //Imprime nota
             itens.firstOrNull()?.nota?.let { nota ->
               imprimeNotaConcluida(nota)
@@ -232,7 +232,7 @@ class SaidaView : NotaView<SaidaVo, SaidaViewModel, ISaidaView>(customFooterLayo
   private fun imprimeItem(item: SaidaVo) {
     val text = viewModel.imprimirItem(item.itemNota)
     showZPLPreview(text) {
-      printText(impressoraUsuario, text)
+      printText(impressoraLocalizacao, text)
       refreshGrid()
     }
   }
@@ -240,7 +240,7 @@ class SaidaView : NotaView<SaidaVo, SaidaViewModel, ISaidaView>(customFooterLayo
   private fun imprimeNotaCompleta(item: SaidaVo) {
     val text = viewModel.imprimirNotaCompleta(item.itemNota)
     showZPLPreview(text) {
-      printText(impressoraUsuario, text)
+      printText(impressoraLocalizacao, text)
       refreshGrid()
     }
   }

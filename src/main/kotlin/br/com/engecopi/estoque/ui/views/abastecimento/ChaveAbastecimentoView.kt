@@ -1,7 +1,7 @@
 package br.com.engecopi.estoque.ui.views.abastecimento
 
 import br.com.engecopi.estoque.model.RegistryUserInfo
-import br.com.engecopi.estoque.model.RegistryUserInfo.impressoraUsuario
+import br.com.engecopi.estoque.model.RegistryUserInfo.impressoraLocalizacao
 import br.com.engecopi.estoque.model.RegistryUserInfo.userDefaultIsAdmin
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.ui.print.PrintUtil.imprimeNotaConcluida
@@ -211,7 +211,7 @@ class ChaveAbastecimentoView: CrudLayoutView<AbastecimentoVo, ChaveAbastecimento
       icon = PRINT
       addClickListener {
         val text = viewModel.imprimeTudo()
-        printText(impressoraUsuario, text)
+        printText(impressoraLocalizacao, text)
         //grid.refreshGrid()
       }
     }

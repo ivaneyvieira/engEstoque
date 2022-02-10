@@ -3,6 +3,7 @@ package br.com.engecopi.estoque.model
 import br.com.engecopi.estoque.model.finder.UsuarioFinder
 import br.com.engecopi.estoque.model.query.QUsuario
 import br.com.engecopi.estoque.model.query.QViewProdutoLoc
+import br.com.engecopi.framework.model.AppPrinter
 import br.com.engecopi.framework.model.BaseModel
 import br.com.engecopi.saci.saci
 import io.ebean.annotation.Index
@@ -82,7 +83,7 @@ class Usuario : BaseModel() {
     val saciUser = usuarioSaci() ?: return impressoraDefault
     val impressoraUsuario = saciUser.impressora ?: return impressoraDefault
 
-    val impressoras = Abreviacao.findAll().map { it.impressora }.filter { it.isNotBlank() }
+    val impressoras = AppPrinter.appPrinterNames
     return if (impressoraUsuario in impressoras) impressoraUsuario else impressoraDefault
   }
 

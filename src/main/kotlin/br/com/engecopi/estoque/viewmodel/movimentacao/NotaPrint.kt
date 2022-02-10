@@ -65,14 +65,15 @@ class NotaPrint {
 
       val temValidade = item.produto?.mesesVencimento != null
 
-      val etiquetasVolStr = if(temValidade) {
+      val etiquetasVolStr = if (temValidade) {
         val volRange = (1..item.quantidadeVolume).toList()
         volRange.joinToString(separator = "\n") { volume ->
           etiquetasVol.joinToString { etiqueta ->
             imprimir(listOf(item), etiqueta, volume)
           }
         }
-      } else {
+      }
+      else {
         ""
       }
 
