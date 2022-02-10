@@ -28,11 +28,8 @@ class AbreciacaoView: LayoutView<AbreciacaoViewModel>(), IAbreciacaoView {
     grid(Abreviacao::class) {
       val edtLoc = CheckBox()
       val edtImpressora = ComboBox<String>().apply {
-        val itens = AppPrinter.printersInfo
-        setItems(itens.map {it.name})
-        setItemCaptionGenerator {
-          itens.find {item -> item.name == it}?.description ?: ""
-        }
+        val itens = AppPrinter.appPrinterNames
+        setItems(itens)
         isTextInputAllowed = false
       }
 

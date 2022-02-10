@@ -1,7 +1,7 @@
 package br.com.engecopi.estoque.ui.views.etiquetas
 
 import br.com.engecopi.estoque.model.Produto
-import br.com.engecopi.estoque.model.RegistryUserInfo.impressoraUsuario
+import br.com.engecopi.estoque.model.RegistryUserInfo.impressoraLocalizacao
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
 import br.com.engecopi.estoque.ui.print.PrintUtil.printText
 import br.com.engecopi.estoque.viewmodel.etiquetas.ILabelProdutoView
@@ -92,7 +92,7 @@ class LabelProdutoView: LayoutView<LabelProdutoViewModel>(), ILabelProdutoView {
               cmbTipoFiltro.value?.let {filtroView ->
                 filtroView.processaFiltro()
                 val print = viewModel.impressaoProduto()
-                printText(impressoraUsuario, print)
+                printText(impressoraLocalizacao, print)
               }
             }
           }

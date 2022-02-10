@@ -39,7 +39,7 @@ object RegistryUserInfo {
     get() = usuarioDefault.admin
   val enderecoBrowser
     get() = Page.getCurrent().webBrowser.address ?: ""
-  val impressoraUsuario
+  val impressoraLocalizacao
     get() = Printer(Abreviacao.findByAbreviacao(abreviacaoDefault)?.impressora ?: "")
   val isLogged
     get() = info != null

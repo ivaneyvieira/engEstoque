@@ -8,16 +8,35 @@ import org.cups4j.CupsPrinter
 import org.cups4j.PrintJob
 
 open class PrinterCups(val host: String, val port: Int, val userName: String, val localHost: String) {
+  val appPrinterNames =
+          listOf("ABASTECIMENTO",
+                 "ADMJS",
+                 "bematech4200",
+                 "CD1A",
+                 "CD1B",
+                 "CD1D",
+                 "CD2A",
+                 "CD2C",
+                 "CD3C",
+                 "CD4C",
+                 "CD5A",
+                 "ENTREGA",
+                 "EXP4",
+                 "exp4b",
+                 "f4ent",
+                 "NULA",
+                 "ressu4200",
+                 "RESSUPRIMENTO").map { it.toUpperCase() }
   private val cupsClient = CupsClient(host, port, userName)
   private val printers
     get() = cupsClient.printers.toList()
   private val printerRemote
-    get() = printers.filter { it.location != "" }.map { cupsPrinter ->
+    get() = printers.filter { it.name.toUpperCase() in appPrinterNames }.map { cupsPrinter ->
       PrinterInfo.newInstance(cupsPrinter, REMOTE)
     }
   private val printerLocal
     get() = printers.filter { it.printerURL.host == localHost }.map { cupsPrinter ->
-      PrinterInfo.newInstance(cupsPrinter, LOCAL)//.copy(location = "Local ${cupsPrinter.name}")
+      PrinterInfo.newInstance(cupsPrinter, LOCAL) //.copy(location = "Local ${cupsPrinter.name}")
     }
   val printersInfo
     get() = printerRemote
@@ -75,15 +94,13 @@ open class PrinterCups(val host: String, val port: Int, val userName: String, va
 }
 
 data class PrinterInfo(val name: String, /*val location: String, */val description: String, val type: PrinterType) {
- /* val urlHost2
-    get() = location
-*/
+  /* val urlHost2
+     get() = location
+ */
   companion object {
-    fun newInstance(printer: CupsPrinter, printerType: PrinterType) = PrinterInfo(name = printer.name,
-                                                                                 /* location = printer.location ?: "",*/
-                                                                                  description = printer.description
-                                                                                                ?: "",
-                                                                                  type = printerType)
+    fun newInstance(printer: CupsPrinter, printerType: PrinterType) =
+            PrinterInfo(name = printer.name,/* location = printer.location ?: "",*/
+                        description = printer.description ?: "", type = printerType)
   }
 }
 
