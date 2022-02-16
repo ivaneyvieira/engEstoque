@@ -33,13 +33,13 @@ class Abreviacao(
       return QAbreviacao().abreviacao.eq(abreviacao).loja.equalTo(loja).findList().firstOrNull()
     }
 
-    fun addAbreviacao(abreviacao: String) {
+    private fun addAbreviacao(abreviacao: String) {
       if (findByAbreviacao(abreviacao) == null) {
         Abreviacao(abreviacao, lojaDeposito, false, "").save()
       }
     }
 
-    fun updateAbreviacao(loja: Loja) {
+    private fun updateAbreviacao(loja: Loja) {
       val abreviacaoes = Repositories.findByLoja(loja).map { it.abreviacao }.distinct().sorted()
       abreviacaoes.forEach { addAbreviacao(it) }
     }
