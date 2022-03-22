@@ -21,7 +21,7 @@ class SaidaViewModel(view: ISaidaView) : NotaViewModel<SaidaVo, ISaidaView>(view
   }
 
   override val query: QItemNota
-    get() = super.query.localizacao.startsWith(abreviacaoDefault)
+    get() = super.query.localizacao.startsWith(abreviacaoDefault).nota.data.ge(LocalDate.now().minusYears(1))
 
   override fun QItemNota.filtroTipoNota(): QItemNota {
     return this
