@@ -18,11 +18,18 @@ object Repositories {
   init {
     newViewProdutosLoc()
   }
-  
+
+  var update = LocalDateTime.now()
+
   fun updateViewProdutosLoc() {
-    newViewProdutosLoc()
+    val now= LocalDateTime.now()
+    if(now.isAfter(update)) {
+      newViewProdutosLoc()
+      update =  LocalDateTime.now().plusMinutes(5)
+    }
   }
-  
+
+
   @Synchronized
   private fun atualizaRepositorio() {
     updateTabelas()
