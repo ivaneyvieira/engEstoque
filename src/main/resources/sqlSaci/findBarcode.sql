@@ -1,4 +1,3 @@
-/*
 SELECT DISTINCT prdno, grade, barcode, 'PDV' AS tipo
 FROM sqlpdv.prdstk
 WHERE storeno = :storeno
@@ -17,25 +16,4 @@ UNION
 SELECT DISTINCT prdno, '' AS grade, auxString1 AS barcode, 'PRD2' AS tipo
 FROM sqldados.prd2
 WHERE auxString1 = :barcode
-  AND auxString1 <> ''
-*/
-
-SELECT DISTINCT prdno, grade, barcode, 'PDV' AS tipo
-FROM sqlpdv.prdstk
-WHERE storeno = :storeno
-  AND trim(barcode) = :barcode
-UNION
-SELECT DISTINCT prdno, grade, barcode, 'GRADE' AS tipo
-FROM sqldados.prdbar
-WHERE trim(barcode) = :barcode
-  AND barcode <> ''
-UNION
-SELECT DISTINCT no AS prdno, '' AS grade, barcode, 'PRD' AS tipo
-FROM sqldados.prd
-WHERE trim(barcode) = :barcode
-  AND barcode <> ''
-UNION
-SELECT DISTINCT prdno, '' AS grade, auxString1 AS barcode, 'PRD2' AS tipo
-FROM sqldados.prd2
-WHERE TRIM(auxString1) = :barcode
   AND auxString1 <> ''
