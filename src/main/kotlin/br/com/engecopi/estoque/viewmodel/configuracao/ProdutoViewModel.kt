@@ -75,6 +75,7 @@ class ProdutoViewModel(view: IProdutoView) : CrudViewModel<Produto, QProduto, Pr
     }
 
   override fun Produto.toVO(): ProdutoVo {
+    Produto.updateMesesGarantia()
     val produto = this
     return ProdutoVo().apply {
       entityVo = produto
