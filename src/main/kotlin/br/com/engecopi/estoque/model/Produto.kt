@@ -15,6 +15,7 @@ import io.ebean.annotation.*
 import io.ebean.annotation.Cache
 import io.ebean.annotation.Index
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.persistence.*
 import javax.persistence.CascadeType.REFRESH
 import javax.validation.constraints.Size
@@ -82,8 +83,9 @@ class Produto : BaseModel() {
     val loja = lojaDeposito
     var saldo = 0
     val itensNotNull =
-            QItemNota().produto.id.eq(id).or().nota.loja.equalTo(loja).nota.tipoNota.`in`(TipoNota.lojasExternas)
-              .endOr().localizacao.like(if (localizacao == "") "%" else localizacao).findList()
+      QItemNota().produto.id.eq(id).or().nota.loja.equalTo(loja).nota.tipoNota
+        .`in`(TipoNota.lojasExternas)
+        .endOr().localizacao.like(if (localizacao == "") "%" else localizacao).findList()
     itensNotNull.sortedWith(compareBy(ItemNota::data, ItemNota::hora)).forEach { item ->
       item.refresh()
       saldo += item.quantidadeSaldo
@@ -94,17 +96,26 @@ class Produto : BaseModel() {
   }
 
   companion object Find : ProdutoFinder() {
+    private var proximaAtualizacao = LocalDateTime.now().minusMinutes(5)
     fun updateMesesGarantia() {
-      DB.beginTransaction().use { tx ->
-        val qPrd = QProduto._alias
-        QProduto().select(qPrd.mesesVencimento, qPrd.quantidadePacote, qPrd.codigo).findEach { produto ->
-          saci.findProdutoGarantia(produto.codigo).let { produtoGarantia ->
-            produto.mesesVencimento = produtoGarantia?.mesesGarantia
-            produto.quantidadePacote = produtoGarantia?.quantidadePacote
-            produto.save()
+      val agora = LocalDateTime.now()
+      if (agora.isAfter(proximaAtualizacao)) {
+        DB.beginTransaction().use { tx ->
+          val qPrd = QProduto._alias
+          QProduto().select(qPrd.mesesVencimento, qPrd.quantidadePacote, qPrd.codigo).findEach { produto ->
+            saci.findProdutoGarantia(produto.codigo).let { produtoGarantia ->
+              val update =
+                produto.mesesVencimento != produtoGarantia?.mesesGarantia || produto.quantidadePacote != produtoGarantia?.quantidadePacote
+              if (update) {
+                produto.mesesVencimento = produtoGarantia?.mesesGarantia
+                produto.quantidadePacote = produtoGarantia?.quantidadePacote
+                produto.save()
+              }
+            }
           }
+          tx.commit()
         }
-        tx.commit()
+        proximaAtualizacao = agora.plusMinutes(5)
       }
     }
 
@@ -190,11 +201,13 @@ class Produto : BaseModel() {
     fun findProdutoSaldo(filtro: FiltroEstoque): List<ProdutoSaldo> {
       val sql = SystemUtils.readFile("/sqlSaci/relatorioSaldo.sql") ?: return emptyList()
       return DB.beginTransaction().use { tx ->
-        DB.findDto(ProdutoSaldo::class.java, sql)
+        DB
+          .findDto(ProdutoSaldo::class.java, sql)
           .setParameter("storeno", filtro.storeno)
           .setParameter("prdno", filtro.prdno)
           .setParameter("estoque", filtro.estoque.sinal)
-          .findList().filter {
+          .findList()
+          .filter {
             val codigos = filtro.produtoFiltro() ?: return@filter true
             it.codigo in codigos
           }
@@ -207,7 +220,8 @@ class Produto : BaseModel() {
   }
 
   fun saldoAbreviacao(abreviacao: String?): Int {
-    return QItemNota().produto.id.eq(id).localizacao.startsWith(abreviacao ?: "")
+    return QItemNota().produto.id.eq(id).localizacao
+      .startsWith(abreviacao ?: "")
       .findList()
       .sumBy { it.quantidadeSaldo }
   }
@@ -238,11 +252,12 @@ class Produto : BaseModel() {
     val ctParte = localizacoesSplit.asSequence().map { it.size - 1 }.minOrNull() ?: 0
     for (i in ctParte downTo 0) {
       val prefix =
-              localizacoesSplit.asSequence()
-                .map { it.subList(0, i) }
-                .map { it.joinToString(separator = ".") }
-                .distinct()
-                .toList()
+        localizacoesSplit
+          .asSequence()
+          .map { it.subList(0, i) }
+          .map { it.joinToString(separator = ".") }
+          .distinct()
+          .toList()
 
       if (prefix.count() == 1) return prefix[0]
     }
@@ -293,6 +308,6 @@ data class FiltroEstoque(val storeno: Int,
                          val vendno: Int,
                          val typeno: Int,
                          val clno: Int,
-                         val pedido: Int){
+                         val pedido: Int) {
   fun produtoFiltro() = saci.findProdutosSaci(storeno, vendno, typeno, clno, pedido)
 }
