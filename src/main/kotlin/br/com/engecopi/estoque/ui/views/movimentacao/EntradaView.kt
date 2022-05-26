@@ -233,8 +233,10 @@ class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(customFo
   private fun imprimeItem(domainObject: EntradaVo, imprimir: (ItemNota?) -> String) {
     val itemNota = domainObject.itemNota ?: domainObject.findEntity()
     val text = imprimir(itemNota)
-    printText(impressoraLocalizacao, text)
-    refreshGrid()
+    showZPLPreview(text) {
+      printText(impressoraLocalizacao, text)
+      refreshGrid()
+    }
   }
 
   override fun processAdd(domainObject: EntradaVo) {
