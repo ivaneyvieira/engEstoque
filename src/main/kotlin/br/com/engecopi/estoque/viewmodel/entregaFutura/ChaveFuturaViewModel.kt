@@ -101,7 +101,7 @@ class ChaveFuturaViewModel(view: IChaveFuturaView):
   }
   
   override fun QViewNotaFutura.filterString(text: String): QViewNotaFutura {
-    return nota.numero.startsWith(text)
+    return or().nota.numero.startsWith(text).nota.itensNota.localizacao.startsWith(text).endOr()
   }
   
   override fun QViewNotaFutura.filterDate(date: LocalDate): QViewNotaFutura {
