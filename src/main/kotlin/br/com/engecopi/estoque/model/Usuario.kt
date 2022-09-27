@@ -96,7 +96,8 @@ class Usuario : BaseModel() {
   }
 
   fun localizacoesProduto(produto: Produto): List<String> {
-    return QViewProdutoLoc().produto.equalTo(produto).or().loja.equalTo(loja).loja.equalTo(null)
+    return QViewProdutoLoc().produto.equalTo(produto).or().loja.equalTo(loja).loja
+      .equalTo(null)
       .endOr()
       .or().abreviacao.isIn(locais).localizacao.isIn(locais).endOr().findList().mapNotNull { it.localizacao }
   }
@@ -109,7 +110,8 @@ class Usuario : BaseModel() {
   val produtoLoc: List<Produto>
     get() {
       return locais.flatMap { loc ->
-        QViewProdutoLoc().loja.eq(loja).or().abreviacao.eq(loc).localizacao.eq(loc)
+        QViewProdutoLoc().loja.eq(loja).or().abreviacao.eq(loc).localizacao
+          .eq(loc)
           .endOr()
           .findList()
           .map { it.produto }
