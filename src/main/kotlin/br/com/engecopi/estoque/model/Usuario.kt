@@ -87,6 +87,14 @@ class Usuario : BaseModel() {
     return if (impressoraUsuario in impressoras) impressoraUsuario else impressoraDefault
   }
 
+  fun impressoraSaci(): String {
+    val saciUser = usuarioSaci() ?: return impressora
+    val impressoraUsuario = saciUser.impressora ?: return impressora
+
+    val impressoras = AppPrinter.appPrinterNames
+    return if (impressoraUsuario in impressoras) impressoraUsuario else impressora
+  }
+
   fun localizacoesProduto(produto: Produto): List<String> {
     return QViewProdutoLoc().produto.equalTo(produto).or().loja.equalTo(loja).loja.equalTo(null)
       .endOr()
