@@ -95,10 +95,10 @@ class ItemNota : BaseModel() {
     get() = nota?.tipoNota
   val dataNota: LocalDate?
     get() = nota?.data
-  val quantidadeVolume : Int
+  val quantidadeVolume: Int
     get() {
       val quantidadePacote = produto()?.quantidadePacote ?: return 0
-      return ceil((quantidade * 1.00).div(quantidadePacote )).roundToInt()
+      return ceil((quantidade * 1.00).div(quantidadePacote)).roundToInt()
     }
   val ultilmaMovimentacao: Boolean
     get() {
@@ -235,6 +235,7 @@ class NotaPrint(val item: ItemNota, val volume: Int? = null) {
   val notaSaci = item.nota
   val rota = notaSaci?.rota ?: ""
   val nota = notaSaci?.numero ?: ""
+  val area = notaSaci?.areaEntrega() ?: ""
   val tipoObservacao = notaSaci?.observacao?.split(" ")?.get(0) ?: ""
   val isNotaSaci = when (notaSaci?.tipoNota) {
     TipoNota.OUTROS_E -> false
