@@ -192,7 +192,7 @@ class ChaveFuturaView: CrudLayoutView<ChaveFuturaVo, ChaveFuturaViewModel>(false
   }
   
   private fun impressora(): Printer {
-    val impressora = usuarioDefault.impressora.trim()
+    val impressora = usuarioDefault.impressoraSaci().trim()
     return Printer(if(impressora == "") "ENTREGA" else impressora)
   }
   
