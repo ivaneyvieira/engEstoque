@@ -17,6 +17,7 @@ import br.com.engecopi.estoque.model.query.QItemNota
 import br.com.engecopi.estoque.model.query.QNota
 import br.com.engecopi.framework.model.BaseModel
 import br.com.engecopi.saci.beans.NotaProdutoSaci
+import br.com.engecopi.saci.beans.NotaSaciInfo
 import br.com.engecopi.saci.saci
 import br.com.engecopi.utils.localDate
 import io.ebean.annotation.*
@@ -105,6 +106,14 @@ class Nota : BaseModel() {
       notaInfo.tipoNota
     }
     this.save()
+  }
+
+  fun areaEntrega() : String {
+    return if(tipoMov == SAIDA){
+      val storeno = loja?.numero ?: 0
+      val notaInfo: NotaSaciInfo = saci.findNotaSaidaInfo(storeno, nfno, nfse) ?: return ""
+      return notaInfo.area
+    } else ""
   }
 
   companion object Find : NotaFinder() {
