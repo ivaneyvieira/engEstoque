@@ -8,6 +8,7 @@ import br.com.engecopi.utils.localDate
 import br.com.engecopi.utils.lpad
 import br.com.engecopi.utils.toSaciDate
 import java.time.LocalDate
+import java.time.LocalTime
 
 class QuerySaci : QueryDB(driver, url, username, password) {
   fun findNotaEntrada(storeno: Int, nfname: String, invse: String, liberaNotasAntigas: Boolean): List<NotaProdutoSaci> {
@@ -298,13 +299,22 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     }
   }
 
+  private var tempo = LocalTime.now()
+  private val listProdutoGarantia = mutableMapOf<String, List<ProdutoGarantia>>()
+
   fun findProdutoGarantia(codigo: String?): ProdutoGarantia? {
     codigo ?: return null
-    val sql = "/sqlSaci/produtoGrantia.sql"
-    return query(sql) { q ->
-      q.addOptionalParameter("codigo", codigo.trim())
-      q.executeAndFetch(ProdutoGarantia::class.java).firstOrNull()
+    if(LocalTime.now().isAfter(tempo) || listProdutoGarantia.isEmpty()) {
+      val sql = "/sqlSaci/produtoGrantia.sql"
+      val list = query(sql) { q ->
+        q.addOptionalParameter("codigo", codigo.trim())
+        q.executeAndFetch(ProdutoGarantia::class.java)
+      }
+      listProdutoGarantia.clear()
+      listProdutoGarantia.putAll(list.groupBy { it.codigo })
+      tempo = LocalTime.now().plusSeconds(30)
     }
+    return listProdutoGarantia.getOrDefault(codigo.trim(), emptyList()).firstOrNull()
   }
 
   fun findProdutosSaci(storeno: Int, vendno: Int, typeno: Int, clno: Int, pedido: Int): List<String>? {
