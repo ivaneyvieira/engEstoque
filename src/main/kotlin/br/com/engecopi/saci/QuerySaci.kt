@@ -15,7 +15,8 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     val sql = "/sqlSaci/findNotaEntrada.sql"
     return if (nfname == "") emptyList()
     else query(sql) { q ->
-      q.addParameter("storeno", storeno)
+      q
+        .addParameter("storeno", storeno)
         .addParameter("nfname", nfname)
         .addParameter("invse", invse)
         .executeAndFetch(NotaProdutoSaci::class.java)
@@ -30,6 +31,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
           9    -> findPedidoRessuprimento(nfno.toIntOrNull())
           else -> findNotaSaidaOrd(storeno, nfno)
         }
+
         else -> {
           val nfs = findNotaSaidaNF(storeno, nfno, nfse)
           when {
@@ -79,7 +81,8 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   private fun findNotaSaidaNF(storeno: Int, nfno: String, nfse: String): List<NotaProdutoSaci> {
     val sql = "/sqlSaci/findNotaSaidaNF.sql"
     return query(sql) { q ->
-      q.addParameter("storeno", storeno)
+      q
+        .addParameter("storeno", storeno)
         .addParameter("nfno", nfno.toIntOrNull())
         .addParameter("nfse", nfse)
         .executeAndFetch(NotaProdutoSaci::class.java)
@@ -89,7 +92,8 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   private fun findNotaSaidaOrd(storeno: Int, nfno: String): List<NotaProdutoSaci> {
     val sql = "/sqlSaci/findNotaSaidaOrd.sql"
     return query(sql) { q ->
-      q.addParameter("storeno", storeno)
+      q
+        .addParameter("storeno", storeno)
         .addParameter("nfno", nfno.toIntOrNull())
         .executeAndFetch(NotaProdutoSaci::class.java)
     }
@@ -98,7 +102,8 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   private fun findNotaSaidaPxa(storeno: Int, nfno: String, nfse: String): List<NotaProdutoSaci> {
     val sql = "/sqlSaci/findNotaSaidaPXA.sql"
     val notas = query(sql) { q ->
-      q.addParameter("storeno", storeno)
+      q
+        .addParameter("storeno", storeno)
         .addParameter("nfno", nfno.toIntOrNull())
         .addParameter("nfse", nfse)
         .executeAndFetch(NotaProdutoSaci::class.java)
@@ -139,7 +144,8 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   fun findBarcode(storeno: Int, barcode: String): List<ChaveProduto> {
     val sql = "/sqlSaci/findBarcode.sql"
     return query(sql) { q ->
-      q.addParameter("storeno", storeno)
+      q
+        .addParameter("storeno", storeno)
         .addParameter("barcode", barcode.lpad(16, " "))
         .executeAndFetch(ChaveProduto::class.java)
         .findChave()
@@ -149,7 +155,8 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   fun findBarcode(storeno: Int, prdno: String, grade: String): List<ChaveProduto> {
     val sql = "/sqlSaci/findBarcode2.sql"
     return query(sql) { q ->
-      q.addParameter("storeno", storeno)
+      q
+        .addParameter("storeno", storeno)
         .addParameter("prdno", prdno)
         .addParameter("grade", grade)
         .executeAndFetch(ChaveProduto::class.java)
@@ -203,7 +210,8 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     val data = LocalDate.of(2020, 1, 1).toSaciDate()
     val notaProdutoList = query(sql) { q ->
       q.run {
-        addParameter("storeno", storeno).addParameter("abreviacao", "${abreviacao ?: ""}%")
+        addParameter("storeno", storeno)
+          .addParameter("abreviacao", "${abreviacao ?: ""}%")
           .addParameter("data", data)
           .executeAndFetch(NotaProduto::class.java)
       }
@@ -226,6 +234,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
                                                    tipo = nota.tipo,
                                                    cancelado = nota.cancelado,
                                                    produtos = produtosValidos)
+
           else                         -> null
         }
       }
@@ -235,7 +244,8 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   fun findDevolucaoFornecedor(storeno: Int, abreviacao: String): List<DevolucaoFornecedor> {
     val sql = "/sqlSaci/findDevolucaoFornecedor.sql"
     return query(sql) { q ->
-      q.addParameter("storeno", storeno)
+      q
+        .addParameter("storeno", storeno)
         .addParameter("abreviacao", "${abreviacao}%")
         .executeAndFetch(DevolucaoFornecedor::class.java)
     }
@@ -260,8 +270,13 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   fun findEntregaFutura(): List<EntregaFutura> {
     val sql = "/sqlSaci/findEntragaFutura.sql"
     val dataInicial = LocalDate.now().minusMonths(6).toSaciDate()
-    return query(sql) { q ->
-      q.addParameter("data_inicial", "$dataInicial").executeAndFetch(EntregaFutura::class.java)
+    return scriptQuery(sql) { q, s ->
+      q.addOptionalParameter("data_inicial", "$dataInicial")
+      if (s) q.executeAndFetch(EntregaFutura::class.java)
+      else {
+        q.executeUpdate()
+        emptyList()
+      }
     }
   }
 
@@ -304,7 +319,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
 
   fun findProdutoGarantia(codigo: String?): ProdutoGarantia? {
     codigo ?: return null
-    if(LocalTime.now().isAfter(tempo) || listProdutoGarantia.isEmpty()) {
+    if (LocalTime.now().isAfter(tempo) || listProdutoGarantia.isEmpty()) {
       val sql = "/sqlSaci/produtoGrantia.sql"
       val list = query(sql) { q ->
         q.addOptionalParameter("codigo", codigo.trim())
@@ -314,7 +329,8 @@ class QuerySaci : QueryDB(driver, url, username, password) {
       listProdutoGarantia.putAll(list.groupBy { it.codigo })
       tempo = LocalTime.now().plusSeconds(30)
     }
-    return listProdutoGarantia.getOrDefault(codigo.trim(), emptyList()).firstOrNull()
+    val result = listProdutoGarantia.getOrDefault(codigo.trim(), emptyList()).firstOrNull()
+    return result
   }
 
   fun findProdutosSaci(storeno: Int, vendno: Int, typeno: Int, clno: Int, pedido: Int): List<String>? {
