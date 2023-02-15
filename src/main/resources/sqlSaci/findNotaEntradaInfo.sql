@@ -24,3 +24,5 @@ FROM sqldados.inv AS N
 WHERE N.storeno = :storeno
   AND N.nfname = :nfno
   AND N.invse = :nfse
+ORDER BY date DESC
+LIMIT 1

@@ -11,7 +11,7 @@ val vaadin8Version = properties["vaadin8Version"] as String
 
 plugins {
   id("org.jetbrains.kotlin.jvm") version "1.4.10"
-  id("org.gretty") version "2.3.1"
+  //id("org.gretty") version "2.3.1"
   id("com.devsoap.plugin.vaadin") version "2.0.0.beta2"
   id("io.ebean") version "12.1.5"
   id("com.github.johnrengelman.shadow") version "5.1.0"
@@ -29,10 +29,12 @@ defaultTasks("clean", "build")
 
 group = "engEstoque"
 
+/*
 gretty {
   contextPath = "/"
   servletContainer = "jetty9.4"
 }
+*/
 
 vaadin {
   version = "8.9.4"
