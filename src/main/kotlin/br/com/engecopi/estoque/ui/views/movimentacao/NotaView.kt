@@ -26,7 +26,7 @@ import com.vaadin.ui.Grid.SelectionMode.MULTI
 import org.vaadin.patrik.FastNavigation
 
 abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView>(customFooterLayout: Boolean) :
-        CrudLayoutView<VO, MODEL>(customFooterLayout) {
+  CrudLayoutView<VO, MODEL>(customFooterLayout) {
   lateinit var gridProduto: Grid<ProdutoNotaVo>
   val usuario get() = usuarioDefault
   val isAdmin get() = usuario.admin
@@ -34,7 +34,7 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
   inline fun <reified V : NotaVo> (@VaadinDsl HasComponents).notaFiscalField(
     operation: CrudOperation?,
     binder: Binder<V>,
-                                                                            ): TextField {
+  ): TextField {
     return textField("Nota Fiscal") {
       expandRatio = 2f
       isReadOnly = operation != ADD
@@ -80,7 +80,7 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
     operation: CrudOperation?,
     binder: Binder<V>,
     tipo: String,
-                                                             ) {
+  ) {
     row {
       this.bindVisible(binder, NotaVo::naoTemGrid.name)
       var dataValidade: DateField? = null
@@ -108,7 +108,7 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
         expandRatio = 1f
         val meses = binder.bean.produto?.mesesVencimento ?: 0
         this.isVisible = meses > 0 && tipo == "Entrada"
-        isReadOnly = operation != ADD || isAdmin
+        isReadOnly = if (isAdmin) false else operation != ADD
         placeholder = "mm/aaaa"
         this.dateFormat = "MM/yyyy"
         this.resolution = DateResolution.MONTH
@@ -156,8 +156,7 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
               if (it.isSave) {
                 it.selecionado = false
                 selectionModel.deselect(it)
-              }
-              else it.selecionado = true
+              } else it.selecionado = true
             }
           }
         }
@@ -229,8 +228,8 @@ abstract class NotaView<VO : NotaVo, MODEL : NotaViewModel<VO, V>, V : INotaView
         this.setStyleGenerator {
           when {
             it.saldoFinal < 0 -> "error_row"
-            it.isSave         -> "ok"
-            else              -> null
+            it.isSave -> "ok"
+            else -> null
           }
         }
       }

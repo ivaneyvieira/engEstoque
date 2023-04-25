@@ -268,6 +268,24 @@ class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(customFo
     dialog.showDialog()
   }
 
+  private fun openDialogDataFabricacao(produtoList: List<ProdutoNotaVo>) {
+    val produtoListFilter = produtoList.filter {
+      it.produto.mesesVencimento != null || it.produto.mesesVencimento != 0
+    }
+    if(produtoListFilter.isNotEmpty()) {
+      val nota = formBinder.bean.nota
+      val produtoItem = produtoListFilter.firstOrNull {
+        it.produto.mesesVencimento != null
+      } ?: produtoListFilter.firstOrNull() ?: return
+
+      val dialog = DialogDataFabricacao(nota, produtoItem) {
+        TODO()
+      }
+      dialog.setWidth("400px")
+      dialog.showDialog()
+    }
+  }
+
   private fun Grid<ProdutoNotaVo>.execBarcode(barcode: String?) {
     if (!barcode.isNullOrBlank()) {
       val produtoItem = this.dataProvider.getAll().firstOrNull {

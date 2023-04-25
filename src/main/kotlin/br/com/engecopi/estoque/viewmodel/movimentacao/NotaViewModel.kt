@@ -21,11 +21,13 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-abstract class NotaViewModel<VO : NotaVo, V : INotaView>(view: V,
-                                                         val tipo: TipoMov,
-                                                         private val statusDefault: StatusNota,
-                                                         private val statusImpressao: StatusNota) :
-        CrudViewModel<ItemNota, QItemNota, VO, V>(view) {
+abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
+  view: V,
+  val tipo: TipoMov,
+  private val statusDefault: StatusNota,
+  private val statusImpressao: StatusNota
+) :
+  CrudViewModel<ItemNota, QItemNota, VO, V>(view) {
   private val print = NotaPrint()
 
   override fun update(bean: VO) {
@@ -49,19 +51,19 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(view: V,
       if (Nota.itemDuplicado(nota, produto)) {
         val msg = "O produto ${produto.codigo} - ${produto.descricao}. Já foi inserido na nota ${nota.numero}."
         view.showWarning(msg)
-      }
-      else {
+      } else {
         bean.entityVo =
-                insertItemNota(nota = nota,
-                               produto = produto,
-                               dataFabricacao = bean.dataFabricacao,
-                               quantProduto = bean.quantProduto ?: 0,
-                               usuario = usuario,
-                               local = bean.localizacao?.localizacao,
-                               addTime = addTime)
+          insertItemNota(
+            nota = nota,
+            produto = produto,
+            dataFabricacao = bean.dataFabricacao,
+            quantProduto = bean.quantProduto ?: 0,
+            usuario = usuario,
+            local = bean.localizacao?.localizacao,
+            addTime = addTime
+          )
       }
-    }
-    else {
+    } else {
       val produtos = bean.produtos.filter { it.selecionado && it.quantidade != 0 }
       val produtosJaInserido = produtos.distinctBy { it.produto.id }.filter { prd ->
         prd.produto.let { Nota.itemDuplicado(nota, it) }
@@ -73,15 +75,15 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(view: V,
       produtos.filter { it.produto !in produtosJaInserido }.forEach { produto ->
         produto.let { prd ->
           if (usuario.temProduto(prd.produto)) bean.entityVo =
-                  insertItemNota(
-                    nota = nota,
-                    produto = prd.produto,
-                    dataFabricacao = prd.dataFabricacao,
-                    quantProduto = prd.quantidade,
-                    usuario = usuario,
-                    local = prd.localizacao?.localizacao,
-                    addTime = addTime,
-                                )
+            insertItemNota(
+              nota = nota,
+              produto = prd.produto,
+              dataFabricacao = prd.dataFabricacao,
+              quantProduto = prd.quantidade,
+              usuario = usuario,
+              local = prd.localizacao?.localizacao,
+              addTime = addTime,
+            )
         }
       }
     }
@@ -95,17 +97,17 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(view: V,
     usuario: Usuario,
     local: String?,
     addTime: LocalTime,
-                            ): ItemNota? {
+  ): ItemNota? {
     if (local.isNullOrBlank()) throw EViewModelError("Não foi especificado a localização do item")
     val mesesValidade = produto?.mesesVencimento ?: 0
     if (nota.tipoNota?.tipoMov == ENTRADA && mesesValidade > 0) {
       val erroVencimento =
-              ValidadeProduto.erroMesFabricacao(
-                produto = produto?.codigo ?: "",
-                dataFabricacao = dataFabricacao,
-                dataEntrada = nota.data,
-                mesesValidade = mesesValidade,
-                                               )
+        ValidadeProduto.erroMesFabricacao(
+          produto = produto?.codigo ?: "",
+          dataFabricacao = dataFabricacao,
+          dataEntrada = nota.data,
+          mesesValidade = mesesValidade,
+        )
       if (erroVencimento.isError()) {
         throw EViewModelError(erroVencimento.msgErro())
       }
@@ -118,7 +120,8 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(view: V,
           view.showWarning(msg)
           null
         }
-        else                                                                    -> {
+
+        else -> {
           ItemNota().apply {
             this.nota = nota
             this.produto = produto
@@ -133,8 +136,7 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(view: V,
           }
         }
       }
-    }
-    else null
+    } else null
   }
 
   private fun updateItemNota(bean: VO, nota: Nota, produto: Produto?) {
@@ -194,7 +196,8 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(view: V,
         .fetch("produto")
         .fetch("produto.vproduto")
         .fetch("produto.viewProdutoLoc").nota.tipoMov.eq(tipo).filtroTipoNota().filtroStatus().or().nota.loja.eq(
-          lojaDeposito).nota.tipoNota.`in`(TipoNota.lojasExternas).endOr()
+          lojaDeposito
+        ).nota.tipoNota.`in`(TipoNota.lojasExternas).endOr()
     }
 
   abstract fun createVo(): VO
@@ -315,16 +318,22 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?) : 
     else ""
   private val mapNotaSaci = mutableMapOf<String?, List<NotaProdutoSaci>>()
   private val notaProdutoProdutoSaci: List<NotaProdutoSaci>
-    get() = if (entityVo == null) mapNotaSaci.getOrPut(numeroNF) {
-      when (tipo) {
-        SAIDA   -> Nota.findNotaSaidaSaci(lojaDeposito, numeroNF).filter {
-          val user = usuario ?: return@filter false
-          user.admin || (it.tipo != "PEDIDO_E")
+    get() {
+      val list = mapNotaSaci[numeroNF].orEmpty()
+      return list.ifEmpty {
+        val nlist = when (tipo) {
+          SAIDA -> Nota.findNotaSaidaSaci(lojaDeposito, numeroNF).filter {
+            val user = usuario ?: return@filter false
+            user.admin || (it.tipo != "PEDIDO_E")
+          }
+
+          ENTRADA -> Nota.findNotaEntradaSaci(lojaDeposito, numeroNF)
         }
-        ENTRADA -> Nota.findNotaEntradaSaci(lojaDeposito, numeroNF)
+        mapNotaSaci[numeroNF] = nlist
+        nlist
       }
     }
-    else emptyList()
+
   val notaSaci
     get() = notaProdutoProdutoSaci.firstOrNull()
   val nota: Nota?
@@ -341,15 +350,20 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?) : 
         else listItensEntrada(notaSaci)
       }
       produtos.addAll(produtosVo.asSequence()
-                        .filter {
-                          it.quantidade != 0 && it.codigo != "" && it.localizacao?.localizacao?.startsWith(
-                            abreviacaoNota ?: "") ?: false
-                        }
-                        .sortedWith(compareBy(ProdutoNotaVo::isSave,
-                                              ProdutoNotaVo::codigo,
-                                              ProdutoNotaVo::grade,
-                                              ProdutoNotaVo::localizacao))
-                        .toList())
+        .filter {
+          it.quantidade != 0 && it.codigo != "" && it.localizacao?.localizacao?.startsWith(
+            abreviacaoNota ?: ""
+          ) ?: false
+        }
+        .sortedWith(
+          compareBy(
+            ProdutoNotaVo::isSave,
+            ProdutoNotaVo::codigo,
+            ProdutoNotaVo::grade,
+            ProdutoNotaVo::localizacao
+          )
+        )
+        .toList())
     }
   }
 
@@ -358,13 +372,15 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?) : 
     val localizacoes = prd.localizacoes(abreviacaoNota).sorted()
     val ultimaLocalizacao = localizacoes.maxOrNull() ?: ""
     val produtoVo =
-            ProdutoNotaVo(produto = prd,
-                          statusNota = RECEBIDO,
-                          dataFabricacao = null,
-                          localizacao = LocProduto(ultimaLocalizacao),
-                          isSave = notaProdutoSaci.isSave()).apply {
-              quantidade = notaProdutoSaci.quant ?: 0
-            }
+      ProdutoNotaVo(
+        produto = prd,
+        statusNota = RECEBIDO,
+        dataFabricacao = null,
+        localizacao = LocProduto(ultimaLocalizacao),
+        isSave = notaProdutoSaci.isSave()
+      ).apply {
+        quantidade = notaProdutoSaci.quant ?: 0
+      }
     return listOf(produtoVo)
   }
 
@@ -374,22 +390,22 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?) : 
     val localizacoes = prd.localizacoes(abreviacaoNota).sorted() //TODO Pegar a localizacao com a validade mais recente
     val ultimaLocalizacao = localizacoes.maxOrNull() ?: ""
     val produtosLocais = localizacoes.map { localizacao ->
-      ProdutoNotaVo(produto = prd,
-                    statusNota = CONFERIDA,
-                    dataFabricacao = null,
-                    localizacao = LocProduto(localizacao),
-                    isSave = notaProdutoSaci.isSave()).apply {
+      ProdutoNotaVo(
+        produto = prd,
+        statusNota = CONFERIDA,
+        dataFabricacao = null,
+        localizacao = LocProduto(localizacao),
+        isSave = notaProdutoSaci.isSave()
+      ).apply {
         if (quant > 0) if (quant > saldo) {
           if (localizacao == ultimaLocalizacao) {
             quantidade = quant
             quant = 0
-          }
-          else {
+          } else {
             quantidade = saldo
             quant -= saldo
           }
-        }
-        else {
+        } else {
           quantidade = quant
           quant = 0
         }
@@ -479,7 +495,7 @@ class ProdutoNotaVo(
   var dataFabricacao: LocalDate?,
   var localizacao: LocProduto?,
   var isSave: Boolean,
-                   ) {
+) {
   val codigo: String = produto.codigo
   val grade: String = produto.grade
   var quantidade: Int = 0
@@ -518,13 +534,14 @@ class ProdutoNotaVo(
   fun updateItem(first: Boolean) {
     dateUpdate = LocalDateTime.now()
     grupoSelecao = when {
-      selecionado    -> when {
+      selecionado -> when {
         first -> SELECT_FT
-        else  -> BLUE
+        else -> BLUE
       }
+
       saldoFinal < 0 -> RED
       !allowSelect() -> GREEN
-      else           -> WHITE
+      else -> WHITE
     }
   }
 }
