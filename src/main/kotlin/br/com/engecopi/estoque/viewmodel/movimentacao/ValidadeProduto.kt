@@ -1,6 +1,7 @@
 package br.com.engecopi.estoque.viewmodel.movimentacao
 
 import br.com.engecopi.estoque.model.RegistryUserInfo.usuarioDefault
+import br.com.engecopi.estoque.model.Validade
 import br.com.engecopi.utils.formatMesAno
 import java.time.LocalDate
 import kotlin.math.round
@@ -17,8 +18,13 @@ class ValidadeProduto(private val msgErro: String?) {
       if (usuarioDefault.admin) return ValidadeProduto(null)
       mesesValidade ?: return ValidadeProduto(null)
       dataFabricacao ?: return ValidadeProduto("Produto '$produto' não deve possui data de validade")
+      // val dataValidadeMaxima = dataEntrada ?: return ValidadeProduto("A Nota não possui data de entrada")
+      // val dataValidadeMinima = dataValidadeMaxima.minusMonths(round(mesesValidade * 3.00 / 4.00).toLong())
+
+      val mesesFabricacao = Validade.findMesesFabricacao(mesesValidade) ?: return ValidadeProduto("Configuração de meses de fabricação não encontrada")
+
       val dataValidadeMaxima = dataEntrada ?: return ValidadeProduto("A Nota não possui data de entrada")
-      val dataValidadeMinima = dataValidadeMaxima.minusMonths(round(mesesValidade * 3.00 / 4.00).toLong())
+      val dataValidadeMinima = dataValidadeMaxima.minusMonths((mesesFabricacao - 1).toLong())
 
       return when {
         dataFabricacao.isBefore(dataValidadeMinima) -> {

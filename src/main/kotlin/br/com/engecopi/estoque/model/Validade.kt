@@ -16,6 +16,26 @@ class Validade : BaseModel() {
   var mesesFabricacao: Int = 0
 
   companion object Find : ValidadeFinder() {
+    private val list = mutableListOf<Validade>()
+    init {
+      updateList()
+    }
+
+    fun updateList() {
+      list.clear()
+      list.addAll(QValidade().findList())
+    }
+
+    fun findAll(): List<Validade> {
+      return list
+    }
+
+    fun findMesesFabricacao(mesesValidade: Int?): Int? {
+      mesesValidade ?: return null
+      return list.asSequence().filter { it.mesesValidade >= mesesValidade }.sortedBy { it.mesesValidade }
+        .firstOrNull()?.mesesFabricacao ?: list.maxOf { it.mesesFabricacao }
+    }
+
     fun find(mesesValidade: Int?): Validade? {
       return QValidade().mesesValidade.eq(mesesValidade).findList().firstOrNull()
     }
