@@ -21,6 +21,7 @@ class ValidadeProduto(private val msgErro: String?) {
       // val dataValidadeMaxima = dataEntrada ?: return ValidadeProduto("A Nota não possui data de entrada")
       // val dataValidadeMinima = dataValidadeMaxima.minusMonths(round(mesesValidade * 3.00 / 4.00).toLong())
 
+      Validade.updateList()
       val mesesFabricacao = Validade.findMesesFabricacao(mesesValidade) ?: return ValidadeProduto("Configuração de meses de fabricação não encontrada")
 
       val dataValidadeMaxima = dataEntrada ?: return ValidadeProduto("A Nota não possui data de entrada")
