@@ -17,13 +17,10 @@ class Validade : BaseModel() {
 
   companion object Find : ValidadeFinder() {
     private val list = mutableListOf<Validade>()
-    init {
-      updateList()
-    }
 
     fun updateList() {
       list.clear()
-      list.addAll(QValidade().findList())
+      list.addAll(all())
     }
 
     fun findAll(): List<Validade> {
