@@ -8,6 +8,15 @@ import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.ICrudView
 
 class ValidadeViewModel(view: IValidadeView) : CrudViewModel<Validade, QValidade, ValidadeVo, IValidadeView>(view) {
+
+  init {
+    Validade.update()
+  }
+
+  fun findMesesFabricacao(mesesValidade: Int?): Int? {
+    return Validade.findMesesFabricacao(mesesValidade)
+  }
+
   override fun newBean(): ValidadeVo {
     return ValidadeVo()
   }
