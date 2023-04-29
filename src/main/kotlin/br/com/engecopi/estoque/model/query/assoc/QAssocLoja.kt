@@ -2,21 +2,15 @@ package br.com.engecopi.estoque.model.query.assoc
 
 import br.com.engecopi.estoque.model.Loja
 import br.com.engecopi.estoque.model.query.QLoja
-import io.ebean.typequery.PInteger
-import io.ebean.typequery.PLocalDateTime
-import io.ebean.typequery.PLong
-import io.ebean.typequery.PString
-import io.ebean.typequery.TQAssocBean
-import io.ebean.typequery.TQProperty
-import io.ebean.typequery.TypeQueryBean
+import io.ebean.typequery.*
 
 /**
  * Association query bean for AssocLoja.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
-class QAssocLoja<R>(name: String, root: R) : TQAssocBean<Loja,R>(name, root) {
+class QAssocLoja<R>(name: String, root: R) : TQAssocBean<Loja, R>(name, root) {
 
   lateinit var id: PLong<R>
   lateinit var createdAt: PLocalDateTime<R>
@@ -31,21 +25,21 @@ class QAssocLoja<R>(name: String, root: R) : TQAssocBean<Loja,R>(name, root) {
   /**
    * Eagerly fetch this association loading the specified properties.
    */
-  fun fetch(vararg properties: TQProperty<QLoja>) : R {
+  fun fetch(vararg properties: TQProperty<QLoja>): R {
     return fetchProperties(*properties)
   }
 
   /**
    * Eagerly fetch this association using a 'query join' loading the specified properties.
    */
-  fun fetchQuery(vararg properties: TQProperty<QLoja>) : R {
+  fun fetchQuery(vararg properties: TQProperty<QLoja>): R {
     return fetchQueryProperties(*properties)
   }
 
   /**
    * Use lazy loading for this association loading the specified properties.
    */
-  fun fetchLazy(vararg properties: TQProperty<QLoja>) : R {
+  fun fetchLazy(vararg properties: TQProperty<QLoja>): R {
     return fetchLazyProperties(*properties)
   }
 

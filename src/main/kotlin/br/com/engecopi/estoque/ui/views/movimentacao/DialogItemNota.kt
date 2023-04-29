@@ -16,7 +16,7 @@ import com.vaadin.ui.themes.ValoTheme
 import java.time.LocalDate
 
 class DialogItemNota(val nota: Nota?, private val produtoVo: ProdutoNotaVo, val salvaProduto: () -> Unit = {}) :
-        Window("Produto") {
+  Window("Produto") {
   private lateinit var cmbLocalizacao: ComboBox<LocProduto>
   private lateinit var edtDataFabricacao: DateField
 
@@ -63,7 +63,7 @@ class DialogItemNota(val nota: Nota?, private val produtoVo: ProdutoNotaVo, val 
               produtoVo.selecionado = true
               salvaProduto()
               this@DialogItemNota.close()
-            }else {
+            } else {
               Notification.show(msg.msgErro(), Notification.Type.ERROR_MESSAGE)
             }
           }
@@ -86,6 +86,6 @@ class DialogItemNota(val nota: Nota?, private val produtoVo: ProdutoNotaVo, val 
       dataFabricacao = edtDataFabricacao.value,
       dataEntrada = nota?.data ?: LocalDate.now(),
       mesesValidade = mesesValidade,
-                                 )
+    )
   }
 }

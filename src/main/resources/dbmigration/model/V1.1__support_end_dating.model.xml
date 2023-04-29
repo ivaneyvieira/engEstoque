@@ -10,7 +10,8 @@
             <column name="version" type="integer" notnull="true"/>
         </createTable>
         <addColumn tableName="itens_nota">
-            <column name="etiqueta_id" type="bigint" references="etiquetas.id" foreignKeyName="fk_itens_nota_etiqueta_id" foreignKeyIndex="ix_itens_nota_etiqueta_id"/>
+            <column name="etiqueta_id" type="bigint" references="etiquetas.id"
+                    foreignKeyName="fk_itens_nota_etiqueta_id" foreignKeyIndex="ix_itens_nota_etiqueta_id"/>
         </addColumn>
     </changeSet>
 </migration>

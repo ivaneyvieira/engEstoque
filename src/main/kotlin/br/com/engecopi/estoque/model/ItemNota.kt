@@ -28,8 +28,10 @@ import kotlin.reflect.full.memberProperties
 @Cache(enableQueryCache = true)
 @CacheQueryTuning(maxSecsToLive = 30)
 @Table(name = "itens_nota")
-@Indices(Index(unique = true, columnNames = ["nota_id", "produto_id", "localizacao"]),
-         Index(columnNames = ["produto_id", "nota_id"]))
+@Indices(
+  Index(unique = true, columnNames = ["nota_id", "produto_id", "localizacao"]),
+  Index(columnNames = ["produto_id", "nota_id"])
+)
 class ItemNota : BaseModel() {
   var data: LocalDate = LocalDate.now()
   var hora: LocalTime = LocalTime.now()
@@ -120,8 +122,7 @@ class ItemNota : BaseModel() {
     get() {
       return if (produto?.mesesVencimento == null) {
         null
-      }
-      else dataFabricacao?.plusMonths(produto?.mesesVencimento?.toLong() ?: 0)
+      } else dataFabricacao?.plusMonths(produto?.mesesVencimento?.toLong() ?: 0)
     }
 
   fun produto(): Produto? {
@@ -147,7 +148,8 @@ class ItemNota : BaseModel() {
       val storeno = notaProdutoSaci.storeno ?: return null
       val produto = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return null
       return QItemNota().nota.fetchQuery().nota.numero.eq("${notaProdutoSaci.numero}/${notaProdutoSaci.serie}").nota.loja.numero.eq(
-        storeno).produto.equalTo(produto).findList().firstOrNull()
+        storeno
+      ).produto.equalTo(produto).findList().firstOrNull()
     }
 
     fun createItemNota(notaProdutoSaci: NotaProdutoSaci, notaPrd: Nota?, abreviacao: String?): ItemNota? {
@@ -198,8 +200,7 @@ class ItemNota : BaseModel() {
       codigoBarraConferencia = viewCodigoBarraConferencia?.codbar ?: ""
       codigoBarraConferenciaBaixa = if (codigoBarraConferencia != "") {
         codigoBarraConferencia + " ENTREGUE"
-      }
-      else ""
+      } else ""
     }
     if (codigoBarraEntrega.isNullOrEmpty()) {
       codigoBarraEntrega = viewCodigoBarraEntrega?.codbar ?: ""
@@ -213,8 +214,7 @@ class ItemNota : BaseModel() {
       codigoBarraConferencia = viewCodigoBarraConferencia?.codbar ?: ""
       codigoBarraConferenciaBaixa = if (codigoBarraConferencia != "") {
         codigoBarraConferencia + "BAIXA"
-      }
-      else ""
+      } else ""
     }
     if (codigoBarraEntrega.isNullOrEmpty()) {
       codigoBarraEntrega = viewCodigoBarraEntrega?.codbar ?: ""
@@ -240,8 +240,8 @@ class NotaPrint(val item: ItemNota, val volume: Int? = null) {
   val isNotaSaci = when (notaSaci?.tipoNota) {
     TipoNota.OUTROS_E -> false
     TipoNota.OUTROS_S -> false
-    null              -> false
-    else              -> true
+    null -> false
+    else -> true
   }
   val tipoNota = if (isNotaSaci) notaSaci?.tipoNota?.descricao ?: ""
   else tipoObservacao
@@ -300,11 +300,9 @@ class NotaPrint(val item: ItemNota, val volume: Int? = null) {
 }
 
 enum class StatusNota(val descricao: String, val tipoMov: TipoMov, val multiplicador: Int) {
-  RECEBIDO("Recebido", ENTRADA, 1),
-  INCLUIDA("Incluída", SAIDA, 0),
-  CONFERIDA("Conferida", SAIDA, -1),
-  ENTREGUE("Entregue", SAIDA, -1),
-  ENT_LOJA("Entregue na Loja", SAIDA, 0),
-  PRODUTO("Etiqueta Produto", SAIDA, 0)
+  RECEBIDO("Recebido", ENTRADA, 1), INCLUIDA("Incluída", SAIDA, 0), CONFERIDA(
+    "Conferida", SAIDA, -1
+  ),
+  ENTREGUE("Entregue", SAIDA, -1), ENT_LOJA("Entregue na Loja", SAIDA, 0), PRODUTO("Etiqueta Produto", SAIDA, 0)
 }
 

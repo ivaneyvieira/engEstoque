@@ -4,7 +4,7 @@ import br.com.engecopi.estoque.model.dtos.EntregaFutura
 import br.com.engecopi.saci.saci
 import io.ebean.DB
 
-class ETLEntregaFutura: ETL<EntregaFutura>() {
+class ETLEntregaFutura : ETL<EntregaFutura>() {
   override val sqlDelete = "DELETE FROM t_entrega_futura where id = :id"
   override val sqlInsert = """
     INSERT IGNORE INTO t_entrega_futura(id, storenoVenda, numeroVenda, nfnoVenda, nfseVenda,
@@ -24,12 +24,12 @@ class ETLEntregaFutura: ETL<EntregaFutura>() {
     WHERE id = :id
   """.trimIndent()
 
-  companion object: ETLThread<EntregaFutura>(ETLEntregaFutura(), 60) {
+  companion object : ETLThread<EntregaFutura>(ETLEntregaFutura(), 60) {
     val sql
       get() = "select * FROM t_entrega_futura"
-  
+
     override fun getSource() = saci.findEntregaFutura()
-  
+
     override fun getTarget() = DB.findDto(EntregaFutura::class.java, sql).findList()
   }
 }

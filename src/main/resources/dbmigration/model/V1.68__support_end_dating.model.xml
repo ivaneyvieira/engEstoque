@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
-  <changeSet type="apply">
-    <alterColumn columnName="tipo_nota"
-                 tableName="notas"
-                 checkConstraint="check ( tipo_nota in ('COMPRA','TRANSFERENCIA_E','DEV_CLI','ACERTO_E','PEDIDO_E','OUTROS_E','NOTA_E','RECLASSIFICACAO_E','VENDAF','VENDA','TRANSFERENCIA_S','ENT_RET','DEV_FOR','ACERTO_S','PEDIDO_S','PEDIDO_R','OUTROS_S','OUTRAS_NFS','SP_REME','CANCELADA_E','CANCELADA_S'))"
-                 checkConstraintName="ck_notas_tipo_nota"/>
-    <addColumn tableName="usuarios">
-      <column name="ressuprimento" type="boolean" defaultValue="false" notnull="true"/>
-    </addColumn>
-  </changeSet>
+    <changeSet type="apply">
+        <alterColumn columnName="tipo_nota"
+                     tableName="notas"
+                     checkConstraint="check ( tipo_nota in ('COMPRA','TRANSFERENCIA_E','DEV_CLI','ACERTO_E','PEDIDO_E','OUTROS_E','NOTA_E','RECLASSIFICACAO_E','VENDAF','VENDA','TRANSFERENCIA_S','ENT_RET','DEV_FOR','ACERTO_S','PEDIDO_S','PEDIDO_R','OUTROS_S','OUTRAS_NFS','SP_REME','CANCELADA_E','CANCELADA_S'))"
+                     checkConstraintName="ck_notas_tipo_nota"/>
+        <addColumn tableName="usuarios">
+            <column name="ressuprimento" type="boolean" defaultValue="false" notnull="true"/>
+        </addColumn>
+    </changeSet>
 </migration>

@@ -8,25 +8,26 @@ import org.cups4j.CupsPrinter
 import org.cups4j.PrintJob
 
 open class PrinterCups(val host: String, val port: Int, val userName: String, val localHost: String) {
-  val appPrinterNames =
-          listOf("ABASTECIMENTO",
-                 "ADMJS",
-                 "bematech4200",
-                 "CD1A",
-                 "CD1B",
-                 "CD1D",
-                 "CD2A",
-                 "CD2C",
-                 "CD3C",
-                 "CD4C",
-                 "CD5A",
-                 "ENTREGA",
-                 "EXP4",
-                 "exp4b",
-                 "f4ent",
-                 "NULA",
-                 "ressu4200",
-                 "RESSUPRIMENTO").map { it.toUpperCase() }
+  val appPrinterNames = listOf(
+    "ABASTECIMENTO",
+    "ADMJS",
+    "bematech4200",
+    "CD1A",
+    "CD1B",
+    "CD1D",
+    "CD2A",
+    "CD2C",
+    "CD3C",
+    "CD4C",
+    "CD5A",
+    "ENTREGA",
+    "EXP4",
+    "exp4b",
+    "f4ent",
+    "NULA",
+    "ressu4200",
+    "RESSUPRIMENTO"
+  ).map { it.toUpperCase() }
   private val cupsClient = CupsClient(host, port, userName)
   private val printers
     get() = cupsClient.printers.toList()
@@ -73,8 +74,8 @@ open class PrinterCups(val host: String, val port: Int, val userName: String, va
   @Throws(ECupsPrinter::class)
   fun printCups(impressora: String, text: String, resultMsg: (String) -> Unit = {}) {
     val printer =
-            findPrinter(impressora)
-            ?: throw ECupsPrinter("Impressora $impressora não está configurada no sistema operacional")
+      findPrinter(impressora)
+        ?: throw ECupsPrinter("Impressora $impressora não está configurada no sistema operacional")
     printer.printText(text, resultMsg)
   }
 
@@ -98,9 +99,10 @@ data class PrinterInfo(val name: String, /*val location: String, */val descripti
      get() = location
  */
   companion object {
-    fun newInstance(printer: CupsPrinter, printerType: PrinterType) =
-            PrinterInfo(name = printer.name,/* location = printer.location ?: "",*/
-                        description = printer.description ?: "", type = printerType)
+    fun newInstance(printer: CupsPrinter, printerType: PrinterType) = PrinterInfo(
+      name = printer.name,/* location = printer.location ?: "",*/
+      description = printer.description ?: "", type = printerType
+    )
   }
 }
 

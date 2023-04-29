@@ -10,11 +10,11 @@ SELECT MD5(CONCAT(L.prdno, L.grade, L.storeno, L.localizacao))                  
        L.localizacao                                                                 AS localizacao,
        SUBSTRING_INDEX(L.localizacao, '.', 1)                                        AS abreviacao,
        IF(X.tipoGarantia = 2, X.garantia, 0)                                         AS mesesValidade
-FROM sqldados.prdloc          AS L
-  INNER JOIN sqldados.prd     AS X
-	       ON X.no = L.prdno
-  LEFT JOIN  sqldados.prdetq2 AS E
-	       ON E.prdno = L.prdno AND E.seqno = 1 AND E.text__256 REGEXP '^[0-9]+.[0-9]+.[0-9]+'
+FROM sqldados.prdloc AS L
+         INNER JOIN sqldados.prd AS X
+                    ON X.no = L.prdno
+         LEFT JOIN sqldados.prdetq2 AS E
+                   ON E.prdno = L.prdno AND E.seqno = 1 AND E.text__256 REGEXP '^[0-9]+.[0-9]+.[0-9]+'
 GROUP BY L.storeno, L.prdno, L.grade, L.localizacao
 HAVING L.localizacao <> ''
 

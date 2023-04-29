@@ -7,19 +7,11 @@ import br.com.engecopi.estoque.model.query.assoc.QAssocLoja
 import br.com.engecopi.estoque.model.query.assoc.QAssocNota
 import br.com.engecopi.estoque.model.query.assoc.QAssocUsuario
 import io.ebean.Database
-import io.ebean.typequery.PEnum
-import io.ebean.typequery.PInteger
-import io.ebean.typequery.PLocalDate
-import io.ebean.typequery.PLocalDateTime
-import io.ebean.typequery.PLocalTime
-import io.ebean.typequery.PLong
-import io.ebean.typequery.PString
-import io.ebean.typequery.TQRootBean
-import io.ebean.typequery.TypeQueryBean
+import io.ebean.typequery.*
 
 /**
  * Query bean for ViewPedidoRessuprimento.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
@@ -39,8 +31,8 @@ class QViewPedidoRessuprimento : TQRootBean<ViewPedidoRessuprimento, QViewPedido
   lateinit var version: PInteger<QViewPedidoRessuprimento>
   lateinit var nota: QAssocNota<QViewPedidoRessuprimento>
   lateinit var numero: PString<QViewPedidoRessuprimento>
-  lateinit var tipoMov: PEnum<QViewPedidoRessuprimento,TipoMov>
-  lateinit var tipoNota: PEnum<QViewPedidoRessuprimento,TipoNota>
+  lateinit var tipoMov: PEnum<QViewPedidoRessuprimento, TipoMov>
+  lateinit var tipoNota: PEnum<QViewPedidoRessuprimento, TipoNota>
   lateinit var rota: PString<QViewPedidoRessuprimento>
   lateinit var fornecedor: PString<QViewPedidoRessuprimento>
   lateinit var cliente: PString<QViewPedidoRessuprimento>

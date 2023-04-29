@@ -160,10 +160,10 @@ class ProdutoView : CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoV
                 this.isSortable = false
                 caption = "NF Baixa"
                 this.setRenderer({ lista ->
-                                   lista.joinToString(" ") { nota ->
-                                     nota.numero
-                                   }
-                                 }, TextRenderer())
+                  lista.joinToString(" ") { nota ->
+                    nota.numero
+                  }
+                }, TextRenderer())
               }
               addColumnFor(ItemNota::dataEntrega) {
                 caption = "Data Baixa"
@@ -283,8 +283,7 @@ class ProdutoView : CrudLayoutView<ProdutoVo, ProdutoViewModel>(true), IProdutoV
         setSortProperty("saldo_total")
         setRenderer(NumberRenderer(DecimalFormat("0")))
         align = VAlign.Right
-      }
-    /*  column(ProdutoVo::comprimento) {
+      }/*  column(ProdutoVo::comprimento) {
         expandRatio = 1
         caption = "Comprimento"
         setSortProperty("vproduto.comp")

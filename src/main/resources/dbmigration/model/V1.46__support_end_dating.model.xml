@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
     <changeSet type="apply">
-        <alterColumn columnName="status_nota" tableName="etiquetas" checkConstraint="check ( status_nota in ('RECEBIDO','INCLUIDA','CONFERIDA','ENTREGUE','ENT_LOJA','PRODUTO'))" checkConstraintName="ck_etiquetas_status_nota"/>
-        <alterColumn columnName="status" tableName="itens_nota" checkConstraint="check ( status in ('RECEBIDO','INCLUIDA','CONFERIDA','ENTREGUE','ENT_LOJA','PRODUTO'))" checkConstraintName="ck_itens_nota_status"/>
-        <addUniqueConstraint constraintName="uq_notas_loja_id_tipo_mov_numero" tableName="notas" columnNames="loja_id,tipo_mov,numero" oneToOne="false" nullableColumns="loja_id"/>
+        <alterColumn columnName="status_nota" tableName="etiquetas"
+                     checkConstraint="check ( status_nota in ('RECEBIDO','INCLUIDA','CONFERIDA','ENTREGUE','ENT_LOJA','PRODUTO'))"
+                     checkConstraintName="ck_etiquetas_status_nota"/>
+        <alterColumn columnName="status" tableName="itens_nota"
+                     checkConstraint="check ( status in ('RECEBIDO','INCLUIDA','CONFERIDA','ENTREGUE','ENT_LOJA','PRODUTO'))"
+                     checkConstraintName="ck_itens_nota_status"/>
+        <addUniqueConstraint constraintName="uq_notas_loja_id_tipo_mov_numero" tableName="notas"
+                             columnNames="loja_id,tipo_mov,numero" oneToOne="false" nullableColumns="loja_id"/>
         <addColumn tableName="usuarios">
             <column name="trava_etiqueta" type="boolean" defaultValue="false" notnull="true"/>
         </addColumn>

@@ -18,8 +18,8 @@ class NotaPrint {
   fun imprimirNotaCompleta(itemNota: ItemNota?, statusImpressao: StatusNota): String {
     itemNota ?: return ""
     val itens =
-            QItemNota().nota.eq(itemNota.nota).status.eq(itemNota.status)
-              .order().nota.loja.numero.asc().nota.numero.asc().findList()
+      QItemNota().nota.eq(itemNota.nota).status.eq(itemNota.status).order().nota.loja.numero.asc().nota.numero.asc()
+        .findList()
     return imprimirItens(itens, statusImpressao)
   }
 
@@ -27,8 +27,8 @@ class NotaPrint {
   fun imprimirNotaCompletaAgrupada(itemNota: ItemNota?, statusImpressao: StatusNota): String {
     itemNota ?: return ""
     val itens =
-            QItemNota().nota.eq(itemNota.nota).status.eq(itemNota.status).hora.eq(itemNota.hora)
-              .order().nota.loja.numero.asc().nota.numero.asc().findList()
+      QItemNota().nota.eq(itemNota.nota).status.eq(itemNota.status).hora.eq(itemNota.hora)
+        .order().nota.loja.numero.asc().nota.numero.asc().findList()
     return imprimirItens(itens, statusImpressao)
   }
 
@@ -37,15 +37,14 @@ class NotaPrint {
     notaCompleta: Boolean,
     groupByHour: Boolean,
     statusImpressao: StatusNota,
-                      ): String {
+  ): String {
     itemNota ?: return ""
     return if (notaCompleta) {
       val itens = QItemNota().nota.eq(itemNota.nota).status.eq(itemNota.status).let {
         if (groupByHour) it.hora.eq(itemNota.hora) else it
       }.order().nota.loja.numero.asc().nota.numero.asc().findList()
       imprimirItens(itens, statusImpressao)
-    }
-    else imprimirItens(listOf(itemNota), statusImpressao)
+    } else imprimirItens(listOf(itemNota), statusImpressao)
   }
 
   fun imprimirItensPendentes(statusImpressao: StatusNota): String {
@@ -72,8 +71,7 @@ class NotaPrint {
             imprimir(listOf(item), etiqueta, volume)
           }
         }
-      }
-      else {
+      } else {
         ""
       }
 
@@ -83,10 +81,8 @@ class NotaPrint {
   }
 
   private fun imprimir(itens: List<ItemNota>, etiqueta: Etiqueta, volume: Int? = null): String {
-    return itens.filter { it.abreviacao?.abreviacao == abreviacaoDefault }
-      .map { imprimir(it, etiqueta, volume) }
-      .distinct()
-      .joinToString(separator = "\n")
+    return itens.filter { it.abreviacao?.abreviacao == abreviacaoDefault }.map { imprimir(it, etiqueta, volume) }
+      .distinct().joinToString(separator = "\n")
   }
 
   private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta, volume: Int? = null): String {

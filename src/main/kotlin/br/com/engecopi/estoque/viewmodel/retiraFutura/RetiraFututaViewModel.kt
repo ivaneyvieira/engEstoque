@@ -9,10 +9,9 @@ import br.com.engecopi.estoque.viewmodel.movimentacao.INotaView
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaViewModel
 import br.com.engecopi.estoque.viewmodel.movimentacao.NotaVo
 
-class RetiraFututaViewModel(view: IRetiraFuturaView) : NotaViewModel<RetiraFututaVo, IRetiraFuturaView>(view,
-                                                                                                        tipo = SAIDA,
-                                                                                                        statusDefault = ENTREGUE,
-                                                                                                        statusImpressao = CONFERIDA) {
+class RetiraFututaViewModel(view: IRetiraFuturaView) : NotaViewModel<RetiraFututaVo, IRetiraFuturaView>(
+  view, tipo = SAIDA, statusDefault = ENTREGUE, statusImpressao = CONFERIDA
+) {
   private val find = RetiraFuturaFind(view)
 
   override fun newBean(): RetiraFututaVo {

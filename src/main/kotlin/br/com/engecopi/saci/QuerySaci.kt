@@ -11,24 +11,23 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 class QuerySaci : QueryDB(driver, url, username, password) {
-  fun findNotaEntrada(storeno: Int, nfname: String, invse: String, liberaNotasAntigas: Boolean): List<NotaProdutoSaci> {
+  fun findNotaEntrada(
+    storeno: Int, nfname: String, invse: String, liberaNotasAntigas: Boolean
+  ): List<NotaProdutoSaci> {
     val sql = "/sqlSaci/findNotaEntrada.sql"
     return if (nfname == "") emptyList()
     else query(sql) { q ->
-      q
-        .addParameter("storeno", storeno)
-        .addParameter("nfname", nfname)
-        .addParameter("invse", invse)
+      q.addParameter("storeno", storeno).addParameter("nfname", nfname).addParameter("invse", invse)
         .executeAndFetch(NotaProdutoSaci::class.java)
     }.filter { liberaNotasAntigas || filtroDataRecente(it) }
   }
 
   fun findNotaSaida(storeno: Int, nfno: String, nfse: String, liberaNotasAntigas: Boolean): List<NotaProdutoSaci> {
     return when (nfno) {
-      ""   -> emptyList()
+      "" -> emptyList()
       else -> when (nfse) {
-        ""   -> when (nfno.length) {
-          9    -> findPedidoRessuprimento(nfno.toIntOrNull())
+        "" -> when (nfno.length) {
+          9 -> findPedidoRessuprimento(nfno.toIntOrNull())
           else -> findNotaSaidaOrd(storeno, nfno)
         }
 
@@ -36,7 +35,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
           val nfs = findNotaSaidaNF(storeno, nfno, nfse)
           when {
             nfs.isNotEmpty() -> nfs
-            else             -> findNotaSaidaPxa(storeno, nfno, nfse)
+            else -> findNotaSaidaPxa(storeno, nfno, nfse)
           }
         }
       }.filter { liberaNotasAntigas || filtroDataRecente(it) }
@@ -81,10 +80,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   private fun findNotaSaidaNF(storeno: Int, nfno: String, nfse: String): List<NotaProdutoSaci> {
     val sql = "/sqlSaci/findNotaSaidaNF.sql"
     return query(sql) { q ->
-      q
-        .addParameter("storeno", storeno)
-        .addParameter("nfno", nfno.toIntOrNull())
-        .addParameter("nfse", nfse)
+      q.addParameter("storeno", storeno).addParameter("nfno", nfno.toIntOrNull()).addParameter("nfse", nfse)
         .executeAndFetch(NotaProdutoSaci::class.java)
     }
   }
@@ -92,9 +88,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   private fun findNotaSaidaOrd(storeno: Int, nfno: String): List<NotaProdutoSaci> {
     val sql = "/sqlSaci/findNotaSaidaOrd.sql"
     return query(sql) { q ->
-      q
-        .addParameter("storeno", storeno)
-        .addParameter("nfno", nfno.toIntOrNull())
+      q.addParameter("storeno", storeno).addParameter("nfno", nfno.toIntOrNull())
         .executeAndFetch(NotaProdutoSaci::class.java)
     }
   }
@@ -102,10 +96,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   private fun findNotaSaidaPxa(storeno: Int, nfno: String, nfse: String): List<NotaProdutoSaci> {
     val sql = "/sqlSaci/findNotaSaidaPXA.sql"
     val notas = query(sql) { q ->
-      q
-        .addParameter("storeno", storeno)
-        .addParameter("nfno", nfno.toIntOrNull())
-        .addParameter("nfse", nfse)
+      q.addParameter("storeno", storeno).addParameter("nfno", nfno.toIntOrNull()).addParameter("nfse", nfse)
         .executeAndFetch(NotaProdutoSaci::class.java)
     }
     return notas
@@ -144,23 +135,16 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   fun findBarcode(storeno: Int, barcode: String): List<ChaveProduto> {
     val sql = "/sqlSaci/findBarcode.sql"
     return query(sql) { q ->
-      q
-        .addParameter("storeno", storeno)
-        .addParameter("barcode", barcode.lpad(16, " "))
-        .executeAndFetch(ChaveProduto::class.java)
-        .findChave()
+      q.addParameter("storeno", storeno).addParameter("barcode", barcode.lpad(16, " "))
+        .executeAndFetch(ChaveProduto::class.java).findChave()
     }
   }
 
   fun findBarcode(storeno: Int, prdno: String, grade: String): List<ChaveProduto> {
     val sql = "/sqlSaci/findBarcode2.sql"
     return query(sql) { q ->
-      q
-        .addParameter("storeno", storeno)
-        .addParameter("prdno", prdno)
-        .addParameter("grade", grade)
-        .executeAndFetch(ChaveProduto::class.java)
-        .findChave()
+      q.addParameter("storeno", storeno).addParameter("prdno", prdno).addParameter("grade", grade)
+        .executeAndFetch(ChaveProduto::class.java).findChave()
     }
   }
 
@@ -210,9 +194,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     val data = LocalDate.of(2020, 1, 1).toSaciDate()
     val notaProdutoList = query(sql) { q ->
       q.run {
-        addParameter("storeno", storeno)
-          .addParameter("abreviacao", "${abreviacao ?: ""}%")
-          .addParameter("data", data)
+        addParameter("storeno", storeno).addParameter("abreviacao", "${abreviacao ?: ""}%").addParameter("data", data)
           .executeAndFetch(NotaProduto::class.java)
       }
     }.toList()
@@ -225,17 +207,19 @@ class QuerySaci : QueryDB(driver, url, username, password) {
           dataCadastroProduto <= nota.date.localDate()
         }.distinct()
         when {
-          produtosValidos.isNotEmpty() -> NotaSaci(invno = nota.invno,
-                                                   storeno = nota.storeno,
-                                                   numero = nota.numero,
-                                                   serie = nota.serie,
-                                                   date = nota.date,
-                                                   dtEmissao = nota.dtEmissao,
-                                                   tipo = nota.tipo,
-                                                   cancelado = nota.cancelado,
-                                                   produtos = produtosValidos)
+          produtosValidos.isNotEmpty() -> NotaSaci(
+            invno = nota.invno,
+            storeno = nota.storeno,
+            numero = nota.numero,
+            serie = nota.serie,
+            date = nota.date,
+            dtEmissao = nota.dtEmissao,
+            tipo = nota.tipo,
+            cancelado = nota.cancelado,
+            produtos = produtosValidos
+          )
 
-          else                         -> null
+          else -> null
         }
       }
     }
@@ -244,9 +228,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   fun findDevolucaoFornecedor(storeno: Int, abreviacao: String): List<DevolucaoFornecedor> {
     val sql = "/sqlSaci/findDevolucaoFornecedor.sql"
     return query(sql) { q ->
-      q
-        .addParameter("storeno", storeno)
-        .addParameter("abreviacao", "${abreviacao}%")
+      q.addParameter("storeno", storeno).addParameter("abreviacao", "${abreviacao}%")
         .executeAndFetch(DevolucaoFornecedor::class.java)
     }
   }

@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
     <changeSet type="apply">
-        <alterColumn columnName="tipo_nota" tableName="notas" checkConstraint="check ( tipo_nota in ('COMPRA','TRANSFERENCIA_E','DEV_CLI','ACERTO_E','PEDIDO_E','OUTROS_E','VENDA','TRANSFERENCIA_S','ENT_RET','DEV_FOR','ACERTO_S','PEDIDO_S','OUTROS_S','OUTRAS_NFS','SP_REME'))" checkConstraintName="ck_notas_tipo_nota"/>
+        <alterColumn columnName="tipo_nota" tableName="notas"
+                     checkConstraint="check ( tipo_nota in ('COMPRA','TRANSFERENCIA_E','DEV_CLI','ACERTO_E','PEDIDO_E','OUTROS_E','VENDA','TRANSFERENCIA_S','ENT_RET','DEV_FOR','ACERTO_S','PEDIDO_S','OUTROS_S','OUTRAS_NFS','SP_REME'))"
+                     checkConstraintName="ck_notas_tipo_nota"/>
         <addColumn tableName="notas">
-            <column name="status" type="varchar(9)" notnull="true" checkConstraint="check ( status in ('INCLUIDA','CONFERIDA','ENTREGUE'))" checkConstraintName="ck_notas_status"/>
+            <column name="status" type="varchar(9)" notnull="true"
+                    checkConstraint="check ( status in ('INCLUIDA','CONFERIDA','ENTREGUE'))"
+                    checkConstraintName="ck_notas_status"/>
         </addColumn>
-        <alterColumn columnName="id" tableName="produtos" references="tab_produtos.produto_id" foreignKeyName="fk_produtos_id" dropForeignKey="fk_produtos_id"/>
+        <alterColumn columnName="id" tableName="produtos" references="tab_produtos.produto_id"
+                     foreignKeyName="fk_produtos_id" dropForeignKey="fk_produtos_id"/>
     </changeSet>
 </migration>

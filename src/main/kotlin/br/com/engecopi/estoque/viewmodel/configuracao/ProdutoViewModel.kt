@@ -45,8 +45,7 @@ class ProdutoViewModel(view: IProdutoView) : CrudViewModel<Produto, QProduto, Pr
           this.save()
         }
       }
-    }
-    else {
+    } else {
       Produto().apply {
         this.codigo = bean.codigoProduto.lpad(16, " ")
         this.grade = ""
@@ -86,13 +85,12 @@ class ProdutoViewModel(view: IProdutoView) : CrudViewModel<Produto, QProduto, Pr
 
   override fun QProduto.filterString(text: String): QProduto {
     return codigo.contains(text).codebar.eq(text).vproduto.nome.contains(text).grade.contains(text).localizacao.contains(
-      text)
+      text
+    )
   }
 
   fun localizacoes(bean: ProdutoVo?): List<LocProduto> {
-    return bean?.produto?.localizacoes("")
-      .orEmpty()
-      .filter { it.startsWith(abreviacaoDefault) || userDefaultIsAdmin }
+    return bean?.produto?.localizacoes("").orEmpty().filter { it.startsWith(abreviacaoDefault) || userDefaultIsAdmin }
       .map { LocProduto(it) }
   }
 
@@ -163,7 +161,8 @@ class ProdutoVo : EntityVo<Produto>() {
 
       return produto?.findItensNota().orEmpty().filter { item ->
         filtroLoja(item) && filtroDataInicial(item) && filtroDataFinal(item) && filtroTipoNota(item) && filtroLocalizacao(
-          item) && filtroQuantidade(item)
+          item
+        ) && filtroQuantidade(item)
       }.sortedWith(compareBy(ItemNota::localizacao, ItemNota::data, ItemNota::hora)).toList()
     }
 

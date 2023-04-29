@@ -9,7 +9,7 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for ViewProdutoSaci.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean

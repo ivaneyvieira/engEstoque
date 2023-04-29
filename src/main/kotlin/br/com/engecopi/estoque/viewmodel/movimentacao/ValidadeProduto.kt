@@ -11,10 +11,9 @@ class ValidadeProduto(private val msgErro: String?) {
   fun msgErro() = msgErro ?: "Erro desconhecido"
 
   companion object {
-    fun erroMesFabricacao(produto: String,
-                          dataFabricacao: LocalDate?,
-                          dataEntrada: LocalDate?,
-                          mesesValidade: Int?): ValidadeProduto {
+    fun erroMesFabricacao(
+      produto: String, dataFabricacao: LocalDate?, dataEntrada: LocalDate?, mesesValidade: Int?
+    ): ValidadeProduto {
       if (usuarioDefault.admin) return ValidadeProduto(null)
       mesesValidade ?: return ValidadeProduto(null)
       dataFabricacao ?: return ValidadeProduto("Produto '$produto' não deve possui data de validade")
@@ -23,16 +22,22 @@ class ValidadeProduto(private val msgErro: String?) {
 
       return when {
         dataFabricacao.isBefore(dataValidadeMinima) -> {
-          ValidadeProduto("Produto '$produto'. Mes de fabricação inválido (antes de ${
-            dataValidadeMinima.formatMesAno()
-          })")
+          ValidadeProduto(
+            "Produto '$produto'. Mes de fabricação inválido (antes de ${
+              dataValidadeMinima.formatMesAno()
+            })"
+          )
         }
-        dataFabricacao.isAfter(dataValidadeMaxima)  -> {
-          ValidadeProduto("Produto '$produto'. Mes de fabricação inválido (depois de ${
-            dataValidadeMaxima.formatMesAno()
-          })")
+
+        dataFabricacao.isAfter(dataValidadeMaxima) -> {
+          ValidadeProduto(
+            "Produto '$produto'. Mes de fabricação inválido (depois de ${
+              dataValidadeMaxima.formatMesAno()
+            })"
+          )
         }
-        else                                        -> ValidadeProduto(null)
+
+        else -> ValidadeProduto(null)
       }
     }
   }

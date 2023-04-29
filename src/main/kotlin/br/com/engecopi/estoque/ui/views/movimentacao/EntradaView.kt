@@ -121,14 +121,12 @@ class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(customFo
             if (it.isUserOriginated) {
               val produto = if (it is MultiSelectionEvent<ProdutoNotaVo>) {
                 it.addedSelection.firstOrNull()
-              }
-              else {
+              } else {
                 it.allSelectedItems.firstOrNull()
               }
               if (isAdmin) {
                 if (produto != null) openDilaogProduto(produto)
-              }
-              else {
+              } else {
                 if (produto != null) gridProduto.deselect(produto)
               }
             }
@@ -272,7 +270,7 @@ class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(customFo
     val produtoListFilter = produtoList.filter {
       it.produto.mesesVencimento != null || it.produto.mesesVencimento != 0
     }
-    if(produtoListFilter.isNotEmpty()) {
+    if (produtoListFilter.isNotEmpty()) {
       val nota = formBinder.bean.nota
       val produtoItem = produtoListFilter.firstOrNull {
         it.produto.mesesVencimento != null

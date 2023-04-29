@@ -5,10 +5,9 @@ import br.com.engecopi.estoque.model.StatusNota.RECEBIDO
 import br.com.engecopi.estoque.model.TipoMov.ENTRADA
 import br.com.engecopi.estoque.model.query.QItemNota
 
-class EntradaViewModel(view: IEntradaView) : NotaViewModel<EntradaVo, IEntradaView>(view = view,
-                                                                                    tipo = ENTRADA,
-                                                                                    statusDefault = RECEBIDO,
-                                                                                    statusImpressao = RECEBIDO) {
+class EntradaViewModel(view: IEntradaView) : NotaViewModel<EntradaVo, IEntradaView>(
+  view = view, tipo = ENTRADA, statusDefault = RECEBIDO, statusImpressao = RECEBIDO
+) {
   override fun newBean(): EntradaVo {
     return EntradaVo()
   }

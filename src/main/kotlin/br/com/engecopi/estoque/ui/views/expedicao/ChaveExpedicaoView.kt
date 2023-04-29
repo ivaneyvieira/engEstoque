@@ -109,14 +109,14 @@ class ChaveExpedicaoView : CrudLayoutView<ChaveExpedicaoVo, ChaveExpedicaoViewMo
       column(ChaveExpedicaoVo::loja) {
         caption = "Loja NF"
         setRenderer({ loja ->
-                      loja?.sigla ?: ""
-                    }, TextRenderer())
+          loja?.sigla ?: ""
+        }, TextRenderer())
       }
       column(ChaveExpedicaoVo::tipoNota) {
         caption = "TipoNota"
         setRenderer({ tipo ->
-                      tipo?.descricao ?: ""
-                    }, TextRenderer())
+          tipo?.descricao ?: ""
+        }, TextRenderer())
         setSortProperty("tipo_nota")
       }
       column(ChaveExpedicaoVo::lancamento) {
@@ -141,8 +141,8 @@ class ChaveExpedicaoView : CrudLayoutView<ChaveExpedicaoVo, ChaveExpedicaoViewMo
       column(ChaveExpedicaoVo::usuario) {
         caption = "Usuário"
         setRenderer({
-                      it?.loginName ?: ""
-                    }, TextRenderer())
+          it?.loginName ?: ""
+        }, TextRenderer())
         setSortProperty("usuario.loginName")
       }
       column(ChaveExpedicaoVo::rota) {
@@ -183,9 +183,11 @@ class ChaveExpedicaoView : CrudLayoutView<ChaveExpedicaoVo, ChaveExpedicaoViewMo
   }
 }
 
-class DlgExpedicaoLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
-                      val viewModel: ChaveExpedicaoViewModel,
-                      val execConfirma: (itens: List<ItemExpedicao>) -> Unit) : Window("Localizações") {
+class DlgExpedicaoLoc(
+  val notaProdutoSaida: List<NotaProdutoSaci>,
+  val viewModel: ChaveExpedicaoViewModel,
+  val execConfirma: (itens: List<ItemExpedicao>) -> Unit
+) : Window("Localizações") {
   private lateinit var gridProdutos: Grid<LocalizacaoExpedicao>
 
   init {
@@ -254,17 +256,14 @@ class DlgExpedicaoLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
               abreviacao
             }
             val abreviacoes = abreviacaoItens.keys.asSequence().flatten().distinct().map { abrev ->
-                val itensExpedicao =
-                        abreviacaoItens.filter { it.key.contains(abrev) }
-                          .map { it.value }
-                          .flatten()
-                          .distinct()
-                          .map { notaSaci ->
-                            val saldo = viewModel.saldoProduto(notaSaci, abrev)
-                            ItemExpedicao(notaSaci, saldo, abrev)
-                          }
-                LocalizacaoExpedicao(abrev, itensExpedicao)
-              }.toList().sortedBy { it.abreviacao }.toList()
+              val itensExpedicao =
+                abreviacaoItens.filter { it.key.contains(abrev) }.map { it.value }.flatten().distinct()
+                  .map { notaSaci ->
+                    val saldo = viewModel.saldoProduto(notaSaci, abrev)
+                    ItemExpedicao(notaSaci, saldo, abrev)
+                  }
+              LocalizacaoExpedicao(abrev, itensExpedicao)
+            }.toList().sortedBy { it.abreviacao }.toList()
 
             this.dataProvider = ListDataProvider(abreviacoes)
             removeAllColumns()
@@ -296,9 +295,9 @@ class DlgExpedicaoLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
   }
 }
 
-class DlgExpedicao(val localizacaoExpedicao: LocalizacaoExpedicao,
-                   val viewModel: ChaveExpedicaoViewModel,
-                   val update: () -> Unit) : Window("Itens da Nota") {
+class DlgExpedicao(
+  val localizacaoExpedicao: LocalizacaoExpedicao, val viewModel: ChaveExpedicaoViewModel, val update: () -> Unit
+) : Window("Itens da Nota") {
   private lateinit var gridProdutos: Grid<ItemExpedicao>
 
   init {
@@ -346,8 +345,7 @@ class DlgExpedicao(val localizacaoExpedicao: LocalizacaoExpedicao,
                   if (it.isSave()) {
                     Notification.show("Não pode ser selecionado. Já está salvo")
                     selectionModel.deselect(it)
-                  }
-                  else if (it.saldoFinal < -100000000) { //TODO Saldo insuficiente
+                  } else if (it.saldoFinal < -100000000) { //TODO Saldo insuficiente
                     Notification.show("Não pode ser selecionado. Saldo insuficiente.")
                     selectionModel.deselect(it)
                   }
@@ -387,9 +385,9 @@ class DlgExpedicao(val localizacaoExpedicao: LocalizacaoExpedicao,
 
             this.setStyleGenerator {
               when {
-                it.isSave()       -> "ok"
+                it.isSave() -> "ok"
                 it.saldoFinal < 0 -> "error_row"
-                else              -> null
+                else -> null
               }
             }
           }

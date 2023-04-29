@@ -9,6 +9,6 @@
     <logger name="io.ebean.SQL" level="TRACE"/>
     <logger name="io.ebean.SUM" level="TRACE"/>
     <root level="info">
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

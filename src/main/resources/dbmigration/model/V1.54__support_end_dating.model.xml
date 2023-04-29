@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
     <changeSet type="apply">
-        <addUniqueConstraint constraintName="uq_abreviacoes_abreviacao" tableName="abreviacoes" columnNames="abreviacao" oneToOne="false" nullableColumns=""/>
+        <addUniqueConstraint constraintName="uq_abreviacoes_abreviacao" tableName="abreviacoes" columnNames="abreviacao"
+                             oneToOne="false" nullableColumns=""/>
     </changeSet>
 </migration>

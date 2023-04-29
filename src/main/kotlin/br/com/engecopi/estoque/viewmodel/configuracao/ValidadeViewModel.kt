@@ -7,7 +7,7 @@ import br.com.engecopi.framework.viewmodel.EViewModelError
 import br.com.engecopi.framework.viewmodel.EntityVo
 import br.com.engecopi.framework.viewmodel.ICrudView
 
-class ValidadeViewModel(view: IValidadeView): CrudViewModel<Validade, QValidade, ValidadeVo, IValidadeView>(view) {
+class ValidadeViewModel(view: IValidadeView) : CrudViewModel<Validade, QValidade, ValidadeVo, IValidadeView>(view) {
   override fun newBean(): ValidadeVo {
     return ValidadeVo()
   }
@@ -49,7 +49,7 @@ class ValidadeViewModel(view: IValidadeView): CrudViewModel<Validade, QValidade,
   }
 }
 
-class ValidadeVo: EntityVo<Validade>() {
+class ValidadeVo : EntityVo<Validade>() {
   override fun findEntity(): Validade? {
     return Validade.find(mesesValidade)
   }
@@ -58,4 +58,4 @@ class ValidadeVo: EntityVo<Validade>() {
   var mesesFabricacao: Int? = 0
 }
 
-interface IValidadeView: ICrudView
+interface IValidadeView : ICrudView

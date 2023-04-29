@@ -1,5 +1,7 @@
 -- apply changes
-alter table itens_nota add column data_validade date;
+alter table itens_nota
+    add column data_validade date;
 
-alter table produtos add column meses_vencimento integer;
+alter table produtos
+    add column meses_vencimento integer;
 
