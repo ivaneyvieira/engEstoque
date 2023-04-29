@@ -8,10 +8,8 @@ import br.com.engecopi.estoque.model.etlSaci.ETLTransferenciaAutomatica
 import br.com.engecopi.estoque.ui.views.abastecimento.ChaveAbastecimentoView
 import br.com.engecopi.estoque.ui.views.abastecimento.EditorAbastecimentoView
 import br.com.engecopi.estoque.ui.views.abastecimento.EntregaAbastecimentoView
+import br.com.engecopi.estoque.ui.views.configuracao.*
 import br.com.engecopi.estoque.ui.views.configuracao.AbreciacaoView
-import br.com.engecopi.estoque.ui.views.configuracao.EtiquetaView
-import br.com.engecopi.estoque.ui.views.configuracao.ProdutoView
-import br.com.engecopi.estoque.ui.views.configuracao.UsuarioView
 import br.com.engecopi.estoque.ui.views.entregaFutura.ChaveFuturaView
 import br.com.engecopi.estoque.ui.views.entregaFutura.EditorFuturaView
 import br.com.engecopi.estoque.ui.views.entregaFutura.EntregaFuturaView
@@ -35,6 +33,7 @@ import br.com.engecopi.framework.ui.view.toViewName
 import br.com.engecopi.utils.SystemUtils
 import com.github.mvysny.karibudsl.v8.*
 import com.vaadin.annotations.*
+import com.vaadin.icons.VaadinIcons
 import com.vaadin.icons.VaadinIcons.*
 import com.vaadin.navigator.Navigator
 import com.vaadin.navigator.PushStateNavigation
@@ -153,6 +152,7 @@ class EstoqueUI : UI() {
         menuButton("Usuários", USER, view = UsuarioView::class.java)
         menuButton("Etiquetas", PAPERCLIP, view = EtiquetaView::class.java)
         menuButton("Localizações", CART_O, view = AbreciacaoView::class.java)
+        menuButton("Validade", CALENDAR, view = ValidadeView::class.java)
       }
     }
   }

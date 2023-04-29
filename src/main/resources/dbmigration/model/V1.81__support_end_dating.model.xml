@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
+    <changeSet type="apply">
+        <alterColumn columnName="impressora" tableName="abreviacoes" type="varchar(30)" currentType="varchar(15)" notnull="false" currentNotnull="true"/>
+        <alterColumn columnName="tipo_nota" tableName="notas" checkConstraint="check ( tipo_nota in ('COMPRA','TRANSFERENCIA_E','DEV_CLI','ACERTO_E','PEDIDO_E','OUTROS_E','NOTA_E','RECLASSIFICACAO_E','VENDAF','RETIRAF','VENDA','TRANSFERENCIA_S','ENT_RET','DEV_FOR','ACERTO_S','PEDIDO_S','PEDIDO_A','PEDIDO_R','OUTROS_S','CHAVE_SAIDA','OUTRAS_NFS','SP_REME','CANCELADA_E','CANCELADA_S'))" checkConstraintName="ck_notas_tipo_nota"/>
+        <createTable name="validades" identityType="identity" pkName="pk_validades">
+            <column name="id" type="bigint" primaryKey="true"/>
+            <column name="meses_validade" type="integer" notnull="true"/>
+            <column name="meses_fabricacao" type="integer" notnull="true"/>
+            <column name="created_at" type="timestamp" notnull="true"/>
+            <column name="updated_at" type="timestamp" notnull="true"/>
+            <column name="version" type="integer" notnull="true"/>
+            <uniqueConstraint name="uq_validades_meses_validade_meses_fabricacao" columnNames="meses_validade,meses_fabricacao" oneToOne="false" nullableColumns=""/>
+        </createTable>
+    </changeSet>
+</migration>
