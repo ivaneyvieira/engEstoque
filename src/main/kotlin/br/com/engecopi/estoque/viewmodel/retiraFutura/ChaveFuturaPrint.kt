@@ -14,30 +14,22 @@ class ChaveFuturaPrint() {
     val listaItens = notaRef.itensNota()
     return imprimeItens(listaItens)
   }
-  
+
   private fun imprimeItens(itens: List<ItemNota>): String {
-    val etiquetas =
-      Etiqueta.findByStatus(INCLUIDA, "ETDEP")
-    return etiquetas.joinToString(separator = "\n") {etiqueta ->
-      itens.map {imprimir(it, etiqueta)}
-        .distinct()
-        .joinToString(separator = "\n")
+    val etiquetas = Etiqueta.findByStatus(INCLUIDA, "ETDEP")
+    return etiquetas.joinToString(separator = "\n") { etiqueta ->
+      itens.map { imprimir(it, etiqueta) }.distinct().joinToString(separator = "\n")
     }
   }
-  
+
   fun imprimeTudo(): String {
     val etiquetas = Etiqueta.findByStatus(INCLUIDA, "ETDEP")
-    val itens =
-      QItemNota().impresso.eq(false)
-        .status.eq(INCLUIDA)
-        .findList()
-    return etiquetas.joinToString(separator = "\n") {etiqueta ->
-      itens.map {item -> imprimir(item, etiqueta)}
-        .distinct()
-        .joinToString(separator = "\n")
+    val itens = QItemNota().impresso.eq(false).status.eq(INCLUIDA).findList()
+    return etiquetas.joinToString(separator = "\n") { etiqueta ->
+      itens.map { item -> imprimir(item, etiqueta) }.distinct().joinToString(separator = "\n")
     }
   }
-  
+
   private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {
     itemNota ?: return ""
     val print = itemNota.printEtiqueta()

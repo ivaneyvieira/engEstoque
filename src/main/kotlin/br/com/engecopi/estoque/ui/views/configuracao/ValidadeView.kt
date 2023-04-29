@@ -12,41 +12,41 @@ import com.vaadin.ui.TextArea
 
 @AutoView
 class ValidadeView : CrudLayoutView<ValidadeVo, ValidadeViewModel>(false), IValidadeView {
-    private lateinit var template: TextArea
+  private lateinit var template: TextArea
 
-    init {
-        viewModel = ValidadeViewModel(this)
-        layoutForm {
-            formLayout.apply {
-                w = 150.px
-                h = 600.px
-                row {
-                    integerField("Validades") {
-                        expandRatio = 4f
-                        bind(binder).bind(ValidadeVo::mesesValidade)
-                    }
-                }
-                row {
-                    integerField("M. Fabricação") {
-                        expandRatio = 4f
-                        bind(binder).bind(ValidadeVo::mesesFabricacao)
-                    }
-                }
-            }
+  init {
+    viewModel = ValidadeViewModel(this)
+    layoutForm {
+      formLayout.apply {
+        w = 150.px
+        h = 600.px
+        row {
+          integerField("Validades") {
+            expandRatio = 4f
+            bind(binder).bind(ValidadeVo::mesesValidade)
+          }
         }
-        form("Validade")
-        gridCrud {
-            deleteOperationVisible = RegistryUserInfo.usuarioDefault.admin
-            column(ValidadeVo::mesesValidade) {
-                expandRatio = 1
-                caption = "Validade"
-                setSortProperty("mesesValidade")
-            }
-            column(ValidadeVo::mesesFabricacao) {
-                expandRatio = 1
-                caption = "M. Fabricação"
-                setSortProperty("mesesFabricacao")
-            }
+        row {
+          integerField("M. Fabricação") {
+            expandRatio = 4f
+            bind(binder).bind(ValidadeVo::mesesFabricacao)
+          }
         }
+      }
     }
+    form("Validade")
+    gridCrud {
+      deleteOperationVisible = RegistryUserInfo.usuarioDefault.admin
+      column(ValidadeVo::mesesValidade) {
+        expandRatio = 1
+        caption = "Validade"
+        setSortProperty("mesesValidade")
+      }
+      column(ValidadeVo::mesesFabricacao) {
+        expandRatio = 1
+        caption = "M. Fabricação"
+        setSortProperty("mesesFabricacao")
+      }
+    }
+  }
 }

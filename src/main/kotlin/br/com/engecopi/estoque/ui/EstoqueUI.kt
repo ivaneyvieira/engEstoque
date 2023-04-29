@@ -9,7 +9,6 @@ import br.com.engecopi.estoque.ui.views.abastecimento.ChaveAbastecimentoView
 import br.com.engecopi.estoque.ui.views.abastecimento.EditorAbastecimentoView
 import br.com.engecopi.estoque.ui.views.abastecimento.EntregaAbastecimentoView
 import br.com.engecopi.estoque.ui.views.configuracao.*
-import br.com.engecopi.estoque.ui.views.configuracao.AbreciacaoView
 import br.com.engecopi.estoque.ui.views.entregaFutura.ChaveFuturaView
 import br.com.engecopi.estoque.ui.views.entregaFutura.EditorFuturaView
 import br.com.engecopi.estoque.ui.views.entregaFutura.EntregaFuturaView
@@ -33,7 +32,6 @@ import br.com.engecopi.framework.ui.view.toViewName
 import br.com.engecopi.utils.SystemUtils
 import com.github.mvysny.karibudsl.v8.*
 import com.vaadin.annotations.*
-import com.vaadin.icons.VaadinIcons
 import com.vaadin.icons.VaadinIcons.*
 import com.vaadin.navigator.Navigator
 import com.vaadin.navigator.PushStateNavigation
@@ -82,8 +80,7 @@ class EstoqueUI : UI() {
         val qtWarnings = repo.qtWarning()
         if (qtWarnings == 0) {
           menuVisaoGeral.badge = ""
-        }
-        else {
+        } else {
           menuVisaoGeral.badge = "$qtWarnings"
         }
       }
@@ -128,8 +125,8 @@ class EstoqueUI : UI() {
     setErrorHandler { e -> errorHandler(e) }
     val contextPathDeafualt = when {
       user.roleExpedicao() && contextPath == "" -> ChaveExpedicaoView::class.java.toViewName()
-      user.roleFutura() && contextPath == ""    -> ChaveFuturaView::class.java.toViewName()
-      else                                      -> contextPath
+      user.roleFutura() && contextPath == "" -> ChaveFuturaView::class.java.toViewName()
+      else -> contextPath
     }
 
     navigator.navigateTo(contextPathDeafualt)
@@ -252,11 +249,12 @@ class EstoqueUI : UI() {
   }
 
   private fun errorHandler(e: ErrorEvent) {
-    log?.error("Erro não identificado ${e.throwable.message}",
-               e.throwable)
-    Notification("Oops",
-                 "\n" + "Ocorreu um erro e lamentamos muito isso. Já está trabalhando na correção!",
-                 ERROR_MESSAGE).apply {
+    log?.error(
+      "Erro não identificado ${e.throwable.message}", e.throwable
+    )
+    Notification(
+      "Oops", "\n" + "Ocorreu um erro e lamentamos muito isso. Já está trabalhando na correção!", ERROR_MESSAGE
+    ).apply {
       styleName += " " + ValoTheme.NOTIFICATION_CLOSABLE
       position = TOP_CENTER
       show(Page.getCurrent())

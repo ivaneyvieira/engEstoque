@@ -13,7 +13,7 @@ class NotaSaciInfo(
   val cancelado: Boolean,
   val tipo: String,
   val area: String,
-                  ) {
+) {
   val numeroSerie
     get() = if (serie.isBlank()) numero else "$numero/$serie"
   val localDate

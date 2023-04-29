@@ -3,16 +3,11 @@ package br.com.engecopi.estoque.model.query
 import br.com.engecopi.estoque.model.ViewProduto
 import br.com.engecopi.estoque.model.query.assoc.QAssocProduto
 import io.ebean.Database
-import io.ebean.typequery.PDouble
-import io.ebean.typequery.PInteger
-import io.ebean.typequery.PLong
-import io.ebean.typequery.PString
-import io.ebean.typequery.TQRootBean
-import io.ebean.typequery.TypeQueryBean
+import io.ebean.typequery.*
 
 /**
  * Query bean for ViewProduto.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean

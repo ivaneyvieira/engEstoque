@@ -11,7 +11,8 @@ import com.vaadin.ui.Window
 import com.vaadin.ui.themes.ValoTheme
 import java.time.LocalDate
 
-class DialogDataFabricacao(val nota: Nota?, private val produtoVo: ProdutoNotaVo, val salvaProduto: () -> Unit = {}) : Window("Data de Fabricação") {
+class DialogDataFabricacao(val nota: Nota?, private val produtoVo: ProdutoNotaVo, val salvaProduto: () -> Unit = {}) :
+  Window("Data de Fabricação") {
   private lateinit var edtDataFabricacao: DateField
 
   init {
@@ -35,7 +36,7 @@ class DialogDataFabricacao(val nota: Nota?, private val produtoVo: ProdutoNotaVo
             produtoVo.selecionado = true
             salvaProduto()
             this@DialogDataFabricacao.close()
-          }else {
+          } else {
             Notification.show(msg.msgErro(), Notification.Type.ERROR_MESSAGE)
           }
         }

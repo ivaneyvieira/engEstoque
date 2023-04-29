@@ -30,8 +30,10 @@ import javax.persistence.CascadeType.*
 import javax.validation.constraints.Size
 
 @Entity
-@Indices(Index(columnNames = ["tipo_mov", "tipo_nota", "sequencia"]),
-         Index(columnNames = ["loja_id", "tipo_mov", "numero"], unique = true))
+@Indices(
+  Index(columnNames = ["tipo_mov", "tipo_nota", "sequencia"]),
+  Index(columnNames = ["loja_id", "tipo_mov", "numero"], unique = true)
+)
 @Cache(enableQueryCache = true)
 @CacheQueryTuning(maxSecsToLive = 30)
 @Table(name = "notas")
@@ -95,12 +97,12 @@ class Nota : BaseModel() {
   fun updateFromSaci() {
     val storeno = loja?.numero ?: 0
     val notaInfo = when (tipoMov) {
-                     ENTRADA -> saci.findNotaEntradaInfo(storeno, nfno, nfse)
-                     SAIDA   -> saci.findNotaSaidaInfo(storeno, nfno, nfse)
-                   } ?: return
+      ENTRADA -> saci.findNotaEntradaInfo(storeno, nfno, nfse)
+      SAIDA -> saci.findNotaSaidaInfo(storeno, nfno, nfse)
+    } ?: return
     tipoNota = if (notaInfo.cancelado) when (tipoMov) {
       ENTRADA -> CANCELADA_E
-      SAIDA   -> CANCELADA_S
+      SAIDA -> CANCELADA_S
     }
     else {
       notaInfo.tipoNota
@@ -108,8 +110,8 @@ class Nota : BaseModel() {
     this.save()
   }
 
-  fun areaEntrega() : String {
-    return if(tipoMov == SAIDA){
+  fun areaEntrega(): String {
+    return if (tipoMov == SAIDA) {
       val storeno = loja?.numero ?: 0
       val notaInfo: NotaSaciInfo = saci.findNotaSaidaInfo(storeno, nfno, nfse) ?: return ""
       return notaInfo.area
@@ -142,8 +144,8 @@ class Nota : BaseModel() {
       val tipoNota = notaSimples.tipoNota() ?: return NotaItens.erro("Nota com tipo inválido")
       val loja = notaSimples.loja() ?: return NotaItens.erro("Nota com loja inválido")
       val nota =
-              findNota(loja, numero, tipoNota.tipoMov) ?: createNota(notaSimples)
-              ?: return NotaItens.erro("Erro ao criar a nota")
+        findNota(loja, numero, tipoNota.tipoMov) ?: createNota(notaSimples)
+        ?: return NotaItens.erro("Erro ao criar a nota")
       nota.sequencia = maxSequencia() + 1
       nota.usuario = usuarioDefault
       val itens = notasaci.mapNotNull { item ->
@@ -181,7 +183,7 @@ class Nota : BaseModel() {
       loja ?: return null
       return when (tipoMov) {
         ENTRADA -> findEntrada(loja, numero)
-        SAIDA   -> findSaida(loja, numero)
+        SAIDA -> findSaida(loja, numero)
       }
     }
 
@@ -216,8 +218,9 @@ class Nota : BaseModel() {
       val numero = nota.numero
       val tipoMov = nota.tipoMov
       val produtoId = produto?.id ?: return false
-      return QItemNota().nota.loja.id.eq(lojaId).nota.numero.eq(numero).nota.tipoMov.eq(tipoMov).produto.id.eq(produtoId)
-               .findCount() > 0
+      return QItemNota().nota.loja.id.eq(lojaId).nota.numero.eq(numero).nota.tipoMov.eq(tipoMov).produto.id.eq(
+        produtoId
+      ).findCount() > 0
     }
 
     fun findNotaSaidaKey(nfeKey: String): List<NotaProdutoSaci> {
@@ -241,16 +244,17 @@ class Nota : BaseModel() {
     private fun notasSalva(loja: Loja, tipoNota: TipoMov): List<Nota> {
       val dtInicial = LocalDate.of(2020, 1, 1)
       return QNota().tipoMov.eq(tipoNota).loja.equalTo(loja).itensNota.localizacao.startsWith(abreviacaoDefault).data.after(
-          dtInicial).findList()
+        dtInicial
+      ).findList()
     }
 
-    fun notaBaixa(storeno: Int?, numero: String?) = TransferenciaAutomatica.notaBaixa(storeno, numero)
-      .ifEmpty { EntregaFutura.notaBaixa(storeno, numero) }
-      .ifEmpty { PedidoNotaRessuprimento.notaBaixa(numero) }
+    fun notaBaixa(storeno: Int?, numero: String?) =
+      TransferenciaAutomatica.notaBaixa(storeno, numero).ifEmpty { EntregaFutura.notaBaixa(storeno, numero) }
+        .ifEmpty { PedidoNotaRessuprimento.notaBaixa(numero) }
 
-    fun notaFatura(storeno: Int?, numero: String?) = TransferenciaAutomatica.notaFatura(storeno, numero)
-      .ifEmpty { EntregaFutura.notaFatura(storeno, numero) }
-      .ifEmpty { PedidoNotaRessuprimento.pedidoRessuprimento(storeno, numero) }
+    fun notaFatura(storeno: Int?, numero: String?) =
+      TransferenciaAutomatica.notaFatura(storeno, numero).ifEmpty { EntregaFutura.notaFatura(storeno, numero) }
+        .ifEmpty { PedidoNotaRessuprimento.pedidoRessuprimento(storeno, numero) }
   }
 
   fun dataBaixa(): LocalDate? = notaBaixa().data
@@ -272,34 +276,37 @@ enum class TipoMov(val descricao: String) {
   ENTRADA("Entrada"), SAIDA("Saida")
 }
 
-enum class TipoNota(val tipoMov: TipoMov,
-                    val descricao: String,
-                    val descricao2: String,
-                    val lojaDeposito: Boolean = true) {
+enum class TipoNota(
+  val tipoMov: TipoMov, val descricao: String, val descricao2: String, val lojaDeposito: Boolean = true
+) {
   //Entrada
-  COMPRA(ENTRADA, "Compra", "Compra"),
-  TRANSFERENCIA_E(ENTRADA, "Transferencia", "Transferencia Entrada"),
-  DEV_CLI(ENTRADA, "Dev Cliente", "Dev Cliente"),
-  ACERTO_E(ENTRADA, "Acerto", "Acerto Entrada"),
-  PEDIDO_E(ENTRADA, "Pedido", "Pedido Entrada"),
-  OUTROS_E(ENTRADA, "Outros", "Outras Entradas"),
-  NOTA_E(ENTRADA, "Entradas", "Entradas"),
-  RECLASSIFICACAO_E(ENTRADA, "Reclassificação", "Reclassificação Entrada"),
-  VENDAF(SAIDA, "Venda Futura", "Venda Fut", false),
-  RETIRAF(SAIDA, "Retira Futura", "Retira Fut", false),
-  VENDA(SAIDA, "Venda", "Venda"),
-  TRANSFERENCIA_S(SAIDA, "Transferencia", "Transferencia Saida"),
-  ENT_RET(SAIDA, "Ent/Ret", "Ent/Ret"),
-  DEV_FOR(SAIDA, "Dev Fornecedor", "Dev Fornecedor"),
-  ACERTO_S(SAIDA, "Acerto", "Acerto Saida"),
-  PEDIDO_S(SAIDA, "Pedido", "Pedido Saida"),
-  PEDIDO_A(SAIDA, "Abastecimento", "Pedido Abastecimento"),
-  PEDIDO_R(SAIDA, "Ressuprimento", "Pedido de Ressuprimento", false),
-  OUTROS_S(SAIDA, "Outros", "Outras Saidas"),
-  CHAVE_SAIDA(SAIDA, "Chave de Nota", "Chave de Nota"),
-  OUTRAS_NFS(SAIDA, "Outras NFS", "Outras NF Saida"),
-  SP_REME(SAIDA, "Simples Remessa", "Simples Remessa"),
-  CANCELADA_E(ENTRADA, "Nota Cancelada", "NF Entrada Cancelada"),
+  COMPRA(ENTRADA, "Compra", "Compra"), TRANSFERENCIA_E(ENTRADA, "Transferencia", "Transferencia Entrada"), DEV_CLI(
+    ENTRADA, "Dev Cliente", "Dev Cliente"
+  ),
+  ACERTO_E(ENTRADA, "Acerto", "Acerto Entrada"), PEDIDO_E(ENTRADA, "Pedido", "Pedido Entrada"), OUTROS_E(
+    ENTRADA, "Outros", "Outras Entradas"
+  ),
+  NOTA_E(ENTRADA, "Entradas", "Entradas"), RECLASSIFICACAO_E(
+    ENTRADA, "Reclassificação", "Reclassificação Entrada"
+  ),
+  VENDAF(SAIDA, "Venda Futura", "Venda Fut", false), RETIRAF(
+    SAIDA, "Retira Futura", "Retira Fut", false
+  ),
+  VENDA(SAIDA, "Venda", "Venda"), TRANSFERENCIA_S(SAIDA, "Transferencia", "Transferencia Saida"), ENT_RET(
+    SAIDA, "Ent/Ret", "Ent/Ret"
+  ),
+  DEV_FOR(SAIDA, "Dev Fornecedor", "Dev Fornecedor"), ACERTO_S(SAIDA, "Acerto", "Acerto Saida"), PEDIDO_S(
+    SAIDA, "Pedido", "Pedido Saida"
+  ),
+  PEDIDO_A(SAIDA, "Abastecimento", "Pedido Abastecimento"), PEDIDO_R(
+    SAIDA, "Ressuprimento", "Pedido de Ressuprimento", false
+  ),
+  OUTROS_S(SAIDA, "Outros", "Outras Saidas"), CHAVE_SAIDA(SAIDA, "Chave de Nota", "Chave de Nota"), OUTRAS_NFS(
+    SAIDA, "Outras NFS", "Outras NF Saida"
+  ),
+  SP_REME(SAIDA, "Simples Remessa", "Simples Remessa"), CANCELADA_E(
+    ENTRADA, "Nota Cancelada", "NF Entrada Cancelada"
+  ),
   CANCELADA_S(SAIDA, "Nota Cancelada", "NF Saída Cancelada");
 
   companion object {
@@ -325,16 +332,17 @@ data class NotaSerie(val id: Long, val tipoNota: TipoNota) {
       return values.find { it.tipoNota == tipo }
     }
 
-    val values =
-            listOf(NotaSerie(1, VENDA),
-                   NotaSerie(2, ENT_RET),
-                   NotaSerie(3, TRANSFERENCIA_S),
-                   NotaSerie(4, ACERTO_S),
-                   NotaSerie(5, PEDIDO_S),
-                   NotaSerie(6, DEV_FOR),
-                   NotaSerie(7, VENDAF),
-                   NotaSerie(8, OUTRAS_NFS),
-                   NotaSerie(9, CHAVE_SAIDA))
+    val values = listOf(
+      NotaSerie(1, VENDA),
+      NotaSerie(2, ENT_RET),
+      NotaSerie(3, TRANSFERENCIA_S),
+      NotaSerie(4, ACERTO_S),
+      NotaSerie(5, PEDIDO_S),
+      NotaSerie(6, DEV_FOR),
+      NotaSerie(7, VENDAF),
+      NotaSerie(8, OUTRAS_NFS),
+      NotaSerie(9, CHAVE_SAIDA)
+    )
   }
 }
 

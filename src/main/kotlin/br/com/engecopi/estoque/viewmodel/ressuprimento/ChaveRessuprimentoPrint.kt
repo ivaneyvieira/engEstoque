@@ -15,29 +15,25 @@ class ChaveRessuprimentoPrint() {
     val listaItens = notaRef.itensNota()
     return imprimeItens(listaItens)
   }
-  
+
   private fun imprimeItens(itens: List<ItemNota>): List<EtiquetaRessuprimento> {
-    val etiquetas =
-      Etiqueta.findByStatus(INCLUIDA, "ETDEP")
-    val prints = etiquetas.flatMap {etiqueta ->
-      itens.mapNotNull {item ->
+    val etiquetas = Etiqueta.findByStatus(INCLUIDA, "ETDEP")
+    val prints = etiquetas.flatMap { etiqueta ->
+      itens.mapNotNull { item ->
         val text = imprimir(item, etiqueta)
         val nota = item.nota ?: return@mapNotNull null
         val abreviacao = item.abreviacao ?: return@mapNotNull null
         EtiquetaRessuprimento(nota, abreviacao, text)
       }
     }
-    return prints.distinctBy {it.text}
+    return prints.distinctBy { it.text }
   }
-  
+
   fun imprimeTudo(): List<EtiquetaRessuprimento> {
-    val itens =
-      QItemNota().impresso.eq(false)
-        .status.eq(INCLUIDA)
-        .findList()
+    val itens = QItemNota().impresso.eq(false).status.eq(INCLUIDA).findList()
     return imprimeItens(itens)
   }
-  
+
   private fun imprimir(itemNota: ItemNota?, etiqueta: Etiqueta): String {
     itemNota ?: return ""
     val print = itemNota.printEtiqueta()

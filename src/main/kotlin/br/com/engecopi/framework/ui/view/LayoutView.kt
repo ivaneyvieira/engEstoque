@@ -64,9 +64,9 @@ abstract class LayoutView<V : ViewModel<*>> : VerticalLayout(), View {
     MessageDialog.image(title, image, printRunnable)
   }
 
-  fun showZPLPreview(zplCode : String, printRunnable: () -> Unit){
+  fun showZPLPreview(zplCode: String, printRunnable: () -> Unit) {
     val image = ZPLPreview.createPdf(zplCode, "4x2")
-    if(image != null) showImage("Preview", image, printRunnable)
+    if (image != null) showImage("Preview", image, printRunnable)
   }
 
   fun showQuestion(msg: String, execYes: () -> Unit, execNo: () -> Unit) {
@@ -92,13 +92,12 @@ fun <V, T> HasItems<T>.bindItens(binder: Binder<V>, propertyList: String): Bindi
     val oldValue = hasValue?.value
     if (itensOld != itens) {
       if (this is ComboBox<T>) setItems({ itemCaption, filterText ->
-                                          itemCaption.toUpperCase().startsWith(filterText.toUpperCase())
-                                        }, itens)
+        itemCaption.toUpperCase().startsWith(filterText.toUpperCase())
+      }, itens)
       else if (this is TwinColSelect<T>) setItems(itens)
       else setItems(itens)
     }
-    @Suppress("UNCHECKED_CAST")
-    val contains = itens.contains(oldValue as? T)
+    @Suppress("UNCHECKED_CAST") val contains = itens.contains(oldValue as? T)
     val value = if (oldValue == null || !contains) null
     else itens.find { it == oldValue }
     if (value == null) hasValue?.value = hasValue?.emptyValue
@@ -138,7 +137,7 @@ private fun <BEAN, FIELDVALUE> bind(
   binder: Binder<BEAN>,
   property: String,
   blockBinder: (FIELDVALUE) -> Unit,
-                                   ): Binding<BEAN, FIELDVALUE> {
+): Binding<BEAN, FIELDVALUE> {
   val field = ReadOnlyHasValue<FIELDVALUE> { itens -> blockBinder(itens) }
   return field.bind(binder).bind(property)
 }
@@ -150,7 +149,7 @@ fun Binder<*>.reload() {
 inline fun <reified BEAN : Any, FIELDVALUE> HasValue<FIELDVALUE>.reloadBinderOnChange(
   binder: Binder<BEAN>,
   vararg propertys: KProperty1<BEAN, *>,
-                                                                                     ) {
+) {
   addValueChangeListener { event ->
     if (event.isUserOriginated && (event.oldValue != event.value)) {
       val bean = binder.bean
@@ -165,8 +164,7 @@ inline fun <reified BEAN : Any, FIELDVALUE> HasValue<FIELDVALUE>.reloadBinderOnC
         }.forEach { binding ->
           binding.read(bean)
         }
-      }
-      else {
+      } else {
         reloadPropertys(binder, *propertys)
       }
     }
@@ -204,48 +202,48 @@ fun <C> Column<C, Int?>.intFormat() {
 }
 
 fun HasComponents.integerField(caption: String = "", block: IntegerField.() -> Unit = {}) =
-        init(IntegerField(caption), block).apply {
-          addStyleName(ValoTheme.TEXTFIELD_ALIGN_RIGHT)
-        }
+  init(IntegerField(caption), block).apply {
+    addStyleName(ValoTheme.TEXTFIELD_ALIGN_RIGHT)
+  }
 
 fun HasComponents.doubleField(caption: String = "", block: DoubleField.() -> Unit = {}) =
-        init(DoubleField(caption), block)
+  init(DoubleField(caption), block)
 
 fun HasComponents.emailField(caption: String = "", block: EmailField.() -> Unit = {}) = init(EmailField(caption), block)
 
 fun HasComponents.clearableTextField(caption: String = "", block: ClearableTextField.() -> Unit = {}) =
-        init(ClearableTextField(caption), block)
+  init(ClearableTextField(caption), block)
 
 fun <T> HasComponents.headerField(caption: String = "", block: HeaderField<T>.() -> Unit = {}) =
-        init(HeaderField(caption), block)
+  init(HeaderField(caption), block)
 
 fun HasComponents.integerSliderField(captionPar: String = "", block: IntegerSliderField.() -> Unit = {}) =
-        init(IntegerSliderField(), block).apply {
-          this.caption = captionPar
-        }
+  init(IntegerSliderField(), block).apply {
+    this.caption = captionPar
+  }
 
 fun HasComponents.mCheckBox(captionPar: String = "", block: MCheckBox.() -> Unit = {}) =
-        init(MCheckBox(), block).apply {
-          this.caption = captionPar
-        }
+  init(MCheckBox(), block).apply {
+    this.caption = captionPar
+  }
 
 fun HasComponents.mTextField(captionPar: String = "", block: MTextField.() -> Unit = {}) =
-        init(MTextField(), block).apply {
-          this.caption = captionPar
-        }
+  init(MTextField(), block).apply {
+    this.caption = captionPar
+  }
 
 fun HasComponents.tokenField(captionPar: String = "", block: AdvancedTokenField.() -> Unit = {}) =
-        init(AdvancedTokenField(), block).apply {
-          this.caption = captionPar
-        }
+  init(AdvancedTokenField(), block).apply {
+    this.caption = captionPar
+  }
 
 fun <T> HasComponents.labelField(caption: String = "", block: LabelField<T>.() -> Unit = {}) =
-        init(LabelField(caption), block)
+  init(LabelField(caption), block)
 
 inline fun <reified T : Enum<*>> HasComponents.enumSelect(
   caption: String = "",
   noinline block: EnumSelect<T>.() -> Unit = {},
-                                                         ) = init(EnumSelect<T>(caption, T::class.java), block)
+) = init(EnumSelect<T>(caption, T::class.java), block)
 
 fun HasComponents.title(title: String) = label(title) {
   w = fillParent
@@ -258,18 +256,17 @@ fun <T : Any> (@VaadinDsl HasComponents).filterGrid(
   caption: String? = null,
   dataProvider: DataProvider<T, *>? = null,
   block: (@VaadinDsl FilterGrid<T>).() -> Unit = {},
-                                                   ) =
-        init(if (itemClass == null) FilterGrid() else FilterGrid<T>(itemClass.java)) {
-          this.caption = caption
-          if (dataProvider != null) this.dataProvider = dataProvider
-          block()
-        }
+) = init(if (itemClass == null) FilterGrid() else FilterGrid<T>(itemClass.java)) {
+  this.caption = caption
+  if (dataProvider != null) this.dataProvider = dataProvider
+  block()
+}
 
 @VaadinDsl
 fun (@VaadinDsl HasComponents).listBuilder(
   caption: String? = null,
   block: (@VaadinDsl ListBuilder).() -> Unit = {},
-                                          ) = init(ListBuilder(caption), block)
+) = init(ListBuilder(caption), block)
 
 fun Window.showDialog() {
   isClosable = true

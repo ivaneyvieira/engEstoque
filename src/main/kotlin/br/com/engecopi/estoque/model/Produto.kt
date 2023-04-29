@@ -49,12 +49,16 @@ class Produto : BaseModel() {
   @OneToMany(mappedBy = "produto", cascade = [REFRESH])
   var viewProdutoLoc: List<ViewProdutoLoc>? = null
 
-  @Formula(select = "LOC.localizacao",
-           join = "LEFT join (select produto_id, GROUP_CONCAT(DISTINCT localizacao ORDER BY localizacao SEPARATOR ' -" + " ') as localizacao from t_loc_produtos FORCE INDEX(i2) where storeno = @LOJA_FIELD group by " + "produto_id) AS LOC ON LOC.produto_id = \${ta}.id")
+  @Formula(
+    select = "LOC.localizacao",
+    join = "LEFT join (select produto_id, GROUP_CONCAT(DISTINCT localizacao ORDER BY localizacao SEPARATOR ' -" + " ') as localizacao from t_loc_produtos FORCE INDEX(i2) where storeno = @LOJA_FIELD group by " + "produto_id) AS LOC ON LOC.produto_id = \${ta}.id"
+  )
   var localizacao: String? = ""
 
-  @Formula(select = "SAL.saldo_total",
-           join = "LEFT JOIN (select produto_id, SUM(quantidade*IF(tipo_mov = 'ENTRADA', 1, -1)*IF(tipo_mov in " + "('INCLUIDA', 'ENTREGUE_LOJA') || tipo_nota IN ('CANCELADA_E', 'CANCELADA_S'), 0, 1)) AS " + "saldo_total from itens_nota AS I inner join notas AS N ON N.id = I.nota_id inner join lojas AS L " + "   ON L.id = N.loja_id WHERE L.numero = @LOJA_FIELD group by produto_id) AS SAL ON SAL.produto_id" + " = \${ta}.id")
+  @Formula(
+    select = "SAL.saldo_total",
+    join = "LEFT JOIN (select produto_id, SUM(quantidade*IF(tipo_mov = 'ENTRADA', 1, -1)*IF(tipo_mov in " + "('INCLUIDA', 'ENTREGUE_LOJA') || tipo_nota IN ('CANCELADA_E', 'CANCELADA_S'), 0, 1)) AS " + "saldo_total from itens_nota AS I inner join notas AS N ON N.id = I.nota_id inner join lojas AS L " + "   ON L.id = N.loja_id WHERE L.numero = @LOJA_FIELD group by produto_id) AS SAL ON SAL.produto_id" + " = \${ta}.id"
+  )
   var saldo_total: Int? = 0
   val descricao: String?
     get() = vproduto?.nome
@@ -83,8 +87,7 @@ class Produto : BaseModel() {
     val loja = lojaDeposito
     var saldo = 0
     val itensNotNull =
-      QItemNota().produto.id.eq(id).or().nota.loja.equalTo(loja).nota.tipoNota
-        .`in`(TipoNota.lojasExternas)
+      QItemNota().produto.id.eq(id).or().nota.loja.equalTo(loja).nota.tipoNota.`in`(TipoNota.lojasExternas)
         .endOr().localizacao.like(if (localizacao == "") "%" else localizacao).findList()
     itensNotNull.sortedWith(compareBy(ItemNota::data, ItemNota::hora)).forEach { item ->
       item.refresh()
@@ -201,13 +204,8 @@ class Produto : BaseModel() {
     fun findProdutoSaldo(filtro: FiltroEstoque): List<ProdutoSaldo> {
       val sql = SystemUtils.readFile("/sqlSaci/relatorioSaldo.sql") ?: return emptyList()
       return DB.beginTransaction().use { tx ->
-        DB
-          .findDto(ProdutoSaldo::class.java, sql)
-          .setParameter("storeno", filtro.storeno)
-          .setParameter("prdno", filtro.prdno)
-          .setParameter("estoque", filtro.estoque.sinal)
-          .findList()
-          .filter {
+        DB.findDto(ProdutoSaldo::class.java, sql).setParameter("storeno", filtro.storeno)
+          .setParameter("prdno", filtro.prdno).setParameter("estoque", filtro.estoque.sinal).findList().filter {
             val codigos = filtro.produtoFiltro() ?: return@filter true
             it.codigo in codigos
           }
@@ -220,9 +218,7 @@ class Produto : BaseModel() {
   }
 
   fun saldoAbreviacao(abreviacao: String?): Int {
-    return QItemNota().produto.id.eq(id).localizacao
-      .startsWith(abreviacao ?: "")
-      .findList()
+    return QItemNota().produto.id.eq(id).localizacao.startsWith(abreviacao ?: "").findList()
       .sumBy { it.quantidadeSaldo }
   }
 
@@ -252,11 +248,7 @@ class Produto : BaseModel() {
     val ctParte = localizacoesSplit.asSequence().map { it.size - 1 }.minOrNull() ?: 0
     for (i in ctParte downTo 0) {
       val prefix =
-        localizacoesSplit
-          .asSequence()
-          .map { it.subList(0, i) }
-          .map { it.joinToString(separator = ".") }
-          .distinct()
+        localizacoesSplit.asSequence().map { it.subList(0, i) }.map { it.joinToString(separator = ".") }.distinct()
           .toList()
 
       if (prefix.count() == 1) return prefix[0]
@@ -291,23 +283,27 @@ data class LocProduto(val localizacao: String) : Comparable<LocProduto> {
   }
 }
 
-class ProdutoSaldo(val codigo: String,
-                   val nome: String,
-                   val grade: String,
-                   val codebar: String,
-                   val localizacao: String,
-                   val quantidade: Int)
+class ProdutoSaldo(
+  val codigo: String,
+  val nome: String,
+  val grade: String,
+  val codebar: String,
+  val localizacao: String,
+  val quantidade: Int
+)
 
 enum class EStatusEstoque(val sinal: String) {
   IGUAL("="), DIFERENTE("<>"), MAIOR(">"), MENOR("<"), TODOS("T")
 }
 
-data class FiltroEstoque(val storeno: Int,
-                         val prdno: String,
-                         val estoque: EStatusEstoque,
-                         val vendno: Int,
-                         val typeno: Int,
-                         val clno: Int,
-                         val pedido: Int) {
+data class FiltroEstoque(
+  val storeno: Int,
+  val prdno: String,
+  val estoque: EStatusEstoque,
+  val vendno: Int,
+  val typeno: Int,
+  val clno: Int,
+  val pedido: Int
+) {
   fun produtoFiltro() = saci.findProdutosSaci(storeno, vendno, typeno, clno, pedido)
 }

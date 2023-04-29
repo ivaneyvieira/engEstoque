@@ -5,16 +5,11 @@ import br.com.engecopi.estoque.model.query.assoc.QAssocNota
 import br.com.engecopi.estoque.model.query.assoc.QAssocUsuario
 import br.com.engecopi.estoque.model.query.assoc.QAssocViewProdutoLoc
 import io.ebean.Database
-import io.ebean.typequery.PInteger
-import io.ebean.typequery.PLocalDateTime
-import io.ebean.typequery.PLong
-import io.ebean.typequery.PString
-import io.ebean.typequery.TQRootBean
-import io.ebean.typequery.TypeQueryBean
+import io.ebean.typequery.*
 
 /**
  * Query bean for Loja.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean

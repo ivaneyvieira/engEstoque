@@ -22,12 +22,8 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
-  view: V,
-  val tipo: TipoMov,
-  private val statusDefault: StatusNota,
-  private val statusImpressao: StatusNota
-) :
-  CrudViewModel<ItemNota, QItemNota, VO, V>(view) {
+  view: V, val tipo: TipoMov, private val statusDefault: StatusNota, private val statusImpressao: StatusNota
+) : CrudViewModel<ItemNota, QItemNota, VO, V>(view) {
   private val print = NotaPrint()
 
   override fun update(bean: VO) {
@@ -52,16 +48,15 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
         val msg = "O produto ${produto.codigo} - ${produto.descricao}. Já foi inserido na nota ${nota.numero}."
         view.showWarning(msg)
       } else {
-        bean.entityVo =
-          insertItemNota(
-            nota = nota,
-            produto = produto,
-            dataFabricacao = bean.dataFabricacao,
-            quantProduto = bean.quantProduto ?: 0,
-            usuario = usuario,
-            local = bean.localizacao?.localizacao,
-            addTime = addTime
-          )
+        bean.entityVo = insertItemNota(
+          nota = nota,
+          produto = produto,
+          dataFabricacao = bean.dataFabricacao,
+          quantProduto = bean.quantProduto ?: 0,
+          usuario = usuario,
+          local = bean.localizacao?.localizacao,
+          addTime = addTime
+        )
       }
     } else {
       val produtos = bean.produtos.filter { it.selecionado && it.quantidade != 0 }
@@ -74,16 +69,15 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
       }
       produtos.filter { it.produto !in produtosJaInserido }.forEach { produto ->
         produto.let { prd ->
-          if (usuario.temProduto(prd.produto)) bean.entityVo =
-            insertItemNota(
-              nota = nota,
-              produto = prd.produto,
-              dataFabricacao = prd.dataFabricacao,
-              quantProduto = prd.quantidade,
-              usuario = usuario,
-              local = prd.localizacao?.localizacao,
-              addTime = addTime,
-            )
+          if (usuario.temProduto(prd.produto)) bean.entityVo = insertItemNota(
+            nota = nota,
+            produto = prd.produto,
+            dataFabricacao = prd.dataFabricacao,
+            quantProduto = prd.quantidade,
+            usuario = usuario,
+            local = prd.localizacao?.localizacao,
+            addTime = addTime,
+          )
         }
       }
     }
@@ -101,13 +95,12 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
     if (local.isNullOrBlank()) throw EViewModelError("Não foi especificado a localização do item")
     val mesesValidade = produto?.mesesVencimento ?: 0
     if (nota.tipoNota?.tipoMov == ENTRADA && mesesValidade > 0) {
-      val erroVencimento =
-        ValidadeProduto.erroMesFabricacao(
-          produto = produto?.codigo ?: "",
-          dataFabricacao = dataFabricacao,
-          dataEntrada = nota.data,
-          mesesValidade = mesesValidade,
-        )
+      val erroVencimento = ValidadeProduto.erroMesFabricacao(
+        produto = produto?.codigo ?: "",
+        dataFabricacao = dataFabricacao,
+        dataEntrada = nota.data,
+        mesesValidade = mesesValidade,
+      )
       if (erroVencimento.isError()) {
         throw EViewModelError(erroVencimento.msgErro())
       }
@@ -190,12 +183,9 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
   override val query: QItemNota
     get() {
       Repositories.updateViewProdutosLoc()
-      return QItemNota().setUseQueryCache(true)
-        .fetch("nota")
-        .fetch("usuario")
-        .fetch("produto")
-        .fetch("produto.vproduto")
-        .fetch("produto.viewProdutoLoc").nota.tipoMov.eq(tipo).filtroTipoNota().filtroStatus().or().nota.loja.eq(
+      return QItemNota().setUseQueryCache(true).fetch("nota").fetch("usuario").fetch("produto")
+        .fetch("produto.vproduto").fetch("produto.viewProdutoLoc").nota.tipoMov.eq(tipo).filtroTipoNota().filtroStatus()
+        .or().nota.loja.eq(
           lojaDeposito
         ).nota.tipoNota.`in`(TipoNota.lojasExternas).endOr()
     }
@@ -349,21 +339,17 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?) : 
         if (tipoNota.tipoMov == SAIDA) listItensSaida(notaSaci)
         else listItensEntrada(notaSaci)
       }
-      produtos.addAll(produtosVo.asSequence()
-        .filter {
+      produtos.addAll(
+        produtosVo.asSequence().filter {
           it.quantidade != 0 && it.codigo != "" && it.localizacao?.localizacao?.startsWith(
             abreviacaoNota ?: ""
           ) ?: false
-        }
-        .sortedWith(
+        }.sortedWith(
           compareBy(
-            ProdutoNotaVo::isSave,
-            ProdutoNotaVo::codigo,
-            ProdutoNotaVo::grade,
-            ProdutoNotaVo::localizacao
+            ProdutoNotaVo::isSave, ProdutoNotaVo::codigo, ProdutoNotaVo::grade, ProdutoNotaVo::localizacao
           )
-        )
-        .toList())
+        ).toList()
+      )
     }
   }
 
@@ -371,16 +357,15 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?) : 
     val prd = Produto.findProduto(notaProdutoSaci.prdno, notaProdutoSaci.grade) ?: return emptyList()
     val localizacoes = prd.localizacoes(abreviacaoNota).sorted()
     val ultimaLocalizacao = localizacoes.maxOrNull() ?: ""
-    val produtoVo =
-      ProdutoNotaVo(
-        produto = prd,
-        statusNota = RECEBIDO,
-        dataFabricacao = null,
-        localizacao = LocProduto(ultimaLocalizacao),
-        isSave = notaProdutoSaci.isSave()
-      ).apply {
-        quantidade = notaProdutoSaci.quant ?: 0
-      }
+    val produtoVo = ProdutoNotaVo(
+      produto = prd,
+      statusNota = RECEBIDO,
+      dataFabricacao = null,
+      localizacao = LocProduto(ultimaLocalizacao),
+      isSave = notaProdutoSaci.isSave()
+    ).apply {
+      quantidade = notaProdutoSaci.quant ?: 0
+    }
     return listOf(produtoVo)
   }
 

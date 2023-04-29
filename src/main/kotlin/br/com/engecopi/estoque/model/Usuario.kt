@@ -96,9 +96,7 @@ class Usuario : BaseModel() {
   }
 
   fun localizacoesProduto(produto: Produto): List<String> {
-    return QViewProdutoLoc().produto.equalTo(produto).or().loja.equalTo(loja).loja
-      .equalTo(null)
-      .endOr()
+    return QViewProdutoLoc().produto.equalTo(produto).or().loja.equalTo(loja).loja.equalTo(null).endOr()
       .or().abreviacao.isIn(locais).localizacao.isIn(locais).endOr().findList().mapNotNull { it.localizacao }
   }
 
@@ -110,10 +108,7 @@ class Usuario : BaseModel() {
   val produtoLoc: List<Produto>
     get() {
       return locais.flatMap { loc ->
-        QViewProdutoLoc().loja.eq(loja).or().abreviacao.eq(loc).localizacao
-          .eq(loc)
-          .endOr()
-          .findList()
+        QViewProdutoLoc().loja.eq(loja).or().abreviacao.eq(loc).localizacao.eq(loc).endOr().findList()
           .map { it.produto }
       }
     }
@@ -134,8 +129,7 @@ class Usuario : BaseModel() {
           val locais = usuario.locais
           if (locais.isEmpty()) usuario.loja?.findAbreviacores()
           else locais
-        }
-        else emptyList()
+        } else emptyList()
       } ?: emptyList()
     }
 

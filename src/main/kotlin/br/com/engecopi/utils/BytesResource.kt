@@ -4,7 +4,6 @@ import com.vaadin.server.StreamResource
 import com.vaadin.server.StreamResource.StreamSource
 import java.io.ByteArrayInputStream
 import java.io.InputStream
-import java.security.MessageDigest
 
 fun ByteArray.makeResource(): StreamResource {
   val nome = System.currentTimeMillis().toString()
@@ -17,7 +16,7 @@ fun ByteArray.makeResource(): StreamResource {
   return streamResource
 }
 
-class BytesStreamSource(private val imagem: ByteArray): StreamSource {
+class BytesStreamSource(private val imagem: ByteArray) : StreamSource {
   override fun getStream(): InputStream {
     return ByteArrayInputStream(imagem)
   }

@@ -5,27 +5,13 @@ import br.com.engecopi.estoque.model.StatusNota.CONFERIDA
 import br.com.engecopi.estoque.model.TipoNota
 import br.com.engecopi.estoque.ui.views.PnlCodigoBarras
 import br.com.engecopi.estoque.ui.views.movimentacao.NotaView
+import br.com.engecopi.estoque.viewmodel.retiraFutura.IRetiraFuturaView
 import br.com.engecopi.estoque.viewmodel.retiraFutura.RetiraFututaViewModel
 import br.com.engecopi.estoque.viewmodel.retiraFutura.RetiraFututaVo
-import br.com.engecopi.estoque.viewmodel.retiraFutura.IRetiraFuturaView
+import br.com.engecopi.framework.ui.view.*
 import br.com.engecopi.framework.ui.view.CrudOperation.ADD
 import br.com.engecopi.framework.ui.view.CrudOperation.UPDATE
-import br.com.engecopi.framework.ui.view.dateFormat
-import br.com.engecopi.framework.ui.view.default
-import br.com.engecopi.framework.ui.view.grupo
-import br.com.engecopi.framework.ui.view.intFormat
-import br.com.engecopi.framework.ui.view.row
-import br.com.engecopi.framework.ui.view.timeFormat
-import com.github.mvysny.karibudsl.v8.AutoView
-import com.github.mvysny.karibudsl.v8.bind
-import com.github.mvysny.karibudsl.v8.comboBox
-import com.github.mvysny.karibudsl.v8.dateField
-import com.github.mvysny.karibudsl.v8.expandRatio
-import com.github.mvysny.karibudsl.v8.label
-import com.github.mvysny.karibudsl.v8.px
-import com.github.mvysny.karibudsl.v8.textField
-import com.github.mvysny.karibudsl.v8.verticalLayout
-import com.github.mvysny.karibudsl.v8.w
+import com.github.mvysny.karibudsl.v8.*
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 import com.vaadin.shared.ui.ContentMode.HTML
 import com.vaadin.ui.Alignment
@@ -34,18 +20,18 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.renderers.TextRenderer
 
 @AutoView("retira_futura")
-class RetiraFuturaView: NotaView<RetiraFututaVo, RetiraFututaViewModel, IRetiraFuturaView>(true), IRetiraFuturaView {
+class RetiraFuturaView : NotaView<RetiraFututaVo, RetiraFututaViewModel, IRetiraFuturaView>(true), IRetiraFuturaView {
   var formCodBar: PnlCodigoBarras? = null
-  
+
   override fun enter(event: ViewChangeEvent) {
     super.enter(event)
     formCodBar?.focusEdit()
   }
-  
+
   init {
     viewModel = RetiraFututaViewModel(this)
     layoutForm {
-      if(operation == ADD) {
+      if (operation == ADD) {
         binder.bean.lojaNF = lojaDeposito
         binder.bean.usuario = usuario
       }
@@ -59,7 +45,7 @@ class RetiraFuturaView: NotaView<RetiraFututaVo, RetiraFututaViewModel, IRetiraF
               lojaField(operation, binder)
               comboBox<TipoNota>("Tipo") {
                 expandRatio = 2f
-                default {it.descricao}
+                default { it.descricao }
                 isReadOnly = true
                 setItems(TipoNota.valuesSaida())
                 bind(binder).bind(RetiraFututaVo::tipoNota)
@@ -84,10 +70,10 @@ class RetiraFuturaView: NotaView<RetiraFututaVo, RetiraFututaViewModel, IRetiraF
           }
         }
         row {
-          label("<b>Produto</b>"){
+          label("<b>Produto</b>") {
             contentMode = HTML
           }
-    
+
           addComponent(footerLayout)
           setComponentAlignment(footerLayout, Alignment.BOTTOM_LEFT)
           addComponentsAndExpand(Label(""))
@@ -96,7 +82,7 @@ class RetiraFuturaView: NotaView<RetiraFututaVo, RetiraFututaViewModel, IRetiraF
           produtoField(operation, binder, "Saída")
         }
       }
-      if(!isAdmin && operation == UPDATE) binder.setReadOnly(true)
+      if (!isAdmin && operation == UPDATE) binder.setReadOnly(true)
     }
     form("Retira Nota")
     gridCrud {
@@ -132,7 +118,7 @@ class RetiraFuturaView: NotaView<RetiraFututaVo, RetiraFututaViewModel, IRetiraF
       }
       column(RetiraFututaVo::lojaNF) {
         caption = "Loja NF"
-        setRenderer({loja -> loja?.sigla ?: ""}, TextRenderer())
+        setRenderer({ loja -> loja?.sigla ?: "" }, TextRenderer())
       }
       column(RetiraFututaVo::tipoNotaDescricao) {
         caption = "TipoNota"
@@ -155,11 +141,11 @@ class RetiraFuturaView: NotaView<RetiraFututaVo, RetiraFututaViewModel, IRetiraF
       }
       column(RetiraFututaVo::localizacao) {
         caption = "Localização"
-        setRenderer({it?.toString()}, TextRenderer())
+        setRenderer({ it?.toString() }, TextRenderer())
       }
       column(RetiraFututaVo::usuario) {
         caption = "Usuário"
-        setRenderer({it?.loginName ?: ""}, TextRenderer())
+        setRenderer({ it?.loginName ?: "" }, TextRenderer())
         setSortProperty("usuario.loginName")
       }
       column(RetiraFututaVo::rotaDescricao) {
@@ -169,25 +155,23 @@ class RetiraFuturaView: NotaView<RetiraFututaVo, RetiraFututaViewModel, IRetiraF
         caption = "Cliente"
         setSortProperty("nota.cliente")
       }
-      val itens = viewModel.notasConferidas().groupBy {it.nota?.numero}.entries.sortedBy {entry ->
-        entry.value.map {it.id}
-          .maxOrNull()
-      }.mapNotNull {it.key}
+      val itens = viewModel.notasConferidas().groupBy { it.nota?.numero }.entries.sortedBy { entry ->
+        entry.value.map { it.id }.maxOrNull()
+      }.mapNotNull { it.key }
 
-      grid.setStyleGenerator {saida ->
-        if(saida.status == CONFERIDA) {
+      grid.setStyleGenerator { saida ->
+        if (saida.status == CONFERIDA) {
           val numero = saida.numeroNF
           val index = itens.indexOf(numero)
-          if(index % 2 == 0) "pendente"
+          if (index % 2 == 0) "pendente"
           else "pendente2"
-        }
-        else null
+        } else null
       }
     }
   }
 
   private fun formCodbar(): PnlCodigoBarras {
-    return PnlCodigoBarras("Nota de transferencia") {key ->
+    return PnlCodigoBarras("Nota de transferencia") { key ->
       viewModel.findKey(key)
     }
   }

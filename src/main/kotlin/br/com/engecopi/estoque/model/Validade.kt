@@ -11,11 +11,11 @@ import javax.persistence.Table
 @Entity
 @Table(name = "validades")
 @Indices(Index(unique = true, columnNames = ["meses_validade", "meses_fabricacao"]))
-class Validade: BaseModel() {
+class Validade : BaseModel() {
   var mesesValidade: Int = 0
   var mesesFabricacao: Int = 0
 
-  companion object Find : ValidadeFinder(){
+  companion object Find : ValidadeFinder() {
     fun find(mesesValidade: Int?): Validade? {
       return QValidade().mesesValidade.eq(mesesValidade).findList().firstOrNull()
     }

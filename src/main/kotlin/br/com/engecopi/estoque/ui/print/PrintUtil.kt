@@ -25,14 +25,15 @@ object PrintUtil {
     nota ?: return
     val printer = RegistryUserInfo.usuarioDefault.impressoraExpedicao()
     val impressoraNota = when (nota.lancamentoOrigem) {
-      ABASTECI  -> Printer(printer)
+      ABASTECI -> Printer(printer)
       EXPEDICAO -> Printer(printer)
       ENTREGA_F -> Printer("ENTREGA")
-      RESSUPRI  -> {
+      RESSUPRI -> {
         val printerNota = nota.itensNota().firstOrNull()?.abreviacao?.printer ?: return
         printerNota
       }
-      else      -> Printer("")
+
+      else -> Printer("")
     }
     val textNota = this.imprimirNota(nota)
     printText(impressoraNota, textNota)
@@ -44,11 +45,11 @@ object PrintUtil {
       when {
         QuerySaci.test -> {
           val image = ZPLPreview.createPdf(text, "4x2")
-          if (image != null) printPreview("Preview ${impressora.nome}", image){
-            // Não faz nada
+          if (image != null) printPreview("Preview ${impressora.nome}", image) { // Não faz nada
           }
         }
-        else           -> try {
+
+        else -> try {
           AppPrinter.printCups(impressora.nome, text)
         } catch (e: ECupsPrinter) {
           Notification("Erro", "\n" + e.message, ERROR_MESSAGE).apply {
@@ -74,8 +75,7 @@ object PrintUtil {
     val itensConferidos = itens.filter { it.status == CONFERIDA }
     return if (itensIncluidos.isEmpty()) {
       imprimirNotaConferida(itensConferidos)
-    }
-    else ""
+    } else ""
   }
 
   private fun imprimir(itens: List<ItemNota>, etiqueta: Etiqueta): String {

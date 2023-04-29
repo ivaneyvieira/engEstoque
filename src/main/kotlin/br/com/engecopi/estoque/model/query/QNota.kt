@@ -8,19 +8,11 @@ import br.com.engecopi.estoque.model.query.assoc.QAssocItemNota
 import br.com.engecopi.estoque.model.query.assoc.QAssocLoja
 import br.com.engecopi.estoque.model.query.assoc.QAssocUsuario
 import io.ebean.Database
-import io.ebean.typequery.PEnum
-import io.ebean.typequery.PInteger
-import io.ebean.typequery.PLocalDate
-import io.ebean.typequery.PLocalDateTime
-import io.ebean.typequery.PLocalTime
-import io.ebean.typequery.PLong
-import io.ebean.typequery.PString
-import io.ebean.typequery.TQRootBean
-import io.ebean.typequery.TypeQueryBean
+import io.ebean.typequery.*
 
 /**
  * Query bean for Nota.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
@@ -40,8 +32,8 @@ class QNota : TQRootBean<Nota, QNota> {
   lateinit var version: PInteger<QNota>
   lateinit var numero: PString<QNota>
   lateinit var numeroEntrega: PString<QNota>
-  lateinit var tipoMov: PEnum<QNota,TipoMov>
-  lateinit var tipoNota: PEnum<QNota,TipoNota>
+  lateinit var tipoMov: PEnum<QNota, TipoMov>
+  lateinit var tipoNota: PEnum<QNota, TipoNota>
   lateinit var rota: PString<QNota>
   lateinit var fornecedor: PString<QNota>
   lateinit var cliente: PString<QNota>
@@ -55,7 +47,7 @@ class QNota : TQRootBean<Nota, QNota> {
   lateinit var sequencia: PInteger<QNota>
   lateinit var usuario: QAssocUsuario<QNota>
   lateinit var maxSequencia: PInteger<QNota>
-  lateinit var lancamentoOrigem: PEnum<QNota,LancamentoOrigem>
+  lateinit var lancamentoOrigem: PEnum<QNota, LancamentoOrigem>
 
 
   /**

@@ -19,7 +19,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 class ChaveFuturaViewModel(view: IChaveFuturaView) :
-        CrudViewModel<ViewNotaFutura, QViewNotaFutura, ChaveFuturaVo, IChaveFuturaView>(view) {
+  CrudViewModel<ViewNotaFutura, QViewNotaFutura, ChaveFuturaVo, IChaveFuturaView>(view) {
   private val processing = ChaveFuturaProcessamento()
   private val print = ChaveFuturaPrint()
   private val find = ChaveFuturaFind()
@@ -88,10 +88,7 @@ class ChaveFuturaViewModel(view: IChaveFuturaView) :
   }
 
   override fun QViewNotaFutura.filterString(text: String): QViewNotaFutura {
-    return or().nota.numero.startsWith(text).abreviacao
-      .startsWith(text)
-      .endOr()
-      .orderBy().data.desc().hora.desc()
+    return or().nota.numero.startsWith(text).abreviacao.startsWith(text).endOr().orderBy().data.desc().hora.desc()
   }
 
   override fun QViewNotaFutura.filterDate(date: LocalDate): QViewNotaFutura {
@@ -154,10 +151,9 @@ class ChaveFuturaVo : EntityVo<ViewNotaFutura>() {
     get() = LocalDateTime.of(data, hora)
 }
 
-data class ItemChaveFutura(val notaProdutoSaci: NotaProdutoSaci,
-                           val saldo: Int,
-                           val abrevicao: String,
-                           var selecionado: Boolean = false) {
+data class ItemChaveFutura(
+  val notaProdutoSaci: NotaProdutoSaci, val saldo: Int, val abrevicao: String, var selecionado: Boolean = false
+) {
   val prdno = notaProdutoSaci.prdno
   val grade = notaProdutoSaci.grade
   val nome = notaProdutoSaci.nome

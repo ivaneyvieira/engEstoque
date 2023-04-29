@@ -16,13 +16,11 @@ import javax.persistence.Table
 @Table(name = "abreviacoes")
 @Index(columnNames = ["loja_id", "abreviacao"], unique = true)
 class Abreviacao(
-  @Length(6)
-  var abreviacao: String,
-  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH])
-  var loja: Loja,
+  @Length(6) var abreviacao: String,
+  @ManyToOne(cascade = [PERSIST, MERGE, REFRESH]) var loja: Loja,
   var expedicao: Boolean,
-  @Length(30)
-  var impressora: String?) : BaseModel() {
+  @Length(30) var impressora: String?
+) : BaseModel() {
   val printer
     get() = Printer(impressora ?: "")
 

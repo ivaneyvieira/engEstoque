@@ -1,7 +1,7 @@
 drop temporary table if exists T_PED_V;
 create temporary table T_PED_V
 (
-  index (storeno, ordno)
+    index (storeno, ordno)
 )
 SELECT P.storeno,
        P.eordno                                  AS ordno,
@@ -12,8 +12,8 @@ SELECT P.storeno,
        P.store_from,
        P.date
 FROM sqlpdv.pxa AS P
-  LEFT JOIN sqlpdv.pxanf2 AS N
-	      USING (storeno, pdvno, xano)
+         LEFT JOIN sqlpdv.pxanf2 AS N
+                   USING (storeno, pdvno, xano)
 WHERE cfo IN (5922, 6922)
   AND storeno in (2, 3, 4, 5)
   AND date > :data_inicial;
@@ -21,7 +21,7 @@ WHERE cfo IN (5922, 6922)
 drop temporary table if exists T_PED_E;
 create temporary table T_PED_E
 (
-  index (storeno, ordno)
+    index (storeno, ordno)
 )
 SELECT P.storeno,
        P.eordno                                  AS ordno,
@@ -32,8 +32,8 @@ SELECT P.storeno,
        P.store_from,
        P.date
 FROM sqlpdv.pxa AS P
-  LEFT JOIN sqlpdv.pxanf2 AS N
-	      USING (storeno, pdvno, xano)
+         LEFT JOIN sqlpdv.pxanf2 AS N
+                   USING (storeno, pdvno, xano)
 WHERE cfo IN (5117, 6117)
   AND storeno in (2, 3, 4, 5)
   AND date > :data_inicial;
@@ -51,8 +51,8 @@ SELECT CAST(MD5(CAST(CONCAT(V.storeno, V.numero, E.storeno, E.numero) AS CHAR)) 
        E.date                                                                            AS dataEntrega,
        E.nfekey                                                                          AS nfekeyEntrega
 FROM T_PED_V AS V
-  INNER JOIN T_PED_E AS E
-	       USING (storeno, ordno)
+         INNER JOIN T_PED_E AS E
+                    USING (storeno, ordno)
 WHERE V.storeno = 4
    OR E.store_from = 4
 GROUP BY storenoVenda, numeroVenda, storenoEntrega, numeroEntrega

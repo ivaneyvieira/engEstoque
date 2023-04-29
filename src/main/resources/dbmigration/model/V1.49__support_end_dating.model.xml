@@ -2,7 +2,9 @@
 <migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
     <changeSet type="apply">
         <addColumn tableName="notas">
-            <column name="lancamento_origem" type="varchar(9)" notnull="true" checkConstraint="check ( lancamento_origem in ('EXPEDICAO','DEPOSITO'))" checkConstraintName="ck_notas_lancamento_origem"/>
+            <column name="lancamento_origem" type="varchar(9)" notnull="true"
+                    checkConstraint="check ( lancamento_origem in ('EXPEDICAO','DEPOSITO'))"
+                    checkConstraintName="ck_notas_lancamento_origem"/>
         </addColumn>
     </changeSet>
 </migration>

@@ -7,20 +7,11 @@ import br.com.engecopi.estoque.model.query.assoc.QAssocNota
 import br.com.engecopi.estoque.model.query.assoc.QAssocProduto
 import br.com.engecopi.estoque.model.query.assoc.QAssocUsuario
 import io.ebean.Database
-import io.ebean.typequery.PBoolean
-import io.ebean.typequery.PEnum
-import io.ebean.typequery.PInteger
-import io.ebean.typequery.PLocalDate
-import io.ebean.typequery.PLocalDateTime
-import io.ebean.typequery.PLocalTime
-import io.ebean.typequery.PLong
-import io.ebean.typequery.PString
-import io.ebean.typequery.TQRootBean
-import io.ebean.typequery.TypeQueryBean
+import io.ebean.typequery.*
 
 /**
  * Query bean for ItemNota.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
@@ -50,7 +41,7 @@ class QItemNota : TQRootBean<ItemNota, QItemNota> {
   lateinit var saldo: PInteger<QItemNota>
   lateinit var impresso: PBoolean<QItemNota>
   lateinit var localizacao: PString<QItemNota>
-  lateinit var status: PEnum<QItemNota,StatusNota>
+  lateinit var status: PEnum<QItemNota, StatusNota>
   lateinit var codigoBarraCliente: PString<QItemNota>
   lateinit var codigoBarraConferencia: PString<QItemNota>
   lateinit var codigoBarraConferenciaBaixa: PString<QItemNota>

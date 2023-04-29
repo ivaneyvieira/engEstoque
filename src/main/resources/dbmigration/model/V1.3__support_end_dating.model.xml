@@ -2,7 +2,8 @@
 <migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
     <changeSet type="apply">
         <addColumn tableName="itens_nota">
-            <column name="usuario_id" type="bigint" references="usuarios.id" foreignKeyName="fk_itens_nota_usuario_id" foreignKeyIndex="ix_itens_nota_usuario_id"/>
+            <column name="usuario_id" type="bigint" references="usuarios.id" foreignKeyName="fk_itens_nota_usuario_id"
+                    foreignKeyIndex="ix_itens_nota_usuario_id"/>
         </addColumn>
     </changeSet>
 </migration>

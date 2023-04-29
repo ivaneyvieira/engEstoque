@@ -2,7 +2,9 @@
 <migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
     <changeSet type="apply">
         <addColumn tableName="etiquetas">
-            <column name="status_nota" type="varchar(9)" checkConstraint="check ( status_nota in ('RECEBIDO','INCLUIDA','CONFERIDA','ENTREGUE'))" checkConstraintName="ck_etiquetas_status_nota"/>
+            <column name="status_nota" type="varchar(9)"
+                    checkConstraint="check ( status_nota in ('RECEBIDO','INCLUIDA','CONFERIDA','ENTREGUE'))"
+                    checkConstraintName="ck_etiquetas_status_nota"/>
         </addColumn>
     </changeSet>
     <changeSet type="pendingDrops">

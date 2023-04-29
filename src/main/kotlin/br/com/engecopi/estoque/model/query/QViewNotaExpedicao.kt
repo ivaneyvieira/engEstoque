@@ -7,19 +7,11 @@ import br.com.engecopi.estoque.model.query.assoc.QAssocLoja
 import br.com.engecopi.estoque.model.query.assoc.QAssocNota
 import br.com.engecopi.estoque.model.query.assoc.QAssocUsuario
 import io.ebean.Database
-import io.ebean.typequery.PEnum
-import io.ebean.typequery.PInteger
-import io.ebean.typequery.PLocalDate
-import io.ebean.typequery.PLocalDateTime
-import io.ebean.typequery.PLocalTime
-import io.ebean.typequery.PLong
-import io.ebean.typequery.PString
-import io.ebean.typequery.TQRootBean
-import io.ebean.typequery.TypeQueryBean
+import io.ebean.typequery.*
 
 /**
  * Query bean for ViewNotaExpedicao.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean
@@ -39,8 +31,8 @@ class QViewNotaExpedicao : TQRootBean<ViewNotaExpedicao, QViewNotaExpedicao> {
   lateinit var version: PInteger<QViewNotaExpedicao>
   lateinit var nota: QAssocNota<QViewNotaExpedicao>
   lateinit var numero: PString<QViewNotaExpedicao>
-  lateinit var tipoMov: PEnum<QViewNotaExpedicao,TipoMov>
-  lateinit var tipoNota: PEnum<QViewNotaExpedicao,TipoNota>
+  lateinit var tipoMov: PEnum<QViewNotaExpedicao, TipoMov>
+  lateinit var tipoNota: PEnum<QViewNotaExpedicao, TipoNota>
   lateinit var rota: PString<QViewNotaExpedicao>
   lateinit var fornecedor: PString<QViewNotaExpedicao>
   lateinit var cliente: PString<QViewNotaExpedicao>

@@ -1,3 +1,4 @@
 -- apply changes
-alter table itens_nota add column quantidade_saci integer;
+alter table itens_nota
+    add column quantidade_saci integer;
 

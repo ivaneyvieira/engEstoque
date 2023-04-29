@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
-  <changeSet type="apply">
-    <alterColumn columnName="status_nota"
-                 tableName="etiquetas"
-                 checkConstraint="check ( status_nota in ('RECEBIDO','INCLUIDA','CONFERIDA','ENTREGUE','ENT_LOJA','PRODUTO'))"
-                 checkConstraintName="ck_etiquetas_status_nota"/>
-    <alterColumn columnName="status"
-                 tableName="itens_nota"
-                 checkConstraint="check ( status in ('RECEBIDO','INCLUIDA','CONFERIDA','ENTREGUE','ENT_LOJA','PRODUTO'))"
-                 checkConstraintName="ck_itens_nota_status"/>
-    <addColumn tableName="notas">
-      <column name="numero_entrega" type="varchar(40)" notnull="true"/>
-    </addColumn>
-    <createIndex indexName="ix_notas_numero_entrega" tableName="notas" columns="numero_entrega"/>
-  </changeSet>
+    <changeSet type="apply">
+        <alterColumn columnName="status_nota"
+                     tableName="etiquetas"
+                     checkConstraint="check ( status_nota in ('RECEBIDO','INCLUIDA','CONFERIDA','ENTREGUE','ENT_LOJA','PRODUTO'))"
+                     checkConstraintName="ck_etiquetas_status_nota"/>
+        <alterColumn columnName="status"
+                     tableName="itens_nota"
+                     checkConstraint="check ( status in ('RECEBIDO','INCLUIDA','CONFERIDA','ENTREGUE','ENT_LOJA','PRODUTO'))"
+                     checkConstraintName="ck_itens_nota_status"/>
+        <addColumn tableName="notas">
+            <column name="numero_entrega" type="varchar(40)" notnull="true"/>
+        </addColumn>
+        <createIndex indexName="ix_notas_numero_entrega" tableName="notas" columns="numero_entrega"/>
+    </changeSet>
 </migration>

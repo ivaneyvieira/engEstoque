@@ -49,9 +49,9 @@ open class QueryDB(private val driver: String, val url: String, val username: St
     }
   }
 
-  protected fun execute(file: String,
-                        vararg params: Pair<String, String>,
-                        monitor: (String, Int, Int) -> Unit = { _, _, _ -> }) {
+  protected fun execute(
+    file: String, vararg params: Pair<String, String>, monitor: (String, Int, Int) -> Unit = { _, _, _ -> }
+  ) {
     var sqlScript = SystemUtils.readFile(file)
     sql2o.beginTransaction().trywr { con ->
       params.forEach {
@@ -90,11 +90,13 @@ open class QueryDB(private val driver: String, val url: String, val username: St
     val selectList = lista.joinToString(separator = "\nUNION\n") { item ->
       "SELECT ${fieldList(item)} FROM DUAL"
     }
-    stringBuild.append("""
+    stringBuild.append(
+      """
         DROP TABLE IF EXISTS $tableName;
         CREATE TEMPORARY TABLE $tableName
         $selectList;
-      """.trimIndent())
+      """.trimIndent()
+    )
     return stringBuild.toString()
   }
 

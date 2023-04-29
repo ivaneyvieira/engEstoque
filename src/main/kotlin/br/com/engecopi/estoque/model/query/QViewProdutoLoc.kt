@@ -11,7 +11,7 @@ import io.ebean.typequery.TypeQueryBean
 
 /**
  * Query bean for ViewProdutoLoc.
- * 
+ *
  * THIS IS A GENERATED OBJECT, DO NOT MODIFY THIS CLASS.
  */
 @TypeQueryBean

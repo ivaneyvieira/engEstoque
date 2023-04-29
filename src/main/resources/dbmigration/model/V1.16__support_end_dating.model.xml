@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
     <changeSet type="apply">
-        <alterColumn columnName="localizacaoes" tableName="usuarios" type="varchar(4000)" currentType="varchar(100)" currentNotnull="true"/>
+        <alterColumn columnName="localizacaoes" tableName="usuarios" type="varchar(4000)" currentType="varchar(100)"
+                     currentNotnull="true"/>
         <addColumn tableName="notas">
             <column name="fornecedor" type="varchar(60)" notnull="true"/>
             <column name="cliente" type="varchar(60)" notnull="true"/>

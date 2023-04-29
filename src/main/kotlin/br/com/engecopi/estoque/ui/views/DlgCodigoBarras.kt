@@ -2,24 +2,14 @@ package br.com.engecopi.estoque.ui.views
 
 import br.com.engecopi.estoque.model.ItemNota
 import br.com.engecopi.estoque.model.Nota
-import com.github.mvysny.karibudsl.v8.alignment
-import com.github.mvysny.karibudsl.v8.button
-import com.github.mvysny.karibudsl.v8.horizontalLayout
-import com.github.mvysny.karibudsl.v8.isMargin
-import com.github.mvysny.karibudsl.v8.perc
-import com.github.mvysny.karibudsl.v8.px
-import com.github.mvysny.karibudsl.v8.w
+import com.github.mvysny.karibudsl.v8.*
 import com.vaadin.event.ShortcutAction.KeyCode
-import com.vaadin.ui.Alignment
-import com.vaadin.ui.TextField
-import com.vaadin.ui.UI
-import com.vaadin.ui.VerticalLayout
-import com.vaadin.ui.Window
+import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 
-class DlgCodigoBarras(textField: TextField,
-                      private val confirmaClose: Boolean,
-                      processaleitura: (Nota?, String) -> ItemNota?): Window(titulo) {
+class DlgCodigoBarras(
+  textField: TextField, private val confirmaClose: Boolean, processaleitura: (Nota?, String) -> ItemNota?
+) : Window(titulo) {
   private var nota: Nota? = null
 
   init {
@@ -48,14 +38,13 @@ class DlgCodigoBarras(textField: TextField,
           alignment = Alignment.BOTTOM_RIGHT
           addClickListener {
             val item = processaleitura(nota, textField.value)
-            if(item == null) {
+            if (item == null) {
               textField.selectAll()
-            }
-            else {
+            } else {
               textField.value = ""
               nota = item.nota
             }
-            if(confirmaClose) close()
+            if (confirmaClose) close()
           }
         }
       }
@@ -72,7 +61,7 @@ class DlgCodigoBarras(textField: TextField,
 }
 
 fun readString(msg: String, confirmaClose: Boolean, processaleitura: (Nota?, String) -> ItemNota?) {
-  if(msg.isNotBlank()) {
+  if (msg.isNotBlank()) {
     val textField = TextField(msg).apply {
       this.w = 400.px
     }

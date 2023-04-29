@@ -107,14 +107,14 @@ class ChaveFuturaView : CrudLayoutView<ChaveFuturaVo, ChaveFuturaViewModel>(fals
       column(ChaveFuturaVo::loja) {
         caption = "Loja NF"
         setRenderer({ loja ->
-                      loja?.sigla ?: ""
-                    }, TextRenderer())
+          loja?.sigla ?: ""
+        }, TextRenderer())
       }
       column(ChaveFuturaVo::tipoNota) {
         caption = "TipoNota"
         setRenderer({ tipo ->
-                      tipo?.descricao ?: ""
-                    }, TextRenderer())
+          tipo?.descricao ?: ""
+        }, TextRenderer())
         setSortProperty("tipo_nota")
       }
       column(ChaveFuturaVo::lancamento) {
@@ -140,8 +140,8 @@ class ChaveFuturaView : CrudLayoutView<ChaveFuturaVo, ChaveFuturaViewModel>(fals
       column(ChaveFuturaVo::usuario) {
         caption = "Usuário"
         setRenderer({
-                      it?.loginName ?: ""
-                    }, TextRenderer())
+          it?.loginName ?: ""
+        }, TextRenderer())
         setSortProperty("usuario.loginName")
       }
       column(ChaveFuturaVo::rota) {
@@ -193,7 +193,7 @@ class ChaveFuturaView : CrudLayoutView<ChaveFuturaVo, ChaveFuturaViewModel>(fals
 }
 
 class DlgFutura(val localizacaoNota: LocalizacaoFutura, val viewModel: ChaveFuturaViewModel, val update: () -> Unit) :
-        Window("Itens da Nota") {
+  Window("Itens da Nota") {
   private lateinit var gridProdutos: Grid<ItemChaveFutura>
 
   init {
@@ -216,8 +216,7 @@ class DlgFutura(val localizacaoNota: LocalizacaoFutura, val viewModel: ChaveFutu
                 }
                 if (produtosPepetidos.isNotEmpty()) {
                   viewModel.view.showWarning("Foi selecionado mais uma grade do mesmo produto")
-                }
-                else {
+                } else {
                   localizacaoNota.itensChaveFutura.forEach {
                     it.selecionado = false
                   }
@@ -252,8 +251,7 @@ class DlgFutura(val localizacaoNota: LocalizacaoFutura, val viewModel: ChaveFutu
                   if (it.isSave()) {
                     Notification.show("Não pode ser selecionado. Já está salvo")
                     selectionModel.deselect(it)
-                  }
-                  else if (it.saldoFinal < -100000000) { //TODO Saldo insuficiente
+                  } else if (it.saldoFinal < -100000000) { //TODO Saldo insuficiente
                     Notification.show("Não pode ser selecionado. Saldo insuficiente.")
                     selectionModel.deselect(it)
                   }
@@ -293,9 +291,9 @@ class DlgFutura(val localizacaoNota: LocalizacaoFutura, val viewModel: ChaveFutu
 
             this.setStyleGenerator {
               when {
-                it.isSave()       -> "ok"
+                it.isSave() -> "ok"
                 it.saldoFinal < 0 -> "error_row"
-                else              -> null
+                else -> null
               }
             }
           }
@@ -309,9 +307,11 @@ class DlgFutura(val localizacaoNota: LocalizacaoFutura, val viewModel: ChaveFutu
   }
 }
 
-class DlgFuturaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
-                   val viewModel: ChaveFuturaViewModel,
-                   val execConfirma: (itens: List<ItemChaveFutura>) -> Unit) : Window("Localizações") {
+class DlgFuturaLoc(
+  val notaProdutoSaida: List<NotaProdutoSaci>,
+  val viewModel: ChaveFuturaViewModel,
+  val execConfirma: (itens: List<ItemChaveFutura>) -> Unit
+) : Window("Localizações") {
   private lateinit var gridProdutos: Grid<LocalizacaoFutura>
 
   init {
@@ -381,11 +381,7 @@ class DlgFuturaLoc(val notaProdutoSaida: List<NotaProdutoSaci>,
             }
             val abreviacoes = abreviacaoItens.keys.flatten().distinct().map { abrev ->
               val itensVendaFutura =
-                abreviacaoItens
-                  .filter { it.key.contains(abrev) }
-                  .map { it.value }
-                  .flatten()
-                  .distinct()
+                abreviacaoItens.filter { it.key.contains(abrev) }.map { it.value }.flatten().distinct()
                   .map { notaSaci ->
                     val saldo = viewModel.saldoProduto(notaSaci, abrev)
                     ItemChaveFutura(notaSaci, saldo, abrev)

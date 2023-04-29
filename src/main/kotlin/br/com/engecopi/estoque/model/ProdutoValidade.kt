@@ -38,4 +38,4 @@ data class ProdutoValidade(
   val localizacao: String,
   val dataValidade: LocalDate?,
   val saldoVencimento: Double,
-                          )
+)

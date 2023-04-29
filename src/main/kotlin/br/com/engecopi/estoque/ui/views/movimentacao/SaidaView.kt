@@ -125,8 +125,8 @@ class SaidaView : NotaView<SaidaVo, SaidaViewModel, ISaidaView>(customFooterLayo
             item.itemNota?.recalculaSaldos()
             val numero = item.numeroNF
             showQuestion(msg = "Imprimir todos os itens da nota $numero?",
-                         execYes = { imprimeNotaCompleta(item) },
-                         execNo = { imprimeItem(item) })
+              execYes = { imprimeNotaCompleta(item) },
+              execNo = { imprimeItem(item) })
           }
         }
       }.id = "btnPrint"
@@ -186,8 +186,8 @@ class SaidaView : NotaView<SaidaVo, SaidaViewModel, ISaidaView>(customFooterLayo
       column(SaidaVo::usuario) {
         caption = "Usuário"
         setRenderer({
-                      it?.loginName ?: ""
-                    }, TextRenderer())
+          it?.loginName ?: ""
+        }, TextRenderer())
         setSortProperty("usuario.loginName")
       }
       column(SaidaVo::rotaDescricao) {
@@ -210,8 +210,7 @@ class SaidaView : NotaView<SaidaVo, SaidaViewModel, ISaidaView>(customFooterLayo
       if (nota == null || nota.vazio) {
         val msgErro = nota?.msgErro ?: "A nota não foi encontrada"
         showError(msgErro.ifEmpty { "A nota não foi encontrada" })
-      }
-      else {
+      } else {
         val dlg = DlgNotaSaida(nota, viewModel) { itens ->
           if (itens.isNotEmpty()) {
             val text = viewModel.imprimirItens(itens)
@@ -250,7 +249,7 @@ class DlgNotaSaida(
   val nota: NotaItens,
   val viewModel: SaidaViewModel,
   val execPrint: (List<ItemNota>) -> Unit,
-                  ) : Window("Nota de Saída") {
+) : Window("Nota de Saída") {
   private lateinit var grupoSelecaoCol: Column<ProdutoNotaVo, Int>
   private lateinit var dateUpdateCol: Column<ProdutoNotaVo, LocalDateTime>
   private lateinit var gridProdutos: Grid<ProdutoNotaVo>
@@ -326,21 +325,35 @@ class DlgNotaSaida(
 
                 itensGroupByOrigem.forEach { (origem, produtos) ->
                   if (origem != null) when (origem) {
-                    DEPOSITO  -> confirmaProdutos(produtosSelecionado = produtos intersect itensSelecionados,
-                                                  produtosNaoSelecionado = produtos intersect naoSelect,
-                                                  statusSelecionado = ENTREGUE)
-                    EXPEDICAO -> confirmaProdutos(produtosSelecionado = produtos intersect itensSelecionados,
-                                                  produtosNaoSelecionado = produtos intersect naoSelect,
-                                                  statusSelecionado = CONFERIDA)
-                    ENTREGA_F -> confirmaProdutos(produtosSelecionado = produtos intersect itensSelecionados,
-                                                  produtosNaoSelecionado = produtos intersect naoSelect,
-                                                  statusSelecionado = CONFERIDA)
-                    RESSUPRI  -> confirmaProdutos(produtosSelecionado = produtos intersect itensSelecionados,
-                                                  produtosNaoSelecionado = produtos intersect naoSelect,
-                                                  statusSelecionado = CONFERIDA)
-                    ABASTECI  -> confirmaProdutos(produtosSelecionado = produtos intersect itensSelecionados,
-                                                  produtosNaoSelecionado = emptySet(),
-                                                  statusSelecionado = ENTREGUE)
+                    DEPOSITO -> confirmaProdutos(
+                      produtosSelecionado = produtos intersect itensSelecionados,
+                      produtosNaoSelecionado = produtos intersect naoSelect,
+                      statusSelecionado = ENTREGUE
+                    )
+
+                    EXPEDICAO -> confirmaProdutos(
+                      produtosSelecionado = produtos intersect itensSelecionados,
+                      produtosNaoSelecionado = produtos intersect naoSelect,
+                      statusSelecionado = CONFERIDA
+                    )
+
+                    ENTREGA_F -> confirmaProdutos(
+                      produtosSelecionado = produtos intersect itensSelecionados,
+                      produtosNaoSelecionado = produtos intersect naoSelect,
+                      statusSelecionado = CONFERIDA
+                    )
+
+                    RESSUPRI -> confirmaProdutos(
+                      produtosSelecionado = produtos intersect itensSelecionados,
+                      produtosNaoSelecionado = produtos intersect naoSelect,
+                      statusSelecionado = CONFERIDA
+                    )
+
+                    ABASTECI -> confirmaProdutos(
+                      produtosSelecionado = produtos intersect itensSelecionados,
+                      produtosNaoSelecionado = emptySet(),
+                      statusSelecionado = ENTREGUE
+                    )
                   }
                 }
                 close()
@@ -392,20 +405,17 @@ class DlgNotaSaida(
                     selectionModel.deselect(it)
                     it.selecionado = false
                     it.updateItem(false)
-                  }
-                  else if (!it.allowSelect()) {
+                  } else if (!it.allowSelect()) {
                     Notification.show("Não editavel")
                     selectionModel.deselect(it)
                     it.selecionado = false
                     it.updateItem(false)
-                  }
-                  else if (!RegistryUserInfo.userDefaultIsAdmin) {
+                  } else if (!RegistryUserInfo.userDefaultIsAdmin) {
                     Notification.show("Usuário não é administrador")
                     selectionModel.deselect(it)
                     it.selecionado = false
                     it.updateItem(false)
-                  }
-                  else {
+                  } else {
                     it.selecionado = true
                     it.updateItem(false)
                   }
@@ -500,7 +510,7 @@ class DlgNotaSaida(
     produtosSelecionado: Set<ProdutoNotaVo>,
     produtosNaoSelecionado: Set<ProdutoNotaVo>,
     statusSelecionado: StatusNota,
-                              ) {
+  ) {
     viewModel.confirmaProdutos(produtosSelecionado.toList(), statusSelecionado)
     viewModel.confirmaProdutos(produtosNaoSelecionado.toList(), ENT_LOJA)
   }
@@ -513,11 +523,13 @@ class DlgNotaSaida(
       val statusNota = item.status
       val isSave = item.id != 0L
       val dataFabricacao = item.dataFabricacao
-      if (produto != null) ProdutoNotaVo(produto = produto,
-                                         statusNota = statusNota,
-                                         dataFabricacao = dataFabricacao,
-                                         localizacao = LocProduto(item.localizacao),
-                                         isSave = isSave).apply {
+      if (produto != null) ProdutoNotaVo(
+        produto = produto,
+        statusNota = statusNota,
+        dataFabricacao = dataFabricacao,
+        localizacao = LocProduto(item.localizacao),
+        isSave = isSave
+      ).apply {
         this.quantidade = item.quantidade
         this.value = item
         this.updateItem(false)
@@ -538,19 +550,16 @@ class DlgNotaSaida(
       val barcodeVolume = viewModel.findByBarcodeProduto2(barcode)
       if (barcodeVolume == null) {
         viewModel.view.showWarning("Produto não encontrado no saci")
-      }
-      else if(!barcodeVolume.isDataVencimentoValida()){
+      } else if (!barcodeVolume.isDataVencimentoValida()) {
         viewModel.view.showWarning("Data de vencimento não é válida")
-      }
-      else {
+      } else {
         val produtosVO = gridProdutos.dataProvider.getAll()
         produtosVO.forEach { it.updateItem(false) }
         val produtos = produtosVO.mapNotNull { it.value?.produto }
         val interProdutos = produtos intersect listOf(barcodeVolume.produto)
         if (interProdutos.isEmpty()) {
           viewModel.view.showWarning("Produto não encontrado no grid")
-        }
-        else {
+        } else {
           interProdutos.forEach { produto ->
             val itemVO = produtosVO.filter { it.value?.produto?.id == produto.id }
             itemVO.forEach { item ->
@@ -561,7 +570,8 @@ class DlgNotaSaida(
                   item.quantidade = item.quantidade + (barcodeVolume.quantidadeVolume ?: 0)
                   selecionaProduto(item)
                 }
-                else               -> viewModel.view.showWarning("O produto '$codigo' não é selecionavel")
+
+                else -> viewModel.view.showWarning("O produto '$codigo' não é selecionavel")
               }
             }
           }
@@ -573,27 +583,26 @@ class DlgNotaSaida(
   }
 
   private fun execBarcode(barcode: String?) {
-    if(!barcode.isNullOrBlank()) {
+    if (!barcode.isNullOrBlank()) {
       val listProduto = viewModel.findByBarcodeProduto(barcode)
-      if(listProduto.isEmpty()) viewModel.view.showWarning("Produto não encontrado no saci")
+      if (listProduto.isEmpty()) viewModel.view.showWarning("Produto não encontrado no saci")
       else {
         val produtosVO = gridProdutos.dataProvider.getAll()
-        produtosVO.forEach {it.updateItem(false)}
-        val produtos = produtosVO.mapNotNull {it.value?.produto}
+        produtosVO.forEach { it.updateItem(false) }
+        val produtos = produtosVO.mapNotNull { it.value?.produto }
         val interProdutos = produtos intersect listProduto
-        interProdutos.forEach {produto ->
-          val itemVO = produtosVO.filter {it.value?.produto?.id == produto.id}
-          itemVO.forEach {item ->
+        interProdutos.forEach { produto ->
+          val itemVO = produtosVO.filter { it.value?.produto?.id == produto.id }
+          itemVO.forEach { item ->
             val codigo = item.value?.codigo?.trim()
-            when {
-              //TODO Saldo Negativo
+            when { //TODO Saldo Negativo
               // item.saldoFinal < 0 -> viewModel.view.showWarning("O saldo final do produto '$codigo' está negativo")
               item.allowSelect() -> selecionaProduto(item)
-              else               -> viewModel.view.showWarning("O produto '$codigo' não é selecionavel")
+              else -> viewModel.view.showWarning("O produto '$codigo' não é selecionavel")
             }
           }
         }
-        if(interProdutos.isEmpty()) viewModel.view.showWarning("Produto não encontrado no grid")
+        if (interProdutos.isEmpty()) viewModel.view.showWarning("Produto não encontrado no grid")
       }
       edtBarcode.focus()
       edtBarcode.selectAll()
@@ -609,7 +618,8 @@ class DlgNotaSaida(
         execPrint(viewModel.confirmaProdutos(listOf(item), ENTREGUE))
         gridProdutos.updateProdutosNota()
       }
-      else     -> {
+
+      else -> {
         execPrint(viewModel.confirmaProdutos(listOf(item), CONFERIDA))
         gridProdutos.updateProdutosNota()
       }
