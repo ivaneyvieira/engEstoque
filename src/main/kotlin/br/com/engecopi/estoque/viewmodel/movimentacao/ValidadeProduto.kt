@@ -18,19 +18,19 @@ class ValidadeProduto(private val msgErro: String?) {
       if (usuarioDefault.admin) return ValidadeProduto(null)
       mesesValidade ?: return ValidadeProduto(null)
       dataFabricacao ?: return ValidadeProduto("Produto '$produto' não deve possui data de validade")
-      // val dataValidadeMaxima = dataEntrada ?: return ValidadeProduto("A Nota não possui data de entrada")
+      // val dataValidadeMaxima = dataEntrada?: return ValidadeProduto("A Nota não possui data de entrada")
       // val dataValidadeMinima = dataValidadeMaxima.minusMonths(round(mesesValidade * 3.00 / 4.00).toLong())
 
       Validade.updateList()
       val mesesFabricacao = Validade.findMesesFabricacao(mesesValidade) ?: return ValidadeProduto("Configuração de meses de fabricação não encontrada")
 
       val dataValidadeMaxima = dataEntrada ?: return ValidadeProduto("A Nota não possui data de entrada")
-      val dataValidadeMinima = dataValidadeMaxima.minusMonths((mesesFabricacao - 1).toLong())
+      val dataValidadeMinima = dataValidadeMaxima.minusMonths((mesesFabricacao - 1).toLong()).withDayOfMonth(1)
 
       return when {
         dataFabricacao.isBefore(dataValidadeMinima) -> {
           ValidadeProduto(
-            "Produto '$produto'. Mes de fabricação inválido (antes de ${
+            "Produto '$produto'. Fabricação a partir do mês ${
               dataValidadeMinima.formatMesAno()
             })"
           )
@@ -38,7 +38,7 @@ class ValidadeProduto(private val msgErro: String?) {
 
         dataFabricacao.isAfter(dataValidadeMaxima) -> {
           ValidadeProduto(
-            "Produto '$produto'. Mes de fabricação inválido (depois de ${
+            "Produto '$produto'. Fabricação antes do mês ${
               dataValidadeMaxima.formatMesAno()
             })"
           )

@@ -300,9 +300,11 @@ class NotaPrint(val item: ItemNota, val volume: Int? = null) {
 }
 
 enum class StatusNota(val descricao: String, val tipoMov: TipoMov, val multiplicador: Int) {
-  RECEBIDO("Recebido", ENTRADA, 1), INCLUIDA("Incluída", SAIDA, 0), CONFERIDA(
-    "Conferida", SAIDA, -1
-  ),
-  ENTREGUE("Entregue", SAIDA, -1), ENT_LOJA("Entregue na Loja", SAIDA, 0), PRODUTO("Etiqueta Produto", SAIDA, 0)
+  RECEBIDO("Recebido", ENTRADA, 1),
+  INCLUIDA("Incluída", SAIDA, 0),
+  CONFERIDA("Conferida", SAIDA, -1),
+  ENTREGUE("Entregue", SAIDA, -1),
+  ENT_LOJA("Entregue na Loja", SAIDA, 0),
+  PRODUTO("Etiqueta Produto", SAIDA, 0)
 }
 
