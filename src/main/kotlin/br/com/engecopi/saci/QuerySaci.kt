@@ -19,7 +19,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     else query(sql) { q ->
       q.addParameter("storeno", storeno).addParameter("nfname", nfname).addParameter("invse", invse)
         .executeAndFetch(NotaProdutoSaci::class.java)
-    }.filter { liberaNotasAntigas || filtroDataRecente(it) }
+    }.filter { liberaNotasAntigas || filtroDataRecente(it) }.sortedByDescending { it.date }
   }
 
   fun findNotaSaida(storeno: Int, nfno: String, nfse: String, liberaNotasAntigas: Boolean): List<NotaProdutoSaci> {
