@@ -13,11 +13,13 @@ class ValidadeProduto(private val msgErro: String?) {
   companion object {
     fun erroMesFabricacao(
       produto: String,
-      dataFabricacao: LocalDate,
+      dataFabricacao: LocalDate?,
       dataEntrada: LocalDate,
       mesesValidade: Int
     ): ValidadeProduto {
       if (usuarioDefault.admin) return ValidadeProduto(null)
+      dataFabricacao ?: return ValidadeProduto(null)
+      if(mesesValidade == 0) return ValidadeProduto(null)
       // val dataValidadeMaxima = dataEntrada?: return ValidadeProduto("A Nota não possui data de entrada")
       // val dataValidadeMinima = dataValidadeMaxima.minusMonths(round(mesesValidade * 3.00 / 4.00).toLong())
 
