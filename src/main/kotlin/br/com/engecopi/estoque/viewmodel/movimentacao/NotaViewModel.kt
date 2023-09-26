@@ -94,7 +94,7 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
   ): ItemNota? {
     if (local.isNullOrBlank()) throw EViewModelError("Não foi especificado a localização do item")
     val mesesValidade = produto?.mesesVencimento ?: 0
-    if (nota.tipoNota?.tipoMov == ENTRADA && mesesValidade > 0) {
+    if (nota.tipoNota?.tipoMov == ENTRADA && mesesValidade > 0 && dataFabricacao != null) {
       val erroVencimento = ValidadeProduto.erroMesFabricacao(
         produto = produto?.codigo ?: "",
         dataFabricacao = dataFabricacao,
@@ -108,7 +108,7 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
     val saldoLocal = produto?.saldoLocalizacao(local) ?: 0
     return if (quantProduto != 0) {
       when {
-        (saldoLocal + (statusDefault.multiplicador * quantProduto)) < -10000000 -> { //TODO Saldo Insusf
+        (saldoLocal + (statusDefault.multiplicador * quantProduto)) < -10000000 -> {
           val msg = "Saldo insuficiente para o produto ${produto?.codigo} - ${produto?.descricao}."
           view.showWarning(msg)
           null

@@ -165,13 +165,15 @@ class Nota : BaseModel() {
 
     fun findEntrada(loja: Loja, numero: String?): Nota? {
       return if (numero.isNullOrBlank()) null
-      else QNota().tipoMov.eq(ENTRADA).numero.eq(numero).loja.id.eq(loja.id).findList().firstOrNull()
+      else QNota().tipoMov.eq(ENTRADA).numero.eq(numero).loja.id.eq(loja.id).order().dataEmissao.desc().data.desc()
+        .findList().firstOrNull()
     }
 
     fun findSaida(storeno: Int?, numero: String?): Nota? {
       storeno ?: return null
       return if (numero.isNullOrBlank()) null
-      else QNota().tipoMov.eq(SAIDA).numero.eq(numero).loja.numero.eq(storeno).findList().firstOrNull()
+      else QNota().tipoMov.eq(SAIDA).numero.eq(numero).loja.numero.eq(storeno).order().dataEmissao.desc().data.desc()
+        .findList().firstOrNull()
     }
 
     fun findSaida(loja: Loja?, numero: String?): Nota? {
