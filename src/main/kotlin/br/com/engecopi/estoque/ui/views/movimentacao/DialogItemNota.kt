@@ -17,8 +17,8 @@ import java.time.LocalDate
 
 class DialogItemNota(val nota: Nota?, private val produtoVo: ProdutoNotaVo, val salvaProduto: () -> Unit = {}) :
   Window("Produto") {
-  private lateinit var cmbLocalizacao: ComboBox<LocProduto>
-  private lateinit var edtDataFabricacao: DateField
+  private var cmbLocalizacao: ComboBox<LocProduto>? = null
+  private var edtDataFabricacao: DateField? = null
 
   init {
     verticalLayout {
@@ -58,8 +58,8 @@ class DialogItemNota(val nota: Nota?, private val produtoVo: ProdutoNotaVo, val 
           onLeftClick {
             val msg = validaProduto()
             if (msg.isOk()) {
-              produtoVo.localizacao = cmbLocalizacao.value
-              produtoVo.dataFabricacao = edtDataFabricacao.value
+              produtoVo.localizacao = cmbLocalizacao?.value
+              produtoVo.dataFabricacao = edtDataFabricacao?.value
               produtoVo.selecionado = true
               salvaProduto()
               this@DialogItemNota.close()
@@ -73,7 +73,7 @@ class DialogItemNota(val nota: Nota?, private val produtoVo: ProdutoNotaVo, val 
             this@DialogItemNota.close()
           }
         }
-        edtDataFabricacao.focus()
+        edtDataFabricacao?.focus()
       }
     }
   }
@@ -81,9 +81,10 @@ class DialogItemNota(val nota: Nota?, private val produtoVo: ProdutoNotaVo, val 
   private fun validaProduto(): ValidadeProduto {
     val produto = produtoVo.produto
     val mesesValidade = produto.mesesVencimento ?: 0
+
     return ValidadeProduto.erroMesFabricacao(
       produto = produto.codigo,
-      dataFabricacao = edtDataFabricacao.value,
+      dataFabricacao = edtDataFabricacao?.value,
       dataEntrada = nota?.data ?: LocalDate.now(),
       mesesValidade = mesesValidade,
     )
