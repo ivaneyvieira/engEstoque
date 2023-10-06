@@ -31,9 +31,6 @@ class SaidaViewModel(view: ISaidaView) : NotaViewModel<SaidaVo, ISaidaView>(view
     return status.`in`(ENTREGUE, CONFERIDA)
   }
 
-  override fun add(bean: SaidaVo) { //Não faze nada
-  }
-
   override fun createVo() = SaidaVo()
 
   fun findByBarcodeProduto2(barcode: String?): BarcodeVolume? {
