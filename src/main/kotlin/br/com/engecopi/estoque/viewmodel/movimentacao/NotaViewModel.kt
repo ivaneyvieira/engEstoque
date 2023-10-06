@@ -280,7 +280,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?) : 
   val numeroCodigoReduzidoNota: String?
     get() {
       return if (numeroCodigoReduzido.isNullOrBlank()) {
-        numeroNF
+        "${lojaNF?.numero} $numeroNF"
       } else numeroCodigoReduzido
     }
 
