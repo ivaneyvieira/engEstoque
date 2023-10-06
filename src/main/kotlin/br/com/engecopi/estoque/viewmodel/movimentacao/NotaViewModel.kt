@@ -272,6 +272,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?) : 
     return ItemNota.find(nota, produto)
   }
 
+
   var usuario: Usuario? = null
   var numeroCodigo: String? = ""
   var numeroCodigoReduzido: String? = ""
