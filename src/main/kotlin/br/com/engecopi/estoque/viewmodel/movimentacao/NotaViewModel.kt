@@ -114,7 +114,7 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
           null
         }
 
-        else -> {
+        else                                                                    -> {
           ItemNota().apply {
             this.nota = nota
             this.produto = produto
@@ -126,6 +126,8 @@ abstract class NotaViewModel<VO : NotaVo, V : INotaView>(
             this.status = statusDefault
             this.insert()
             this.produto?.recalculaSaldos(local)
+            this.codigoBarraCliente = "${nota.loja?.numero} ${nota.numero.replace("/", " ")} ${nota.sequencia}"
+            //REPLACE(CONCAT(`L`.`numero`, ' ', `N`.`numero`, ' ', `N`.`sequencia`), '/', ' ')
           }
         }
       }
@@ -273,6 +275,14 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?) : 
   var usuario: Usuario? = null
   var numeroCodigo: String? = ""
   var numeroCodigoReduzido: String? = ""
+
+  val numeroCodigoReduzidoNota: String?
+    get() {
+      return if (numeroCodigoReduzido.isNullOrBlank()) {
+        numeroNF
+      } else numeroCodigoReduzido
+    }
+
   var numeroBaixa: String = ""
   var dataBaixa: LocalDate? = null
   var numeroNF: String? = ""
@@ -312,7 +322,7 @@ abstract class NotaVo(val tipo: TipoMov, private val abreviacaoNota: String?) : 
       val list = mapNotaSaci[numeroNF].orEmpty()
       return list.ifEmpty {
         val nlist = when (tipo) {
-          SAIDA -> Nota.findNotaSaidaSaci(lojaDeposito, numeroNF).filter {
+          SAIDA   -> Nota.findNotaSaidaSaci(lojaDeposito, numeroNF).filter {
             val user = usuario ?: return@filter false
             user.admin || (it.tipo != "PEDIDO_E")
           }
@@ -519,14 +529,14 @@ class ProdutoNotaVo(
   fun updateItem(first: Boolean) {
     dateUpdate = LocalDateTime.now()
     grupoSelecao = when {
-      selecionado -> when {
+      selecionado    -> when {
         first -> SELECT_FT
-        else -> BLUE
+        else  -> BLUE
       }
 
       saldoFinal < 0 -> RED
       !allowSelect() -> GREEN
-      else -> WHITE
+      else           -> WHITE
     }
   }
 }

@@ -60,7 +60,7 @@ class SaidaView : NotaView<SaidaVo, SaidaViewModel, ISaidaView>(customFooterLayo
       if (operation == ADD) {
         binder.bean.lojaNF = lojaDeposito
         binder.bean.usuario = usuario
-        operationButton?.isEnabled = false
+        operationButton?.isEnabled = true
       }
       formLayout.apply {
         w = (UI.getCurrent().page.browserWindowWidth * 0.8).toInt().px
@@ -130,7 +130,7 @@ class SaidaView : NotaView<SaidaVo, SaidaViewModel, ISaidaView>(customFooterLayo
           }
         }
       }.id = "btnPrint"
-      column(SaidaVo::numeroCodigoReduzido) {
+      column(SaidaVo::numeroCodigoReduzidoNota) {
         caption = "Número Conferencia"
         setSortProperty("codigo_barra_conferencia")
       }
