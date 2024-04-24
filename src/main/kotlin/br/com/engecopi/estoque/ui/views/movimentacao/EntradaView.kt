@@ -239,9 +239,9 @@ class EntradaView : NotaView<EntradaVo, EntradaViewModel, IEntradaView>(customFo
 
   override fun processAdd(domainObject: EntradaVo) {
     super.processAdd(domainObject)
-    imprimeItem(domainObject) { itemNota ->
-      viewModel.imprimirNotaCompletaAgrupada(itemNota)
-    }
+    //imprimeItem(domainObject) { itemNota ->
+    //  viewModel.imprimirNotaCompletaAgrupada(itemNota)
+    // }
   }
 
   override fun stillShow() {

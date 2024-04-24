@@ -97,12 +97,12 @@ class Nota : BaseModel() {
   fun updateFromSaci() {
     val storeno = loja?.numero ?: 0
     val notaInfo = when (tipoMov) {
-      ENTRADA -> saci.findNotaEntradaInfo(storeno, nfno, nfse)
-      SAIDA -> saci.findNotaSaidaInfo(storeno, nfno, nfse)
-    } ?: return
+                     ENTRADA -> saci.findNotaEntradaInfo(storeno, nfno, nfse)
+                     SAIDA   -> saci.findNotaSaidaInfo(storeno, nfno, nfse)
+                   } ?: return
     tipoNota = if (notaInfo.cancelado) when (tipoMov) {
       ENTRADA -> CANCELADA_E
-      SAIDA -> CANCELADA_S
+      SAIDA   -> CANCELADA_S
     }
     else {
       notaInfo.tipoNota
@@ -144,8 +144,8 @@ class Nota : BaseModel() {
       val tipoNota = notaSimples.tipoNota() ?: return NotaItens.erro("Nota com tipo inválido")
       val loja = notaSimples.loja() ?: return NotaItens.erro("Nota com loja inválido")
       val nota =
-        findNota(loja, numero, tipoNota.tipoMov) ?: createNota(notaSimples)
-        ?: return NotaItens.erro("Erro ao criar a nota")
+          findNota(loja, numero, tipoNota.tipoMov) ?: createNota(notaSimples)
+          ?: return NotaItens.erro("Erro ao criar a nota")
       nota.sequencia = maxSequencia() + 1
       nota.usuario = usuarioDefault
       val itens = notasaci.mapNotNull { item ->
@@ -185,7 +185,7 @@ class Nota : BaseModel() {
       loja ?: return null
       return when (tipoMov) {
         ENTRADA -> findEntrada(loja, numero)
-        SAIDA -> findSaida(loja, numero)
+        SAIDA   -> findSaida(loja, numero)
       }
     }
 
@@ -251,12 +251,12 @@ class Nota : BaseModel() {
     }
 
     fun notaBaixa(storeno: Int?, numero: String?) =
-      TransferenciaAutomatica.notaBaixa(storeno, numero).ifEmpty { EntregaFutura.notaBaixa(storeno, numero) }
-        .ifEmpty { PedidoNotaRessuprimento.notaBaixa(numero) }
+        TransferenciaAutomatica.notaBaixa(storeno, numero).ifEmpty { EntregaFutura.notaBaixa(storeno, numero) }
+          .ifEmpty { PedidoNotaRessuprimento.notaBaixa(numero) }
 
     fun notaFatura(storeno: Int?, numero: String?) =
-      TransferenciaAutomatica.notaFatura(storeno, numero).ifEmpty { EntregaFutura.notaFatura(storeno, numero) }
-        .ifEmpty { PedidoNotaRessuprimento.pedidoRessuprimento(storeno, numero) }
+        TransferenciaAutomatica.notaFatura(storeno, numero).ifEmpty { EntregaFutura.notaFatura(storeno, numero) }
+          .ifEmpty { PedidoNotaRessuprimento.pedidoRessuprimento(storeno, numero) }
   }
 
   fun dataBaixa(): LocalDate? = notaBaixa().data
@@ -282,33 +282,29 @@ enum class TipoNota(
   val tipoMov: TipoMov, val descricao: String, val descricao2: String, val lojaDeposito: Boolean = true
 ) {
   //Entrada
-  COMPRA(ENTRADA, "Compra", "Compra"), TRANSFERENCIA_E(ENTRADA, "Transferencia", "Transferencia Entrada"), DEV_CLI(
-    ENTRADA, "Dev Cliente", "Dev Cliente"
-  ),
-  ACERTO_E(ENTRADA, "Acerto", "Acerto Entrada"), PEDIDO_E(ENTRADA, "Pedido", "Pedido Entrada"), OUTROS_E(
-    ENTRADA, "Outros", "Outras Entradas"
-  ),
-  NOTA_E(ENTRADA, "Entradas", "Entradas"), RECLASSIFICACAO_E(
-    ENTRADA, "Reclassificação", "Reclassificação Entrada"
-  ),
-  VENDAF(SAIDA, "Venda Futura", "Venda Fut", false), RETIRAF(
-    SAIDA, "Retira Futura", "Retira Fut", false
-  ),
-  VENDA(SAIDA, "Venda", "Venda"), TRANSFERENCIA_S(SAIDA, "Transferencia", "Transferencia Saida"), ENT_RET(
-    SAIDA, "Ent/Ret", "Ent/Ret"
-  ),
-  DEV_FOR(SAIDA, "Dev Fornecedor", "Dev Fornecedor"), ACERTO_S(SAIDA, "Acerto", "Acerto Saida"), PEDIDO_S(
-    SAIDA, "Pedido", "Pedido Saida"
-  ),
-  PEDIDO_A(SAIDA, "Abastecimento", "Pedido Abastecimento"), PEDIDO_R(
-    SAIDA, "Ressuprimento", "Pedido de Ressuprimento", false
-  ),
-  OUTROS_S(SAIDA, "Outros", "Outras Saidas"), CHAVE_SAIDA(SAIDA, "Chave de Nota", "Chave de Nota"), OUTRAS_NFS(
-    SAIDA, "Outras NFS", "Outras NF Saida"
-  ),
-  SP_REME(SAIDA, "Simples Remessa", "Simples Remessa"), CANCELADA_E(
-    ENTRADA, "Nota Cancelada", "NF Entrada Cancelada"
-  ),
+  COMPRA(ENTRADA, "Compra", "Compra"),
+  TRANSFERENCIA_E(ENTRADA, "Transferencia", "Transferencia Entrada"),
+  DEV_CLI(ENTRADA, "Dev Cliente", "Dev Cliente"),
+  ACERTO_E(ENTRADA, "Acerto", "Acerto Entrada"),
+  PEDIDO_E(ENTRADA, "Pedido", "Pedido Entrada"),
+  OUTROS_E(ENTRADA, "Outros", "Outras Entradas"),
+  NOTA_E(ENTRADA, "Entradas", "Entradas"),
+  RECLASSIFICACAO_E(ENTRADA, "Reclassificação", "Reclassificação Entrada"),
+  VENDAF(SAIDA, "Venda Futura", "Venda Fut", false),
+  RETIRAF(SAIDA, "Retira Futura", "Retira Fut", false),
+  VENDA(SAIDA, "Venda", "Venda"),
+  TRANSFERENCIA_S(SAIDA, "Transferencia", "Transferencia Saida"),
+  ENT_RET(SAIDA, "Ent/Ret", "Ent/Ret"),
+  DEV_FOR(SAIDA, "Dev Fornecedor", "Dev Fornecedor"),
+  ACERTO_S(SAIDA, "Acerto", "Acerto Saida"),
+  PEDIDO_S(SAIDA, "Pedido", "Pedido Saida"),
+  PEDIDO_A(SAIDA, "Abastecimento", "Pedido Abastecimento"),
+  PEDIDO_R(SAIDA, "Ressuprimento", "Pedido de Ressuprimento", false),
+  OUTROS_S(SAIDA, "Outros", "Outras Saidas"),
+  CHAVE_SAIDA(SAIDA, "Chave de Nota", "Chave de Nota"),
+  OUTRAS_NFS(SAIDA, "Outras NFS", "Outras NF Saida"),
+  SP_REME(SAIDA, "Simples Remessa", "Simples Remessa"),
+  CANCELADA_E(ENTRADA, "Nota Cancelada", "NF Entrada Cancelada"),
   CANCELADA_S(SAIDA, "Nota Cancelada", "NF Saída Cancelada");
 
   companion object {

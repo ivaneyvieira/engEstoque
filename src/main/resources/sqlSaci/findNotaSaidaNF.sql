@@ -11,7 +11,7 @@ SELECT DISTINCT CAST(IFNULL(X.xrouteno, '') AS CHAR) AS rota,
                 CASE
                     WHEN (IFNULL(NP.optionEntrega, 0) % 100) = 4
                         THEN 'RETIRAF'
-                    WHEN (N.nfse = 1 AND N.cfo IN (5922, 6922)) OR (N.nfse = 7)
+                    WHEN (N.nfse = 1 AND N.cfo IN (5922, 6922)) OR (N.nfse = 7)/*Venda no Site*/
                         THEN 'VENDAF'
                     WHEN N.nfse = '66'
                         THEN 'ACERTO_S'
